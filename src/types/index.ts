@@ -49,16 +49,19 @@ export interface DocumentRequired {
 
 export type GenderEligibility = 'all' | 'female' | 'male';
 
+export type CountryCode = 'IN' | 'US' | 'GB' | 'CA' | 'AU' | 'DE' | 'GLOBAL';
+
 export interface Opportunity {
   id: string;
   title: string;
   titleHi: string;
   category: OpportunityCategory;
   lifeStage: LifeStage;
+  country?: CountryCode; // Country of origin or eligibility
   targetAges: [number, number]; // [minAge, maxAge]
   genderEligibility?: GenderEligibility; // 'all' (default), 'female', 'male'
   stateEligibility: string[]; // ['ALL'] or ['UP', 'Bihar', etc.]
-  incomeCeiling?: number; // In INR per annum
+  incomeCeiling?: number; // In INR or USD per annum
   targetOccupations: string[];
   benefitHeadline: string;
   benefitHeadlineHi: string;
@@ -83,7 +86,10 @@ export interface CitizenProfile {
   email?: string;
   photoURL?: string;
   phoneNumber: string;
-  aadhaarNumberMasked?: string; // e.g. 'XXXX-XXXX-8921'
+  country?: CountryCode;
+  nationalIdName?: string; // e.g. 'Aadhaar Card', 'Social Security Number', etc.
+  nationalIdMasked?: string; // e.g. 'XXXX-XXXX-8921' or 'XXX-XX-8921'
+  aadhaarNumberMasked?: string; // Kept for backwards compatibility
   isAadhaarVerified: boolean;
   isOnboarded?: boolean;
   age: number;
@@ -92,6 +98,7 @@ export interface CitizenProfile {
   state: string;
   district: string;
   pincode: string;
+  administrativeDivision?: string;
   lifePhase: 'school_student' | 'college_student' | 'exam_aspirant' | 'job_seeker' | 'employed' | 'business_owner' | 'farmer' | 'homemaker' | 'senior_citizen';
   casteCategory: 'General' | 'OBC' | 'SC' | 'ST' | 'EWS' | 'Minority';
   familyIncomeAnnual: number;
@@ -114,7 +121,7 @@ export interface FamilyMember {
   lifePhase: string;
 }
 
-export type SupportedLanguage = 'hi' | 'en';
+export type SupportedLanguage = 'en' | 'hi' | 'es' | 'fr' | 'de' | 'ar';
 
 export type HelplineCategory = 
   | 'emergency' 

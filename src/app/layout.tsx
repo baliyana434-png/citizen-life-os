@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { TranslationProvider } from '@/i18n/useTranslation';
+import { CountryProvider } from '@/context/CountryContext';
 
 export const metadata: Metadata = {
-  title: 'Citizen Life OS | 100% Verified National Opportunities & Benefits',
-  description: 'Military-grade, zero-scam platform for Govt Schemes, Competitive Exams, Verified Jobs, Free AI Tools, and Healthcare.',
+  title: 'Citizen Life OS | Verified National & Global Opportunities',
+  description: 'Zero-scam civic platform for verified government schemes, competitive exams, study abroad scholarships, jobs, and healthcare.',
   manifest: '/manifest.json',
 };
 
@@ -21,10 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="hi">
+    <html lang="en">
       <body className="min-h-screen bg-slate-50 text-slate-900 selection:bg-emerald-200 selection:text-emerald-950">
         <TranslationProvider>
-          {children}
+          <CountryProvider>
+            {children}
+          </CountryProvider>
         </TranslationProvider>
       </body>
     </html>

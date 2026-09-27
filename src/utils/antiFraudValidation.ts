@@ -3,6 +3,8 @@
  * 100% Free Lifetime Verification (UIDAI Verhoeff Checksum + TRAI Rules + India Post Rules)
  */
 
+import { SupportedLanguage } from '@/types';
+
 // 1. UIDAI Verhoeff Checksum Algorithm
 // Dihedral group D5 multiplication and permutation matrices
 const VERHOEFF_D = [
@@ -40,7 +42,7 @@ export function validateVerhoeff(numStr: string): boolean {
 }
 
 // 2. Full Name Validation
-export function validateRealName(name: string, lang: 'hi' | 'en' = 'hi'): { valid: boolean; error?: string } {
+export function validateRealName(name: string, lang: SupportedLanguage = 'en'): { valid: boolean; error?: string } {
   const trimmed = (name || '').trim();
   if (!trimmed) {
     return {
@@ -104,7 +106,7 @@ export function validateRealName(name: string, lang: 'hi' | 'en' = 'hi'): { vali
 }
 
 // 3. Indian Mobile Number Validation (TRAI Standards)
-export function validateRealPhone(phone: string, lang: 'hi' | 'en' = 'hi'): { valid: boolean; cleanPhone: string; error?: string } {
+export function validateRealPhone(phone: string, lang: SupportedLanguage = 'en'): { valid: boolean; cleanPhone: string; error?: string } {
   const clean = (phone || '').replace(/\D/g, '').slice(-10);
   if (!clean || clean.length !== 10) {
     return {
@@ -169,7 +171,7 @@ export function validateRealPhone(phone: string, lang: 'hi' | 'en' = 'hi'): { va
 }
 
 // 4. UIDAI 12-Digit Aadhaar Card Validation
-export function validateRealAadhaar(aadhaar: string, lang: 'hi' | 'en' = 'hi'): { valid: boolean; cleanAadhaar: string; error?: string } {
+export function validateRealAadhaar(aadhaar: string, lang: SupportedLanguage = 'en'): { valid: boolean; cleanAadhaar: string; error?: string } {
   const clean = (aadhaar || '').replace(/[\s-]/g, '').trim();
   if (!clean) {
     return {
@@ -239,7 +241,7 @@ export function validateRealAadhaar(aadhaar: string, lang: 'hi' | 'en' = 'hi'): 
 }
 
 // 5. Date of Birth & Age Validation
-export function validateRealDob(dobStr: string, lang: 'hi' | 'en' = 'hi'): { valid: boolean; age: number; error?: string } {
+export function validateRealDob(dobStr: string, lang: SupportedLanguage = 'en'): { valid: boolean; age: number; error?: string } {
   if (!dobStr) {
     return {
       valid: false,
@@ -296,7 +298,7 @@ export function validateRealDob(dobStr: string, lang: 'hi' | 'en' = 'hi'): { val
 }
 
 // 6. India Post Pincode Validation
-export function validateRealPincode(pincode: string, lang: 'hi' | 'en' = 'hi'): { valid: boolean; cleanPincode: string; error?: string } {
+export function validateRealPincode(pincode: string, lang: SupportedLanguage = 'en'): { valid: boolean; cleanPincode: string; error?: string } {
   const clean = (pincode || '').replace(/\D/g, '').trim();
   if (!clean || clean.length !== 6) {
     return {
@@ -332,7 +334,7 @@ export function validateRealPincode(pincode: string, lang: 'hi' | 'en' = 'hi'): 
 }
 
 // 7. District Validation
-export function validateRealDistrict(district: string, lang: 'hi' | 'en' = 'hi'): { valid: boolean; error?: string } {
+export function validateRealDistrict(district: string, lang: SupportedLanguage = 'en'): { valid: boolean; error?: string } {
   const trimmed = (district || '').trim();
   if (!trimmed || trimmed.length < 3) {
     return {
@@ -362,7 +364,7 @@ export function validateRealDistrict(district: string, lang: 'hi' | 'en' = 'hi')
 }
 
 // 8. Annual Family Income Validation
-export function validateRealIncome(income: number, lang: 'hi' | 'en' = 'hi'): { valid: boolean; error?: string } {
+export function validateRealIncome(income: number, lang: SupportedLanguage = 'en'): { valid: boolean; error?: string } {
   const val = Number(income);
   if (isNaN(val) || val < 10000) {
     return {

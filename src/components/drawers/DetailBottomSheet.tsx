@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Opportunity } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
+import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import {
   X,
   ShieldCheck,
@@ -13,8 +14,10 @@ import {
   Building2,
   FileText,
   CheckCircle2,
-  Sparkles,
-  Star
+  Star,
+  Clock,
+  Target,
+  Users,
 } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 
@@ -48,33 +51,32 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
 
   if (!opportunity) return null;
 
-  const title = language === 'hi' ? opportunity.titleHi : opportunity.title;
-  const benefit = language === 'hi' ? opportunity.benefitHeadlineHi : opportunity.benefitHeadline;
-  const description = language === 'hi' ? opportunity.descriptionHi : opportunity.description;
+  const localized = getLocalizedOpportunity(opportunity, language);
 
   const toggleDoc = (id: string) => {
     setCheckedDocs((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/65 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-md animate-fade-in">
       {/* Backdrop tap to close */}
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Centered Modal Container */}
-      <div className="relative w-full max-w-2xl sm:max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200/80 flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto transition-all transform animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl sm:max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto transition-all transform animate-in fade-in zoom-in-95 duration-200">
+        
         {/* 1. Header with Close Button */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-start justify-between gap-3 bg-slate-50/80 rounded-t-3xl">
+        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-start justify-between gap-3 bg-slate-50 rounded-t-3xl">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 {t('official_verified')}
               </span>
-              <VoiceReader textToSpeak={`${title}. ${benefit}`} />
+              <VoiceReader textToSpeak={`${localized.title}. ${localized.benefitHeadline}`} />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-              {title}
+            <h2 className="text-base sm:text-xl font-extrabold text-slate-900 leading-snug">
+              {localized.title}
             </h2>
           </div>
 
@@ -84,14 +86,10 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 onClick={() => onToggleFavorite(opportunity.id)}
                 className={`p-2 rounded-xl border transition-all ${
                   isFavorite
-                    ? 'bg-amber-100 text-amber-500 border-amber-300 hover:bg-amber-200 ring-2 ring-amber-400/50 shadow-2xs'
-                    : 'bg-white text-slate-400 hover:text-amber-500 hover:bg-amber-50 border-slate-200 hover:border-amber-300'
+                    ? 'bg-amber-100 text-amber-500 border-amber-300'
+                    : 'bg-white text-slate-400 hover:text-amber-500 border-slate-200'
                 }`}
-                title={
-                  isFavorite
-                    ? (language === 'hi' ? 'पसंदीदा से हटाएं' : 'Remove from Favorites')
-                    : (language === 'hi' ? 'पसंदीदा में जोड़ें (आगामी सूचना हेतु)' : 'Save to Favorites (Track updates)')
-                }
+                title={t('subfilters.favorites')}
                 aria-label="Toggle Favorite"
               >
                 <Star className={`w-4 h-4 ${isFavorite ? 'fill-amber-400 text-amber-500' : ''}`} />
@@ -110,82 +108,71 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
 
         {/* 2. Scrollable Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 overscroll-contain">
+          
           {/* A. Official Gazette & Authority Box */}
-          <div className="p-3.5 rounded-xl bg-slate-100/90 border border-slate-200 text-xs space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
             <div className="flex items-center gap-1.5 font-bold text-slate-800">
               <Building2 className="w-4 h-4 text-slate-600" />
-              <span>{opportunity.gazette.issuingAuthority}</span>
+              <span>{localized.issuingAuthority}</span>
             </div>
             <div className="text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>{t('card.circular_no')}: <strong>{opportunity.gazette.circularNumber}</strong></span>
               <span>{opportunity.gazette.lastVerifiedAt}</span>
-              <span>{t('card.official_fee')}: <strong className="text-emerald-700">{opportunity.gazette.officialGovtFee}</strong></span>
+              <span>{t('card.official_fee')}: <strong className="text-emerald-800">{localized.officialFee}</strong></span>
               {opportunity.targetAges && (
-                <span>🎯 {language === 'hi' ? 'पात्र आयु:' : 'Eligible Age:'} <strong className="text-slate-800">{opportunity.targetAges[0]} - {opportunity.targetAges[1]} {language === 'hi' ? 'वर्ष' : 'Years'}</strong></span>
+                <span className="flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5 text-slate-500" />
+                  <span>{t('hero.age_label')}: <strong>{opportunity.targetAges[0]} - {opportunity.targetAges[1]} {t('hero.years_suffix')}</strong></span>
+                </span>
               )}
               {opportunity.genderEligibility === 'female' && (
-                <span className="text-rose-700 font-bold">👩 {language === 'hi' ? 'पात्रता: केवल महिलाएं' : 'Eligibility: Women Only'}</span>
+                <span className="text-rose-700 font-bold flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5 text-rose-600" />
+                  <span>{t('onboarding.female')}</span>
+                </span>
               )}
             </div>
           </div>
 
-          {/* A2. Official Application Cycle / Portal Status Banner */}
-          {opportunity.applicationStatus === 'active_now' ? (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300/80 flex items-start gap-2.5 text-xs text-emerald-950 font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 mt-1 shrink-0"></span>
-              <div>
-                <strong className="block text-emerald-900 font-bold">
-                  {language === 'hi' ? '🟢 आधिकारिक पोर्टल पर आवेदन प्रक्रिया चालू है' : '🟢 Online Application Active on Official Portal'}
-                </strong>
-                <span>
-                  {language === 'hi'
-                    ? 'संबंधित आधिकारिक आयोग/विभाग की वेबसाइट पर वर्तमान में ऑनलाइन फॉर्म एवं शुल्क भुगतान विंडो खुली हुई है।'
-                    : 'The online registration and fee payment window is currently active on the official department portal.'}
-                </span>
-              </div>
+          {/* A2. Application Status Banner */}
+          <div className={`p-3 rounded-xl border flex items-start gap-2.5 text-xs font-semibold ${
+            opportunity.applicationStatus === 'active_now'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
+              : opportunity.applicationStatus === 'upcoming'
+              ? 'bg-blue-50 border-blue-200 text-blue-950'
+              : 'bg-slate-100 border-slate-200 text-slate-800'
+          }`}>
+            <span className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
+              opportunity.applicationStatus === 'active_now'
+                ? 'bg-emerald-600'
+                : opportunity.applicationStatus === 'upcoming'
+                ? 'bg-blue-600'
+                : 'bg-slate-500'
+            }`} />
+            <div>
+              <strong className="block text-xs font-bold mb-0.5">
+                {localized.applicationStatusText}
+              </strong>
+              <span className="text-[11px] font-normal leading-relaxed block">
+                {opportunity.applicationStatus === 'active_now'
+                  ? (language === 'hi' ? 'संबंधित आधिकारिक आयोग अथवा विभाग की वेबसाइट पर वर्तमान में आवेदन फॉर्म व पंजीकरण खिड़की खुली हुई है।' : 'The official registration and application window is currently active on the official portal.')
+                  : opportunity.applicationStatus === 'upcoming'
+                  ? (language === 'hi' ? 'यह अवसर वर्तमान में आधिकारिक वार्षिक कैलेंडर में सूचीबद्ध है। निर्धारित समय पर आवेदन लिंक सक्रिय हो जाएगा।' : 'This opportunity is officially scheduled under the annual calendar. The application link opens as scheduled.')
+                  : (language === 'hi' ? 'यह अवसर वर्ष भर निरंतर खुला रहता है। आप कभी भी सीधे आवेदन कर सकते हैं।' : 'This program operates on a continuous, round-the-year schedule with direct open access.')}
+              </span>
             </div>
-          ) : opportunity.applicationStatus === 'upcoming' ? (
-            <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-start gap-2.5 text-xs text-blue-950">
-              <Calendar className="w-4 h-4 text-blue-700 mt-0.5 shrink-0" />
-              <div>
-                <strong className="block text-blue-900 font-bold">
-                  {language === 'hi' ? '📅 वार्षिक परीक्षा कैलेंडर चक्र (Upcoming Notification Cycle)' : '📅 Official Examination Calendar Cycle'}
-                </strong>
-                <span className="text-blue-800">
-                  {language === 'hi'
-                    ? 'यह भर्ती/परीक्षा वर्तमान में आयोग के वार्षिक परीक्षा कैलेंडर में सूचीबद्ध है। आयोग द्वारा आधिकारिक आवेदन फॉर्म विंडो खुलते ही लिंक सीधे सक्रिय हो जाएगा।'
-                    : 'This opportunity is currently scheduled under the Commission’s Annual Examination Calendar. The direct application form link will open as per the scheduled notification window.'}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs text-slate-800">
-              <Building2 className="w-4 h-4 text-slate-600 mt-0.5 shrink-0" />
-              <div>
-                <strong className="block text-slate-900 font-bold">
-                  {opportunity.category === 'govt_scheme' || opportunity.category === 'govt_job'
-                    ? (language === 'hi' ? '🏛️ निरंतर चालू सरकारी योजना (Ongoing Round)' : '🏛️ Year-Round Government Service')
-                    : (language === 'hi' ? '⚡ निरंतर चालू अवसर (Ongoing Open Round)' : '⚡ Ongoing Open Opportunity')}
-                </strong>
-                <span className="text-slate-600">
-                  {language === 'hi'
-                    ? 'यह अवसर/डिजिटल सेवा पूरे वर्ष भर निरंतर खुली रहती है। आप कभी भी सीधे आवेदन या लाभ प्राप्त कर सकते हैं।'
-                    : 'This opportunity or digital service operates round the year with no closing date.'}
-                </span>
-              </div>
-            </div>
-          )}
+          </div>
 
           {/* B. Anti-Cheat & Scam Protection Box */}
-          <div className="p-4 rounded-xl bg-amber-50 border border-amber-300/80 shadow-sm">
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
             <div className="flex items-start gap-2.5">
               <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-amber-900 mb-1">
+                <h4 className="text-xs font-bold text-amber-900 mb-1">
                   {t('drawer.scam_alert_title')}
                 </h4>
                 <p className="text-xs text-amber-800 leading-relaxed">
-                  {opportunity.gazette.scamAlertWarning}
+                  {localized.scamWarning}
                 </p>
               </div>
             </div>
@@ -193,97 +180,100 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
 
           {/* C. Benefit Summary */}
           <div>
-            <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
-              <span>{t('drawer.benefit_details')}</span>
+            <h3 className="text-sm font-bold text-slate-900 mb-2">
+              {t('drawer.benefit_details')}
             </h3>
-            <div className="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200 text-xs sm:text-sm font-semibold text-emerald-950">
-              {benefit}
+            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs sm:text-sm font-bold text-emerald-950">
+              {localized.benefitHeadline}
             </div>
-            <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-              {description}
+          </div>
+
+          {/* D. Official Description */}
+          <div>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              {localized.description}
             </p>
           </div>
 
-          {/* D. Required Documents Checklist (Interactive) */}
-          {opportunity.documents.length > 0 && (
+          {/* E. Required Documents Checklist */}
+          {localized.documents && localized.documents.length > 0 && (
             <div>
               <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                <FileText className="w-4 h-4 text-slate-700" />
+                <FileCheck2 className="w-4 h-4 text-emerald-600" />
                 <span>{t('drawer.required_documents')}</span>
               </h3>
-              <div className="space-y-2">
-                {opportunity.documents.map((doc) => {
-                  const isChecked = !!checkedDocs[doc.id];
-                  const docName = language === 'hi' ? doc.nameHi : doc.name;
-                  return (
-                    <div
-                      key={doc.id}
-                      onClick={() => toggleDoc(doc.id)}
-                      className={`p-3 rounded-xl border flex items-center justify-between gap-3 text-xs sm:text-sm cursor-pointer transition-colors ${
-                        isChecked
-                          ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-medium'
-                          : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className={`w-4 h-4 rounded border flex items-center justify-center ${
-                            isChecked
-                              ? 'bg-emerald-600 border-emerald-600 text-white'
-                              : 'border-slate-300 bg-white'
-                          }`}
-                        >
-                          {isChecked && <CheckCircle2 className="w-3.5 h-3.5" />}
-                        </div>
-                        <span>{docName}</span>
-                      </div>
+              <div className="space-y-1.5">
+                {localized.documents.map((doc) => (
+                  <label
+                    key={doc.id}
+                    onClick={() => toggleDoc(doc.id)}
+                    className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!checkedDocs[doc.id]}
+                      onChange={() => {}}
+                      className="mt-0.5 w-4 h-4 text-emerald-600 rounded-sm border-slate-300 focus:ring-emerald-500"
+                    />
+                    <div className="text-xs">
+                      <span className="font-semibold text-slate-800">
+                        {doc.name}
+                      </span>
                       {doc.isMandatory && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold">
+                        <span className="ml-2 text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-md">
                           {t('drawer.mandatory')}
                         </span>
                       )}
                     </div>
-                  );
-                })}
+                  </label>
+                ))}
               </div>
             </div>
           )}
 
-          {/* E. Step-by-Step Application Guide */}
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-              <FileCheck2 className="w-4 h-4 text-slate-700" />
-              <span>{t('drawer.apply_steps')}</span>
-            </h3>
-            <div className="space-y-2.5">
-              {opportunity.applySteps.map((step) => {
-                const stepText = language === 'hi' ? step.textHi : step.text;
-                return (
-                  <div key={step.step} className="flex items-start gap-3 text-xs sm:text-sm text-slate-700">
-                    <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-800 font-bold flex items-center justify-center shrink-0 text-xs border border-slate-300">
+          {/* F. Step-by-Step Application Process */}
+          {localized.applySteps && localized.applySteps.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 mb-2">
+                {t('drawer.apply_steps')}
+              </h3>
+              <div className="space-y-2">
+                {localized.applySteps.map((step) => (
+                  <div
+                    key={step.step}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs"
+                  >
+                    <span className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px] shrink-0">
                       {step.step}
                     </span>
-                    <p className="pt-0.5">{stepText}</p>
+                    <span className="text-slate-700 leading-relaxed font-medium">
+                      {step.text}
+                    </span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* 3. Action Footer (Direct Official Portal - Zero Broker Guarantee) */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 bg-white shadow-lg rounded-b-3xl">
-          {/* Direct Official Government Portal Link */}
+        {/* 3. Bottom Sticky Action Hub */}
+        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
           <a
             href={opportunity.gazette.officialPortalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-700/20 transition-all active:scale-[0.99] cursor-pointer"
+            className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
           >
             <span>{t('drawer.official_portal_btn')}</span>
-            <ExternalLink className="w-4 h-4 text-emerald-100 shrink-0" />
+            <ExternalLink className="w-4 h-4" />
           </a>
+
+          <button
+            onClick={onClose}
+            className="py-3 px-4 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold transition-colors cursor-pointer"
+          >
+            {t('drawer.close')}
+          </button>
         </div>
       </div>
     </div>

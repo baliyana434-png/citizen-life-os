@@ -3,9 +3,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import enDict from './locales/en.json';
 import hiDict from './locales/hi.json';
+import esDict from './locales/es.json';
+import frDict from './locales/fr.json';
+import deDict from './locales/de.json';
+import arDict from './locales/ar.json';
 import { SupportedLanguage } from '@/types';
-
-type Dictionary = typeof enDict;
 
 interface TranslationContextType {
   language: SupportedLanguage;
@@ -16,23 +18,34 @@ interface TranslationContextType {
 const dictionaries: Record<SupportedLanguage, any> = {
   en: enDict,
   hi: hiDict,
+  es: esDict,
+  fr: frDict,
+  de: deDict,
+  ar: arDict,
 };
 
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export function TranslationProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<SupportedLanguage>('hi');
+  const [language, setLanguageState] = useState<SupportedLanguage>('en');
 
   useEffect(() => {
     const saved = localStorage.getItem('citizen_language') as SupportedLanguage;
-    if (saved && (saved === 'hi' || saved === 'en')) {
+    if (saved && dictionaries[saved]) {
       setLanguageState(saved);
+      document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = saved;
     }
   }, []);
 
   const setLanguage = (lang: SupportedLanguage) => {
-    setLanguageState(lang);
-    localStorage.setItem('citizen_language', lang);
+    if (dictionaries[lang]) {
+      setLanguageState(lang);
+      localStorage.setItem('citizen_language', lang);
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+      window.dispatchEvent(new CustomEvent('language_changed', { detail: lang }));
+    }
   };
 
   const t = (keyPath: string): string => {

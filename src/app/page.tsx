@@ -12,6 +12,7 @@ import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
+import { useCountry } from '@/context/CountryContext';
 import {
   Sparkles,
   ShieldCheck,
@@ -85,6 +86,7 @@ const GOVT_CATEGORIES = new Set([
 
 export default function HomePage() {
   const { t, language } = useTranslation();
+  const { country, countryMeta } = useCountry();
 
   // Master Citizen Account Profile (Individual citizen)
   const [profile, setProfile] = useState<CitizenProfile>(GUEST_PROFILE);
@@ -208,14 +210,14 @@ export default function HomePage() {
       if (isAdding) {
         setPaymentSuccessToast(
           language === 'hi'
-            ? `⭐ "${title.slice(0, 45)}..." पसंदीदा में सुरक्षित कर लिया गया!`
-            : `⭐ "${title.slice(0, 45)}..." saved to Favourites!`
+            ? `"${title.slice(0, 45)}..." सहेजे गए अवसरों में जोड़ दिया गया।`
+            : `"${title.slice(0, 45)}..." saved to your list.`
         );
       } else {
         setPaymentSuccessToast(
           language === 'hi'
-            ? `पसंदीदा सूची से हटाया गया।`
-            : `Removed from Favourites.`
+            ? `सहेजे गए अवसरों से हटाया गया।`
+            : `Removed from saved list.`
         );
       }
       setTimeout(() => setPaymentSuccessToast(null), 3500);
@@ -431,6 +433,11 @@ export default function HomePage() {
       // 1. Life Stage Tab Match
       if (opp.lifeStage !== activeTab) return false;
 
+      // 1B. Country-Aware Matching (Show opportunities for selected country, or worldwide/study abroad programs)
+      if (opp.country && opp.country !== 'GLOBAL' && opp.country !== country) {
+        return false;
+      }
+
       // 2. MANDATORY Strict Age & Eligibility Filter (NEVER show opportunities outside citizen's age)
       if (opp.targetAges) {
         const [minAge, maxAge] = opp.targetAges;
@@ -478,21 +485,23 @@ export default function HomePage() {
       // Priority 3: Higher benefit value first
       return (b.benefitAmount || 0) - (a.benefitAmount || 0);
     });
-  }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, opportunities, favoriteIds]);
+  }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, opportunities, favoriteIds, country]);
 
   // Total Available Benefit Amount
   const totalBenefitSum = useMemo(() => {
     return filteredOpportunities.reduce((acc, curr) => acc + (curr.benefitAmount || 0), 0);
   }, [filteredOpportunities]);
 
-  // WhatsApp Viral Share
+  // WhatsApp Share
   const handleShareWhatsApp = (opp: Opportunity) => {
     const title = language === 'hi' ? opp.titleHi : opp.title;
     const benefit = language === 'hi' ? opp.benefitHeadlineHi : opp.benefitHeadline;
     const isGovt = opp.category === 'govt_scheme' || opp.category === 'govt_job' || opp.category === 'competitive_exam';
-    const tagHeader = isGovt ? '🏛️ *100% सरकारी प्रमाणित अवसर:*' : '💼 *सत्यापित राष्ट्रीय अवसर:*';
+    const tagHeader = isGovt
+      ? (language === 'hi' ? '*प्रमाणित आधिकारिक अवसर:*' : '*Verified Official Opportunity:*')
+      : (language === 'hi' ? '*सत्यापित अवसर:*' : '*Verified Opportunity:*');
     const text = encodeURIComponent(
-      `${tagHeader}\n\n📌 *${title}*\n💰 *लाभ:* ${benefit}\n🛡️ *सत्यापित स्रोत:* ${opp.gazette.issuingAuthority}\n\n👉 *बिना किसी दलाल के सीधे यहाँ से चेक करें:* ${window.location.origin}`
+      `${tagHeader}\n\n*${title}*\n*${t('card.benefit')}:* ${benefit}\n*${t('card.verified_source')}:* ${opp.gazette.issuingAuthority}\n\n*Official Link:* ${window.location.origin}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -542,15 +551,12 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug">
-                {language === 'hi' ? (
-                  <>
-                    {t('hero.headline_prefix')} <span className="text-emerald-400 font-mono">₹{totalBenefitSum.toLocaleString('en-IN')}</span> {t('hero.headline_suffix')}
-                  </>
-                ) : (
-                  <>
-                    {t('hero.headline_prefix')} <span className="text-emerald-400 font-mono">₹{totalBenefitSum.toLocaleString('en-IN')}</span> {t('hero.headline_suffix')}
-                  </>
-                )}
+                {t('hero.headline_prefix')}{' '}
+                <span className="text-emerald-400 font-mono">
+                  {countryMeta.currencySymbol}
+                  {totalBenefitSum.toLocaleString()}
+                </span>{' '}
+                {t('hero.headline_suffix')}
               </h1>
 
               <p className="text-xs sm:text-sm text-emerald-100/80 mt-1 max-w-2xl">
@@ -565,10 +571,10 @@ export default function HomePage() {
               </div>
               <div className="text-left">
                 <span className="block text-xs font-bold text-white leading-tight">
-                  {profile.fullName || (language === 'hi' ? 'नागरिक खाता' : 'Citizen Account')}
+                  {profile.fullName || t('profile.guest_title')}
                 </span>
                 <span className="text-[11px] text-emerald-300 capitalize">
-                  {profile.lifePhase ? profile.lifePhase.replace('_', ' ') : 'Citizen'} • {profile.casteCategory || 'General'}
+                  {profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • {profile.casteCategory || 'General'}
                 </span>
               </div>
             </div>
@@ -591,14 +597,14 @@ export default function HomePage() {
             <button
               onClick={fetchLiveSync}
               disabled={isSyncing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95 text-xs"
-              title="Click to check internet for latest notifications right now"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95 text-xs cursor-pointer"
+              title="Sync Feed"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
               <span>
                 {isSyncing
                   ? (language === 'hi' ? 'जांच जारी है...' : 'Syncing...')
-                  : (language === 'hi' ? '🔄 अभी सिंक करें' : '🔄 Sync Now')}
+                  : (language === 'hi' ? 'अद्यतन करें' : 'Sync Feed')}
               </span>
             </button>
           </div>

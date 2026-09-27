@@ -3,7 +3,8 @@
 import React from 'react';
 import { Opportunity } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
-import { ShieldCheck, Calendar, ArrowRight, Share2, Sparkles, AlertCircle, Star } from 'lucide-react';
+import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
+import { ShieldCheck, Calendar, ArrowRight, Share2, Star, Clock } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { RotatingNewBadge } from '../common/RotatingNewBadge';
 
@@ -23,17 +24,14 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
   onToggleFavorite,
 }) => {
   const { t, language } = useTranslation();
-
-  const title = language === 'hi' ? opportunity.titleHi : opportunity.title;
-  const benefit = language === 'hi' ? opportunity.benefitHeadlineHi : opportunity.benefitHeadline;
-  const description = language === 'hi' ? opportunity.descriptionHi : opportunity.description;
+  const localized = getLocalizedOpportunity(opportunity, language);
 
   return (
     <div
       onClick={() => onSelect(opportunity)}
-      className="group relative bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-card hover:shadow-card-hover hover:border-emerald-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between"
+      className="group relative bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-md hover:border-emerald-500/40 transition-all duration-200 cursor-pointer flex flex-col justify-between"
     >
-      {/* 0. Top-Left Red Rotating Starburst Sticker Badge (Zero Glow, Smooth Slow Rotation) */}
+      {/* Red Rotating Badge */}
       {opportunity.isNew && (
         <div className="absolute -top-3.5 -left-2 z-10 pointer-events-none">
           <RotatingNewBadge size="md" />
@@ -43,35 +41,32 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
       {/* 1. Header Badges */}
       <div>
         <div className="flex items-center justify-between gap-2 mb-2.5">
-          {/* Official Verification Authority Badge */}
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-300 text-slate-800 text-[11px] font-bold min-w-0 max-w-[55%]">
+          {/* Issuing Authority Badge */}
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-300 text-slate-800 text-[11px] font-bold min-w-0 max-w-[60%]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span className="truncate">
-              {opportunity.gazette.issuingAuthority.split('(')[0].trim()}
+              {localized.issuingAuthority.split('(')[0].trim()}
             </span>
           </div>
 
-          {/* Real Government Application Status Badge & Star Button */}
+          {/* Status Badge & Star */}
           <div className="shrink-0 flex items-center gap-1.5">
-            {opportunity.applicationStatus === 'active_now' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 whitespace-nowrap shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span>
-                <span>{language === 'hi' ? 'आवेदन चालू है' : 'Form Active Now'}</span>
-              </span>
-            )}
-            {opportunity.applicationStatus === 'upcoming' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-900 border border-blue-200 whitespace-nowrap shrink-0">
-                <Calendar className="w-3 h-3 text-blue-600 shrink-0" />
-                <span>{language === 'hi' ? 'कैलेंडर चक्र (Upcoming)' : 'Upcoming Cycle'}</span>
-              </span>
-            )}
-            {(!opportunity.applicationStatus || opportunity.applicationStatus === 'ongoing') && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap shrink-0">
-                <span>{language === 'hi' ? 'सदा चालू' : 'Ongoing'}</span>
-              </span>
-            )}
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border whitespace-nowrap shrink-0 ${
+              opportunity.applicationStatus === 'active_now'
+                ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
+                : opportunity.applicationStatus === 'upcoming'
+                ? 'bg-blue-50 text-blue-900 border-blue-200'
+                : 'bg-slate-100 text-slate-700 border-slate-200'
+            }`}>
+              {opportunity.applicationStatus === 'active_now' ? (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0" />
+              ) : (
+                <Calendar className="w-3 h-3 text-slate-600 shrink-0" />
+              )}
+              <span>{localized.applicationStatusText}</span>
+            </span>
 
-            {/* Quick Star / Favourite Button */}
+            {/* Star Favorite Button */}
             {onToggleFavorite && (
               <button
                 onClick={(e) => {
@@ -80,15 +75,11 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
                 }}
                 className={`p-1.5 rounded-xl border transition-all ${
                   isFavorite
-                    ? 'bg-amber-100 text-amber-500 border-amber-300 hover:bg-amber-200 shadow-2xs'
-                    : 'bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 border-slate-200 hover:border-amber-300'
+                    ? 'bg-amber-100 text-amber-500 border-amber-300 hover:bg-amber-200'
+                    : 'bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 border-slate-200'
                 }`}
-                title={
-                  isFavorite
-                    ? (language === 'hi' ? 'पसंदीदा से हटाएं' : 'Remove from Favourites')
-                    : (language === 'hi' ? 'पसंदीदा में रखें (आगामी सूचना हेतु)' : 'Save to Favourites (Track upcoming updates)')
-                }
-                aria-label="Star Favorite"
+                title={t('subfilters.favorites')}
+                aria-label="Favorite"
               >
                 <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-amber-400 text-amber-500' : ''}`} />
               </button>
@@ -98,70 +89,67 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
 
         {/* 2. Title & Speech Reader */}
         <div className="mb-2">
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2">
-            {title}
-          </h3>
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-950 transition-colors">
+              {localized.title}
+            </h3>
+            <div className="shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
+              <VoiceReader textToSpeak={`${localized.title}. ${localized.benefitHeadline}`} />
+            </div>
+          </div>
         </div>
 
-        {/* 3. Highlighted Benefit Pill */}
-        <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-100 mb-2">
-          <p className="text-xs sm:text-sm font-semibold text-emerald-950 flex items-start gap-1.5">
-            <Sparkles className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <span>{benefit}</span>
-          </p>
-        </div>
-
-        {/* 3B. Strict Age Eligibility & Gender Badge */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
-          {opportunity.targetAges && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200">
-              🎯 {language === 'hi' ? 'पात्र आयु:' : 'Eligible Age:'} {opportunity.targetAges[0]} - {opportunity.targetAges[1]} {language === 'hi' ? 'वर्ष' : 'Yrs'}
-            </span>
-          )}
-          {opportunity.genderEligibility === 'female' && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 text-[11px] font-bold border border-rose-200">
-              👩 {language === 'hi' ? 'केवल महिलाओं हेतु' : 'Women Only'}
-            </span>
-          )}
-        </div>
-
-        {/* 4. Description snippet */}
-        <p className="text-xs text-slate-600 line-clamp-2 mb-3">
-          {description}
-        </p>
-      </div>
-
-      {/* 5. Footer: Fee, Voice Reader, Share & Action */}
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-        <div className="flex items-center gap-2">
-          {/* Voice Reader */}
-          <VoiceReader textToSpeak={`${title}. ${benefit}.`} />
-
-          {/* Govt Fee indicator */}
-          <span className="text-[11px] text-slate-500 font-medium">
-            {t('card.official_fee')}: <strong className="text-slate-700">{opportunity.gazette.officialGovtFee}</strong>
+        {/* 3. Benefit Headline */}
+        <div className="mb-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+          <span className="text-xs font-bold text-emerald-900 block leading-snug">
+            {localized.benefitHeadline}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          {/* WhatsApp Share Button */}
+        {/* 4. Description */}
+        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">
+          {localized.description}
+        </p>
+      </div>
+
+      {/* 5. Footer Details & Actions */}
+      <div className="pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
+          <div className="flex items-center gap-1 font-semibold text-slate-700">
+            <Clock className="w-3.5 h-3.5 text-slate-500" />
+            <span>
+              {opportunity.daysRemaining && opportunity.daysRemaining > 0
+                ? `${opportunity.daysRemaining} ${t('card.days_left')}`
+                : opportunity.deadline}
+            </span>
+          </div>
+
+          <span className="font-bold text-emerald-800">
+            {localized.officialFee}
+          </span>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onSelect(opportunity)}
+            className="flex-1 py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+          >
+            <span>{t('card.view_details')}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+
           <button
             onClick={(e) => {
               e.stopPropagation();
               onShareWhatsApp(opportunity);
             }}
-            className="p-2 rounded-xl text-emerald-700 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-colors"
+            className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
             title={t('card.share_whatsapp')}
-            aria-label={t('card.share_whatsapp')}
+            aria-label="Share"
           >
             <Share2 className="w-4 h-4" />
           </button>
-
-          {/* View Details Button */}
-          <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-semibold group-hover:bg-emerald-700 transition-colors shadow-sm">
-            <span>{t('card.view_details')}</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </div>
         </div>
       </div>
     </div>
