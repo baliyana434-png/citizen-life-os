@@ -155,10 +155,10 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               </strong>
               <span className="text-[11px] font-normal leading-relaxed block">
                 {opportunity.applicationStatus === 'active_now'
-                  ? (language === 'hi' ? 'संबंधित आधिकारिक आयोग अथवा विभाग की वेबसाइट पर वर्तमान में आवेदन फॉर्म व पंजीकरण खिड़की खुली हुई है।' : 'The official registration and application window is currently active on the official portal.')
+                  ? t('drawer.status_active_desc')
                   : opportunity.applicationStatus === 'upcoming'
-                  ? (language === 'hi' ? 'यह अवसर वर्तमान में आधिकारिक वार्षिक कैलेंडर में सूचीबद्ध है। निर्धारित समय पर आवेदन लिंक सक्रिय हो जाएगा।' : 'This opportunity is officially scheduled under the annual calendar. The application link opens as scheduled.')
-                  : (language === 'hi' ? 'यह अवसर वर्ष भर निरंतर खुला रहता है। आप कभी भी सीधे आवेदन कर सकते हैं।' : 'This program operates on a continuous, round-the-year schedule with direct open access.')}
+                  ? t('drawer.status_upcoming_desc')
+                  : t('drawer.status_ongoing_desc')}
               </span>
             </div>
           </div>

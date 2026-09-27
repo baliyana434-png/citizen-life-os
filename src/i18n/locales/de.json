@@ -79,7 +79,10 @@
     "download_kit_btn": "Leitfaden und Antragsformular herunterladen",
     "official_pdf_notice": "Amtliche Bekanntmachung im Bundesgesetzblatt",
     "mandatory": "Pflichtangabe",
-    "close": "Schließen"
+    "close": "Schließen",
+    "status_active_desc": "Das offizielle Registrierungs- und Bewerbungsfenster ist derzeit auf dem offiziellen Portal geöffnet.",
+    "status_upcoming_desc": "Diese Maßnahme ist im offiziellen Jahreskalender vorgesehen. Der Bewerbungslink wird termingerecht freigeschaltet.",
+    "status_ongoing_desc": "Dieses Programm läuft ganzjährig kontinuierlich mit direktem Zugang."
   },
   "auth": {
     "modal_title": "Bürgeridentitätsprüfung",

@@ -79,7 +79,10 @@
     "download_kit_btn": "Download Official Guidelines and Form",
     "official_pdf_notice": "Official Notification Document",
     "mandatory": "Mandatory",
-    "close": "Close"
+    "close": "Close",
+    "status_active_desc": "The official registration and application window is currently active on the official portal.",
+    "status_upcoming_desc": "This opportunity is officially scheduled under the annual calendar. The application link opens as scheduled.",
+    "status_ongoing_desc": "This program operates on a continuous, round-the-year schedule with direct open access."
   },
   "auth": {
     "modal_title": "National Citizen Verification",

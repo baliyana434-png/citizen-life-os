@@ -245,7 +245,7 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
                   >
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
                       <span className="text-sm">{c.flag}</span>
-                      <span className="truncate">{c.name.split(' ')[0]}</span>
+                      <span className="truncate">{c.name}</span>
                     </span>
                     {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
                   </button>

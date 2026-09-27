@@ -15,8 +15,18 @@ import { UK_OPPORTUNITIES } from './categories/uk_opportunities';
 import { CANADA_OPPORTUNITIES } from './categories/canada_opportunities';
 import { GERMANY_OPPORTUNITIES } from './categories/germany_opportunities';
 import { AUSTRALIA_OPPORTUNITIES } from './categories/australia_opportunities';
+import { FRANCE_OPPORTUNITIES } from './categories/france_opportunities';
+import { JAPAN_OPPORTUNITIES } from './categories/japan_opportunities';
+import { UAE_OPPORTUNITIES } from './categories/uae_opportunities';
+import { BRAZIL_OPPORTUNITIES } from './categories/brazil_opportunities';
+import { SINGAPORE_OPPORTUNITIES } from './categories/singapore_opportunities';
+import { SOUTH_KOREA_OPPORTUNITIES } from './categories/south_korea_opportunities';
+import { SAUDI_OPPORTUNITIES } from './categories/saudi_opportunities';
+import { NEWZEALAND_OPPORTUNITIES } from './categories/newzealand_opportunities';
+import { SOUTH_AFRICA_OPPORTUNITIES } from './categories/south_africa_opportunities';
+import { ITALY_OPPORTUNITIES } from './categories/italy_opportunities';
 
-// Ensure all Indian-origin opportunities have country: 'IN' by default
+// Tag country code on opportunities that don't have one set
 const tagCountry = (opps: Opportunity[], countryCode: Opportunity['country']): Opportunity[] => {
   return opps.map((o) => ({
     ...o,
@@ -25,23 +35,33 @@ const tagCountry = (opps: Opportunity[], countryCode: Opportunity['country']): O
 };
 
 export const INITIAL_OPPORTUNITIES: Opportunity[] = [
-  // International Study Abroad & Multi-National Opportunities
-  ...GLOBAL_STUDY_ABROAD_OPPORTUNITIES,
-  ...USA_OPPORTUNITIES,
-  ...UK_OPPORTUNITIES,
-  ...CANADA_OPPORTUNITIES,
-  ...GERMANY_OPPORTUNITIES,
-  ...AUSTRALIA_OPPORTUNITIES,
-
   // India Opportunities (Default 'IN')
   ...tagCountry(EXAM_OPPORTUNITIES, 'IN'),
   ...tagCountry(PRIVATE_JOB_OPPORTUNITIES, 'IN'),
   ...tagCountry(INTERNSHIP_OPPORTUNITIES, 'IN'),
   ...tagCountry(EDUCATION_OPPORTUNITIES, 'IN'),
-  ...tagCountry(ABROAD_OPPORTUNITIES, 'GLOBAL'),
+  ...tagCountry(ABROAD_OPPORTUNITIES, 'IN'),
   ...tagCountry(CAREER_OPPORTUNITIES, 'IN'),
   ...tagCountry(STARTUP_OPPORTUNITIES, 'IN'),
   ...tagCountry(SCHEME_OPPORTUNITIES, 'IN'),
   ...tagCountry(FREEBIE_OPPORTUNITIES, 'IN'),
   ...tagCountry(HEALTH_OPPORTUNITIES, 'IN'),
+  ...tagCountry(GLOBAL_STUDY_ABROAD_OPPORTUNITIES, 'IN'),
+
+  // International Country-Specific Opportunities
+  ...USA_OPPORTUNITIES,
+  ...UK_OPPORTUNITIES,
+  ...CANADA_OPPORTUNITIES,
+  ...GERMANY_OPPORTUNITIES,
+  ...AUSTRALIA_OPPORTUNITIES,
+  ...FRANCE_OPPORTUNITIES,
+  ...JAPAN_OPPORTUNITIES,
+  ...UAE_OPPORTUNITIES,
+  ...BRAZIL_OPPORTUNITIES,
+  ...SINGAPORE_OPPORTUNITIES,
+  ...SOUTH_KOREA_OPPORTUNITIES,
+  ...SAUDI_OPPORTUNITIES,
+  ...NEWZEALAND_OPPORTUNITIES,
+  ...SOUTH_AFRICA_OPPORTUNITIES,
+  ...ITALY_OPPORTUNITIES,
 ];

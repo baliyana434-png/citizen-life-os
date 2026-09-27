@@ -79,7 +79,10 @@
     "download_kit_btn": "Télécharger le Guide et Formulaire Officiel",
     "official_pdf_notice": "Document Officiel du Journal Administratif",
     "mandatory": "Obligatoire",
-    "close": "Fermer"
+    "close": "Fermer",
+    "status_active_desc": "La période officielle d'inscription et de candidature est actuellement ouverte sur le portail officiel.",
+    "status_upcoming_desc": "Ce dispositif est officiellement programmé dans le calendrier annuel. Le lien de candidature s'ouvrira à la date prévue.",
+    "status_ongoing_desc": "Ce programme fonctionne en continu tout au long de l'année avec un accès direct."
   },
   "auth": {
     "modal_title": "Vérification de l'Identité Citoyenne",

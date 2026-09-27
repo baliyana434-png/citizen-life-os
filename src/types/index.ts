@@ -49,7 +49,7 @@ export interface DocumentRequired {
 
 export type GenderEligibility = 'all' | 'female' | 'male';
 
-export type CountryCode = 'IN' | 'US' | 'GB' | 'CA' | 'AU' | 'DE' | 'GLOBAL';
+export type CountryCode = 'IN' | 'US' | 'GB' | 'CA' | 'AU' | 'DE' | 'FR' | 'JP' | 'AE' | 'BR' | 'SG' | 'KR' | 'SA' | 'NZ' | 'ZA' | 'IT';
 
 export interface Opportunity {
   id: string;

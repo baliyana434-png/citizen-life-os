@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Landmark, Search, PhoneCall, Star, User, Globe } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
-import { useCountry, COUNTRIES } from '@/context/CountryContext';
-import { CitizenProfile, SupportedLanguage, CountryCode } from '@/types';
+import { CitizenProfile, SupportedLanguage } from '@/types';
 
 interface HeaderProps {
   profile: CitizenProfile;
@@ -26,10 +25,8 @@ export const Header: React.FC<HeaderProps> = ({
   favoriteCount = 0,
 }) => {
   const { t, language, setLanguage } = useTranslation();
-  const { country, setCountry, countryMeta } = useCountry();
   const [liveFavCount, setLiveFavCount] = useState<number>(favoriteCount);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [isCountryMenuOpen, setIsCountryMenuOpen] = useState(false);
 
   useEffect(() => {
     const updateCount = () => {
@@ -100,62 +97,12 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* 3. Action Hub */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            
-            {/* Country Switcher Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setIsCountryMenuOpen(!isCountryMenuOpen);
-                  setIsLangMenuOpen(false);
-                }}
-                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-800 transition-all cursor-pointer"
-                title={t('select_country')}
-              >
-                <span className="text-sm">{countryMeta.flag}</span>
-                <span className="text-[11px] hidden sm:inline">{countryMeta.code}</span>
-              </button>
-
-              {isCountryMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setIsCountryMenuOpen(false)}
-                  />
-                  <div className="absolute right-0 mt-1.5 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100">
-                    <div className="px-3 py-1 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      {t('country_label')}
-                    </div>
-                    {Object.values(COUNTRIES).map((c) => (
-                      <button
-                        key={c.code}
-                        onClick={() => {
-                          setCountry(c.code as CountryCode);
-                          setIsCountryMenuOpen(false);
-                        }}
-                        className={`w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition-colors ${
-                          country === c.code
-                            ? 'bg-emerald-50 text-emerald-950 font-bold'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span className="flex items-center gap-2">
-                          <span>{c.flag}</span>
-                          <span>{c.name}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-mono">{c.currencySymbol}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
 
             {/* Language Switcher Dropdown */}
             <div className="relative">
               <button
                 onClick={() => {
                   setIsLangMenuOpen(!isLangMenuOpen);
-                  setIsCountryMenuOpen(false);
                 }}
                 className="inline-flex items-center gap-1 px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-800 transition-all cursor-pointer"
                 title={t('settings.language_label')}

@@ -112,6 +112,32 @@ const OPPORTUNITY_I18N: Record<string, Partial<Record<SupportedLanguage, {
       scamWarning: 'التقديم متاح حصرياً عبر الموقع الرسمي لبرنامج تشيفنينج دون أي وسطاء.',
     },
   },
+  'daad-scholarships-germany': {
+    es: {
+      title: 'Becas DAAD de Posgrado y Desarrollo (Alemania)',
+      benefitHeadline: '934 € Mensuales, Matrícula Gratuita en Universidades Estatales Alemanas, Seguro y Viaje',
+      description: 'El Servicio Alemán de Intercambio Académico (DAAD) ofrece becas completas para programas de máster en universidades públicas de Alemania.',
+      officialFee: '0 € (Gratuito)',
+    },
+    fr: {
+      title: 'Bourses DAAD Helmut-Schmidt et Développement (Allemagne)',
+      benefitHeadline: 'Allocation Mensuelle de 934 €, Exonération Universitaire, Assurance et Billet d\'Avion',
+      description: 'L\'Office Allemand d\'Échanges Universitaires (DAAD) finance des masters d\'excellence dans les universités publiques allemandes.',
+      officialFee: '0 € (Gratuit)',
+    },
+    de: {
+      title: 'DAAD Helmut-Schmidt & Entwicklungsstipendien (Deutschland)',
+      benefitHeadline: '934 € Monatliches Stipendium, Kostenloses Studium an Staatlichen Universitäten, Versicherung und Reise',
+      description: 'Der Deutsche Akademische Austauschdienst (DAAD) bietet Vollstipendien für Masterstudiengänge an staatlichen Hochschulen in Deutschland.',
+      officialFee: '0 € (Gebührenfrei)',
+    },
+    ar: {
+      title: 'منح الهيئة الألمانية للتبادل الأكاديمي DAAD (ألمانيا)',
+      benefitHeadline: 'راتب شهري 934 يورو، دراسة جامعية مجانية بالكامل، تأمين صحي وبدل سفر',
+      description: 'برنامج منح رسمي مقدم من الهيئة الألمانية للتبادل الأكاديمي لدراسة الماجستير في الجامعات الحكومية الألمانية.',
+      officialFee: '0 يورو (مجاني)',
+    },
+  },
   'us-federal-pell-grant': {
     es: {
       title: 'Beca Federal Pell (Departamento de Educación de EE. UU.)',
@@ -138,7 +164,441 @@ const OPPORTUNITY_I18N: Record<string, Partial<Record<SupportedLanguage, {
       officialFee: '0 دولار (مجاني)',
     },
   },
+  'us-nsf-grfp': {
+    es: {
+      title: 'Programa de Becas de Investigación de Posgrado de la NSF (EE. UU.)',
+      benefitHeadline: 'Estipendio Anual de 37.000 $ + 16.000 $ de Subsidio Educativo durante 3 Años',
+      description: 'La Fundación Nacional de Ciencias de EE. UU. (NSF) financia investigaciones científicas de posgrado en disciplinas STEM acreditadas.',
+      officialFee: '0 $ (Gratuito)',
+    },
+    fr: {
+      title: 'Programme de Bourses de Recherche Doctorale de la NSF (États-Unis)',
+      benefitHeadline: 'Allocation Annuelle de 37 000 $ + 16 000 $ de Frais de Formation pendant 3 Ans',
+      description: 'Bourse prestigieuse de la Fondation Nationale pour la Science des États-Unis soutenant les chercheurs en sciences, technologies et ingénierie.',
+      officialFee: '0 $ (Gratuit)',
+    },
+    de: {
+      title: 'NSF Graduierten-Forschungsstipendienprogramm (USA)',
+      benefitHeadline: '37.000 $ Jährliches Lebensunterhaltsstipendium + 16.000 $ Bildungskostenpauschale für 3 Jahre',
+      description: 'Exzellenzförderung der National Science Foundation für herausragende Forschungsmaster und Promotionen in MINT-Fächern.',
+      officialFee: '0 $ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'برنامج زمالة أبحاث الدراسات العليا NSF (الولايات المتحدة)',
+      benefitHeadline: 'مكافأة سنوية 37,000 دولار + 16,000 دولار بدل مصاريف دراسية لمدة 3 سنوات',
+      description: 'منحة بحثية من مؤسسة العلوم الوطنية الأمريكية لتمويل الدراسات العليا في مجالات العلوم والتكنولوجيا والهندسة.',
+      officialFee: '0 دولار (مجاني)',
+    },
+  },
+  'us-usajobs-pathways-internships': {
+    es: {
+      title: 'Programa de Prácticas Pathways de USAJOBS (Función Pública Federal)',
+      benefitHeadline: 'Prácticas Remuneradas (18 $ - 34 $/h) con Incorporación Directa como Funcionario Federal Permanente',
+      description: 'Prácticas laborales remuneradas en agencias del gobierno federal de EE. UU. con transición directa a empleo permanente.',
+      officialFee: '0 $ (Gratuito)',
+    },
+    fr: {
+      title: 'Programme de Stages Pathways USAJOBS (Fonction Publique Fédérale Américaine)',
+      benefitHeadline: 'Stages Fédéraux Rémunérés (18 $ à 34 $/h) avec Titularisation Permanente Directe',
+      description: 'Opportunités rémunérées au sein des agences fédérales américaines avec conversion directe en fonctionnaire permanent.',
+      officialFee: '0 $ (Gratuit)',
+    },
+    de: {
+      title: 'USAJOBS Pathways Praktikumsprogramm (Bundesbeamter USA)',
+      benefitHeadline: 'Vergütete Bundesstellen (18 $ - 34 $/Std.) mit Direkter Festanstellung im Bundesdienst',
+      description: 'Bezahlte Praktika in US-Bundesbehörden mit anschließendem direktem Übergang in eine feste Bundesanstellung.',
+      officialFee: '0 $ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'برنامج التدريب العملي Pathways (الخدمة المدنية الفيدرالية الأمريكية)',
+      benefitHeadline: 'وظائف تدريبية براتب (18 - 34 دولار/ساعة) مع تثبيت مباشر في الوظائف الحكومية الدائمة',
+      description: 'برنامج تدريب مدفوع الأجر في الوكالات الفيدرالية الأمريكية يتيح التعيين المباشر في الخدمة المدنية الحكومية.',
+      officialFee: '0 دولار (مجاني)',
+    },
+  },
+  'fr-bourse-crous-bcs': {
+    es: {
+      title: 'Beca de Criterios Sociales (BCS) - Ayuda Universitaria CROUS (Francia)',
+      benefitHeadline: 'De 1.454 € a 6.335 € Anuales + Exención Total de Tasas Universitarias y CVEC',
+      description: 'Principal ayuda universitaria del gobierno francés gestionada por el CROUS según renta y puntos familiares con acceso prioritario a residencia.',
+      officialFee: '0 € (Gratuito)',
+    },
+    fr: {
+      title: 'Bourse sur Critères Sociaux (BCS) - CROUS (France)',
+      benefitHeadline: '1 454 € à 6 335 € par An + Exonération Totale des Frais d\'Inscription et CVEC',
+      description: 'Principale bourse d\'enseignement supérieur de l\'État français attribuée par les CROUS selon les revenus fiscaux du foyer.',
+      officialFee: '0 € (Gratuit)',
+    },
+    de: {
+      title: 'Sozialkriterien-Stipendium (BCS) - CROUS Studienhilfe (Frankreich)',
+      benefitHeadline: '1.454 € bis 6.335 € Jährlich + Befreiung von Einschreibegebühren und CVEC',
+      description: 'Zentrale staatliche Hochschulbeihilfe in Frankreich vergeben durch das CROUS nach Einkommen und Sozialpunkten.',
+      officialFee: '0 € (Gebührenfrei)',
+    },
+    ar: {
+      title: 'منحة المعايير الاجتماعية (BCS) - دعم التعليم العالي CROUS (فرنسا)',
+      benefitHeadline: 'من 1,454 إلى 6,335 يورو سنوياً + إعفاء كامل من المصروفات الجامعية ورسوم CVEC',
+      description: 'المنحة الحكومية الفرنسية الرئيسية لطلاب الجامعات تصرف عبر مراكز CROUS وفقاً للدخل والمستوى الاجتماعي.',
+      officialFee: '0 يورو (مجاني)',
+    },
+  },
+  'fr-contrat-apprentissage': {
+    es: {
+      title: 'Contrato de Aprendizaje (Programa Estatal de Formación Dual en Francia)',
+      benefitHeadline: '100% Matrícula Gratuita + Sueldo Mensual Legal de 477 € a 1.800 € (27% a 100% del Salario Mínimo)',
+      description: 'Formación dual alternada entre empresa y centro educativo con salario legal garantizado y matrícula completamente cubierta por el Estado.',
+      officialFee: '0 € (Gratuito)',
+    },
+    fr: {
+      title: 'Contrat d\'Apprentissage (Formation en Alternance de l\'État Français)',
+      benefitHeadline: '100% des Frais Pris en Charge + Salaire Mensuel de 477 € à 1 800 € (27% à 100% du SMIC)',
+      description: 'Dispositif officiel d\'alternance combinant enseignement théorique et expérience professionnelle rémunérée.',
+      officialFee: '0 € (Gratuit)',
+    },
+    de: {
+      title: 'Ausbildungsvertrag (Duale Ausbildung des Französischen Staates)',
+      benefitHeadline: '100% Gebührenübernahme + Gesetzliches Monatsgehalt von 477 € bis 1.800 € (27% bis 100% SMIC)',
+      description: 'Offizielles duales Ausbildungsprogramm in Frankreich mit voller Kostenübernahme und monatlicher Ausbildungsvergütung.',
+      officialFee: '0 € (Gebührenfrei)',
+    },
+    ar: {
+      title: 'عقد التمهن المهني (برنامج التدريب المزدوج الحكومي الفرنسي)',
+      benefitHeadline: 'تغطية كاملة 100% لرسوم الدراسة + راتب قانوني شهري من 477 إلى 1,800 يورو',
+      description: 'برنامج التدريب المهني الحكومي الفرنسي يجمع بين الدراسة الأكاديمية والعمل الميداني براتب شهري معتمد.',
+      officialFee: '0 يورو (مجاني)',
+    },
+  },
+  'fr-rsa-solidarite-active': {
+    es: {
+      title: 'Renta de Solidaridad Activa (RSA) - Ayuda Social CAF (Francia)',
+      benefitHeadline: 'Hasta 635,71 € Mensuales de Ingreso Mínimo Garantizado para Residentes',
+      description: 'Prestación social de la Caja de Asignaciones Familiares (CAF) que garantiza un nivel mínimo de subsistencia a personas sin ingresos suficientes.',
+      officialFee: '0 € (Gratuito)',
+    },
+    fr: {
+      title: 'Revenu de Solidarité Active (RSA) - Allocation CAF (France)',
+      benefitHeadline: 'Jusqu\'à 635,71 € par Mois de Revenu Minimum Garanti',
+      description: 'Prestation sociale assurée par la CAF garantissant un niveau minimum de ressources pour les personnes sans emploi ou aux revenus modestes.',
+      officialFee: '0 € (Gratuit)',
+    },
+    de: {
+      title: 'Aktives Solidaritätseinkommen (RSA) - CAF Sozialleistung (Frankreich)',
+      benefitHeadline: 'Bis zu 635,71 € Monatliches Garantiertes Mindesteinkommen',
+      description: 'Staatliche Grundsicherung der französischen Familienkasse CAF zur Absicherung des Existenzminimums.',
+      officialFee: '0 € (Gebührenfrei)',
+    },
+    ar: {
+      title: 'دخل التضامن النشط (RSA) - مساعدات صندوق CAF (فرنسا)',
+      benefitHeadline: 'ما يصل إلى 635.71 يورو شهرياً كحد أدنى مضمون للدخل المعيشي',
+      description: 'مساعدة اجتماعية حكومية فرنسية تصرف عبر صندوق المساعدات العائلية CAF لضمان حد الكفاية المعيشية.',
+      officialFee: '0 يورو (مجاني)',
+    },
+  },
+  'jp-mext-scholarship': {
+    es: {
+      title: 'Beca MEXT del Gobierno de Japón (Monbukagakusho)',
+      benefitHeadline: '100% Matrícula Universitaria + Estipendio Mensual de 117.000 ¥ a 145.000 ¥ y Vuelos Incluidos',
+      description: 'Beca oficial del Ministerio de Educación de Japón para cursar estudios superiores y posgrado en universidades de élite japonesas.',
+      officialFee: '0 ¥ (Gratuito)',
+    },
+    fr: {
+      title: 'Bourse d\'Excellence MEXT du Gouvernement Japonais (Monbukagakusho)',
+      benefitHeadline: 'Frais Universitaires 100% Gratuits + Allocation de 117 000 ¥ à 145 000 ¥/Mois et Billets d\'Avion',
+      description: 'Programme officiel de bourses de recherche et d\'études supérieures dispensé par le Ministère de l\'Éducation du Japon.',
+      officialFee: '0 ¥ (Gratuit)',
+    },
+    de: {
+      title: 'MEXT-Stipendium der Japanischen Regierung (Monbukagakusho)',
+      benefitHeadline: '100% Studiengebührenbefreiung + 117.000 ¥ bis 145.000 ¥ Monatlicher Zuschuss Inklusive Flug',
+      description: 'Offizielles Exzellenzstipendium des japanischen Bildungsministeriums für Universitäts- und Promotionsstudien in Japan.',
+      officialFee: '0 ¥ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'منحة ميكست الحكومية اليابانية (MEXT Monbukagakusho)',
+      benefitHeadline: 'إعفاء جامعي 100% + راتب شهري من 117,000 إلى 145,000 ين وتذاكر طيران مجانية',
+      description: 'المنحة الرسمية المقدمة من وزارة التعليم والعلوم اليابانية للدراسة الجامعية والماجستير والدكتوراه في اليابان.',
+      officialFee: '0 ين (مجاني)',
+    },
+  },
+  'ae-emirates-foundation-youth': {
+    es: {
+      title: 'Programa Juvenil de la Fundación Emirates (EAU)',
+      benefitHeadline: 'Capacitación Profesional Certificada 100% Gratuita en IA, Fintech y Colocación Laboral Directa',
+      description: 'Iniciativa oficial del gobierno de los Emiratos Árabes Unidos para la formación tecnológica y profesional de jóvenes talentos.',
+      officialFee: '0 د.إ (Gratuito)',
+    },
+    fr: {
+      title: 'Programme Jeunesse de la Fondation Emirates (Émirats Arabes Unis)',
+      benefitHeadline: 'Formations Certifiantes Offertes en IA et Économie Numérique avec Recrutement Garanti',
+      description: 'Programme officiel de développement des compétences soutenu par le gouvernement des Émirats Arabes Unis.',
+      officialFee: '0 د.إ (Gratuit)',
+    },
+    de: {
+      title: 'Jugendförderprogramm der Emirates Foundation (VAE)',
+      benefitHeadline: 'Kostenlose Zertifizierte Weiterbildung in KI und Finanztechnologie mit Direkter Vermittlung',
+      description: 'Offizielles staatliches Qualifizierungsprogramm der Vereinigten Arabischen Emirate für Nachwuchskräfte.',
+      officialFee: '0 د.إ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'برنامج مؤسسة الإمارات لتأهيل وتطوير الشباب (الإمارات)',
+      benefitHeadline: 'تدريب احترافي معتمد ومجاني 100% في الذكاء الاصطناعي والاقتصاد الرقمي مع توظيف مباشر',
+      description: 'مبادرة وطنية رسمية لدولة الإمارات العربية المتحدة لتطوير مهارات الشباب وإعدادهم لسوق العمل المستقبلي.',
+      officialFee: '0 درهم (مجاني)',
+    },
+  },
+  'sg-skillsfuture-credit': {
+    es: {
+      title: 'Crédito SkillsFuture de Capacitación Permanente (Gobierno de Singapur)',
+      benefitHeadline: 'De 500 S$ a 4.000 S$ en Créditos Directos No Reembolsables para Cursos Profesionales',
+      description: 'Iniciativa gubernamental de Singapur que dota de fondos a los ciudadanos para su reciclaje profesional y formación en competencias del futuro.',
+      officialFee: '0 S$ (Gratuito)',
+    },
+    fr: {
+      title: 'Crédit Formation SkillsFuture (Gouvernement de Singapour)',
+      benefitHeadline: '500 S$ à 4 000 S$ de Crédits Publics Directs pour Formations Certifiantes et Reconversion',
+      description: 'Dispositif de formation continue subventionné par l\'État singapourien pour l\'acquisition de compétences stratégiques.',
+      officialFee: '0 S$ (Gratuit)',
+    },
+    de: {
+      title: 'SkillsFuture Weiterbildungsguthaben (Regierung von Singapur)',
+      benefitHeadline: '500 S$ bis 4.000 S$ Direkte Staatliche Bildungsgutschrift für Anerkannte Fachkurse',
+      description: 'Offizielles nationales Weiterbildungsprogramm Singapurs zur lebenslangen Qualifizierung und beruflichen Neuausrichtung.',
+      officialFee: '0 S$ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'رصيد سكيلز فيوتشر للتدريب المهني (حكومة سنغافورة)',
+      benefitHeadline: 'رصيد تدريبي حكومي مباشر من 500 إلى 4,000 دولار سنغافوري لدورات التطوير المهني',
+      description: 'مبادرة حكومية سنغافورية لتطوير مهارات المواطنين وتغطية تكاليف الدورات التدريبية المعتمدة بالكامل.',
+      officialFee: '0 دولار سنغافوري (مجاني)',
+    },
+  },
+  'kr-gks-scholarship': {
+    es: {
+      title: 'Beca Global Korea Scholarship (GKS / KGSP) - Gobierno de Corea del Sur',
+      benefitHeadline: '100% Matrícula Universitaria + Asignación Mensual de 1.000.000 ₩ a 1.500.000 ₩ y Vuelos',
+      description: 'Programa oficial de becas del Ministerio de Educación de Corea del Sur (NIIED) para estudios de grado y posgrado en universidades coreanas.',
+      officialFee: '0 ₩ (Gratuito)',
+    },
+    fr: {
+      title: 'Bourse d\'Excellence Global Korea (GKS / KGSP) - République de Corée',
+      benefitHeadline: 'Frais de Scolarité 100% Pris en Charge + 1 000 000 ₩ à 1 500 000 ₩/Mois et Billets d\'Avion',
+      description: 'Programme prestigieux de bourses d\'études supérieures financé par le Ministère de l\'Éducation de Corée du Sud.',
+      officialFee: '0 ₩ (Gratuit)',
+    },
+    de: {
+      title: 'Global Korea Scholarship (GKS) - Staatliche Stipendien Südkoreas',
+      benefitHeadline: '100% Studiengebührenbefreiung + 1.000.000 ₩ bis 1.500.000 ₩ Monatspauschale und Flüge',
+      description: 'Offizielles Studienförderprogramm des südkoreanischen Bildungsministeriums (NIIED) für internationale Studierende.',
+      officialFee: '0 ₩ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'منحة حكومة كوريا الجنوبية الدولية (GKS / KGSP)',
+      benefitHeadline: 'إعفاء جامعي 100% + راتب شهري من مليون إلى 1.5 مليون وون وتذاكر طيران مجانية',
+      description: 'المنحة الرسمية لوزارة التعليم الكورية الجنوبية لدراسة البكالوريوس والدراسات العليا في الجامعات الكورية.',
+      officialFee: '0 وون (مجاني)',
+    },
+  },
+  'sa-tamheer-internship': {
+    es: {
+      title: 'Programa de Prácticas Profesionales Tamheer (HRDF / Hadaf - Arabia Saudita)',
+      benefitHeadline: '3.000 SAR Mensuales de Ayuda Gubernamental Directa + Seguro contra Accidentes Laborales',
+      description: 'Iniciativa oficial del Fondo de Desarrollo de Recursos Humanos saudí que financia prácticas laborales remuneradas en grandes corporaciones.',
+      officialFee: '0 ﷼ (Gratuito)',
+    },
+    fr: {
+      title: 'Programme de Formation Professionnelle Tamheer (HRDF / Hadaf - Arabie Saoudite)',
+      benefitHeadline: '3 000 SAR par Mois d\'Indemnité Directe Versée par l\'État + Assurance Professionnelle',
+      description: 'Dispositif officiel saoudien de stages rémunérés au sein d\'entreprises privées et publiques de premier plan.',
+      officialFee: '0 ﷼ (Gratuit)',
+    },
+    de: {
+      title: 'Tamheer Berufseinstiegsprogramm (HRDF / Hadaf - Saudi-Arabien)',
+      benefitHeadline: '3.000 SAR Monatlicher Staatlicher Zuschuss + Arbeitsunfallversicherung',
+      description: 'Offizielles Qualifizierungsprogramm des saudischen Personalförderungsfonds für Universitätsabsolventen.',
+      officialFee: '0 ﷼ (Gebührenfrei)',
+    },
+    ar: {
+      title: 'برنامج التدريب على رأس العمل (تمهير) - صندوق هدف (السعودية)',
+      benefitHeadline: 'مكافأة حكومية شهرية 3,000 ريال سعودي + تأمين ضد مخاطر العمل وتأهيل وظيفي',
+      description: 'برنامج حكومي رسمي من صندوق تنمية الموارد البشرية (هدف) لتدريب وتأهيل الخريجين في كبرى الشركات.',
+      officialFee: '0 ريال (مجاني)',
+    },
+  },
+  'it-edisu-borsa-studio': {
+    es: {
+      title: 'Beca de Estudios EDISU / DSU (Universidades Públicas de Italia)',
+      benefitHeadline: 'Hasta 7.500 € Anuales en Ayuda Directa + Exención Total de Tasas Universitarias y Comedor Gratuito',
+      description: 'Programa oficial regional para el derecho a la educación superior en Italia que otorga financiación directa y alojamiento a estudiantes universitarios.',
+      officialFee: '0 € (Gratuito)',
+    },
+    fr: {
+      title: 'Bourse d\'Études Régionale EDISU / DSU (Universités Publiques en Italie)',
+      benefitHeadline: 'Jusqu\'à 7 500 € par An en Aide Directe + Gratuité Universitaire et Restauration Offerte',
+      description: 'Aide officielle de l\'État italien attribuée aux étudiants selon les critères économiques de l\'ISEE universitaire.',
+      officialFee: '0 € (Gratuit)',
+    },
+    de: {
+      title: 'EDISU / DSU Landesstipendium (Staatliche Universitäten Italien)',
+      benefitHeadline: 'Bis zu 7.500 € Jährlicher Barzuschuss + Vollständige Befreiung von Studiengebühren und Mensa',
+      description: 'Offizielle Studienbeihilfe italienischer Regionen zur Förderung des Hochschulzugangs nach ISEE-Einkommensnachweis.',
+      officialFee: '0 € (Gebührenfrei)',
+    },
+    ar: {
+      title: 'منحة إيديسو EDISU / DSU الإقليمية (الجامعات الحكومية الإيطالية)',
+      benefitHeadline: 'ما يصل إلى 7,500 يورو سنوياً دعماً نقدياً + إعفاء جامعي 100% ووجبات مجانية',
+      description: 'المنحة الرسمية لهيئة الحق في التعليم الجامعي الإيطالية وتغطي تكاليف الدراسة والسكن والمعيشة.',
+      officialFee: '0 يورو (مجاني)',
+    },
+  },
 };
+
+// Document Name Localization Dictionary
+const DOC_TRANSLATIONS: Record<string, Partial<Record<SupportedLanguage, string>>> = {
+  pass: {
+    es: 'Pasaporte Nacional Válido',
+    fr: 'Passeport National en Cours de Validité',
+    de: 'Gültiger Reisepass',
+    ar: 'جواز سفر وطني ساري المفعول',
+    hi: 'वैध राष्ट्रीय पासपोर्ट',
+  },
+  trans: {
+    es: 'Expediente Académico y Notas Oficiales',
+    fr: 'Relevés de Notes et Dossier Universitaire',
+    de: 'Amtliche Notenübersichten und Zeugnisse',
+    ar: 'السجل الأكاديمي وكشف الدرجات المعتمد',
+    hi: 'आधिकारिक शैक्षणिक अंकतालिका',
+  },
+  deg: {
+    es: 'Título Universitario o Certificado de Estudios',
+    fr: 'Diplôme Universitaire ou Attestation de Réussite',
+    de: 'Hochschulabschlusszeugnis oder Diplom',
+    ar: 'الشهادة الجامعية أو المؤهل الأكاديمي',
+    hi: 'स्नातक उपाधि प्रमाणपत्र',
+  },
+  ssn: {
+    es: 'Número de Seguro Social o Documento Nacional',
+    fr: 'Numéro de Sécurité Sociale ou Carte d\'Identité',
+    de: 'Sozialversicherungsnummer oder Ausweis',
+    ar: 'رقم الهوية الوطنية أو التأمين الاجتماعي',
+    hi: 'सोशल सिक्योरिटी नंबर (एसएसएन)',
+  },
+  tax: {
+    es: 'Declaración Oficial del Impuesto sobre la Renta',
+    fr: 'Avis d\'Imposition sur le Revenu',
+    de: 'Einkommensteuerbescheid',
+    ar: 'الإقرار الضريبي أو شهادة الدخل المعتمدة',
+    hi: 'आयकर निर्धारण प्रपत्र',
+  },
+  res: {
+    es: 'Currículum Vitae Oficial Actualizado',
+    fr: 'Curriculum Vitae à Jour au Format Standard',
+    de: 'Vollständiger Tabellarischer Lebenslauf',
+    ar: 'السيرة الذاتية الرسمية المحدثة',
+    hi: 'बायोडाटा / सीवी',
+  },
+  ref: {
+    es: 'Cartas de Recomendación Profesional o Académica',
+    fr: 'Lettres de Recommandation Académiques',
+    de: 'Akademische oder Berufliche Empfehlungsschreiben',
+    ar: 'خطابات التوصية الأكاديمية أو المهنية',
+    hi: 'अनुशंसा पत्र',
+  },
+  id_card: {
+    es: 'Documento Nacional de Identidad en Vigor',
+    fr: 'Carte Nationale d\'Identité ou Titre de Séjour',
+    de: 'Personalausweis oder Aufenthaltstitel',
+    ar: 'بطاقة الهوية الوطنية سارية الصلاحية',
+    hi: 'राष्ट्रीय पहचान पत्र',
+  },
+};
+
+// Common Authority Name Localization
+function localizeAuthority(authority: string, language: SupportedLanguage): string {
+  if (language === 'en') return authority;
+  if (language === 'hi') {
+    return authority
+      .replace(/Ministry of Education/g, 'शिक्षा मंत्रालय')
+      .replace(/Ministry of/g, 'मंत्रालय')
+      .replace(/Department of/g, 'विभाग')
+      .replace(/Government of/g, 'सरकार')
+      .replace(/United States Government/g, 'अमेरिकी संघीय सरकार')
+      .replace(/United Kingdom/g, 'यूनाइटेड किंगडम');
+  }
+  if (language === 'es') {
+    return authority
+      .replace(/Ministry of Education/g, 'Ministerio de Educación')
+      .replace(/Ministry of/g, 'Ministerio de')
+      .replace(/Department of/g, 'Departamento de')
+      .replace(/Government of/g, 'Gobierno de')
+      .replace(/United States/g, 'Estados Unidos')
+      .replace(/United Kingdom/g, 'Reino Unido')
+      .replace(/European Commission/g, 'Comisión Europea');
+  }
+  if (language === 'fr') {
+    return authority
+      .replace(/Ministry of Education/g, 'Ministère de l\'Éducation')
+      .replace(/Ministry of/g, 'Ministère de')
+      .replace(/Department of/g, 'Département de')
+      .replace(/Government of/g, 'Gouvernement de')
+      .replace(/United States/g, 'États-Unis')
+      .replace(/United Kingdom/g, 'Royaume-Uni')
+      .replace(/European Commission/g, 'Commission Européenne');
+  }
+  if (language === 'de') {
+    return authority
+      .replace(/Ministry of Education/g, 'Bildungsministerium')
+      .replace(/Ministry of/g, 'Ministerium für')
+      .replace(/Department of/g, 'Abteilung für')
+      .replace(/Government of/g, 'Regierung von')
+      .replace(/United States/g, 'Vereinigte Staaten')
+      .replace(/United Kingdom/g, 'Großbritannien')
+      .replace(/European Commission/g, 'Europäische Kommission');
+  }
+  if (language === 'ar') {
+    return authority
+      .replace(/Ministry of Education/g, 'وزارة التعليم')
+      .replace(/Ministry of/g, 'وزارة')
+      .replace(/Department of/g, 'إدارة')
+      .replace(/Government of/g, 'حكومة')
+      .replace(/United States/g, 'الولايات المتحدة')
+      .replace(/United Kingdom/g, 'المملكة المتحدة')
+      .replace(/European Commission/g, 'المفوضية الأوروبية');
+  }
+  return authority;
+}
+
+// Fallback universal translation for steps
+function localizeStepText(stepNumber: number, originalText: string, language: SupportedLanguage): string {
+  if (language === 'en') return originalText;
+  if (language === 'hi') return originalText;
+  
+  const stepTemplates: Record<SupportedLanguage, Record<number, string>> = {
+    es: {
+      1: 'Acceda al portal oficial del organismo y complete su registro de usuario verificado.',
+      2: 'Cumplimente el formulario de solicitud oficial y adjunte la documentación requerida.',
+      3: 'Envíe su expediente y realice el seguimiento telemático con su número de referencia.',
+    },
+    fr: {
+      1: 'Connectez-vous sur le portail officiel de l\'administration et créez votre compte citoyen.',
+      2: 'Complétez le dossier de candidature en ligne et téléversez les pièces justificatives.',
+      3: 'Validez votre demande officielle et conservez le numéro d\'enregistrement pour le suivi.',
+    },
+    de: {
+      1: 'Registrieren Sie sich im amtlichen Online-Portal und erstellen Sie Ihr Bürgerkonto.',
+      2: 'Füllen Sie das Antragsformular vollständig aus und laden Sie die erforderlichen Nachweise hoch.',
+      3: 'Reichen Sie den Antrag elektronisch ein und notieren Sie das Aktenzeichen zur Nachverfolgung.',
+    },
+    ar: {
+      1: 'سجل الدخول عبر البوابة الرسمية للجهة الحكومية وأنشئ حسابك الوطني المعتمد.',
+      2: 'املأ استمارة التقديم الرسمية وأرفق الوثائق والشهادات الثبوتية المطلوبة.',
+      3: 'أرسل الطلب واحتفظ برقم القيد الإلكتروني لمتابعة حالة الاستحقاق والاعتماد.',
+    },
+    en: {},
+    hi: {},
+  };
+
+  return stepTemplates[language]?.[stepNumber] || originalText;
+}
 
 /**
  * Universal zero-leakage opportunity localization helper
@@ -180,6 +640,14 @@ export function getLocalizedOpportunity(
     officialFee = officialFee.replace('₹0', '₹०').replace('Free', 'निःशुल्क');
   } else if (i18nEntry?.officialFee) {
     officialFee = i18nEntry.officialFee;
+  } else if (language === 'es') {
+    officialFee = officialFee.replace('Free', 'Gratuito').replace('Completely Free', 'Totalmente Gratuito');
+  } else if (language === 'fr') {
+    officialFee = officialFee.replace('Free', 'Gratuit').replace('Completely Free', 'Entièrement Gratuit');
+  } else if (language === 'de') {
+    officialFee = officialFee.replace('Free', 'Gebührenfrei').replace('Completely Free', 'Vollständig Gebührenfrei');
+  } else if (language === 'ar') {
+    officialFee = officialFee.replace('Free', 'مجاني').replace('Completely Free', 'مجاني بالكامل');
   }
 
   // 5. Scam Warning Resolution
@@ -230,6 +698,8 @@ export function getLocalizedOpportunity(
       name = doc.nameHi;
     } else if (i18nEntry?.docNames?.[doc.id]) {
       name = i18nEntry.docNames[doc.id];
+    } else if (DOC_TRANSLATIONS[doc.id]?.[language]) {
+      name = DOC_TRANSLATIONS[doc.id]![language]!;
     }
     return {
       id: doc.id,
@@ -244,6 +714,8 @@ export function getLocalizedOpportunity(
     let text = step.text;
     if (language === 'hi' && step.textHi) {
       text = step.textHi;
+    } else {
+      text = localizeStepText(step.step, step.text, language);
     }
     return {
       step: step.step,
@@ -257,7 +729,7 @@ export function getLocalizedOpportunity(
     description,
     officialFee,
     scamWarning,
-    issuingAuthority: opportunity.gazette.issuingAuthority,
+    issuingAuthority: localizeAuthority(opportunity.gazette.issuingAuthority, language),
     documents,
     applySteps,
     applicationStatusText,

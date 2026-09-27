@@ -10,7 +10,7 @@ import { AadhaarAuthModal } from '@/components/auth/AadhaarAuthModal';
 import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
-import { CitizenProfile, FamilyMember, LifeStage, Opportunity } from '@/types';
+import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import {
@@ -86,7 +86,7 @@ const GOVT_CATEGORIES = new Set([
 
 export default function HomePage() {
   const { t, language } = useTranslation();
-  const { country, countryMeta } = useCountry();
+  const { country, setCountry, countryMeta } = useCountry();
 
   // Master Citizen Account Profile (Individual citizen)
   const [profile, setProfile] = useState<CitizenProfile>(GUEST_PROFILE);
@@ -143,6 +143,9 @@ export default function HomePage() {
         if (saved) {
           const parsed = JSON.parse(saved);
           setProfile(parsed);
+          if (parsed.country) {
+            setCountry(parsed.country);
+          }
           if (parsed.lifePhase) {
             handleRoleAutoSwitch(parsed.lifePhase);
           }
@@ -317,7 +320,7 @@ export default function HomePage() {
     setIsOnboardingOpen(true);
   };
 
-  // Complete Onboarding: Save Role, Age, Category, State and Unlock Opportunities
+  // Complete Onboarding: Save Role, Age, Category, State, Country and Unlock Opportunities
   const handleOnboardingComplete = (completed: {
     fullName: string;
     email: string;
@@ -327,8 +330,16 @@ export default function HomePage() {
     casteCategory: CitizenProfile['casteCategory'];
     state: string;
     gender: CitizenProfile['gender'];
+    country?: CountryCode;
+    nationalIdName?: string;
+    nationalIdMasked?: string;
+    administrativeDivision?: string;
   }) => {
     setIsOnboardingOpen(false);
+
+    if (completed.country) {
+      setCountry(completed.country);
+    }
 
     const fullProfile: CitizenProfile = {
       ...profile,
@@ -341,6 +352,10 @@ export default function HomePage() {
       casteCategory: completed.casteCategory,
       state: completed.state,
       gender: completed.gender,
+      country: completed.country,
+      nationalIdName: completed.nationalIdName,
+      nationalIdMasked: completed.nationalIdMasked,
+      administrativeDivision: completed.administrativeDivision,
       isAadhaarVerified: true,
       isOnboarded: true,
     };
@@ -377,8 +392,8 @@ export default function HomePage() {
 
     setPaymentSuccessToast(
       language === 'hi'
-        ? `🎉 स्वागत है ${completed.fullName}! आपका ${roleLabel} प्रोफाइल सेट हो गया है और अवसर अनलॉक हो गए हैं।`
-        : `🎉 Welcome ${completed.fullName}! Your ${completed.lifePhase.replace('_', ' ')} profile is ready and opportunities are unlocked!`
+        ? `स्वागत है ${completed.fullName}! आपका ${roleLabel} प्रोफाइल सेट हो गया है और अवसर अनलॉक हो गए हैं।`
+        : `Welcome ${completed.fullName}! Your ${completed.lifePhase.replace('_', ' ')} profile is ready and opportunities are unlocked!`
     );
     setTimeout(() => setPaymentSuccessToast(null), 5000);
   };
@@ -433,8 +448,8 @@ export default function HomePage() {
       // 1. Life Stage Tab Match
       if (opp.lifeStage !== activeTab) return false;
 
-      // 1B. Country-Aware Matching (Show opportunities for selected country, or worldwide/study abroad programs)
-      if (opp.country && opp.country !== 'GLOBAL' && opp.country !== country) {
+      // 1B. Strict Country Matching (Show ONLY opportunities for the user's registered country)
+      if (opp.country !== country) {
         return false;
       }
 

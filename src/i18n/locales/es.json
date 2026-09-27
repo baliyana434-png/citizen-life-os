@@ -79,7 +79,10 @@
     "download_kit_btn": "Descargar Guía y Formulario Oficial",
     "official_pdf_notice": "Documento Oficial de Convocatoria",
     "mandatory": "Obligatorio",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "status_active_desc": "El plazo oficial de registro y presentación de solicitudes se encuentra actualmente abierto en el portal oficial.",
+    "status_upcoming_desc": "Esta convocatoria está programada en el calendario anual oficial. El enlace de solicitud se activará según lo previsto.",
+    "status_ongoing_desc": "Este programa funciona con un calendario continuo durante todo el año con acceso directo."
   },
   "auth": {
     "modal_title": "Verificación de Identidad Ciudadana",

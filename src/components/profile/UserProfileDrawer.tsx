@@ -122,10 +122,10 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   const roleName = profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student');
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden flex justify-end bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col z-10 animate-slide-left">
+      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
