@@ -16,6 +16,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { LiveFeedService } from '@/services/liveFeedService';
 import { Opportunity } from '@/types';
@@ -120,8 +122,8 @@ export default function SavedPage() {
       if (isAdding) {
         setToastMessage(
           language === 'hi'
-            ? `⭐ "${title.slice(0, 40)}..." पसंदीदा में पुनः जोड़ा गया!`
-            : `⭐ "${title.slice(0, 40)}..." restored to Saved!`
+            ? `"${title.slice(0, 40)}..." पसंदीदा में पुनः जोड़ा गया!`
+            : `"${title.slice(0, 40)}..." restored to Saved!`
         );
       } else {
         setToastMessage(
@@ -156,14 +158,13 @@ export default function SavedPage() {
     }
   };
 
-  // WhatsApp Viral Share
+  // WhatsApp Share (100% localized, zero-leakage, zero fake emojis)
   const handleShareWhatsApp = (opp: Opportunity) => {
-    const title = language === 'hi' ? opp.titleHi : opp.title;
-    const benefit = language === 'hi' ? opp.benefitHeadlineHi : opp.benefitHeadline;
+    const localized = getLocalizedOpportunity(opp, language);
     const isGovt = opp.category === 'govt_scheme' || opp.category === 'govt_job' || opp.category === 'competitive_exam';
-    const tagHeader = isGovt ? '🏛️ *100% सरकारी प्रमाणित अवसर:*' : '💼 *सत्यापित राष्ट्रीय अवसर:*';
+    const tagHeader = isGovt ? `*${t('official_verified')}*` : `*${t('card.verified_source')}*`;
     const text = encodeURIComponent(
-      `${tagHeader}\n\n📌 *${title}*\n💰 *लाभ:* ${benefit}\n🛡️ *सत्यापित स्रोत:* ${opp.gazette.issuingAuthority}\n\n👉 *बिना किसी दलाल के सीधे यहाँ से चेक करें:* ${window.location.origin}`
+      `${tagHeader}\n\n*${localized.title}*\n*${t('card.benefit')}:* ${localized.benefitHeadline}\n*${t('card.verified_source')}:* ${localized.issuingAuthority}\n\n${window.location.origin}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -229,29 +230,8 @@ export default function SavedPage() {
                 <span>{language === 'hi' ? 'हेल्पलाइन' : 'Helplines'}</span>
               </Link>
 
-              {/* Language Switcher */}
-              <div className="inline-flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200">
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                    language === 'en'
-                      ? 'bg-white text-emerald-900 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => setLanguage('hi')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                    language === 'hi'
-                      ? 'bg-white text-emerald-900 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  हिन्दी
-                </button>
-              </div>
+              {/* 6-Language Switcher */}
+              <LanguageSwitcher />
             </div>
           </div>
         </div>

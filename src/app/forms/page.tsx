@@ -23,6 +23,8 @@ import {
   Star
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
+import { useCountry } from '@/context/CountryContext';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { LiveFeedService } from '@/services/liveFeedService';
 import { Opportunity, CitizenProfile } from '@/types';
@@ -54,6 +56,7 @@ const DEFAULT_PROFILE: CitizenProfile = {
 
 export default function FormsPage() {
   const { language, setLanguage } = useTranslation();
+  const { country, countryMeta } = useCountry();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -138,6 +141,9 @@ export default function FormsPage() {
       // Must be active registration now
       if (opp.applicationStatus !== 'active_now') return false;
 
+      // Strict country match
+      if (opp.country && opp.country !== country) return false;
+
       // Filter by category
       if (activeCategory === 'favorites' && !favoriteIds.has(opp.id)) return false;
       if (activeCategory !== 'all' && activeCategory !== 'favorites') {
@@ -160,7 +166,7 @@ export default function FormsPage() {
 
       return true;
     });
-  }, [ALL_OPPORTUNITIES, activeCategory, searchQuery, favoriteIds]);
+  }, [ALL_OPPORTUNITIES, activeCategory, searchQuery, favoriteIds, country]);
 
   const copyToClipboard = (text: string, fieldKey: string) => {
     navigator.clipboard.writeText(text);
@@ -168,13 +174,17 @@ export default function FormsPage() {
     setTimeout(() => setCopiedField(null), 2500);
   };
 
+  const countryOpportunities = useMemo(() => {
+    return ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now' && (!o.country || o.country === country));
+  }, [ALL_OPPORTUNITIES, country]);
+
   const formCategories = [
-    { id: 'all', labelEn: 'All Open Forms', labelHi: 'सभी चालू फॉर्म', count: ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now').length },
-    { id: 'favorites', labelEn: '⭐ Saved Forms', labelHi: '⭐ पसंदीदा फॉर्म', count: ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now' && favoriteIds.has(o.id)).length },
-    { id: 'exams', labelEn: 'Govt Exams', labelHi: 'सरकारी परीक्षा', count: ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now' && o.lifeStage === 'exams').length },
-    { id: 'private_jobs', labelEn: 'Private Hiring', labelHi: 'प्राइवेट जॉब भर्ती', count: ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now' && o.lifeStage === 'private_jobs').length },
-    { id: 'internships', labelEn: 'Internships', labelHi: 'इंटर्नशिप', count: ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now' && o.lifeStage === 'internships').length },
-    { id: 'schemes', labelEn: 'Govt Schemes', labelHi: 'सरकारी योजनाएं', count: ALL_OPPORTUNITIES.filter(o => o.applicationStatus === 'active_now' && o.lifeStage === 'schemes').length },
+    { id: 'all', labelEn: 'All Open Forms', labelHi: 'सभी चालू फॉर्म', count: countryOpportunities.length },
+    { id: 'favorites', labelEn: 'Saved Forms', labelHi: 'पसंदीदा फॉर्म', count: countryOpportunities.filter(o => favoriteIds.has(o.id)).length },
+    { id: 'exams', labelEn: 'Govt Exams', labelHi: 'सरकारी परीक्षा', count: countryOpportunities.filter(o => o.lifeStage === 'exams').length },
+    { id: 'private_jobs', labelEn: 'Private Hiring', labelHi: 'प्राइवेट जॉब भर्ती', count: countryOpportunities.filter(o => o.lifeStage === 'private_jobs').length },
+    { id: 'internships', labelEn: 'Internships', labelHi: 'इंटर्नशिप', count: countryOpportunities.filter(o => o.lifeStage === 'internships').length },
+    { id: 'schemes', labelEn: 'Govt Schemes', labelHi: 'सरकारी योजनाएं', count: countryOpportunities.filter(o => o.lifeStage === 'schemes').length },
   ];
 
   return (
@@ -248,29 +258,8 @@ export default function FormsPage() {
                 <span>{language === 'hi' ? '२४x७ हेल्पलाइन' : '24x7 Helplines'}</span>
               </Link>
 
-              {/* Language Switcher */}
-              <div className="inline-flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200">
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                    language === 'en'
-                      ? 'bg-white text-emerald-900 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => setLanguage('hi')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                    language === 'hi'
-                      ? 'bg-white text-emerald-900 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  हिन्दी
-                </button>
-              </div>
+              {/* 6-Language Switcher */}
+              <LanguageSwitcher />
             </div>
           </div>
         </div>

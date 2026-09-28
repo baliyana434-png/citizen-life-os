@@ -17,9 +17,12 @@ import {
   Scale, 
   Building2,
   Lock,
-  Star
+  Star,
+  Sparkles,
+  FileText
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { VERIFIED_HELPLINES } from '@/data/helplines';
 import { HelplineCategory, HelplineFacility } from '@/types';
 
@@ -30,15 +33,28 @@ export default function HelplinePage() {
   const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
 
   const categories = [
-    { id: 'all', labelEn: 'All Helplines', labelHi: 'सभी हेल्पलाइन', icon: '🏛️' },
-    { id: 'emergency', labelEn: 'Emergency (112/108)', labelHi: 'आपातकाल (११२/१०८)', icon: '🚨' },
-    { id: 'cyber_legal', labelEn: 'Cyber & Legal (1930/15100)', labelHi: 'साइबर ठगी व कानून', icon: '⚖️' },
-    { id: 'women_child', labelEn: 'Women & Child (181/1098)', labelHi: 'महिला व बाल सुरक्षा', icon: '👩‍👧' },
-    { id: 'senior', labelEn: 'Senior Citizens (14567)', labelHi: 'वरिष्ठ नागरिक', icon: '👴' },
-    { id: 'farmer', labelEn: 'Farmers (KCC)', labelHi: 'किसान सहायता', icon: '🌾' },
-    { id: 'health', labelEn: 'Health & Mental (14416)', labelHi: 'स्वास्थ्य व तनाव', icon: '🩺' },
-    { id: 'citizen_services', labelEn: 'Citizen & Exams', labelHi: 'नागरिक सेवा व परीक्षा', icon: '📋' },
+    { id: 'all', labelEn: 'All Helplines', labelHi: 'सभी हेल्पलाइन' },
+    { id: 'emergency', labelEn: 'Emergency (112/108)', labelHi: 'आपातकाल (११२/१०८)' },
+    { id: 'cyber_legal', labelEn: 'Cyber & Legal (1930/15100)', labelHi: 'साइबर ठगी व कानून' },
+    { id: 'women_child', labelEn: 'Women & Child (181/1098)', labelHi: 'महिला व बाल सुरक्षा' },
+    { id: 'senior', labelEn: 'Senior Citizens (14567)', labelHi: 'वरिष्ठ नागरिक' },
+    { id: 'farmer', labelEn: 'Farmers (KCC)', labelHi: 'किसान सहायता' },
+    { id: 'health', labelEn: 'Health & Mental (14416)', labelHi: 'स्वास्थ्य व तनाव' },
+    { id: 'citizen_services', labelEn: 'Citizen & Exams', labelHi: 'नागरिक सेवा व परीक्षा' },
   ];
+
+  const getCategoryIcon = (id: string) => {
+    switch (id) {
+      case 'emergency': return <AlertTriangle className="w-3.5 h-3.5 text-rose-500 shrink-0" />;
+      case 'cyber_legal': return <Scale className="w-3.5 h-3.5 text-blue-500 shrink-0" />;
+      case 'women_child': return <HeartHandshake className="w-3.5 h-3.5 text-pink-500 shrink-0" />;
+      case 'senior': return <ShieldCheck className="w-3.5 h-3.5 text-amber-500 shrink-0" />;
+      case 'farmer': return <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />;
+      case 'health': return <Building2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />;
+      case 'citizen_services': return <FileText className="w-3.5 h-3.5 text-indigo-500 shrink-0" />;
+      default: return <Building2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />;
+    }
+  };
 
   const filteredHelplines = useMemo(() => {
     return VERIFIED_HELPLINES.filter((h) => {
@@ -124,29 +140,8 @@ export default function HelplinePage() {
                 <span>{language === 'hi' ? 'पसंदीदा' : 'Saved'}</span>
               </Link>
 
-              {/* Language Switcher */}
-              <div className="inline-flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200">
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                    language === 'en'
-                      ? 'bg-white text-emerald-900 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => setLanguage('hi')}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                    language === 'hi'
-                      ? 'bg-white text-emerald-900 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  हिन्दी
-                </button>
-              </div>
+              {/* 6-Language Switcher */}
+              <LanguageSwitcher />
             </div>
           </div>
         </div>
@@ -279,7 +274,7 @@ export default function HelplinePage() {
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                 }`}
               >
-                <span>{cat.icon}</span>
+                {getCategoryIcon(cat.id)}
                 <span>{language === 'hi' ? cat.labelHi : cat.labelEn}</span>
               </button>
             ))}

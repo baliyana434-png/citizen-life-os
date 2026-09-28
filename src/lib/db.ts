@@ -1,6 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 import fs from 'fs/promises';
 import path from 'path';
+import { CountryCode } from '@/types';
 
 const CITIZENS_FILE = path.join(process.cwd(), 'src', 'data', 'citizens_store.json');
 const FAVORITES_FILE = path.join(process.cwd(), 'src', 'data', 'favorites_store.json');
@@ -73,11 +74,15 @@ export interface CitizenRecord {
   fullName: string;
   email?: string;
   phoneNumber?: string;
+  country?: CountryCode;
+  nationalIdName?: string;
+  nationalIdMasked?: string;
   aadhaarNumberMasked?: string;
   age: number;
   dob?: string;
   gender: 'male' | 'female' | 'other';
   state: string;
+  administrativeDivision?: string;
   district?: string;
   pincode?: string;
   lifePhase: string;

@@ -21,6 +21,7 @@ import {
   Calendar,
   CreditCard,
   Globe,
+  Mail,
 } from 'lucide-react';
 
 interface CitizenOnboardingModalProps {
@@ -101,6 +102,9 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
   const [division, setDivision] = useState<string>(countryMeta.divisions[0] || 'General');
   const [gender, setGender] = useState<CitizenProfile['gender']>('male');
   const [nationalIdInput, setNationalIdInput] = useState<string>('');
+  const [manualName, setManualName] = useState<string>('');
+  const [manualEmail, setManualEmail] = useState<string>('');
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
@@ -131,12 +135,31 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
 
   if (!isOpen) return null;
 
-  const displayName = googleUser?.name || 'Citizen';
-  const displayEmail = googleUser?.email || '';
+  const displayName = googleUser?.name || manualName.trim() || (language === 'hi' ? 'नागरिक' : 'Citizen');
+  const displayEmail = googleUser?.email || manualEmail.trim() || '';
   const photoURL = googleUser?.photoURL;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+
+    if (!googleUser) {
+      if (!manualName.trim()) {
+        setValidationError(
+          language === 'hi' ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full name.'
+        );
+        return;
+      }
+      if (!manualEmail.trim() || !manualEmail.includes('@')) {
+        setValidationError(
+          language === 'hi'
+            ? 'कृपया एक मान्य ईमेल पता दर्ज करें।'
+            : 'Please enter a valid email address.'
+        );
+        return;
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -146,7 +169,7 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
 
       onComplete({
         fullName: displayName,
-        email: displayEmail,
+        email: displayEmail || `${Date.now()}@citizen.local`,
         photoURL: photoURL,
         lifePhase: selectedRole,
         age: Number(age) || 21,
@@ -188,14 +211,14 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-base sm:text-lg font-bold tracking-tight text-white leading-tight">
-                    {displayName}
+                    {googleUser ? displayName : (manualName.trim() || (language === 'hi' ? 'नागरिक पंजीकरण' : 'Citizen Registration'))}
                   </h3>
                   <span className="p-0.5 rounded-full bg-emerald-500 text-slate-950">
                     <ShieldCheck className="w-3.5 h-3.5" />
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                  <span>{displayEmail}</span>
+                  <span>{displayEmail || (language === 'hi' ? 'प्रत्यक्ष सत्यापन' : 'Direct Verification')}</span>
                   <span>•</span>
                   <span className="font-semibold text-emerald-400">
                     {t('onboarding.subtitle')}
@@ -216,6 +239,52 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
 
         {/* 2. Interactive Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 overscroll-contain">
+          
+          {/* Validation Error if any */}
+          {validationError && (
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold">
+              {validationError}
+            </div>
+          )}
+
+          {/* Direct Citizen Info (Full Name & Email) when not using Google Sign-in */}
+          {!googleUser && (
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <h4 className="text-xs font-extrabold text-slate-800 flex items-center gap-2">
+                <User className="w-4 h-4 text-emerald-600" />
+                <span>{language === 'hi' ? 'नागरिक विवरण' : 'Citizen Details'}</span>
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    {language === 'hi' ? 'पूरा नाम' : 'Full Name'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={manualName}
+                    onChange={(e) => setManualName(e.target.value)}
+                    placeholder={language === 'hi' ? 'उदा. राहुल शर्मा' : 'e.g. John Doe'}
+                    className="w-full py-2 px-3 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1 flex items-center gap-1">
+                    <Mail className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{language === 'hi' ? 'ईमेल पता' : 'Email Address'} *</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={manualEmail}
+                    onChange={(e) => setManualEmail(e.target.value)}
+                    placeholder="citizen@example.com"
+                    className="w-full py-2 px-3 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Step 1: Select Country */}
           <div className="space-y-2">

@@ -34,6 +34,7 @@ interface UserProfileDrawerProps {
   onSwitchMember?: (id: string) => void;
   onLogout?: () => void;
   onOpenLogin?: () => void;
+  onOpenOnboarding?: () => void;
   onLoginSuccess?: (updated: Partial<CitizenProfile>) => void;
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
   onAddFamilyMember?: (member: FamilyMember) => void;
@@ -46,6 +47,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   profile,
   onUpdateProfile,
   onLogout,
+  onOpenOnboarding,
   onLoginSuccess,
   onGoogleSuccess,
 }) => {
@@ -178,7 +180,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                   </div>
                 )}
 
-                <div className="pt-2">
+                <div className="pt-2 space-y-2">
                   <button
                     onClick={handleDirectGoogleLogin}
                     disabled={isGoogleLoggingIn}
@@ -191,6 +193,20 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                     )}
                     <span>{t('profile.login_btn')}</span>
                   </button>
+
+                  {onOpenOnboarding && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenOnboarding();
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span>{language === 'hi' ? 'प्रत्यक्ष नागरिक पंजीकरण' : 'Direct Citizen Registration'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

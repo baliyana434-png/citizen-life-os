@@ -10,6 +10,7 @@ import { AadhaarAuthModal } from '@/components/auth/AadhaarAuthModal';
 import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
+import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -60,9 +61,9 @@ const GUEST_PROFILE: CitizenProfile = {
   age: 21,
   dob: '2003-01-01',
   gender: 'male',
-  state: 'Uttar Pradesh',
-  district: 'Kanpur Nagar',
-  pincode: '208001',
+  state: '',
+  district: '',
+  pincode: '',
   lifePhase: 'college_student',
   casteCategory: 'General',
   familyIncomeAnnual: 0,
@@ -453,14 +454,14 @@ export default function HomePage() {
         return false;
       }
 
-      // 2. MANDATORY Strict Age & Eligibility Filter (NEVER show opportunities outside citizen's age)
-      if (opp.targetAges) {
+      // 2. MANDATORY Strict Age & Eligibility Filter (Only show opportunities matching citizen's age when onboarded)
+      if (activeProfile.isOnboarded && opp.targetAges) {
         const [minAge, maxAge] = opp.targetAges;
         if (activeProfile.age < minAge || activeProfile.age > maxAge) return false;
       }
 
-      // 2B. Strict Gender Isolation (Never show gender-restricted opportunities to other genders)
-      if (opp.genderEligibility && opp.genderEligibility !== 'all') {
+      // 2B. Strict Gender Isolation (Never show gender-restricted opportunities to other genders when onboarded)
+      if (activeProfile.isOnboarded && opp.genderEligibility && opp.genderEligibility !== 'all') {
         if (!activeProfile.gender || opp.genderEligibility !== activeProfile.gender) return false;
       }
 
@@ -507,16 +508,13 @@ export default function HomePage() {
     return filteredOpportunities.reduce((acc, curr) => acc + (curr.benefitAmount || 0), 0);
   }, [filteredOpportunities]);
 
-  // WhatsApp Share
+  // WhatsApp Share (100% localized, zero-leakage, zero fake emojis)
   const handleShareWhatsApp = (opp: Opportunity) => {
-    const title = language === 'hi' ? opp.titleHi : opp.title;
-    const benefit = language === 'hi' ? opp.benefitHeadlineHi : opp.benefitHeadline;
+    const localized = getLocalizedOpportunity(opp, language);
     const isGovt = opp.category === 'govt_scheme' || opp.category === 'govt_job' || opp.category === 'competitive_exam';
-    const tagHeader = isGovt
-      ? (language === 'hi' ? '*प्रमाणित आधिकारिक अवसर:*' : '*Verified Official Opportunity:*')
-      : (language === 'hi' ? '*सत्यापित अवसर:*' : '*Verified Opportunity:*');
+    const tagHeader = isGovt ? `*${t('official_verified')}*` : `*${t('card.verified_source')}*`;
     const text = encodeURIComponent(
-      `${tagHeader}\n\n*${title}*\n*${t('card.benefit')}:* ${benefit}\n*${t('card.verified_source')}:* ${opp.gazette.issuingAuthority}\n\n*Official Link:* ${window.location.origin}`
+      `${tagHeader}\n\n*${localized.title}*\n*${t('card.benefit')}:* ${localized.benefitHeadline}\n*${t('card.verified_source')}:* ${localized.issuingAuthority}\n\n${window.location.origin}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -558,7 +556,11 @@ export default function HomePage() {
               <div className="flex items-center gap-2 mb-2">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  {activeProfile.fullName} ({t('hero.age_label')}: {activeProfile.age} {t('hero.years_suffix')} • {activeProfile.state})
+                  {activeProfile.isOnboarded ? (
+                    `${activeProfile.fullName} (${t('hero.age_label')}: ${activeProfile.age} ${t('hero.years_suffix')}${activeProfile.state ? ' • ' + activeProfile.state : ''})`
+                  ) : (
+                    `${countryMeta.flag} ${countryMeta.name} • ${t('hero.unverified_status')}`
+                  )}
                 </span>
                 <span className="text-xs text-emerald-200/80 font-medium">
                   {activeProfile.isAadhaarVerified ? t('hero.verified_status') : t('hero.unverified_status')}
@@ -582,14 +584,16 @@ export default function HomePage() {
             {/* Individual Profile Summary Badge */}
             <div className="flex items-center gap-2.5 bg-black/30 backdrop-blur-xs px-3.5 py-2.5 rounded-2xl border border-white/10 shrink-0">
               <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-xs">
-                {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'C'}
+                {activeProfile.isOnboarded && profile.fullName ? profile.fullName.charAt(0).toUpperCase() : countryMeta.flag}
               </div>
               <div className="text-left">
                 <span className="block text-xs font-bold text-white leading-tight">
-                  {profile.fullName || t('profile.guest_title')}
+                  {activeProfile.isOnboarded ? profile.fullName : t('profile.guest_title')}
                 </span>
-                <span className="text-[11px] text-emerald-300 capitalize">
-                  {profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • {profile.casteCategory || 'General'}
+                <span className="text-[11px] text-emerald-300">
+                  {activeProfile.isOnboarded
+                    ? `${profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • ${profile.casteCategory || 'General'}`
+                    : `${countryMeta.name} • ${t('hero.unverified_status')}`}
                 </span>
               </div>
             </div>
@@ -697,6 +701,10 @@ export default function HomePage() {
           }
         }}
         onLogout={handleLogout}
+        onOpenOnboarding={() => {
+          setPendingGoogleUser(null);
+          setIsOnboardingOpen(true);
+        }}
         onLoginSuccess={handleVerificationComplete}
         onGoogleSuccess={handleGoogleAuthSuccess}
       />
