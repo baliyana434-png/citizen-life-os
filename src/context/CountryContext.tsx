@@ -5,6 +5,7 @@ import { CountryCode } from '@/types';
 
 export interface CountryMeta {
   code: CountryCode;
+  alpha3: string;
   name: string;
   nativeName: string;
   flag: string;
@@ -19,6 +20,7 @@ export interface CountryMeta {
 export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   IN: {
     code: 'IN',
+    alpha3: 'IND',
     name: 'India',
     nativeName: 'भारत',
     flag: '🇮🇳',
@@ -54,6 +56,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   US: {
     code: 'US',
+    alpha3: 'USA',
     name: 'United States',
     nativeName: 'United States',
     flag: '🇺🇸',
@@ -83,6 +86,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   GB: {
     code: 'GB',
+    alpha3: 'GBR',
     name: 'United Kingdom',
     nativeName: 'United Kingdom',
     flag: '🇬🇧',
@@ -104,6 +108,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   CA: {
     code: 'CA',
+    alpha3: 'CAN',
     name: 'Canada',
     nativeName: 'Canada',
     flag: '🇨🇦',
@@ -127,6 +132,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   AU: {
     code: 'AU',
+    alpha3: 'AUS',
     name: 'Australia',
     nativeName: 'Australia',
     flag: '🇦🇺',
@@ -148,6 +154,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   DE: {
     code: 'DE',
+    alpha3: 'DEU',
     name: 'Germany',
     nativeName: 'Deutschland',
     flag: '🇩🇪',
@@ -171,6 +178,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   FR: {
     code: 'FR',
+    alpha3: 'FRA',
     name: 'France',
     nativeName: 'France',
     flag: '🇫🇷',
@@ -197,6 +205,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   JP: {
     code: 'JP',
+    alpha3: 'JPN',
     name: 'Japan',
     nativeName: '日本',
     flag: '🇯🇵',
@@ -223,6 +232,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   AE: {
     code: 'AE',
+    alpha3: 'ARE',
     name: 'United Arab Emirates',
     nativeName: 'الإمارات العربية المتحدة',
     flag: '🇦🇪',
@@ -243,6 +253,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   BR: {
     code: 'BR',
+    alpha3: 'BRA',
     name: 'Brazil',
     nativeName: 'Brasil',
     flag: '🇧🇷',
@@ -268,6 +279,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   SG: {
     code: 'SG',
+    alpha3: 'SGP',
     name: 'Singapore',
     nativeName: 'Singapore',
     flag: '🇸🇬',
@@ -286,6 +298,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   KR: {
     code: 'KR',
+    alpha3: 'KOR',
     name: 'South Korea',
     nativeName: '대한민국',
     flag: '🇰🇷',
@@ -313,6 +326,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   SA: {
     code: 'SA',
+    alpha3: 'SAU',
     name: 'Saudi Arabia',
     nativeName: 'المملكة العربية السعودية',
     flag: '🇸🇦',
@@ -339,6 +353,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   NZ: {
     code: 'NZ',
+    alpha3: 'NZL',
     name: 'New Zealand',
     nativeName: 'Aotearoa',
     flag: '🇳🇿',
@@ -363,6 +378,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   ZA: {
     code: 'ZA',
+    alpha3: 'ZAF',
     name: 'South Africa',
     nativeName: 'South Africa',
     flag: '🇿🇦',
@@ -385,6 +401,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
   },
   IT: {
     code: 'IT',
+    alpha3: 'ITA',
     name: 'Italy',
     nativeName: 'Italia',
     flag: '🇮🇹',

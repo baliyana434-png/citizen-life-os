@@ -9,9 +9,11 @@ import { DetailBottomSheet } from '@/components/drawers/DetailBottomSheet';
 import { AadhaarAuthModal } from '@/components/auth/AadhaarAuthModal';
 import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
+import { GoogleAccountChooserModal } from '@/components/auth/GoogleAccountChooserModal';
+import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
-import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode } from '@/types';
+import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode, CitizenSubscription } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import {
@@ -23,7 +25,9 @@ import {
   AlertCircle,
   RefreshCw,
   Clock,
-  Star
+  Star,
+  Award,
+  Lock,
 } from 'lucide-react';
 
 const DEFAULT_PROFILE: CitizenProfile = {
@@ -101,6 +105,8 @@ export default function HomePage() {
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
+  const [isGoogleChooserOpen, setIsGoogleChooserOpen] = useState<boolean>(false);
+  const [isSubscriptionOpen, setIsSubscriptionOpen] = useState<boolean>(false);
   const [pendingGoogleUser, setPendingGoogleUser] = useState<{
     name: string;
     email: string;
@@ -300,6 +306,7 @@ export default function HomePage() {
 
   // Direct Google Sign-In Success: Check onboarding state or launch Wizard
   const handleGoogleAuthSuccess = async (googleUser: { name: string; email: string; photoURL?: string }) => {
+    setIsGoogleChooserOpen(false);
     try {
       // Check if this user already registered & completed onboarding previously on server
       const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleUser.email)}`);
@@ -307,6 +314,9 @@ export default function HomePage() {
       if (data.success && data.citizen && data.citizen.isOnboarded) {
         // Returning user with completed onboarding! Restore their profile directly
         handleVerificationComplete(data.citizen);
+        if (data.citizen.country) {
+          setCountry(data.citizen.country);
+        }
         if (data.citizen.lifePhase) {
           handleRoleAutoSwitch(data.citizen.lifePhase);
         }
@@ -342,6 +352,9 @@ export default function HomePage() {
       setCountry(completed.country);
     }
 
+    const randomSeq = Math.floor(1000 + Math.random() * 9000);
+    const citizenIdGenerated = completed.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-2026-${randomSeq}`;
+
     const fullProfile: CitizenProfile = {
       ...profile,
       id: profile.id && profile.id !== 'cit-guest' ? profile.id : 'cit-' + Date.now(),
@@ -353,10 +366,10 @@ export default function HomePage() {
       casteCategory: completed.casteCategory,
       state: completed.state,
       gender: completed.gender,
-      country: completed.country,
+      country: completed.country || country,
       nationalIdName: completed.nationalIdName,
-      nationalIdMasked: completed.nationalIdMasked,
-      administrativeDivision: completed.administrativeDivision,
+      nationalIdMasked: citizenIdGenerated,
+      administrativeDivision: completed.administrativeDivision || completed.state,
       isAadhaarVerified: true,
       isOnboarded: true,
     };
@@ -378,25 +391,44 @@ export default function HomePage() {
     // Automatically switch active opportunity tab to match the citizen's role!
     handleRoleAutoSwitch(completed.lifePhase);
 
-    const roleNamesHi: Record<string, string> = {
-      college_student: 'कॉलेज छात्र',
-      school_student: 'स्कूली छात्र',
-      exam_aspirant: 'प्रतियोगी परीक्षा',
-      job_seeker: 'नौकरी की तलाश',
-      farmer: 'किसान',
-      business_owner: 'व्यापार व उद्योग',
-      employed: 'नौकरीपेशा',
-      homemaker: 'गृहणी / महिला',
-      senior_citizen: 'वरिष्ठ नागरिक',
+    // Prompt 1-Year Subscription Modal immediately after ID generation if not yet active
+    if (!fullProfile.subscription || fullProfile.subscription.status !== 'active') {
+      setIsSubscriptionOpen(true);
+    } else {
+      setPaymentSuccessToast(
+        language === 'hi'
+          ? `स्वागत है ${completed.fullName}! आपका नागरिक प्रोफाइल सेट हो गया है और अवसर अनलॉक हो गए हैं।`
+          : `Welcome ${completed.fullName}! Your citizen profile is ready and opportunities are unlocked!`
+      );
+      setTimeout(() => setPaymentSuccessToast(null), 5000);
+    }
+  };
+
+  // Handle ₹19 1-Year Subscription Success
+  const handleSubscriptionSuccess = (sub: CitizenSubscription) => {
+    setIsSubscriptionOpen(false);
+    const updatedProfile: CitizenProfile = {
+      ...profile,
+      subscription: sub,
     };
-    const roleLabel = roleNamesHi[completed.lifePhase] || completed.lifePhase;
+
+    try {
+      localStorage.setItem('citizen_profile', JSON.stringify(updatedProfile));
+    } catch (e) {}
+    setProfile(updatedProfile);
+
+    fetch('/api/citizens/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedProfile),
+    }).catch((e) => console.warn('Server sync error:', e));
 
     setPaymentSuccessToast(
       language === 'hi'
-        ? `स्वागत है ${completed.fullName}! आपका ${roleLabel} प्रोफाइल सेट हो गया है और अवसर अनलॉक हो गए हैं।`
-        : `Welcome ${completed.fullName}! Your ${completed.lifePhase.replace('_', ' ')} profile is ready and opportunities are unlocked!`
+        ? `बधाई हो ${updatedProfile.fullName}! आपका ₹19 का 1-वर्षीय राष्ट्रीय नागरिक पास सक्रिय हो गया है (वैधता: 365 दिन)।`
+        : `Congratulations ${updatedProfile.fullName}! Your ₹19 1-Year National Citizen Pass is now active (365 Days).`
     );
-    setTimeout(() => setPaymentSuccessToast(null), 5000);
+    setTimeout(() => setPaymentSuccessToast(null), 6000);
   };
 
   // Live Internet Sync State
@@ -466,6 +498,12 @@ export default function HomePage() {
         if (!activeProfile.gender || opp.genderEligibility !== activeProfile.gender) return false;
       }
 
+      // 2C. Strict Area / State / Region Filter
+      if (activeProfile.isOnboarded && opp.stateEligibility && !opp.stateEligibility.includes('ALL')) {
+        const userDivision = activeProfile.administrativeDivision || activeProfile.state;
+        if (userDivision && !opp.stateEligibility.includes(userDivision)) return false;
+      }
+
       // 3. Search Query Match
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -502,7 +540,7 @@ export default function HomePage() {
       // Priority 3: Higher benefit value first
       return (b.benefitAmount || 0) - (a.benefitAmount || 0);
     });
-  }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, opportunities, favoriteIds, country]);
+  }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, activeProfile.state, activeProfile.administrativeDivision, opportunities, favoriteIds, country]);
 
   // Total Available Benefit Amount
   const totalBenefitSum = useMemo(() => {
@@ -558,9 +596,9 @@ export default function HomePage() {
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   {activeProfile.isOnboarded ? (
-                    `${activeProfile.fullName} (${t('hero.age_label')}: ${activeProfile.age} ${t('hero.years_suffix')}${activeProfile.state ? ' • ' + activeProfile.state : ''})`
+                    `${countryMeta.flag} ${countryMeta.alpha3 || country} • ${activeProfile.fullName} (${t('hero.age_label')}: ${activeProfile.age} ${t('hero.years_suffix')}${activeProfile.state ? ' • ' + activeProfile.state : ''})`
                   ) : (
-                    `${countryMeta.flag} ${countryMeta.name} • ${t('hero.unverified_status')}`
+                    `${countryMeta.flag} ${countryMeta.alpha3 || country} • ${countryMeta.name} • ${t('hero.unverified_status')}`
                   )}
                 </span>
                 <span className="text-xs text-emerald-200/80 font-medium">
@@ -600,6 +638,58 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* 1-Year Citizen Access Pass Status Strip */}
+        {profile.subscription?.status === 'active' ? (
+          <div className="bg-emerald-950 text-white rounded-2xl px-4 py-2.5 border border-emerald-700/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-base">{countryMeta.flag}</span>
+              <span className="font-mono font-bold text-emerald-300 uppercase px-1.5 py-0.5 rounded bg-emerald-900/60 border border-emerald-700">
+                {countryMeta.alpha3 || country} CITIZEN PASS
+              </span>
+              <span className="font-semibold text-emerald-100">
+                {language === 'hi'
+                  ? `1-वर्षीय सक्रिय सदस्यता (वैधता: ${profile.subscription.validUntil}) • आयु (${profile.age}) एवं क्षेत्र (${profile.state || countryMeta.divisions[0]}) अनुसार मिलान`
+                  : `1-Year Citizen Pass Active (Valid: ${profile.subscription.validUntil}) • Matched for Age ${profile.age} & ${profile.state || countryMeta.divisions[0]}`}
+              </span>
+            </div>
+            <span className="text-[10px] font-mono text-emerald-400 bg-black/20 px-2 py-0.5 rounded-md">
+              {profile.subscription.transactionId}
+            </span>
+          </div>
+        ) : (
+          <div className="bg-slate-900 text-white rounded-2xl px-4 py-3 border border-slate-800 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+                <Award className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-bold text-white block">
+                  {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹19 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹19 / 1 Year'}
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  {language === 'hi' 
+                    ? `${countryMeta.name} में अपनी आयु, क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
+                    : `Unlock all genuine opportunities in ${countryMeta.name} matched to your exact age & area for 365 days`}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (!profile.isOnboarded) {
+                  setIsGoogleChooserOpen(true);
+                } else {
+                  setIsSubscriptionOpen(true);
+                }
+              }}
+              className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? 'पास सक्रिय करें (₹19)' : 'Activate Pass (₹19)'}</span>
+            </button>
+          </div>
+        )}
 
         {/* 2. Official Feed Synchronization Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-slate-900/95 text-white rounded-2xl border border-slate-800 shadow-md text-xs">
@@ -706,17 +796,34 @@ export default function HomePage() {
           setPendingGoogleUser(null);
           setIsOnboardingOpen(true);
         }}
+        onOpenSubscription={() => setIsSubscriptionOpen(true)}
         onLoginSuccess={handleVerificationComplete}
         onGoogleSuccess={handleGoogleAuthSuccess}
       />
 
-      {/* 6. Registration Onboarding & Role Selection Modal */}
+      {/* 6. Google Account Chooser Modal */}
+      <GoogleAccountChooserModal
+        isOpen={isGoogleChooserOpen}
+        onClose={() => setIsGoogleChooserOpen(false)}
+        onSelectAccount={handleGoogleAuthSuccess}
+      />
+
+      {/* 7. Registration Onboarding & Role Selection Modal */}
       <CitizenOnboardingModal
         isOpen={isOnboardingOpen}
         onClose={() => setIsOnboardingOpen(false)}
         googleUser={pendingGoogleUser}
         initialRole={profile.lifePhase}
         onComplete={handleOnboardingComplete}
+      />
+
+      {/* 8. 1-Year Citizen Access Subscription Modal (₹19 / Year) */}
+      <SubscriptionModal
+        isOpen={isSubscriptionOpen}
+        onClose={() => setIsSubscriptionOpen(false)}
+        citizenName={profile.fullName || 'Citizen'}
+        citizenId={profile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`}
+        onSubscriptionSuccess={handleSubscriptionSuccess}
       />
     </div>
   );

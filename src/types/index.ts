@@ -109,6 +109,18 @@ export interface CitizenProfile {
     whatsApp: boolean;
     urgentDeadlinesOnly: boolean;
   };
+  subscription?: CitizenSubscription;
+}
+
+export interface CitizenSubscription {
+  status: 'inactive' | 'active' | 'expired';
+  plan: '1_year';
+  amount: number;
+  currency: string;
+  activatedAt: string;
+  validUntil: string;
+  transactionId: string;
+  paymentMethod?: string;
 }
 
 export interface FamilyMember {

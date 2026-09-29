@@ -163,9 +163,11 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
     setIsSubmitting(true);
 
     try {
+      const randomSeq = Math.floor(1000 + Math.random() * 9000);
+      const generatedCitizenId = `${countryMeta.alpha3 || country}-CIT-2026-${randomSeq}`;
       const maskedId = nationalIdInput.trim()
         ? `***-${nationalIdInput.trim().slice(-4)}`
-        : `${country}-CIT-8921`;
+        : generatedCitizenId;
 
       onComplete({
         fullName: displayName,
@@ -314,7 +316,8 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
                   >
                     <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
                       <span className="text-sm">{c.flag}</span>
-                      <span className="truncate">{c.name}</span>
+                      <span className="text-[11px] font-bold text-slate-900 font-mono">{c.alpha3}</span>
+                      <span className="truncate text-slate-600 text-[11px]">{c.name}</span>
                     </span>
                     {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
                   </button>

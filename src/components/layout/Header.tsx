@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Landmark, Search, PhoneCall, Star, User, Globe } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
+import { useCountry } from '@/context/CountryContext';
 import { CitizenProfile, SupportedLanguage } from '@/types';
 
 interface HeaderProps {
@@ -25,6 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
   favoriteCount = 0,
 }) => {
   const { t, language, setLanguage } = useTranslation();
+  const { country, countryMeta } = useCountry();
   const [liveFavCount, setLiveFavCount] = useState<number>(favoriteCount);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
@@ -166,27 +168,37 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </Link>
 
+            {/* Country Flag & Alpha-3 Code Badge */}
+            <div 
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 border border-slate-200 text-xs font-bold text-slate-800 shadow-xs cursor-default"
+              title={`${countryMeta.name} (${countryMeta.alpha3 || country})`}
+            >
+              <span className="text-sm">{countryMeta.flag}</span>
+              <span className="text-[11px] font-mono font-black text-slate-900">{countryMeta.alpha3 || country}</span>
+            </div>
+
             {/* Profile Avatar Button */}
             <button
               onClick={onOpenProfile}
-              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border flex items-center justify-center transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer ${
+              className={`h-8 sm:h-9 px-2 sm:px-2.5 rounded-full border flex items-center gap-1.5 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer ${
                 profile.isAadhaarVerified
-                  ? 'bg-emerald-100 hover:bg-emerald-200 border-emerald-300 text-emerald-800 font-black text-xs'
-                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-600'
+                  ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-950 font-bold text-xs'
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700 font-medium text-xs'
               }`}
               aria-label={t('profile_btn')}
             >
-              {profile.isAadhaarVerified ? (
-                profile.photoURL ? (
-                  <img src={profile.photoURL} alt={profile.fullName} className="w-full h-full object-cover rounded-full" />
+              <div className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
+                {profile.photoURL ? (
+                  <img src={profile.photoURL} alt={profile.fullName} className="w-full h-full object-cover" />
                 ) : (
-                  <>
-                    <span>{profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'C'}</span>
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-                  </>
-                )
-              ) : (
-                <User className="w-4 h-4" />
+                  profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User className="w-3 h-3 text-slate-300" />
+                )}
+              </div>
+              <span className="hidden sm:inline text-xs font-bold max-w-[90px] truncate">
+                {profile.isAadhaarVerified ? profile.fullName.split(' ')[0] : (language === 'hi' ? 'लॉगिन' : 'Login')}
+              </span>
+              {profile.subscription?.status === 'active' && (
+                <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white shrink-0" title="1-Year Active Citizen Pass" />
               )}
             </button>
           </div>

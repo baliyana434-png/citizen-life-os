@@ -22,6 +22,9 @@ import {
   Briefcase,
   MapPin,
   CreditCard,
+  Award,
+  Sparkles,
+  Check,
 } from 'lucide-react';
 
 interface UserProfileDrawerProps {
@@ -35,6 +38,7 @@ interface UserProfileDrawerProps {
   onLogout?: () => void;
   onOpenLogin?: () => void;
   onOpenOnboarding?: () => void;
+  onOpenSubscription?: () => void;
   onLoginSuccess?: (updated: Partial<CitizenProfile>) => void;
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
   onAddFamilyMember?: (member: FamilyMember) => void;
@@ -48,6 +52,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   onUpdateProfile,
   onLogout,
   onOpenOnboarding,
+  onOpenSubscription,
   onLoginSuccess,
   onGoogleSuccess,
 }) => {
@@ -219,12 +224,15 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="text-base">{countryMeta.flag}</span>
-                    <span className="text-[11px] font-bold tracking-wider uppercase text-emerald-400">
+                    <span className="text-xs font-mono font-bold tracking-wider text-emerald-400">
+                      {countryMeta.alpha3 || country}
+                    </span>
+                    <span className="text-[11px] font-bold tracking-wider uppercase text-slate-300">
                       {t('profile.title')}
                     </span>
                   </div>
                   <span className="text-[10px] font-mono text-slate-300 px-2 py-0.5 rounded-md bg-white/10 border border-white/10">
-                    {profile.nationalIdMasked || `${country}-CIT-8921`}
+                    {profile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`}
                   </span>
                 </div>
 
@@ -281,6 +289,50 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                     {t('profile.aadhaar_badge')}
                   </span>
                 </div>
+              </div>
+
+              {/* 1-Year Citizen Access Subscription Section */}
+              <div className="rounded-2xl p-4 border transition-all space-y-2.5 bg-gradient-to-br from-slate-900 to-slate-950 text-white border-slate-800 shadow-md">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-amber-400 shrink-0" />
+                    <div>
+                      <span className="text-xs font-extrabold text-white block">
+                        {language === 'hi' ? '१-वर्षीय राष्ट्रीय नागरिक पास' : '1-Year Citizen Access Pass'}
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        {profile.subscription?.status === 'active' 
+                          ? (language === 'hi' ? `सक्रिय • वैधता: ${profile.subscription.validUntil}` : `Active • Valid until ${profile.subscription.validUntil}`)
+                          : (language === 'hi' ? 'निष्क्रिय • केवल ₹19 / 1 वर्ष' : 'Inactive • Only ₹19 / 1 Year')}
+                      </span>
+                    </div>
+                  </div>
+                  {profile.subscription?.status === 'active' ? (
+                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Check className="w-3 h-3 text-emerald-400" />
+                      <span>{language === 'hi' ? 'सक्रिय' : 'Active'}</span>
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenSubscription?.();
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition-all shadow-sm flex items-center gap-1 cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{language === 'hi' ? '₹19 पास लें' : 'Get Pass'}</span>
+                    </button>
+                  )}
+                </div>
+
+                {profile.subscription?.status === 'active' && profile.subscription.transactionId && (
+                  <div className="pt-2 border-t border-white/10 text-[10px] font-mono text-slate-400 flex items-center justify-between">
+                    <span>Txn: {profile.subscription.transactionId}</span>
+                    <span className="text-emerald-400">365 Days Unlocked</span>
+                  </div>
+                )}
               </div>
 
               {/* Notification Preferences */}
