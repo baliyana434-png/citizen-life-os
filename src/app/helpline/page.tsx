@@ -23,24 +23,26 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { useCountry } from '@/context/CountryContext';
 import { VERIFIED_HELPLINES } from '@/data/helplines';
 import { HelplineCategory, HelplineFacility } from '@/types';
 
 export default function HelplinePage() {
   const { language, setLanguage } = useTranslation();
+  const { country, countryMeta } = useCountry();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
 
   const categories = [
     { id: 'all', labelEn: 'All Helplines', labelHi: 'सभी हेल्पलाइन' },
-    { id: 'emergency', labelEn: 'Emergency (112/108)', labelHi: 'आपातकाल (११२/१०८)' },
-    { id: 'cyber_legal', labelEn: 'Cyber & Legal (1930/15100)', labelHi: 'साइबर ठगी व कानून' },
-    { id: 'women_child', labelEn: 'Women & Child (181/1098)', labelHi: 'महिला व बाल सुरक्षा' },
-    { id: 'senior', labelEn: 'Senior Citizens (14567)', labelHi: 'वरिष्ठ नागरिक' },
-    { id: 'farmer', labelEn: 'Farmers (KCC)', labelHi: 'किसान सहायता' },
-    { id: 'health', labelEn: 'Health & Mental (14416)', labelHi: 'स्वास्थ्य व तनाव' },
-    { id: 'citizen_services', labelEn: 'Citizen & Exams', labelHi: 'नागरिक सेवा व परीक्षा' },
+    { id: 'emergency', labelEn: 'Emergency', labelHi: 'आपातकाल' },
+    { id: 'cyber_legal', labelEn: 'Cyber & Legal', labelHi: 'साइबर ठगी व कानून' },
+    { id: 'women_child', labelEn: 'Women & Child', labelHi: 'महिला व बाल सुरक्षा' },
+    { id: 'senior', labelEn: 'Senior Citizens', labelHi: 'वरिष्ठ नागरिक' },
+    { id: 'farmer', labelEn: 'Agriculture & Support', labelHi: 'किसान व कृषि सहायता' },
+    { id: 'health', labelEn: 'Health & Crisis', labelHi: 'स्वास्थ्य व तनाव' },
+    { id: 'citizen_services', labelEn: 'Citizen Services', labelHi: 'नागरिक सेवाएं' },
   ];
 
   const getCategoryIcon = (id: string) => {
@@ -58,15 +60,19 @@ export default function HelplinePage() {
 
   const filteredHelplines = useMemo(() => {
     return VERIFIED_HELPLINES.filter((h) => {
+      // Strict country filter
+      if ((h.country || 'IN') !== country) {
+        return false;
+      }
       if (activeCategory !== 'all' && h.category !== activeCategory) {
         return false;
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchNumber = h.number.toLowerCase().includes(q);
-        const matchName = h.name.toLowerCase().includes(q) || h.nameHi.includes(q);
-        const matchAuth = h.authority.toLowerCase().includes(q) || h.authorityHi.includes(q);
-        const matchPurpose = h.purpose.toLowerCase().includes(q) || h.purposeHi.includes(q);
+        const matchName = h.name.toLowerCase().includes(q) || (h.nameHi && h.nameHi.includes(q));
+        const matchAuth = h.authority.toLowerCase().includes(q) || (h.authorityHi && h.authorityHi.includes(q));
+        const matchPurpose = h.purpose.toLowerCase().includes(q) || (h.purposeHi && h.purposeHi.includes(q));
         const matchTags = h.tags.some((t) => t.toLowerCase().includes(q));
         if (!matchNumber && !matchName && !matchAuth && !matchPurpose && !matchTags) {
           return false;
@@ -74,7 +80,7 @@ export default function HelplinePage() {
       }
       return true;
     });
-  }, [activeCategory, searchQuery]);
+  }, [country, activeCategory, searchQuery]);
 
   const handleCopyNumber = (num: string) => {
     navigator.clipboard.writeText(num);
@@ -88,8 +94,10 @@ export default function HelplinePage() {
       <div className="w-full bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-8 border-b border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="font-bold tracking-wider text-slate-100 flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
-            {language === 'hi' ? 'नागरिक आपातकालीन एवं कानूनी सहायता डायरेक्टरी' : 'CITIZEN 24x7 EMERGENCY & HELPLINE DIRECTORY'}
+            <span className="text-sm">{countryMeta.flag}</span>
+            <span>{countryMeta.name}</span>
+            <span className="text-slate-500">•</span>
+            <span>{language === 'hi' ? 'नागरिक आपातकालीन एवं सहायता डायरेक्टरी' : '24x7 EMERGENCY & HELPLINE DIRECTORY'}</span>
           </span>
           <span className="text-slate-600 hidden md:inline">•</span>
           <span className="text-slate-400 text-[10px] hidden md:inline">
@@ -149,100 +157,55 @@ export default function HelplinePage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Top Emergency Hot Bar (Golden Hour & Life Threats) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {/* 112 Emergency */}
-          <div className="bg-gradient-to-br from-red-600 to-rose-700 rounded-2xl p-4 text-white shadow-md flex flex-col justify-between border border-red-500">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider">
-                  24x7 PAN-INDIA
-                </span>
-                <LifeBuoy className="w-4 h-4 text-white/80" />
-              </div>
-              <h3 className="text-xl font-black font-mono">112</h3>
-              <p className="text-xs font-bold text-red-100 mt-0.5">
-                {language === 'hi' ? 'पुलिस, आग व आकस्मिक आपदा' : 'National Emergency (Police/Fire)'}
-              </p>
-            </div>
-            <a
-              href="tel:112"
-              className="mt-3 w-full py-2 px-3 bg-white hover:bg-red-50 text-red-700 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'तुरंत कॉल करें (112)' : 'Call 112 Now'}</span>
-            </a>
-          </div>
+        {/* Top Emergency Hot Bar (Country-Aware Dynamic Emergency Hotlines) */}
+        {(() => {
+          const topCards = filteredHelplines.slice(0, 4);
+          if (topCards.length === 0) return null;
 
-          {/* 1930 Cyber Fraud */}
-          <div className="bg-gradient-to-br from-indigo-700 to-blue-800 rounded-2xl p-4 text-white shadow-md flex flex-col justify-between border border-indigo-600">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider">
-                  GOLDEN HOUR
-                </span>
-                <ShieldAlert className="w-4 h-4 text-white/80" />
-              </div>
-              <h3 className="text-xl font-black font-mono">1930</h3>
-              <p className="text-xs font-bold text-indigo-100 mt-0.5">
-                {language === 'hi' ? 'साइबर व ऑनलाइन वित्तीय ठगी' : 'Cyber Financial Fraud Freeze'}
-              </p>
-            </div>
-            <a
-              href="tel:1930"
-              className="mt-3 w-full py-2 px-3 bg-white hover:bg-indigo-50 text-indigo-800 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'खाता फ्रीज करें (1930)' : 'Call 1930 Now'}</span>
-            </a>
-          </div>
+          const gradients = [
+            'from-red-600 to-rose-700 border-red-500',
+            'from-indigo-700 to-blue-800 border-indigo-600',
+            'from-emerald-700 to-teal-800 border-emerald-600',
+            'from-amber-600 to-orange-700 border-amber-500',
+          ];
 
-          {/* 181 Women in Distress */}
-          <div className="bg-gradient-to-br from-pink-600 to-rose-600 rounded-2xl p-4 text-white shadow-md flex flex-col justify-between border border-pink-500">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider">
-                  WOMEN ONLY • 24x7
-                </span>
-                <HeartHandshake className="w-4 h-4 text-white/80" />
-              </div>
-              <h3 className="text-xl font-black font-mono">181</h3>
-              <p className="text-xs font-bold text-pink-100 mt-0.5">
-                {language === 'hi' ? 'महिला सुरक्षा व सखी सेंटर' : 'Women in Distress Helpline'}
-              </p>
-            </div>
-            <a
-              href="tel:181"
-              className="mt-3 w-full py-2 px-3 bg-white hover:bg-pink-50 text-pink-700 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'सुरक्षा कॉल (181)' : 'Call 181 Now'}</span>
-            </a>
-          </div>
+          return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {topCards.map((item, idx) => {
+                const grad = gradients[idx % gradients.length];
+                const displayName = language === 'hi' ? (item.nameHi || item.name) : item.name;
+                const badgeText = item.is24x7 ? '24x7 EMERGENCY' : (language === 'hi' ? 'आधिकारिक सेवा' : 'OFFICIAL HELPLINE');
 
-          {/* 15100 Free Legal Aid */}
-          <div className="bg-gradient-to-br from-emerald-700 to-teal-800 rounded-2xl p-4 text-white shadow-md flex flex-col justify-between border border-emerald-600">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider">
-                  FREE LEGAL AID
-                </span>
-                <Scale className="w-4 h-4 text-white/80" />
-              </div>
-              <h3 className="text-xl font-black font-mono">15100</h3>
-              <p className="text-xs font-bold text-emerald-100 mt-0.5">
-                {language === 'hi' ? 'मुफ्त वकील व कानूनी परामर्श' : 'Tele-Law 24x7 Free Legal Advice'}
-              </p>
+                return (
+                  <div
+                    key={item.id}
+                    className={`bg-gradient-to-br ${grad} rounded-2xl p-4 text-white shadow-md flex flex-col justify-between border`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider">
+                          {badgeText}
+                        </span>
+                        <LifeBuoy className="w-4 h-4 text-white/80" />
+                      </div>
+                      <h3 className="text-xl font-black font-mono">{item.number}</h3>
+                      <p className="text-xs font-bold text-white/90 mt-0.5 line-clamp-1">
+                        {displayName}
+                      </p>
+                    </div>
+                    <a
+                      href={`tel:${item.number.replace(/[^0-9+]/g, '')}`}
+                      className="mt-3 w-full py-2 px-3 bg-white hover:bg-white/90 text-slate-900 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
+                    >
+                      <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{language === 'hi' ? `कॉल करें (${item.number})` : `Call ${item.number}`}</span>
+                    </a>
+                  </div>
+                );
+              })}
             </div>
-            <a
-              href="tel:15100"
-              className="mt-3 w-full py-2 px-3 bg-white hover:bg-emerald-50 text-emerald-800 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'मुफ्त सलाह लें (15100)' : 'Call 15100 Now'}</span>
-            </a>
-          </div>
-        </div>
+          );
+        })()}
 
         {/* Search & Category Filter Section */}
         <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-sm space-y-4">

@@ -150,4 +150,5 @@ export interface HelplineFacility {
   guidanceHi: string[];
   portalUrl?: string;
   tags: string[];
+  country?: CountryCode;
 }

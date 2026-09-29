@@ -449,8 +449,9 @@ export default function HomePage() {
       // 1. Life Stage Tab Match
       if (opp.lifeStage !== activeTab) return false;
 
-      // 1B. Strict Country Matching (Show ONLY opportunities for the user's registered country)
-      if (opp.country !== country) {
+      // 1B. Strict Country Matching (Show ONLY opportunities for the user's registered country, with exception for study abroad)
+      const isStudyAbroad = opp.lifeStage === 'abroad_jobs' || opp.category === 'study_abroad';
+      if (!isStudyAbroad && opp.country !== country) {
         return false;
       }
 
