@@ -4,7 +4,7 @@
     "fullName": "Abhay Baliyan",
     "email": "abhaybaliyan4087@gmail.com",
     "phoneNumber": "",
-    "aadhaarNumberMasked": "",
+    "aadhaarNumberMasked": "XXXX-XXXX-8921",
     "age": 21,
     "dob": "2003-01-01",
     "gender": "male",
@@ -25,7 +25,8 @@
       "webPush": false,
       "whatsApp": false,
       "urgentDeadlinesOnly": false
-    }
+    },
+    "country": "IN"
   },
   {
     "id": "cit-1790417577935",

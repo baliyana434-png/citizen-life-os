@@ -1,7 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 import fs from 'fs/promises';
 import path from 'path';
-import { CountryCode } from '@/types';
+import { CountryCode, CitizenSubscription } from '@/types';
 
 const CITIZENS_FILE = path.join(process.cwd(), 'src', 'data', 'citizens_store.json');
 const FAVORITES_FILE = path.join(process.cwd(), 'src', 'data', 'favorites_store.json');
@@ -92,6 +92,7 @@ export interface CitizenRecord {
   registeredAt: string;
   status: 'verified';
   isOnboarded?: boolean;
+  subscription?: CitizenSubscription;
 }
 
 export const DatabaseService = {

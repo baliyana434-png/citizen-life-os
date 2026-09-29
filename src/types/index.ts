@@ -121,6 +121,7 @@ export interface CitizenSubscription {
   validUntil: string;
   transactionId: string;
   paymentMethod?: string;
+  signature?: string;
 }
 
 export interface FamilyMember {

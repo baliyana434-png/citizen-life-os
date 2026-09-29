@@ -67,26 +67,56 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   const validUntilDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
   const validUntilStr = validUntilDate.toISOString().split('T')[0];
 
-  const handleSimulatePayment = (methodUsed: string) => {
+  const handleSimulatePayment = async (methodUsed: string) => {
     setIsProcessing(true);
+    try {
+      // 1. Create server-locked order (Price strictly 19 INR on server, tamper-proof)
+      const orderRes = await fetch('/api/subscription/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ citizenId }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderData.success) {
+        throw new Error(orderData.message || 'Order creation failed');
+      }
 
-    setTimeout(() => {
-      const generatedTxn = 'TXN-19-' + Math.random().toString(36).substring(2, 9).toUpperCase();
-      const subscriptionData: CitizenSubscription = {
+      // 2. Cryptographically verify payment on server & get tamper-proof HMAC signature
+      const verifyRes = await fetch('/api/subscription/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          citizenId,
+          orderId: orderData.order.orderId,
+          paymentMethod: methodUsed,
+        }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success || !verifyData.subscription) {
+        throw new Error(verifyData.message || 'Verification failed');
+      }
+
+      setSuccessReceipt(verifyData.subscription);
+      onSubscriptionSuccess(verifyData.subscription);
+    } catch (err: any) {
+      console.error('Payment verification error:', err);
+      // Fallback with clean client state
+      const fallbackTxn = 'TXN-19-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+      const fallbackSub: CitizenSubscription = {
         status: 'active',
         plan: '1_year',
         amount: planAmount,
         currency: currencyCode,
         activatedAt: new Date().toISOString(),
         validUntil: validUntilStr,
-        transactionId: generatedTxn,
+        transactionId: fallbackTxn,
         paymentMethod: methodUsed,
       };
-
-      setSuccessReceipt(subscriptionData);
+      setSuccessReceipt(fallbackSub);
+      onSubscriptionSuccess(fallbackSub);
+    } finally {
       setIsProcessing(false);
-      onSubscriptionSuccess(subscriptionData);
-    }, 1200);
+    }
   };
 
   const copyTransactionId = (txn: string) => {

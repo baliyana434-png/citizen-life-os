@@ -80,6 +80,7 @@ export async function POST(req: NextRequest) {
       registeredAt: existing?.registeredAt || new Date().toISOString(),
       status: 'verified',
       isOnboarded: body.isOnboarded !== undefined ? Boolean(body.isOnboarded) : (existing?.isOnboarded ?? true),
+      subscription: body.subscription || existing?.subscription || undefined,
     };
 
     const saved = await DatabaseService.saveCitizen(citizenRecord);
