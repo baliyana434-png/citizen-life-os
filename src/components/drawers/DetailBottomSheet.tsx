@@ -24,6 +24,7 @@ import { VoiceReader } from '../voice/VoiceReader';
 import { CitizenProfile } from '@/types';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
 import { evaluateCitizenEligibility } from '@/lib/eligibility';
+import { formatDeadlineText } from '@/lib/dateUtils';
 
 interface DetailBottomSheetProps {
   opportunity: Opportunity | null;
@@ -131,8 +132,12 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               <Building2 className="w-4 h-4 text-slate-600" />
               <span>{localized.issuingAuthority}</span>
             </div>
-            <div className="text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-1">
-              <span>{t('card.circular_no')}: <strong>{opportunity.gazette.circularNumber}</strong></span>
+            <div className="text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 border-t border-slate-200/80">
+              <span>{t('card.circular_no')}: <strong className="text-slate-900 font-mono">{opportunity.gazette.circularNumber}</strong></span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-slate-500" />
+                <span>{t('card.last_date')}: <strong className="text-slate-900">{formatDeadlineText(opportunity.deadline, opportunity.daysRemaining, language, t('card.days_left'))}</strong></span>
+              </span>
               <span>{opportunity.gazette.lastVerifiedAt}</span>
               <span>{t('card.official_fee')}: <strong className="text-emerald-800">{localized.officialFee}</strong></span>
               {opportunity.targetAges && (

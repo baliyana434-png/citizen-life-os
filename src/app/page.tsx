@@ -559,7 +559,14 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col antialiased">
+    <div className="min-h-screen bg-slate-50 flex flex-col antialiased relative selection:bg-emerald-500 selection:text-white">
+      {/* Ambient 3D Aurora Mesh Glows */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
+      </div>
+
       {/* 1. Header */}
       <Header
         profile={profile}
@@ -571,7 +578,7 @@ export default function HomePage() {
       />
 
       {/* 2. Main Viewport Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 relative z-10">
         {/* Dynamic Payment/Success Toast */}
         {paymentSuccessToast && (
           <div className="p-3.5 rounded-2xl bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-lg flex items-center justify-between gap-3 animate-fade-in">
@@ -588,48 +595,52 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Hero Personalized Insight Bar */}
-        <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-slate-900 rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden border border-emerald-700/40">
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Hero Personalized Insight Bar (3D Cyber-Gov Terminal) */}
+        <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 rounded-3xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/30">
+          {/* Subtle Cyber Grid Texture */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_50%)] pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-                  <ShieldCheck className="w-3.5 h-3.5" />
+              {/* Telemetry Status Row */}
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40 shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 radar-pulse" />
                   {activeProfile.isOnboarded ? (
                     `${countryMeta.flag} ${countryMeta.alpha3 || country} • ${activeProfile.fullName} (${t('hero.age_label')}: ${activeProfile.age} ${t('hero.years_suffix')}${activeProfile.state ? ' • ' + activeProfile.state : ''})`
                   ) : (
                     `${countryMeta.flag} ${countryMeta.alpha3 || country} • ${countryMeta.name} • ${t('hero.unverified_status')}`
                   )}
                 </span>
-                <span className="text-xs text-emerald-200/80 font-medium">
+                <span className="text-[11px] uppercase tracking-wider text-emerald-300/80 font-mono font-bold bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
                   {activeProfile.isAadhaarVerified ? t('hero.verified_status') : t('hero.unverified_status')}
                 </span>
               </div>
 
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug">
                 {t('hero.headline_prefix')}{' '}
-                <span className="text-emerald-400 font-mono">
+                <span className="text-emerald-400 font-mono underline decoration-emerald-500/40 decoration-wavy underline-offset-4">
                   {countryMeta.currencySymbol}
                   {totalBenefitSum.toLocaleString()}
                 </span>{' '}
                 {t('hero.headline_suffix')}
               </h1>
 
-              <p className="text-xs sm:text-sm text-emerald-100/80 mt-1 max-w-2xl">
+              <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl leading-relaxed">
                 {t('hero.subline')}
               </p>
             </div>
 
             {/* Individual Profile Summary Badge */}
-            <div className="flex items-center gap-2.5 bg-black/30 backdrop-blur-xs px-3.5 py-2.5 rounded-2xl border border-white/10 shrink-0">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-xs">
+            <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 shrink-0 shadow-lg">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 font-black text-sm shadow-md">
                 {activeProfile.isOnboarded && profile.fullName ? profile.fullName.charAt(0).toUpperCase() : countryMeta.flag}
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold text-white leading-tight">
+                <span className="block text-xs sm:text-sm font-extrabold text-white leading-tight">
                   {activeProfile.isOnboarded ? profile.fullName : t('profile.guest_title')}
                 </span>
-                <span className="text-[11px] text-emerald-300">
+                <span className="text-[11px] text-emerald-300 font-medium">
                   {activeProfile.isOnboarded
                     ? `${profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • ${profile.casteCategory || 'General'}`
                     : `${countryMeta.name} • ${t('hero.unverified_status')}`}
@@ -744,7 +755,7 @@ export default function HomePage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
             {filteredOpportunities.map((opp) => (
               <OpportunityCard
                 key={opp.id}
