@@ -642,15 +642,15 @@ export default function HomePage() {
         {/* 1-Year Citizen Access Pass Status Strip */}
         {profile.subscription?.status === 'active' ? (
           <div className="bg-emerald-950 text-white rounded-2xl px-4 py-2.5 border border-emerald-700/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-base">{countryMeta.flag}</span>
               <span className="font-mono font-bold text-emerald-300 uppercase px-1.5 py-0.5 rounded bg-emerald-900/60 border border-emerald-700">
                 {countryMeta.alpha3 || country} CITIZEN PASS
               </span>
               <span className="font-semibold text-emerald-100">
                 {language === 'hi'
-                  ? `1-वर्षीय सक्रिय सदस्यता (वैधता: ${profile.subscription.validUntil}) • आयु (${profile.age}) एवं क्षेत्र (${profile.state || countryMeta.divisions[0]}) अनुसार मिलान`
-                  : `1-Year Citizen Pass Active (Valid: ${profile.subscription.validUntil}) • Matched for Age ${profile.age} & ${profile.state || countryMeta.divisions[0]}`}
+                  ? `1-वर्षीय सक्रिय सदस्यता (वैधता: ${profile.subscription.validUntil}) • कुल अनलॉक लाभ: ₹${totalBenefitSum.toLocaleString('en-IN')}`
+                  : `1-Year Citizen Pass Active (Valid: ${profile.subscription.validUntil}) • Total Unlocked Benefits: ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()}`}
               </span>
             </div>
             <span className="text-[10px] font-mono text-emerald-400 bg-black/20 px-2 py-0.5 rounded-md">
@@ -664,12 +664,17 @@ export default function HomePage() {
                 <Award className="w-4 h-4" />
               </div>
               <div>
-                <span className="font-bold text-white block">
-                  {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹19 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹19 / 1 Year'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-white block">
+                    {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹19 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹19 / 1 Year'}
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-600/50">
+                    {language === 'hi' ? `₹${totalBenefitSum.toLocaleString('en-IN')} के लाभ अनलॉक करें` : `Unlock ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()} Benefits`}
+                  </span>
+                </div>
                 <span className="text-[11px] text-slate-400">
                   {language === 'hi' 
-                    ? `${countryMeta.name} में अपनी आयु, क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
+                    ? `${countryMeta.name} में अपनी आयु (${profile.age || '18+'}), क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
                     : `Unlock all genuine opportunities in ${countryMeta.name} matched to your exact age & area for 365 days`}
                 </span>
               </div>
@@ -745,7 +750,7 @@ export default function HomePage() {
                 key={opp.id}
                 opportunity={opp}
                 onSelect={(opp) => setSelectedOpp(opp)}
-                onShareWhatsApp={handleShareWhatsApp}
+                citizenProfile={activeProfile}
                 isFavorite={favoriteIds.has(opp.id)}
                 onToggleFavorite={handleToggleFavorite}
               />
@@ -761,6 +766,7 @@ export default function HomePage() {
       <DetailBottomSheet
         opportunity={selectedOpp}
         onClose={() => setSelectedOpp(null)}
+        citizenProfile={activeProfile}
         isFavorite={selectedOpp ? favoriteIds.has(selectedOpp.id) : false}
         onToggleFavorite={handleToggleFavorite}
       />
@@ -777,6 +783,7 @@ export default function HomePage() {
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         profile={profile}
+        totalBenefitsUnlocked={totalBenefitSum}
         onUpdateProfile={(updated) => {
           setProfile((prev) => {
             const next = { ...prev, ...updated };

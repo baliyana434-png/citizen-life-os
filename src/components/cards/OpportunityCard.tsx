@@ -1,17 +1,20 @@
 'use client';
 
 import React from 'react';
-import { Opportunity } from '@/types';
+import { Opportunity, CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
-import { ShieldCheck, Calendar, ArrowRight, Share2, Star, Clock } from 'lucide-react';
+import { ShieldCheck, Calendar, ArrowRight, Star, Clock, CheckCircle2 } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { RotatingNewBadge } from '../common/RotatingNewBadge';
+import { generateGoogleCalendarUrl } from '@/lib/calendar';
+import { evaluateCitizenEligibility } from '@/lib/eligibility';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
   onSelect: (opp: Opportunity) => void;
-  onShareWhatsApp: (opp: Opportunity) => void;
+  onShareWhatsApp?: (opp: Opportunity) => void;
+  citizenProfile?: CitizenProfile | null;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string) => void;
 }
@@ -19,12 +22,23 @@ interface OpportunityCardProps {
 export const OpportunityCard: React.FC<OpportunityCardProps> = ({
   opportunity,
   onSelect,
-  onShareWhatsApp,
+  citizenProfile,
   isFavorite = false,
   onToggleFavorite,
 }) => {
   const { t, language } = useTranslation();
   const localized = getLocalizedOpportunity(opportunity, language);
+  const eligibility = evaluateCitizenEligibility(opportunity, citizenProfile);
+
+  const handleAddToCalendar = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = generateGoogleCalendarUrl(
+      opportunity,
+      localized.title,
+      localized.issuingAuthority
+    );
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div
@@ -87,6 +101,14 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           </div>
         </div>
 
+        {/* 1B. Citizen Eligibility Match Indicator */}
+        {citizenProfile?.isOnboarded && eligibility.isEligible && (
+          <div className="mb-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 text-[11px] font-extrabold shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>{t('card.eligible_100')} • {t('card.eligible_age_match')}</span>
+          </div>
+        )}
+
         {/* 2. Title & Speech Reader */}
         <div className="mb-2">
           <div className="flex items-start justify-between gap-2">
@@ -139,16 +161,14 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
 
+          {/* 1-Click Google Calendar Reminder Button */}
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onShareWhatsApp(opportunity);
-            }}
-            className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
-            title={t('card.share_whatsapp')}
-            aria-label="Share"
+            onClick={handleAddToCalendar}
+            className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-colors cursor-pointer flex items-center justify-center"
+            title={t('card.add_calendar')}
+            aria-label="Add Deadline to Google Calendar"
           >
-            <Share2 className="w-4 h-4" />
+            <Calendar className="w-4 h-4 text-emerald-600" />
           </button>
         </div>
       </div>

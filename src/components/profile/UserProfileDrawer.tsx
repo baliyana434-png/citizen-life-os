@@ -43,6 +43,7 @@ interface UserProfileDrawerProps {
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
   onAddFamilyMember?: (member: FamilyMember) => void;
   onDeleteFamilyMember?: (id: string) => void;
+  totalBenefitsUnlocked?: number;
 }
 
 export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
@@ -55,6 +56,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   onOpenSubscription,
   onLoginSuccess,
   onGoogleSuccess,
+  totalBenefitsUnlocked,
 }) => {
   const { t, language } = useTranslation();
   const { country, countryMeta } = useCountry();
@@ -334,6 +336,29 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Total Unlocked Value Counter Card */}
+              {totalBenefitsUnlocked !== undefined && totalBenefitsUnlocked > 0 && (
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 border border-emerald-500/40 text-white shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>{language === 'hi' ? 'कुल अनलॉक अवसर मूल्य' : 'Total Unlocked Benefits'}</span>
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-900/80 px-2 py-0.5 rounded-md border border-emerald-600">
+                      ₹19 Pass
+                    </span>
+                  </div>
+                  <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400 my-1">
+                    {countryMeta.currencySymbol}{totalBenefitsUnlocked.toLocaleString('en-IN')}
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-snug">
+                    {language === 'hi'
+                      ? 'आपकी आयु एवं क्षेत्र के आधार पर सत्यापित छात्रवृत्तियां, सरकारी योजनाएं, स्वास्थ्य कवर एवं करियर अवसर।'
+                      : 'Verified scholarships, subsidies, health coverage & career vacancies unlocked for your profile.'}
+                  </p>
+                </div>
+              )}
 
               {/* Notification Preferences */}
               <div>

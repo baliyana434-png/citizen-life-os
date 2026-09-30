@@ -65,6 +65,9 @@
     "free_badge": "Free",
     "view_details": "View Official Details",
     "share_whatsapp": "Share Details",
+    "add_calendar": "Add Deadline to Calendar",
+    "eligible_100": "100% Eligible",
+    "eligible_age_match": "Age & State Match",
     "eligible_match": "Match Score",
     "verified_source": "Authorized Source",
     "circular_no": "Notice Number"
@@ -82,7 +85,13 @@
     "close": "Close",
     "status_active_desc": "The official registration and application window is currently active on the official portal.",
     "status_upcoming_desc": "This opportunity is officially scheduled under the annual calendar. The application link opens as scheduled.",
-    "status_ongoing_desc": "This program operates on a continuous, round-the-year schedule with direct open access."
+    "status_ongoing_desc": "This program operates on a continuous, round-the-year schedule with direct open access.",
+    "add_google_calendar": "Add Deadline to Google Calendar",
+    "eligibility_check_title": "Instant Citizen Eligibility Check",
+    "eligibility_100_pass": "100% Eligible for Your Profile",
+    "eligibility_age_ok": "Age criteria satisfied",
+    "eligibility_state_ok": "State / Region eligibility confirmed",
+    "eligibility_zero_scam": "Direct Government Application (No Middleman)"
   },
   "auth": {
     "modal_title": "National Citizen Verification",

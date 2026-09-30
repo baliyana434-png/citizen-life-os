@@ -18,13 +18,18 @@ import {
   Clock,
   Target,
   Users,
+  MapPin,
 } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
+import { CitizenProfile } from '@/types';
+import { generateGoogleCalendarUrl } from '@/lib/calendar';
+import { evaluateCitizenEligibility } from '@/lib/eligibility';
 
 interface DetailBottomSheetProps {
   opportunity: Opportunity | null;
   onClose: () => void;
   onDownloadKit?: (opp: Opportunity) => void | Promise<void>;
+  citizenProfile?: CitizenProfile | null;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string) => void;
 }
@@ -32,6 +37,7 @@ interface DetailBottomSheetProps {
 export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
   opportunity,
   onClose,
+  citizenProfile,
   isFavorite = false,
   onToggleFavorite,
 }) => {
@@ -52,9 +58,19 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
   if (!opportunity) return null;
 
   const localized = getLocalizedOpportunity(opportunity, language);
+  const eligibility = evaluateCitizenEligibility(opportunity, citizenProfile);
 
   const toggleDoc = (id: string) => {
     setCheckedDocs((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleOpenGoogleCalendar = () => {
+    const url = generateGoogleCalendarUrl(
+      opportunity,
+      localized.title,
+      localized.issuingAuthority
+    );
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -163,6 +179,47 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
             </div>
           </div>
 
+          {/* A3. Instant Citizen Eligibility Verification Card */}
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/80 border border-emerald-300">
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="text-xs sm:text-sm font-extrabold text-emerald-950 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{t('drawer.eligibility_check_title')}</span>
+              </span>
+              <span className="text-[11px] font-bold text-emerald-900 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 shrink-0">
+                {t('drawer.eligibility_100_pass')}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-emerald-200">
+                <Target className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="truncate">
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">{t('hero.age_label')}</span>
+                  <span className="font-bold text-slate-800">
+                    {opportunity.targetAges ? `${opportunity.targetAges[0]} - ${opportunity.targetAges[1]} ${t('hero.years_suffix')}` : 'All Ages'}
+                    {citizenProfile?.isOnboarded && ` (${citizenProfile.age} ${t('hero.years_suffix')})`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-emerald-200">
+                <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="truncate">
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">{t('profile.state')}</span>
+                  <span className="font-bold text-slate-800">
+                    {eligibility.stateText}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-2 text-[11px] font-semibold text-emerald-800 flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>{t('drawer.eligibility_zero_scam')}</span>
+            </div>
+          </div>
+
           {/* B. Anti-Cheat & Scam Protection Box */}
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
             <div className="flex items-start gap-2.5">
@@ -257,7 +314,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
         </div>
 
         {/* 3. Bottom Sticky Action Hub */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-2 sm:gap-3">
           <a
             href={opportunity.gazette.officialPortalUrl}
             target="_blank"
@@ -268,9 +325,20 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
             <ExternalLink className="w-4 h-4" />
           </a>
 
+          {/* 1-Click Google Calendar Deadline Reminder */}
+          <button
+            onClick={handleOpenGoogleCalendar}
+            className="py-3 px-3.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
+            title={t('drawer.add_google_calendar')}
+          >
+            <Calendar className="w-4 h-4 text-emerald-600" />
+            <span className="hidden sm:inline">{t('drawer.add_google_calendar')}</span>
+            <span className="sm:hidden">Calendar</span>
+          </button>
+
           <button
             onClick={onClose}
-            className="py-3 px-4 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold transition-colors cursor-pointer"
+            className="py-3 px-4 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold transition-colors cursor-pointer shrink-0"
           >
             {t('drawer.close')}
           </button>
