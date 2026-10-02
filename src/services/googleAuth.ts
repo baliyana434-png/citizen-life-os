@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut, User } from 'firebase/auth';
 import { getFirebaseAuth, isFirebaseConfigured } from './firebase';
 import { SupportedLanguage } from '@/types';
 
@@ -149,6 +149,20 @@ export class GoogleAuthService {
       const err: any = new Error(error.message || error.code || 'Google sign-in failed');
       err.code = error.code || 'auth/failed';
       throw err;
+    }
+  }
+
+  /**
+   * Signs out the current user session from Firebase Auth
+   */
+  static async signOut(): Promise<void> {
+    try {
+      const auth = getFirebaseAuth();
+      if (auth && isFirebaseConfigured()) {
+        await signOut(auth);
+      }
+    } catch (error) {
+      console.warn('Firebase signOut error:', error);
     }
   }
 }

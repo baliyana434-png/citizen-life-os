@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CitizenProfile, FamilyMember } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -140,6 +140,13 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     });
   };
 
+  // Reset logout confirmation when drawer closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShowLogoutConfirm(false);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const isVerified = profile.isAadhaarVerified;
@@ -166,13 +173,26 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {isVerified && (
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(true)}
+                className="h-8 px-2 sm:px-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                title={language === 'hi' ? 'लॉग आउट करें' : 'Log Out'}
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-600" />
+                <span className="hidden sm:inline">{language === 'hi' ? 'लॉग आउट' : 'Log Out'}</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Content Body */}
@@ -471,52 +491,60 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                 </div>
               </div>
 
-              {/* Logout Button */}
+              {/* Logout Button Section */}
               <div className="pt-2">
-                <button
-                  onClick={() => setShowLogoutConfirm(true)}
-                  className="w-full py-2.5 px-4 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-800 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4 text-red-700" />
-                  <span>{t('profile.logout_btn')}</span>
-                </button>
+                {!showLogoutConfirm ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="w-full py-3 px-4 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-800 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs active:scale-[0.99]"
+                  >
+                    <LogOut className="w-4 h-4 text-red-700" />
+                    <span>{t('profile.logout_btn')}</span>
+                  </button>
+                ) : (
+                  <div className="p-4 rounded-2xl bg-red-50/95 border border-red-300 space-y-3 shadow-sm animate-in fade-in">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <LogOut className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm leading-tight">
+                          {t('profile.logout_confirm_title')}
+                        </h4>
+                        <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                          {t('profile.logout_confirm_desc')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowLogoutConfirm(false);
+                          onClose();
+                          onLogout?.();
+                        }}
+                        className="flex-1 py-2.5 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-extrabold text-white cursor-pointer shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>{t('profile.logout_confirm_yes')}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowLogoutConfirm(false)}
+                        className="py-2.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+                      >
+                        {t('profile.logout_cancel')}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}
         </div>
       </div>
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl border border-slate-200">
-            <h4 className="font-extrabold text-slate-900 text-sm">
-              {t('profile.logout_confirm_title')}
-            </h4>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              {t('profile.logout_confirm_desc')}
-            </p>
-            <div className="flex items-center justify-end gap-2 pt-1">
-              <button
-                onClick={() => setShowLogoutConfirm(false)}
-                className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
-              >
-                {t('profile.logout_cancel')}
-              </button>
-              <button
-                onClick={() => {
-                  setShowLogoutConfirm(false);
-                  onClose();
-                  onLogout?.();
-                }}
-                className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-xs font-bold text-white cursor-pointer shadow-xs"
-              >
-                {t('profile.logout_confirm_yes')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

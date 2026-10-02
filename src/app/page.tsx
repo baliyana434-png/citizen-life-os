@@ -11,6 +11,7 @@ import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { GoogleAccountChooserModal } from '@/components/auth/GoogleAccountChooserModal';
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
+import { GoogleAuthService } from '@/services/googleAuth';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode, CitizenSubscription } from '@/types';
@@ -237,12 +238,23 @@ export default function HomePage() {
   };
 
   // Handle Logout System
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await GoogleAuthService.signOut();
+    } catch (e) {
+      console.warn('Firebase signout notice:', e);
+    }
     try {
       localStorage.setItem('citizen_logged_out', 'true');
       localStorage.removeItem('citizen_profile');
+      localStorage.removeItem('citizen_favorites');
+      window.dispatchEvent(new Event('favorites_updated'));
     } catch (e) {}
+    setPendingGoogleUser(null);
     setProfile(GUEST_PROFILE);
+    setFavoriteIds(new Set());
+    setIsProfileOpen(false);
+    setIsOnboardingOpen(false);
     setPaymentSuccessToast(
       language === 'hi'
         ? 'सफलतापूर्वक लॉग आउट हो गया। आप अतिथि मोड में हैं।'
@@ -571,6 +583,7 @@ export default function HomePage() {
           setPendingGoogleUser(null);
           setIsOnboardingOpen(true);
         }}
+        onLogout={handleLogout}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         favoriteCount={favoriteIds.size}

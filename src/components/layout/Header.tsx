@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck } from 'lucide-react';
+import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { CitizenProfile, SupportedLanguage } from '@/types';
@@ -12,6 +12,7 @@ interface HeaderProps {
   onOpenAuth?: () => void;
   onOpenProfile: () => void;
   onOpenOnboarding?: () => void;
+  onLogout?: () => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   favoriteCount?: number;
@@ -23,6 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   profile,
   onOpenProfile,
   onOpenOnboarding,
+  onLogout,
   searchQuery = '',
   onSearchChange,
   favoriteCount = 0,
@@ -211,26 +213,41 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={onOpenProfile}
-                className="h-9 px-2.5 sm:px-3 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center gap-2 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer shrink-0"
-                aria-label={t('profile_btn')}
-              >
-                <div className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
-                  {profile.photoURL ? (
-                    <img src={profile.photoURL} alt={profile.fullName} className="w-full h-full object-cover" />
-                  ) : (
-                    profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User className="w-3 h-3 text-slate-300" />
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* Profile Avatar Button */}
+                <button
+                  type="button"
+                  onClick={onOpenProfile}
+                  className="h-9 px-2.5 sm:px-3 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center gap-2 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer shrink-0 shadow-2xs"
+                  aria-label={t('profile_btn')}
+                >
+                  <div className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
+                    {profile.photoURL ? (
+                      <img src={profile.photoURL} alt={profile.fullName} className="w-full h-full object-cover" />
+                    ) : (
+                      profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User className="w-3 h-3 text-slate-300" />
+                    )}
+                  </div>
+                  <span className="hidden sm:inline text-xs font-bold max-w-[90px] truncate">
+                    {profile.fullName.split(' ')[0]}
+                  </span>
+                  {profile.subscription?.status === 'active' && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white shrink-0" title="1-Year Active Citizen Pass" />
                   )}
-                </div>
-                <span className="hidden sm:inline text-xs font-bold max-w-[90px] truncate">
-                  {profile.fullName.split(' ')[0]}
-                </span>
-                {profile.subscription?.status === 'active' && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white shrink-0" title="1-Year Active Citizen Pass" />
-                )}
-              </button>
+                </button>
+
+                {/* Direct Header Log Out Button */}
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="h-9 px-2 sm:px-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-2xs active:scale-[0.98]"
+                  title={language === 'hi' ? 'लॉग आउट करें' : 'Log Out'}
+                  aria-label="Log Out"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                  <span className="hidden md:inline text-xs font-bold">{language === 'hi' ? 'लॉग आउट' : 'Log Out'}</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
