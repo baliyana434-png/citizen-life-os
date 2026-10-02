@@ -128,7 +128,7 @@ export default function HelplinePage() {
                 </div>
                 <div>
                   <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none">
-                    {language === 'hi' ? '२४x७ नागरिक हेल्पलाइन एवं सहायता केंद्र' : '24x7 Citizen Helpline & Emergency Hub'}
+                    {language === 'hi' ? '24x7 नागरिक हेल्पलाइन एवं सहायता केंद्र' : '24x7 Citizen Helpline & Emergency Hub'}
                   </h1>
                   <p className="text-[11px] text-slate-500 hidden sm:block mt-0.5">
                     {language === 'hi' ? 'सरकारी आपातकालीन, कानूनी, साइबर व जन-कल्याण सेवाएं' : 'Government emergency, legal, cyber & welfare hotlines'}

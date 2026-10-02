@@ -30,11 +30,12 @@ export function formatDeadlineText(
     try {
       const [year, month, day] = deadline.split('-');
       const d = new Date(Number(year), Number(month) - 1, Number(day));
-      return d.toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', {
+      const formatted = d.toLocaleDateString(language === 'hi' ? 'hi-IN-u-nu-latn' : 'en-US', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
       });
+      return formatted.replace(/[०-९]/g, (digit) => String('०१२३४५६७८९'.indexOf(digit)));
     } catch {
       return deadline;
     }

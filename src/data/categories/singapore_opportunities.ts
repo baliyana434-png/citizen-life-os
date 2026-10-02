@@ -12,7 +12,7 @@ export const SINGAPORE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['employed', 'job_seeker', 'business_owner'],
     benefitHeadline: 'S$500 to S$4,000 Direct Government Credit for Subsidized Professional Courses',
-    benefitHeadlineHi: 'मान्यता प्राप्त व्यावसायिक पाठ्यक्रमों हेतु S$५०० से S$४,००० तक का सीधा सरकारी प्रशिक्षण क्रेडिट',
+    benefitHeadlineHi: 'मान्यता प्राप्त व्यावसायिक पाठ्यक्रमों हेतु S$500 से S$4,000 तक का सीधा सरकारी प्रशिक्षण क्रेडिट',
     benefitAmount: 4000,
     deadline: '2026-12-31',
     daysRemaining: 95,
@@ -20,7 +20,7 @@ export const SINGAPORE_OPPORTUNITIES: Opportunity[] = [
     isNew: false,
     applicationStatus: 'active_now',
     description: 'SkillsFuture Credit is a Singapore government initiative administered by SkillsFuture Singapore (SSG) under the Ministry of Education. It provides all eligible Singaporeans with upfront credits and substantial mid-career top-ups to offset fees for thousands of approved courses in artificial intelligence, green technology, data analytics, and digital management.',
-    descriptionHi: 'स्किल्सफ्यूचर क्रेडिट सिंगापुर सरकार (SSG) की एक प्रमुख राष्ट्रीय पहल है जो नागरिकों को आजीवन नए कौशल सीखने हेतु प्रोत्साहित करती है। यह योग्य नागरिकों को उच्च मांग वाले उद्योग पाठ्यक्रमों जैसे एआई, डेटा एनालिटिक्स और मैनेजमेंट हेतु S$४,००० तक का सीधा क्रेडिट प्रदान करती है।',
+    descriptionHi: 'स्किल्सफ्यूचर क्रेडिट सिंगापुर सरकार (SSG) की एक प्रमुख राष्ट्रीय पहल है जो नागरिकों को आजीवन नए कौशल सीखने हेतु प्रोत्साहित करती है। यह योग्य नागरिकों को उच्च मांग वाले उद्योग पाठ्यक्रमों जैसे एआई, डेटा एनालिटिक्स और मैनेजमेंट हेतु S$4,000 तक का सीधा क्रेडिट प्रदान करती है।',
     gazette: {
       circularNumber: 'SG-SSG-SFC-2026',
       issuingAuthority: 'SkillsFuture Singapore (SSG, Statutory Board under MOE)',
@@ -53,7 +53,7 @@ export const SINGAPORE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'school_student'],
     benefitHeadline: 'Up to S$15,000 to S$40,000 Annual Higher Education Tuition Fee Subsidy at Autonomous Universities & Polytechnics',
-    benefitHeadlineHi: 'स्वायत्त विश्वविद्यालयों एवं पॉलिटेक्निक में प्रति वर्ष S$१५,००० से S$४०,००० तक की उच्च शिक्षा ट्यूशन फीस सब्सिडी',
+    benefitHeadlineHi: 'स्वायत्त विश्वविद्यालयों एवं पॉलिटेक्निक में प्रति वर्ष S$15,000 से S$40,000 तक की उच्च शिक्षा ट्यूशन फीस सब्सिडी',
     benefitAmount: 40000,
     deadline: '2026-10-31',
     daysRemaining: 34,
@@ -94,7 +94,7 @@ export const SINGAPORE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['business_owner', 'employed', 'job_seeker'],
     benefitHeadline: 'S$50,000 Startup Capital Grant with 1:1 Co-Matching + Dedicated Mentorship via Accredited Partners',
-    benefitHeadlineHi: 'S$५०,००० का सरकारी स्टार्टअप पूंजी अनुदान (१:१ सह-मैचिंग के साथ) + मान्यता प्राप्त मेंटर्स से विशेष मार्गदर्शन',
+    benefitHeadlineHi: 'S$50,000 का सरकारी स्टार्टअप पूंजी अनुदान (1:1 सह-मैचिंग के साथ) + मान्यता प्राप्त मेंटर्स से विशेष मार्गदर्शन',
     benefitAmount: 50000,
     deadline: '2026-11-30',
     daysRemaining: 64,
@@ -102,7 +102,7 @@ export const SINGAPORE_OPPORTUNITIES: Opportunity[] = [
     isNew: false,
     applicationStatus: 'active_now',
     description: 'The Startup SG Founder programme, managed by Enterprise Singapore (ESG), supports first-time entrepreneurs with innovative, scalable business models. It provides a S$50,000 non-dilutive grant alongside hands-on mentorship, network access, and acceleration support through Accredited Mentor Partners (AMPs).',
-    descriptionHi: 'एंटरप्राइज सिंगापुर (ESG) द्वारा संचालित स्टार्टअप एसजी फाउंडर कार्यक्रम पहली बार व्यवसाय शुरू करने वाले नवोन्मेषी उद्यमियों को S$५०,००० का पूंजी अनुदान तथा मान्यता प्राप्त मेंटर पार्टनर्स (AMP) के माध्यम से इनक्यूबेशन एवं तकनीकी मार्गदर्शन प्रदान करता है।',
+    descriptionHi: 'एंटरप्राइज सिंगापुर (ESG) द्वारा संचालित स्टार्टअप एसजी फाउंडर कार्यक्रम पहली बार व्यवसाय शुरू करने वाले नवोन्मेषी उद्यमियों को S$50,000 का पूंजी अनुदान तथा मान्यता प्राप्त मेंटर पार्टनर्स (AMP) के माध्यम से इनक्यूबेशन एवं तकनीकी मार्गदर्शन प्रदान करता है।',
     gazette: {
       circularNumber: 'SG-ESG-SSGF-2026',
       issuingAuthority: 'Enterprise Singapore (ESG, Statutory Board under MTI)',
@@ -114,7 +114,7 @@ export const SINGAPORE_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'pitch_deck', name: 'Comprehensive Pitch Deck with Business Model and Financial Roadmap', nameHi: 'व्यावसायिक पिच डेक एवं वित्तीय कार्ययोजना', isMandatory: true },
-      { id: 'acra_profile', name: 'ACRA Business Profile (company incorporated for less than 6 months)', nameHi: 'ACRA कंपनी प्रोफाइल (६ माह से कम पुरानी निगमित कंपनी)', isMandatory: true },
+      { id: 'acra_profile', name: 'ACRA Business Profile (company incorporated for less than 6 months)', nameHi: 'ACRA कंपनी प्रोफाइल (6 माह से कम पुरानी निगमित कंपनी)', isMandatory: true },
       { id: 'founder_nric', name: 'NRIC and Singpass details of the main applicant founders', nameHi: 'मुख्य संस्थापक का NRIC एवं सिंगपास विवरण', isMandatory: true },
     ],
     applySteps: [

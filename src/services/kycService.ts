@@ -35,7 +35,7 @@ export class KycService {
   static async requestAadhaarOtp(aadhaarNumber: string): Promise<AadhaarOtpRequestResponse> {
     const cleanNumber = aadhaarNumber.replace(/[\s-]/g, '').trim();
     if (cleanNumber.length !== 12 || !/^\d{12}$/.test(cleanNumber)) {
-      throw new Error('आधार नंबर ठीक १२ अंकों का होना चाहिए।');
+      throw new Error('आधार नंबर ठीक 12 अंकों का होना चाहिए।');
     }
 
     const response = await fetch('/api/kyc/aadhaar/send-otp', {
@@ -72,7 +72,7 @@ export class KycService {
   ): Promise<AadhaarVerificationResponse> {
     const cleanOtp = otpCode.replace(/\D/g, '').trim();
     if (!cleanOtp || cleanOtp.length < 6) {
-      throw new Error('कृपया ६ अंकों का वैध ओटीपी दर्ज करें।');
+      throw new Error('कृपया 6 अंकों का वैध ओटीपी दर्ज करें।');
     }
 
     const response = await fetch('/api/kyc/aadhaar/verify-otp', {

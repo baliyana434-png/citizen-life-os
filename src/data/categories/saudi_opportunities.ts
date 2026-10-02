@@ -13,7 +13,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'college_student'],
     benefitHeadline: 'SAR 3,000 Monthly Government Stipend + Professional Corporate On-The-Job Training',
-    benefitHeadlineHi: 'SAR ३,००० मासिक सरकारी प्रशिक्षण वजीफा + कॉर्पोरेट कार्यस्थल अनुभव',
+    benefitHeadlineHi: 'SAR 3,000 मासिक सरकारी प्रशिक्षण वजीफा + कॉर्पोरेट कार्यस्थल अनुभव',
     benefitAmount: 18000,
     deadline: '2026-11-15',
     daysRemaining: 49,
@@ -21,7 +21,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     isNew: true,
     applicationStatus: 'active_now',
     description: 'The Tamheer program is an on-the-job training initiative launched by the Human Resources Development Fund (HRDF / Hadaf) in Saudi Arabia. Geared towards Saudi diploma, bachelors, and masters graduates who have not been employed for the preceding six months, Tamheer provides 3 to 6 months of paid training inside premier public and private sector companies, with monthly stipends of SAR 3,000 for degree holders and SAR 2,000 for diploma holders, backed by workplace injury insurance.',
-    descriptionHi: 'तमहीर कार्यक्रम सऊदी अरब के मानव संसाधन विकास कोष (HRDF/हदफ) द्वारा संचालित एक ऑन-द-जॉब इंटर्नशिप कार्यक्रम है। यह नए सऊदी डिप्लोमा और डिग्री धारकों को देश के प्रमुख कॉर्पोरेट व सरकारी संस्थानों में ३ से ६ महीने का प्रत्यक्ष व्यावहारिक कार्य प्रशिक्षण और प्रति माह SAR ३,००० तक का सरकारी वजीफा प्रदान करता है।',
+    descriptionHi: 'तमहीर कार्यक्रम सऊदी अरब के मानव संसाधन विकास कोष (HRDF/हदफ) द्वारा संचालित एक ऑन-द-जॉब इंटर्नशिप कार्यक्रम है। यह नए सऊदी डिप्लोमा और डिग्री धारकों को देश के प्रमुख कॉर्पोरेट व सरकारी संस्थानों में 3 से 6 महीने का प्रत्यक्ष व्यावहारिक कार्य प्रशिक्षण और प्रति माह SAR 3,000 तक का सरकारी वजीफा प्रदान करता है।',
     gazette: {
       circularNumber: 'SA-HRDF-TAMHEER-2026',
       issuingAuthority: 'Human Resources Development Fund (HRDF / Hadaf), Kingdom of Saudi Arabia',
@@ -34,7 +34,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     documents: [
       { id: 'sa_national_id', name: 'Saudi National ID Card (Hawiya)', nameHi: 'सऊदी राष्ट्रीय पहचान पत्र (हविया)', isMandatory: true },
       { id: 'sa_degree_cert', name: 'Accredited Diploma or University Degree Certificate', nameHi: 'मान्यता प्राप्त डिप्लोमा अथवा विश्वविद्यालय डिग्री प्रमाणपत्र', isMandatory: true },
-      { id: 'sa_gosi_cert', name: 'GOSI Social Insurance Certificate Confirming No Active Employment in Past 6 Months', nameHi: 'गोसी (GOSI) सामाजिक बीमा प्रमाणपत्र (विगत ६ माह में कार्यरत न होने की पुष्टि)', isMandatory: true },
+      { id: 'sa_gosi_cert', name: 'GOSI Social Insurance Certificate Confirming No Active Employment in Past 6 Months', nameHi: 'गोसी (GOSI) सामाजिक बीमा प्रमाणपत्र (विगत 6 माह में कार्यरत न होने की पुष्टि)', isMandatory: true },
     ],
     applySteps: [
       { step: 1, text: 'Log in to the Taqat portal (taqat.sa / hrdf.org.sa) using National Single Sign-On (Nafath).', textHi: 'राष्ट्रीय एकल साइन-ऑन (Nafath) का उपयोग करके ताक़त पोर्टल (taqat.sa / hrdf.org.sa) पर लॉग इन करें।' },
@@ -56,7 +56,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: '100% University Tuition Covered + Full Living Allowance & Family Health Insurance',
-    benefitHeadlineHi: '१००% विदेशी विश्वविद्यालय शिक्षण शुल्क + पूर्ण मासिक निर्वाह भत्ता एवं परिवार स्वास्थ्य बीमा',
+    benefitHeadlineHi: '100% विदेशी विश्वविद्यालय शिक्षण शुल्क + पूर्ण मासिक निर्वाह भत्ता एवं परिवार स्वास्थ्य बीमा',
     benefitAmount: 120000,
     deadline: '2026-12-15',
     daysRemaining: 79,
@@ -64,7 +64,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     isNew: true,
     applicationStatus: 'active_now',
     description: 'The Custodian of the Two Holy Mosques Scholarship Program (historically known as KASP), supervised by the Saudi Ministry of Education, is a fully funded national scholarship initiative. Designed under Saudi Vision 2030 across four major pathways (Pioneers, Research & Development, Provider, and Promising), the program finances undergraduate, masters, and doctoral studies at the worlds top 200 ranked universities worldwide, providing tuition, generous monthly allowances, annual flight tickets, and healthcare coverage.',
-    descriptionHi: 'सऊदी शिक्षा मंत्रालय द्वारा संचालित यह राष्ट्रीय छात्रवृत्ति कार्यक्रम (KASP) सऊदी विजन २०३० के तहत युवाओं को दुनिया के शीर्ष २०० विश्वविद्यालयों में स्नातक, परास्नातक एवं डॉक्टरेट की पढ़ाई हेतु पूर्ण वित्तपोषण प्रदान करता है। इसमें शत-प्रतिशत शिक्षण शुल्क, उच्च मासिक निर्वाह भत्ता, हवाई यात्रा और व्यापक स्वास्थ्य बीमा सम्मिलित है।',
+    descriptionHi: 'सऊदी शिक्षा मंत्रालय द्वारा संचालित यह राष्ट्रीय छात्रवृत्ति कार्यक्रम (KASP) सऊदी विजन 2030 के तहत युवाओं को दुनिया के शीर्ष 200 विश्वविद्यालयों में स्नातक, परास्नातक एवं डॉक्टरेट की पढ़ाई हेतु पूर्ण वित्तपोषण प्रदान करता है। इसमें शत-प्रतिशत शिक्षण शुल्क, उच्च मासिक निर्वाह भत्ता, हवाई यात्रा और व्यापक स्वास्थ्य बीमा सम्मिलित है।',
     gazette: {
       circularNumber: 'SA-MOE-KASP-VISION2030',
       issuingAuthority: 'Ministry of Education, Kingdom of Saudi Arabia',
@@ -100,7 +100,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['entrepreneur', 'job_seeker', 'employed'],
     benefitHeadline: 'Up to SAR 150,000 Incubation Support + Kafalah Loan Guarantees & Advisory Rebates',
-    benefitHeadlineHi: 'SAR १५०,००० तक इन्क्यूबेशन सहायता + कफाला ऋण गारंटी एवं सरकारी व्यापार परामर्श',
+    benefitHeadlineHi: 'SAR 150,000 तक इन्क्यूबेशन सहायता + कफाला ऋण गारंटी एवं सरकारी व्यापार परामर्श',
     benefitAmount: 150000,
     deadline: '2026-12-31',
     daysRemaining: 95,
@@ -108,7 +108,7 @@ export const SAUDI_OPPORTUNITIES: Opportunity[] = [
     isNew: false,
     applicationStatus: 'active_now',
     description: 'Monshaat (The Small and Medium Enterprises General Authority) spearheads the growth of Saudi startup enterprises under the National Transformation Program. Through startup hubs, Tomoh fast-growth initiatives, and Kafalah loan guarantee collaborations, eligible Saudi entrepreneurs receive direct grant subsidies, subsidized cloud and accounting software, business incubation credits of up to SAR 150,000, and low-interest venture debt facilitation.',
-    descriptionHi: 'मुनशात (लघु एवं मध्यम उद्यम सामान्य प्राधिकरण) सऊदी विजन २०३० के तहत नवाचार और व्यापार को बढ़ावा देने वाली राष्ट्रीय संस्था है। इसके माध्यम से नए उद्यमियों को व्यापार इन्क्यूबेशन, SAR १५०,००० तक के अनुदान लाभ, कफाला वित्तीय गारंटी और रियायती सरकारी परामर्श सेवाएं उपलब्ध कराई जाती हैं।',
+    descriptionHi: 'मुनशात (लघु एवं मध्यम उद्यम सामान्य प्राधिकरण) सऊदी विजन 2030 के तहत नवाचार और व्यापार को बढ़ावा देने वाली राष्ट्रीय संस्था है। इसके माध्यम से नए उद्यमियों को व्यापार इन्क्यूबेशन, SAR 150,000 तक के अनुदान लाभ, कफाला वित्तीय गारंटी और रियायती सरकारी परामर्श सेवाएं उपलब्ध कराई जाती हैं।',
     gazette: {
       circularNumber: 'SA-MONSHAAT-INNOV-2026',
       issuingAuthority: 'Small and Medium Enterprises General Authority (Monshaat), Kingdom of Saudi Arabia',

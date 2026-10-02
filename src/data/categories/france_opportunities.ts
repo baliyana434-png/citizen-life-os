@@ -12,7 +12,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'school_student'],
     benefitHeadline: '€1,454 to €6,335 Annual Need-Based Grant + Full University Tuition & CVEC Exemption',
-    benefitHeadlineHi: '€१,४५४ से €६,३३५ वार्षिक आवश्यकता-आधारित अनुदान + विश्वविद्यालय शिक्षण शुल्क एवं CVEC से पूर्ण छूट',
+    benefitHeadlineHi: '€1,454 से €6,335 वार्षिक आवश्यकता-आधारित अनुदान + विश्वविद्यालय शिक्षण शुल्क एवं CVEC से पूर्ण छूट',
     benefitAmount: 6335,
     deadline: '2026-10-31',
     daysRemaining: 34,
@@ -20,7 +20,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
     isNew: true,
     applicationStatus: 'active_now',
     description: 'The Bourse sur Critères Sociaux (BCS) managed by CROUS is France’s primary government higher education scholarship. Granted based on household tax income, family points, and distance, it provides monthly allowances across 8 tiers along with full tuition fee exemption and priority student housing access.',
-    descriptionHi: 'क्रूस (CROUS) द्वारा संचालित सामाजिक मानदंड छात्रवृत्ति (BCS) फ्रांस सरकार की प्रमुख उच्च शिक्षा सहायता योजना है। यह पारिवारिक आय और दूरी के आधार पर ८ स्तरों में मासिक वजीफा, विश्वविद्यालय ट्यूशन फीस में पूर्ण छूट तथा प्राथमिकता के आधार पर छात्र आवास प्रदान करती है।',
+    descriptionHi: 'क्रूस (CROUS) द्वारा संचालित सामाजिक मानदंड छात्रवृत्ति (BCS) फ्रांस सरकार की प्रमुख उच्च शिक्षा सहायता योजना है। यह पारिवारिक आय और दूरी के आधार पर 8 स्तरों में मासिक वजीफा, विश्वविद्यालय ट्यूशन फीस में पूर्ण छूट तथा प्राथमिकता के आधार पर छात्र आवास प्रदान करती है।',
     gazette: {
       circularNumber: 'FR-MESR-BCS-2026',
       issuingAuthority: 'Ministère de l’Enseignement supérieur et de la Recherche / CROUS (France)',
@@ -53,7 +53,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'school_student'],
     benefitHeadline: '100% Tuition Fees Covered + Monthly Legal Wage from €477 to €1,800 (27% to 100% SMIC)',
-    benefitHeadlineHi: '१००% निःशुल्क शिक्षण शुल्क + €४७७ से €१,८०० मासिक वैधानिक वेतन (SMIC का २७% से १००%)',
+    benefitHeadlineHi: '100% निःशुल्क शिक्षण शुल्क + €477 से €1,800 मासिक वैधानिक वेतन (SMIC का 27% से 100%)',
     benefitAmount: 1800,
     deadline: '2026-11-30',
     daysRemaining: 64,
@@ -94,7 +94,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'employed'],
     benefitHeadline: 'Up to €635.71 Monthly Guaranteed Minimum Subsistence Income for Single Individuals',
-    benefitHeadlineHi: 'एकल व्यक्ति हेतु अधिकतम €६३५.७१ मासिक गारंटीकृत न्यूनतम निर्वाह आय सहायता',
+    benefitHeadlineHi: 'एकल व्यक्ति हेतु अधिकतम €635.71 मासिक गारंटीकृत न्यूनतम निर्वाह आय सहायता',
     benefitAmount: 635,
     deadline: '2026-12-31',
     daysRemaining: 95,
@@ -114,7 +114,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'rib', name: 'French Bank Account Details (Relevé d’Identité Bancaire - RIB)', nameHi: 'फ्रांसीसी बैंक खाता विवरण (आरआर्इबी - RIB)', isMandatory: true },
-      { id: 'residence', name: 'Proof of Legal Residence in France for minimum 3 months (or eligible status)', nameHi: 'फ्रांस में न्यूनतम ३ माह के वैध निवास का आधिकारिक प्रमाण', isMandatory: true },
+      { id: 'residence', name: 'Proof of Legal Residence in France for minimum 3 months (or eligible status)', nameHi: 'फ्रांस में न्यूनतम 3 माह के वैध निवास का आधिकारिक प्रमाण', isMandatory: true },
       { id: 'income_decl', name: 'Quarterly Declaration of Financial Resources (Déclaration trimestrielle)', nameHi: 'त्रैमासिक आय एवं वित्तीय संसाधन घोषणा प्रपत्र', isMandatory: true },
     ],
     applySteps: [
@@ -135,7 +135,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['business_owner', 'employed', 'job_seeker'],
     benefitHeadline: 'Up to €30,000 in Non-Repayable Grant (Subvention) Covering 70% of Early-Stage Tech R&D',
-    benefitHeadlineHi: 'प्रारंभिक तकनीकी अनुसंधान एवं उत्पाद विकास हेतु €३०,००० तक का गैर-वापसी योग्य सरकारी अनुदान',
+    benefitHeadlineHi: 'प्रारंभिक तकनीकी अनुसंधान एवं उत्पाद विकास हेतु €30,000 तक का गैर-वापसी योग्य सरकारी अनुदान',
     benefitAmount: 30000,
     deadline: '2026-11-30',
     daysRemaining: 62,
@@ -154,7 +154,7 @@ export const FRANCE_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '€0 (Completely Free)',
     },
     documents: [
-      { id: 'kbis', name: 'Extrait Kbis (French Company Registration under 1 year old)', nameHi: 'केबिस उद्धरण (१ वर्ष से कम पुरानी कंपनी पंजीकरण प्रति)', isMandatory: true },
+      { id: 'kbis', name: 'Extrait Kbis (French Company Registration under 1 year old)', nameHi: 'केबिस उद्धरण (1 वर्ष से कम पुरानी कंपनी पंजीकरण प्रति)', isMandatory: true },
       { id: 'business_deck', name: 'Innovation Pitch Deck and Feasibility Study', nameHi: 'नवाचार प्रस्तुति एवं तकनीकी व्यवहार्यता अध्ययन', isMandatory: true },
     ],
     applySteps: [

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     // 1. Validate Indian 10-digit mobile number
     if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
       return NextResponse.json(
-        { success: false, message: 'कृपया १० अंकों का मान्य भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8, या 9 से शुरू)।' },
+        { success: false, message: 'कृपया 10 अंकों का मान्य भारतीय मोबाइल नंबर दर्ज करें (6, 7, 8, या 9 से शुरू)।' },
         { status: 400 }
       );
     }

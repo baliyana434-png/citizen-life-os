@@ -9,7 +9,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-upsc-cse-01',
     title: 'UPSC Civil Services Examination (CSE) 2026: IAS / IPS / IFS',
-    titleHi: 'संघ लोक सेवा आयोग (यूपीएससी) सिविल सेवा परीक्षा २०२६: आईएएस / आईपीएस',
+    titleHi: 'संघ लोक सेवा आयोग (यूपीएससी) सिविल सेवा परीक्षा 2026: आईएएस / आईपीएस',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [21, 35],
@@ -46,19 +46,19 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-nda-01',
     title: 'UPSC NDA & NA (National Defence Academy) Exam 2026',
-    titleHi: 'संघ लोक सेवा आयोग राष्ट्रीय रक्षा अकादमी (एनडीए) परीक्षा २०२६',
+    titleHi: 'संघ लोक सेवा आयोग राष्ट्रीय रक्षा अकादमी (एनडीए) परीक्षा 2026',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [16, 19],
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'exam_aspirant'],
     benefitHeadline: 'Direct Commission as Officer in Indian Army, Navy, Air Force + Free 4-Year B.Tech Degree',
-    benefitHeadlineHi: 'भारतीय थल सेना, नौसेना एवं वायुसेना में सैन्य अधिकारी पद + निःशुल्क ४-वर्षीय बीटेक डिग्री',
+    benefitHeadlineHi: 'भारतीय थल सेना, नौसेना एवं वायुसेना में सैन्य अधिकारी पद + निःशुल्क 4-वर्षीय बीटेक डिग्री',
     benefitAmount: 65000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Prestigious entry for 12th pass youth into Indian Armed Forces with full government sponsorship, training at Khadakwasla, Pune, and starting officer salary of ₹56,100.',
-    descriptionHi: '१२वीं पास युवाओं के लिए भारतीय सेना में लेफ्टिनेंट/फ्लाइंग ऑफिसर बनने का प्रतिष्ठित अवसर, निःशुल्क प्रशिक्षण एवं ₹५६,१०० प्रारंभिक वेतन।',
+    descriptionHi: '12वीं पास युवाओं के लिए भारतीय सेना में लेफ्टिनेंट/फ्लाइंग ऑफिसर बनने का प्रतिष्ठित अवसर, निःशुल्क प्रशिक्षण एवं ₹56,100 प्रारंभिक वेतन।',
     gazette: {
       circularNumber: 'UPSC/NDA-NA-I/2026/NOTICE',
       issuingAuthority: 'Union Public Service Commission (Govt of India)',
@@ -69,13 +69,13 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹100 (Female/SC/ST: ₹0 Free)'
     },
     documents: [
-      { id: 'd-nda-1', name: '10th & 12th Certificate (PCM)', nameHi: '१०वीं एवं १२वीं अंकतालिका', isMandatory: true },
+      { id: 'd-nda-1', name: '10th & 12th Certificate (PCM)', nameHi: '10वीं एवं 12वीं अंकतालिका', isMandatory: true },
       { id: 'd-nda-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Apply via UPSC OTR platform at upsconline.nic.in.', textHi: 'upsconline.nic.in पर यूपीएससी ओटीआर के माध्यम से आवेदन करें।' },
       { step: 2, text: 'Select service preference (Army, Navy, Air Force).', textHi: 'सेना प्राथमिकता (आर्मी, नेवी, एयरफोर्स) का चयन करें।' },
-      { step: 3, text: 'Download e-Admit Card 3 weeks prior to examination.', textHi: 'परीक्षा से ३ सप्ताह पूर्व आधिकारिक प्रवेश पत्र डाउनलोड करें।' }
+      { step: 3, text: 'Download e-Admit Card 3 weeks prior to examination.', textHi: 'परीक्षा से 3 सप्ताह पूर्व आधिकारिक प्रवेश पत्र डाउनलोड करें।' }
     ],
     tags: ['Defence', 'Army', 'Navy', 'Air Force', 'NDA'],
     is100PercentFree: false
@@ -83,7 +83,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-cds-01',
     title: 'UPSC Combined Defence Services (CDS) Exam 2026: IMA / OTA / INA / AFA',
-    titleHi: 'संघ लोक सेवा आयोग संयुक्त रक्षा सेवा (सीडीएस) परीक्षा २०२६',
+    titleHi: 'संघ लोक सेवा आयोग संयुक्त रक्षा सेवा (सीडीएस) परीक्षा 2026',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [19, 25],
@@ -112,7 +112,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Apply online on upsconline.nic.in.', textHi: 'upsconline.nic.in पर ऑनलाइन आवेदन पत्र भरें।' },
       { step: 2, text: 'Choose academy priority (IMA, OTA, INA, AFA).', textHi: 'अकादमी प्राथमिकता का चयन करें।' },
-      { step: 3, text: 'Attend UPSC written test followed by 5-day SSB interview.', textHi: 'लिखित परीक्षा एवं ५-दिवसीय एसएसबी साक्षात्कार में सम्मिलित हों।' }
+      { step: 3, text: 'Attend UPSC written test followed by 5-day SSB interview.', textHi: 'लिखित परीक्षा एवं 5-दिवसीय एसएसबी साक्षात्कार में सम्मिलित हों।' }
     ],
     tags: ['Defence Officer', 'Army', 'Navy', 'Air Force', 'CDS'],
     is100PercentFree: false
@@ -120,7 +120,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-capf-01',
     title: 'UPSC CAPF (AC) 2026: Central Armed Police Forces Assistant Commandant',
-    titleHi: 'यूपीएससी केंद्रीय सशस्त्र पुलिस बल (सीएपीएफ) सहायक कमांडेंट परीक्षा २०२६',
+    titleHi: 'यूपीएससी केंद्रीय सशस्त्र पुलिस बल (सीएपीएफ) सहायक कमांडेंट परीक्षा 2026',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [20, 25],
@@ -161,7 +161,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-cgl-01',
     title: 'SSC CGL 2026: Combined Graduate Level Recruitment (14,000+ Posts)',
-    titleHi: 'कर्मचारी चयन आयोग (एसएससी सीजीएल) २०२६ - १४,०००+ पद',
+    titleHi: 'कर्मचारी चयन आयोग (एसएससी सीजीएल) 2026 - 14,000+ पद',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 32],
@@ -198,19 +198,19 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-chsl-01',
     title: 'SSC CHSL 2026: Combined Higher Secondary (10+2) Level (3,700+ Posts)',
-    titleHi: 'कर्मचारी चयन आयोग (एसएससी सीएचएसएल) २०२६ (१०+२ स्तर क्लर्क एवं डीईओ भर्ती)',
+    titleHi: 'कर्मचारी चयन आयोग (एसएससी सीएचएसएल) 2026 (10+2 स्तर क्लर्क एवं डीईओ भर्ती)',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 27],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'school_student', 'college_student'],
     benefitHeadline: 'Lower Division Clerk (LDC), Junior Secretariat Assistant (JSA), Data Entry Operator (DEO) in Ministries',
-    benefitHeadlineHi: 'केंद्रीय मंत्रालयों में लोअर डिवीजन क्लर्क, डाटा एंट्री ऑपरेटर एवं सचिवालय सहायक पद (वेतन ₹३५,०००+)',
+    benefitHeadlineHi: 'केंद्रीय मंत्रालयों में लोअर डिवीजन क्लर्क, डाटा एंट्री ऑपरेटर एवं सचिवालय सहायक पद (वेतन ₹35,000+)',
     benefitAmount: 38000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Direct recruitment for 12th pass candidates across Indian Armed Forces HQ, CBI, Central Vigilance Commission, and Passport Offices.',
-    descriptionHi: '१२वीं पास युवाओं हेतु केंद्रीय मंत्रालयों एवं विभागों में प्रतिष्ठित कार्यालयी पदों पर स्थायी सरकारी भर्ती।',
+    descriptionHi: '12वीं पास युवाओं हेतु केंद्रीय मंत्रालयों एवं विभागों में प्रतिष्ठित कार्यालयी पदों पर स्थायी सरकारी भर्ती।',
     gazette: {
       circularNumber: 'SSC/CHSL-2026/EXAM-NOTICE',
       issuingAuthority: 'Staff Selection Commission (Govt of India)',
@@ -221,7 +221,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹100 (Women/SC/ST: ₹0 Free)'
     },
     documents: [
-      { id: 'd-chsl-1', name: '12th Standard Passing Marksheet', nameHi: '१२वीं उत्तीर्ण अंकतालिका', isMandatory: true },
+      { id: 'd-chsl-1', name: '12th Standard Passing Marksheet', nameHi: '12वीं उत्तीर्ण अंकतालिका', isMandatory: true },
       { id: 'd-chsl-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
@@ -235,14 +235,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ssc-gd-01',
     title: 'SSC GD Constable 2026: 39,000+ Posts in BSF, CISF, CRPF, ITBP, SSB, SSF',
-    titleHi: 'कर्मचारी चयन आयोग जीडी कांस्टेबल २०२६: ३९,०००+ पद अर्धसैनिक बल भर्ती',
+    titleHi: 'कर्मचारी चयन आयोग जीडी कांस्टेबल 2026: 39,000+ पद अर्धसैनिक बल भर्ती',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 23],
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'job_seeker'],
     benefitHeadline: 'Starting Salary of ₹30,000/Month + Free Housing, Ration Allowance & Uniform for 10th Pass Youths',
-    benefitHeadlineHi: '१०वीं पास युवाओं हेतु ₹३०,००० प्रारंभिक वेतन + सरकारी आवास, राशन भत्ता एवं पेंशन सुरक्षा',
+    benefitHeadlineHi: '10वीं पास युवाओं हेतु ₹30,000 प्रारंभिक वेतन + सरकारी आवास, राशन भत्ता एवं पेंशन सुरक्षा',
     benefitAmount: 32000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -258,13 +258,13 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹100 (Women / SC / ST / Ex-Servicemen: ₹0 Free)'
     },
     documents: [
-      { id: 'd-gd-1', name: '10th Class Marksheet & Board Certificate', nameHi: '१०वीं बोर्ड अंकतालिका', isMandatory: true },
+      { id: 'd-gd-1', name: '10th Class Marksheet & Board Certificate', nameHi: '10वीं बोर्ड अंकतालिका', isMandatory: true },
       { id: 'd-gd-2', name: 'Aadhaar Card & Domicile Certificate', nameHi: 'आधार कार्ड एवं मूल निवास प्रमाण पत्र', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Submit application on official ssc.gov.in portal.', textHi: 'आधिकारिक ssc.gov.in पोर्टल पर ऑनलाइन फॉर्म भरें।' },
       { step: 2, text: 'Select force preference (CISF, BSF, CRPF, ITBP, SSB).', textHi: 'सुरक्षा बल प्राथमिकता (सीआईएसएफ, बीएसएफ, सीआरपीएफ) चुनें।' },
-      { step: 3, text: 'Appear for Computer Based Test in 13 regional languages.', textHi: '१३ क्षेत्रीय भाषाओं में उपलब्ध कंप्यूटर परीक्षा में सम्मिलित हों।' }
+      { step: 3, text: 'Appear for Computer Based Test in 13 regional languages.', textHi: '13 क्षेत्रीय भाषाओं में उपलब्ध कंप्यूटर परीक्षा में सम्मिलित हों।' }
     ],
     tags: ['10th Pass', 'Police', 'BSF', 'CRPF', 'SSC GD'],
     is100PercentFree: false
@@ -272,14 +272,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ssc-mts-01',
     title: 'SSC MTS & Havaldar 2026: Multi-Tasking Staff in Central Govt Ministries (9,500+ Posts)',
-    titleHi: 'एसएससी एमटीएस एवं हवलदार २०२६: केंद्रीय मंत्रालयों में ९,५००+ पदों पर १०वीं पास भर्ती',
+    titleHi: 'एसएससी एमटीएस एवं हवलदार 2026: केंद्रीय मंत्रालयों में 9,500+ पदों पर 10वीं पास भर्ती',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 27],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'school_student'],
     benefitHeadline: 'Permanent Central Govt Job for 10th Pass Candidates (Level-1 Pay Scale: ₹24,000 - ₹28,000/Month)',
-    benefitHeadlineHi: '१०वीं पास उम्मीदवारों हेतु केंद्रीय मंत्रालयों में स्थायी सरकारी नौकरी (वेतनमान ₹२४,००० - ₹२८,०००)',
+    benefitHeadlineHi: '10वीं पास उम्मीदवारों हेतु केंद्रीय मंत्रालयों में स्थायी सरकारी नौकरी (वेतनमान ₹24,000 - ₹28,000)',
     benefitAmount: 28000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -295,7 +295,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹100 (Women / SC / ST / PwD: ₹0 Free)'
     },
     documents: [
-      { id: 'd-mts-1', name: '10th Standard Marksheet', nameHi: '१०वीं उत्तीर्ण अंकतालिका', isMandatory: true },
+      { id: 'd-mts-1', name: '10th Standard Marksheet', nameHi: '10वीं उत्तीर्ण अंकतालिका', isMandatory: true },
       { id: 'd-mts-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
@@ -313,7 +313,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ibps-po-01',
     title: 'IBPS PO 2026: Probationary Officer in 11 Public Sector Banks (4,000+ Vacancies)',
-    titleHi: 'आईबीपीएस पीओ २०२६: ११ राष्ट्रीयकृत बैंकों में प्रोबेशनरी ऑफिसर भर्ती',
+    titleHi: 'आईबीपीएस पीओ 2026: 11 राष्ट्रीयकृत बैंकों में प्रोबेशनरी ऑफिसर भर्ती',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [20, 30],
@@ -325,7 +325,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Institute of Banking Personnel Selection common recruitment process for graduate candidates across all major public sector banks in India.',
-    descriptionHi: 'देश के ११ प्रमुख सरकारी बैंकों में स्केल-१ अधिकारी के पदों पर सीधी राष्ट्रीय भर्ती परीक्षा।',
+    descriptionHi: 'देश के 11 प्रमुख सरकारी बैंकों में स्केल-1 अधिकारी के पदों पर सीधी राष्ट्रीय भर्ती परीक्षा।',
     gazette: {
       circularNumber: 'IBPS/CRP-PO-MT-XVI/2026',
       issuingAuthority: 'Institute of Banking Personnel Selection (IBPS)',
@@ -350,14 +350,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-sbi-po-01',
     title: 'State Bank of India (SBI) PO 2026: Premier Officer Recruitment (2,000+ Posts)',
-    titleHi: 'भारतीय स्टेट बैंक (एसबीआई) पीओ २०२६: शीर्ष बैंक अधिकारी भर्ती',
+    titleHi: 'भारतीय स्टेट बैंक (एसबीआई) पीओ 2026: शीर्ष बैंक अधिकारी भर्ती',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [21, 30],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'employed', 'college_student'],
     benefitHeadline: 'Highest Starting Salary in Banking Industry (₹68,000 - ₹75,000/Month) + 4 Advance Increments',
-    benefitHeadlineHi: 'बैंकिंग क्षेत्र में सर्वाधिक प्रारंभिक वेतन (₹६८,०००+) + ४ अग्रिम वेतनवृद्धियां एवं चिकित्सा सुविधा',
+    benefitHeadlineHi: 'बैंकिंग क्षेत्र में सर्वाधिक प्रारंभिक वेतन (₹68,000+) + 4 अग्रिम वेतनवृद्धियां एवं चिकित्सा सुविधा',
     benefitAmount: 72000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -387,14 +387,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ibps-clerk-01',
     title: 'IBPS Clerk 2026: Customer Service Associates in Nationalized Banks (6,500+ Posts)',
-    titleHi: 'आईबीपीएस क्लर्क २०२६: राष्ट्रीयकृत बैंकों में ६,५००+ पदों पर लिपिक संवर्ग भर्ती',
+    titleHi: 'आईबीपीएस क्लर्क 2026: राष्ट्रीयकृत बैंकों में 6,500+ पदों पर लिपिक संवर्ग भर्ती',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [20, 28],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'college_student'],
     benefitHeadline: 'Home State Posting, Fixed 5-Day Banking Hours, Starting Salary of ₹32,000 - ₹36,000/Month',
-    benefitHeadlineHi: 'गृह राज्य में पदस्थापना, निर्धारित कार्यालय समय एवं ₹३२,००० - ₹३६,००० प्रारंभिक वेतन',
+    benefitHeadlineHi: 'गृह राज्य में पदस्थापना, निर्धारित कार्यालय समय एवं ₹32,000 - ₹36,000 प्रारंभिक वेतन',
     benefitAmount: 34000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -425,20 +425,20 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ibps-rrb-01',
     title: 'IBPS RRB 2026 (CRP RRBs XV): 13,745 Vacancies in Regional Rural Banks Across India',
-    titleHi: 'आईबीपीएस आरआरबी २०२६: देश भर के ग्रामीण बैंकों में १३,७४५ पदों पर आधिकारिक भर्ती',
+    titleHi: 'आईबीपीएस आरआरबी 2026: देश भर के ग्रामीण बैंकों में 13,745 पदों पर आधिकारिक भर्ती',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 30],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'college_student', 'employed'],
     benefitHeadline: '13,745 Permanent Posts (Office Assistant & Scale I/II/III Officers) in 43 Regional Rural Banks with Home State Posting',
-    benefitHeadlineHi: '४३ क्षेत्रीय ग्रामीण बैंकों में १३,७४५ स्थायी पद (क्लर्क व स्केल १/२/३ अधिकारी) + गृह राज्य में पदस्थापना',
+    benefitHeadlineHi: '43 क्षेत्रीय ग्रामीण बैंकों में 13,745 स्थायी पद (क्लर्क व स्केल 1/2/3 अधिकारी) + गृह राज्य में पदस्थापना',
     benefitAmount: 48000,
     deadline: '2026-09-21',
     applicationStatus: 'active_now',
     isNew: true,
     description: 'Institute of Banking Personnel Selection official recruitment for 13,745 vacancies across 43 Regional Rural Banks (RRBs) in India. Application and fee submission active on ibps.in.',
-    descriptionHi: 'बैंकिंग कार्मिक चयन संस्थान द्वारा देश के ४३ ग्रामीण बैंकों में १३,७४५ पदों पर सीधी भर्ती। आधिकारिक पोर्टल ibps.in पर आवेदन प्रक्रिया सक्रिय है।',
+    descriptionHi: 'बैंकिंग कार्मिक चयन संस्थान द्वारा देश के 43 ग्रामीण बैंकों में 13,745 पदों पर सीधी भर्ती। आधिकारिक पोर्टल ibps.in पर आवेदन प्रक्रिया सक्रिय है।',
     gazette: {
       circularNumber: 'IBPS/CRP-RRBs-XV/2026/MEGA-DRIVE',
       issuingAuthority: 'Institute of Banking Personnel Selection (IBPS)',
@@ -467,14 +467,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-rrb-ntpc-01',
     title: 'Indian Railways RRB NTPC 2026 (11,500+ Station Master & Clerk Posts)',
-    titleHi: 'भारतीय रेलवे आरआरबी एनटीपीसी २०२६ (११,५००+ स्टेशन मास्टर एवं क्लर्क पद)',
+    titleHi: 'भारतीय रेलवे आरआरबी एनटीपीसी 2026 (11,500+ स्टेशन मास्टर एवं क्लर्क पद)',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 33],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'employed', 'college_student'],
     benefitHeadline: 'Central Railway Jobs (Level 2 to Level 6) with Free Railway Family Passes & Housing',
-    benefitHeadlineHi: 'केंद्रीय रेलवे पद (वेतनमान लेवल २ से ६) + परिवार हेतु निःशुल्क रेलवे पास एवं आवास',
+    benefitHeadlineHi: 'केंद्रीय रेलवे पद (वेतनमान लेवल 2 से 6) + परिवार हेतु निःशुल्क रेलवे पास एवं आवास',
     benefitAmount: 45000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -490,7 +490,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹500 (₹400 refunded after appearing in CBT-1)'
     },
     documents: [
-      { id: 'd-rrb-1', name: '12th Pass or Degree Certificate', nameHi: '१२वीं अथवा स्नातक उत्तीर्ण प्रमाण पत्र', isMandatory: true },
+      { id: 'd-rrb-1', name: '12th Pass or Degree Certificate', nameHi: '12वीं अथवा स्नातक उत्तीर्ण प्रमाण पत्र', isMandatory: true },
       { id: 'd-rrb-2', name: 'Aadhaar Card Linked Bank Account', nameHi: 'आधार से लिंक बैंक खाता विवरण', isMandatory: true }
     ],
     applySteps: [
@@ -504,19 +504,19 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-india-post-gds-01',
     title: 'India Post GDS 2026: Gramin Dak Sevak (44,228 Posts - 100% Zero Exam, 10th Merit)',
-    titleHi: 'भारतीय डाक विभाग जीडीएस २०२६: ग्रामीण डाक सेवक (४४,२२८ पद - बिना परीक्षा १०वीं मेरिट भर्ती)',
+    titleHi: 'भारतीय डाक विभाग जीडीएस 2026: ग्रामीण डाक सेवक (44,228 पद - बिना परीक्षा 10वीं मेरिट भर्ती)',
     category: 'govt_job',
     lifeStage: 'exams',
     targetAges: [18, 40],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'school_student', 'farmer', 'homemaker'],
     benefitHeadline: 'Branch Postmaster (BPM) & Assistant Branch Postmaster (ABPM) Positions with Direct 10th Marks Selection',
-    benefitHeadlineHi: 'बिना किसी परीक्षा के १०वीं के अंकों के आधार पर सीधे डाक विभाग में डाक सेवक पद पर चयन',
+    benefitHeadlineHi: 'बिना किसी परीक्षा के 10वीं के अंकों के आधार पर सीधे डाक विभाग में डाक सेवक पद पर चयन',
     benefitAmount: 18000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Department of Posts Gramin Dak Sevak (GDS) recruitment cycle. Merit lists and upcoming engagement schedule published on indiapostgdsonline.gov.in.',
-    descriptionHi: 'डाक विभाग ग्रामीण डाक सेवक (GDS) भर्ती चक्र। १०वीं मेरिट परिणाम एवं आगामी चक्र की जानकारी indiapostgdsonline.gov.in पर देखें।',
+    descriptionHi: 'डाक विभाग ग्रामीण डाक सेवक (GDS) भर्ती चक्र। 10वीं मेरिट परिणाम एवं आगामी चक्र की जानकारी indiapostgdsonline.gov.in पर देखें।',
     gazette: {
       circularNumber: 'POSTS/GDS/ONLINE-ENGAGEMENT/2026/SCHEDULE-II',
       issuingAuthority: 'Department of Posts, Ministry of Communications',
@@ -527,12 +527,12 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹100 (Female / SC / ST / PwD / Transgender: ₹0 Free)'
     },
     documents: [
-      { id: 'd-gds-1', name: 'Class 10th Marksheet (with Math & English)', nameHi: '१०वीं अंकतालिका (गणित एवं अंग्रेजी अनिवार्य)', isMandatory: true },
+      { id: 'd-gds-1', name: 'Class 10th Marksheet (with Math & English)', nameHi: '10वीं अंकतालिका (गणित एवं अंग्रेजी अनिवार्य)', isMandatory: true },
       { id: 'd-gds-2', name: 'Aadhaar Card & Basic Computer Training Certificate (60 days)', nameHi: 'आधार कार्ड एवं बुनियादी कंप्यूटर ज्ञान प्रमाण', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Register on indiapostgdsonline.gov.in with 10th Roll Number.', textHi: 'indiapostgdsonline.gov.in पर १०वीं रोल नंबर से पंजीकरण करें।' },
-      { step: 2, text: 'Choose division and up to 20 post office preferences in your district.', textHi: 'अपने जिले के डाकघरों की २० प्राथमिकताएं चुनें।' },
+      { step: 1, text: 'Register on indiapostgdsonline.gov.in with 10th Roll Number.', textHi: 'indiapostgdsonline.gov.in पर 10वीं रोल नंबर से पंजीकरण करें।' },
+      { step: 2, text: 'Choose division and up to 20 post office preferences in your district.', textHi: 'अपने जिले के डाकघरों की 20 प्राथमिकताएं चुनें।' },
       { step: 3, text: 'Submit application. System-generated merit lists released in phases.', textHi: 'आवेदन जमा करें और कम्प्यूटरीकृत मेरिट सूची में नाम देखें।' }
     ],
     tags: ['India Post', 'No Exam Job', '10th Pass', 'GDS'],
@@ -543,14 +543,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-gate-01',
     title: 'GATE 2026: Graduate Aptitude Test in Engineering (PSU Recruitment & IIT M.Tech)',
-    titleHi: 'गेट २०२६: ग्रेजुएट एप्टीट्यूड टेस्ट इन इंजीनियरिंग (पीएसयू सीधी भर्ती एवं एमटेक)',
+    titleHi: 'गेट 2026: ग्रेजुएट एप्टीट्यूड टेस्ट इन इंजीनियरिंग (पीएसयू सीधी भर्ती एवं एमटेक)',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [20, 45],
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'employed', 'job_seeker'],
     benefitHeadline: 'Direct PSU Executive Trainee Recruitment (ONGC, IOCL, NTPC, BHEL) with ₹18 - ₹24 Lakh Package + M.Tech Stipend',
-    benefitHeadlineHi: 'ओएनजीसी, आईओसीएल, एनटीपीसी जैसी महारत्न कंपनियों में सीधी अधिकारी भर्ती + ₹१२,४०० मासिक छात्रवृत्ति',
+    benefitHeadlineHi: 'ओएनजीसी, आईओसीएल, एनटीपीसी जैसी महारत्न कंपनियों में सीधी अधिकारी भर्ती + ₹12,400 मासिक छात्रवृत्ति',
     benefitAmount: 2000000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -566,12 +566,12 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹1,800 (General) / ₹900 (Female / SC / ST / PwD)'
     },
     documents: [
-      { id: 'd-gate-1', name: 'B.E. / B.Tech Degree Certificate or 3rd/4th Year Proof', nameHi: 'बीटेक उपाधि अथवा ३रे/४थे वर्ष का प्रमाण', isMandatory: true },
+      { id: 'd-gate-1', name: 'B.E. / B.Tech Degree Certificate or 3rd/4th Year Proof', nameHi: 'बीटेक उपाधि अथवा 3रे/4थे वर्ष का प्रमाण', isMandatory: true },
       { id: 'd-gate-2', name: 'Valid Photo ID (Aadhaar / Passport)', nameHi: 'वैध पहचान पत्र (आधार या पासपोर्ट)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register on GOAPS portal at gate.iitr.ac.in.', textHi: 'GOAPS पोर्टल पर ऑनलाइन पंजीकरण करें।' },
-      { step: 2, text: 'Choose 1 or 2 engineering papers and select 3 test cities.', textHi: 'इंजीनियरिंग विषय और ३ परीक्षा शहरों का चयन करें।' },
+      { step: 2, text: 'Choose 1 or 2 engineering papers and select 3 test cities.', textHi: 'इंजीनियरिंग विषय और 3 परीक्षा शहरों का चयन करें।' },
       { step: 3, text: 'Appear for Computer Based Test in February.', textHi: 'फरवरी में आयोजित कंप्यूटर परीक्षा में शामिल हों।' }
     ],
     tags: ['GATE', 'PSU Jobs', 'Engineering', 'M.Tech'],
@@ -584,7 +584,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ctet-01',
     title: 'CTET 2026: Central Teacher Eligibility Test (Primary & Upper Primary)',
-    titleHi: 'सीटेट २०२६: केंद्रीय शिक्षक पात्रता परीक्षा (प्राथमिक एवं उच्च प्राथमिक)',
+    titleHi: 'सीटेट 2026: केंद्रीय शिक्षक पात्रता परीक्षा (प्राथमिक एवं उच्च प्राथमिक)',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [18, 50],
@@ -596,7 +596,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'National examination conducted by CBSE certifying candidates as qualified teachers for Classes I to VIII in central and state government schools with lifetime validity.',
-    descriptionHi: 'सीबीएसई द्वारा केंद्रीय व राज्य विद्यालयों में कक्षा १ से ८ तक सरकारी शिक्षक भर्ती हेतु आयोजित राष्ट्रीय पात्रता परीक्षा।',
+    descriptionHi: 'सीबीएसई द्वारा केंद्रीय व राज्य विद्यालयों में कक्षा 1 से 8 तक सरकारी शिक्षक भर्ती हेतु आयोजित राष्ट्रीय पात्रता परीक्षा।',
     gazette: {
       circularNumber: 'CBSE/CTET/2026/INFORMATION-BULLETIN',
       issuingAuthority: 'Central Board of Secondary Education (CBSE)',
@@ -612,7 +612,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Register on official portal ctet.nic.in.', textHi: 'ctet.nic.in पर आधार एवं शैक्षणिक विवरण से पंजीकरण करें।' },
-      { step: 2, text: 'Select Paper 1 (Class 1-5), Paper 2 (Class 6-8), or Both.', textHi: 'पेपर १, पेपर २ अथवा दोनों का चयन करें।' },
+      { step: 2, text: 'Select Paper 1 (Class 1-5), Paper 2 (Class 6-8), or Both.', textHi: 'पेपर 1, पेपर 2 अथवा दोनों का चयन करें।' },
       { step: 3, text: 'Pay examination fee and download Confirmation Page.', textHi: 'सरकारी परीक्षा शुल्क जमा कर पुष्टिकरण रसीद सुरक्षित करें।' }
     ],
     tags: ['Teaching', 'Govt Teacher', 'CTET', 'CBSE'],
@@ -621,14 +621,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ugc-net-01',
     title: 'NTA UGC NET 2026: Assistant Professorship & Junior Research Fellowship',
-    titleHi: 'एनटीए यूजीसी नेट २०२६: विश्वविद्यालय सहायक प्रोफेसर एवं शोध फेलोशिप',
+    titleHi: 'एनटीए यूजीसी नेट 2026: विश्वविद्यालय सहायक प्रोफेसर एवं शोध फेलोशिप',
     category: 'competitive_exam',
     lifeStage: 'exams',
     targetAges: [21, 65],
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'employed', 'college_student'],
     benefitHeadline: 'Lifetime UGC Eligibility for Assistant Professor in 1,100+ Universities + ₹37,000/Month JRF Stipend',
-    benefitHeadlineHi: 'देश के १,१००+ विश्वविद्यालयों में प्रोफेसर पद हेतु आजीवन पात्रता + ₹३७,००० मासिक जेआरएफ छात्रवृत्ति',
+    benefitHeadlineHi: 'देश के 1,100+ विश्वविद्यालयों में प्रोफेसर पद हेतु आजीवन पात्रता + ₹37,000 मासिक जेआरएफ छात्रवृत्ति',
     benefitAmount: 444000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -649,7 +649,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Register on official portal ugcnet.nta.ac.in with Aadhaar verification.', textHi: 'ugcnet.nta.ac.in पर आधार सत्यापन के साथ ऑनलाइन पंजीकरण करें।' },
-      { step: 2, text: 'Choose subject from 83 streams and preferred examination city.', textHi: '८३ विषयों में से अपने विषय और परीक्षा शहर का चयन करें।' },
+      { step: 2, text: 'Choose subject from 83 streams and preferred examination city.', textHi: '83 विषयों में से अपने विषय और परीक्षा शहर का चयन करें।' },
       { step: 3, text: 'Submit fee online and save application confirmation form.', textHi: 'ऑनलाइन शुल्क का भुगतान करें और पुष्टिकरण प्रपत्र सुरक्षित रखें।' }
     ],
     tags: ['Professorship', 'UGC NET', 'NTA', 'Adult Higher Education'],
@@ -670,7 +670,7 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'business_owner', 'homemaker'],
     benefitHeadline: '100% Free 15-Day Certified Training with ₹500 Daily Stipend + Bank Loan Eligibility Certificate',
-    benefitHeadlineHi: '१५ दिवसीय निःशुल्क प्रशिक्षण + ₹५०० दैनिक भत्ता एवं बैंक ऋण पात्रता प्रमाण पत्र',
+    benefitHeadlineHi: '15 दिवसीय निःशुल्क प्रशिक्षण + ₹500 दैनिक भत्ता एवं बैंक ऋण पात्रता प्रमाण पत्र',
     benefitAmount: 15000,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'active_now',
@@ -699,14 +699,14 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-pmkvy-rpl-01',
     title: 'PMKVY 4.0 RPL: Free Govt Skill Certificate + ₹500 DBT for Experienced Citizens',
-    titleHi: 'प्रधानमंत्री कौशल विकास योजना (RPL): निःशुल्क सरकारी कौशल प्रमाण पत्र + ₹५०० बैंक में',
+    titleHi: 'प्रधानमंत्री कौशल विकास योजना (RPL): निःशुल्क सरकारी कौशल प्रमाण पत्र + ₹500 बैंक में',
     category: 'skill_roadmap',
     lifeStage: 'exams',
     targetAges: [18, 65],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'business_owner', 'homemaker', 'employed', 'job_seeker'],
     benefitHeadline: 'Official Skill India Digital Certificate + ₹500 DBT Cash Reward + Free ₹2 Lakh Accident Insurance',
-    benefitHeadlineHi: 'आधिकारिक स्किल इंडिया डिजिटल सर्टिफिकेट + ₹५०० नकद प्रोत्साहन + ₹२ लाख का निःशुल्क दुर्घटना बीमा',
+    benefitHeadlineHi: 'आधिकारिक स्किल इंडिया डिजिटल सर्टिफिकेट + ₹500 नकद प्रोत्साहन + ₹2 लाख का निःशुल्क दुर्घटना बीमा',
     benefitAmount: 5000,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'active_now',
@@ -723,12 +723,12 @@ export const EXAM_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-pmkvy-1', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true },
-      { id: 'd-pmkvy-2', name: 'Bank Account linked with Aadhaar (for ₹500 DBT)', nameHi: 'आधार से लिंक बैंक खाता (₹५०० प्रोत्साहन राशि हेतु)', isMandatory: true }
+      { id: 'd-pmkvy-2', name: 'Bank Account linked with Aadhaar (for ₹500 DBT)', nameHi: 'आधार से लिंक बैंक खाता (₹500 प्रोत्साहन राशि हेतु)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Search nearest Pradhan Mantri Kaushal Kendra (PMKK) on skillindia.gov.in.', textHi: 'skillindia.gov.in पर अपने शहर का कौशल केंद्र खोजें।' },
-      { step: 2, text: 'Register for 12-hour orientation and trade assessment.', textHi: '१२ घंटे के ओरिएंटेशन एवं कार्य मूल्यांकन हेतु पंजीकरण करवाएं।' },
-      { step: 3, text: 'Get certified and receive ₹500 direct in bank account.', textHi: 'सफलतापूर्वक मूल्यांकन उपरांत प्रमाण पत्र व ₹५०० बैंक में प्राप्त करें।' }
+      { step: 2, text: 'Register for 12-hour orientation and trade assessment.', textHi: '12 घंटे के ओरिएंटेशन एवं कार्य मूल्यांकन हेतु पंजीकरण करवाएं।' },
+      { step: 3, text: 'Get certified and receive ₹500 direct in bank account.', textHi: 'सफलतापूर्वक मूल्यांकन उपरांत प्रमाण पत्र व ₹500 बैंक में प्राप्त करें।' }
     ],
     tags: ['Skill India', 'Govt Certificate', 'DBT Direct Cash', 'Adult Skills'],
     is100PercentFree: true

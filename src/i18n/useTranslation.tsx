@@ -24,6 +24,11 @@ const dictionaries: Record<SupportedLanguage, any> = {
   ar: arDict,
 };
 
+export function toMathDigits(str: string): string {
+  if (!str || typeof str !== 'string') return str;
+  return str.replace(/[०-९]/g, (d) => String('०१२३४५६७८९'.indexOf(d)));
+}
+
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export function TranslationProvider({ children }: { children: React.ReactNode }) {
@@ -64,10 +69,10 @@ export function TranslationProvider({ children }: { children: React.ReactNode })
             return keyPath;
           }
         }
-        return typeof fallback === 'string' ? fallback : keyPath;
+        return typeof fallback === 'string' ? toMathDigits(fallback) : keyPath;
       }
     }
-    return typeof current === 'string' ? current : keyPath;
+    return typeof current === 'string' ? toMathDigits(current) : keyPath;
   };
 
   return (

@@ -7,18 +7,18 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-skill-ai-01',
     title: 'AI Prompt Engineering & Workflow Automation: Complete Free Roadmap',
-    titleHi: 'एआई प्रॉम्प्ट इंजीनियरिंग एवं वर्कफ़्लो ऑटोमेशन: १००% निःशुल्क संपूर्ण रोडमैप',
+    titleHi: 'एआई प्रॉम्प्ट इंजीनियरिंग एवं वर्कफ़्लो ऑटोमेशन: 100% निःशुल्क संपूर्ण रोडमैप',
     category: 'skill_roadmap',
     lifeStage: 'career',
     targetAges: [16, 50],
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed', 'business_owner'],
     benefitHeadline: 'Learn to Automate Business Tasks Using LLMs & Make ₹50,000 - ₹1.5 Lakh/Month as Freelance Consultant',
-    benefitHeadlineHi: 'एआई की मदद से जटिल कार्य ऑटोमेट करना सीखें एवं ₹५०,००० - ₹१.५ लाख प्रतिमाह तक कमाएं',
+    benefitHeadlineHi: 'एआई की मदद से जटिल कार्य ऑटोमेट करना सीखें एवं ₹50,000 - ₹1.5 लाख प्रतिमाह तक कमाएं',
     benefitAmount: 65000,
     deadline: 'OPEN_ROUND',
     description: 'Curated 6-week self-paced roadmap using 100% free courses from DeepLearning.AI, Harvard CS50, and official OpenAI documentation with zero subscription cost.',
-    descriptionHi: 'हार्वर्ड और डीपलर्निंग एआई द्वारा संचालित ६ सप्ताह का निःशुल्क कोर्स जिससे बिना कोडिंग के एआई टूल्स चलाकर उच्च आय प्राप्त की जा सकती है।',
+    descriptionHi: 'हार्वर्ड और डीपलर्निंग एआई द्वारा संचालित 6 सप्ताह का निःशुल्क कोर्स जिससे बिना कोडिंग के एआई टूल्स चलाकर उच्च आय प्राप्त की जा सकती है।',
     gazette: {
       circularNumber: 'SKILL-AI-FREE-2026/CURATED',
       issuingAuthority: 'Citizen Life OS Free Skills Council',
@@ -32,7 +32,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Start with free Prompt Engineering Guide at learnprompting.org.', textHi: 'learnprompting.org पर निःशुल्क गाइड से शुरुआत करें।' },
       { step: 2, text: 'Complete DeepLearning.AI ChatGPT Prompt Engineering for Developers (Free).', textHi: 'डीपलर्निंग.एआई का निःशुल्क सर्टिफिकेट कोर्स पूरा करें।' },
-      { step: 3, text: 'Build 3 automation workflows on Zapier / Make free tier to showcase to clients.', textHi: 'क्लाइंट्स को दिखाने हेतु ३ लाइव ऑटोमेशन प्रोजेक्ट तैयार करें।' }
+      { step: 3, text: 'Build 3 automation workflows on Zapier / Make free tier to showcase to clients.', textHi: 'क्लाइंट्स को दिखाने हेतु 3 लाइव ऑटोमेशन प्रोजेक्ट तैयार करें।' }
     ],
     tags: ['High Income Skill', 'Free AI Course', 'Freelancing'],
     is100PercentFree: true,
@@ -48,7 +48,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker', 'homemaker'],
     benefitHeadline: 'Master Short-Form & Long-Form Video Storytelling and Earn $500 - $2,000 Per International Client',
-    benefitHeadlineHi: 'शॉर्ट्स एवं यूट्यूब वीडियो एडिटिंग सीखकर अंतरराष्ट्रीय क्लाइंट्स से $५०० - $२,००० प्रति माह कमाएं',
+    benefitHeadlineHi: 'शॉर्ट्स एवं यूट्यूब वीडियो एडिटिंग सीखकर अंतरराष्ट्रीय क्लाइंट्स से $500 - $2,000 प्रति माह कमाएं',
     benefitAmount: 85000,
     deadline: 'OPEN_ROUND',
     description: 'Learn color grading, sound design, and hook pacing on DaVinci Resolve (100% free software used by Hollywood studios) with zero pirated plugins.',
@@ -65,8 +65,8 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     documents: [],
     applySteps: [
       { step: 1, text: 'Download official free DaVinci Resolve from blackmagicdesign.com.', textHi: 'आधिकारिक वेबसाइट से निःशुल्क डाविंची रिजॉल्व सॉफ्टवेयर डाउनलोड करें।' },
-      { step: 2, text: 'Follow Blackmagic official 10-part certified training videos on YouTube.', textHi: 'ब्लैकमैजिक के आधिकारिक १०-भागों वाले यूट्यूब ट्यूटोरियल देखें।' },
-      { step: 3, text: 'Create a 3-video portfolio and reach out to creators on Twitter/LinkedIn.', textHi: '३ वीडियो का पोर्टफोलियो बनाकर सोशल मीडिया पर क्रिएटर्स से संपर्क करें।' }
+      { step: 2, text: 'Follow Blackmagic official 10-part certified training videos on YouTube.', textHi: 'ब्लैकमैजिक के आधिकारिक 10-भागों वाले यूट्यूब ट्यूटोरियल देखें।' },
+      { step: 3, text: 'Create a 3-video portfolio and reach out to creators on Twitter/LinkedIn.', textHi: '3 वीडियो का पोर्टफोलियो बनाकर सोशल मीडिया पर क्रिएटर्स से संपर्क करें।' }
     ],
     tags: ['Video Editing', 'Remote Earning', 'Creative Skill'],
     is100PercentFree: true
@@ -81,7 +81,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'farmer', 'business_owner'],
     benefitHeadline: 'Earn ₹30,000 - ₹60,000/Month Providing 400+ Govt G2C and B2C Services in Your Village/Ward',
-    benefitHeadlineHi: 'गांव या कस्बे में डिजिटल सेवा केंद्र खोलकर ₹३०,००० - ₹६०,००० प्रतिमाह की स्थायी आय कमाएं',
+    benefitHeadlineHi: 'गांव या कस्बे में डिजिटल सेवा केंद्र खोलकर ₹30,000 - ₹60,000 प्रतिमाह की स्थायी आय कमाएं',
     benefitAmount: 45000,
     deadline: 'OPEN_ROUND',
     description: 'Special Purpose Vehicle under Ministry of Electronics & IT (MeitY) allowing citizens to run government kiosks providing PAN, Passport, PM-Kisan, and Banking services.',
@@ -117,7 +117,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Master JavaScript, React, Node.js & Next.js to Land ₹6 LPA - ₹18 LPA Software Engineering Roles',
-    benefitHeadlineHi: 'बिना किसी महंगे बूटकैंप के घर बैठे कोडिंग सीखकर ₹६ लाख से ₹१८ लाख का सॉफ्टवेयर इंजीनियर पैकेज पाएं',
+    benefitHeadlineHi: 'बिना किसी महंगे बूटकैंप के घर बैठे कोडिंग सीखकर ₹6 लाख से ₹18 लाख का सॉफ्टवेयर इंजीनियर पैकेज पाएं',
     benefitAmount: 70000,
     deadline: 'OPEN_ROUND',
     description: '100% open-source curriculum trusted globally by millions of developers. Includes real-world project assignments, Git version control, and Discord community code reviews with zero paywalls.',
@@ -134,7 +134,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     documents: [],
     applySteps: [
       { step: 1, text: 'Start with The Odin Project Foundations course at theodinproject.com.', textHi: 'theodinproject.com पर जाकर फाउंडेशन कोर्स से शुरुआत करें।' },
-      { step: 2, text: 'Build 5 real-world GitHub projects (Calculator, Weather App, Full-Stack E-Commerce).', textHi: '५ लाइव प्रोजेक्ट्स बनाकर अपने गिटहब अकाउंट पर अपलोड करें।' },
+      { step: 2, text: 'Build 5 real-world GitHub projects (Calculator, Weather App, Full-Stack E-Commerce).', textHi: '5 लाइव प्रोजेक्ट्स बनाकर अपने गिटहब अकाउंट पर अपलोड करें।' },
       { step: 3, text: 'Apply for remote developer jobs or freelance contracts on GitHub Jobs and Wellfound.', textHi: 'अपने प्रोजेक्ट पोर्टफोलियो के साथ रिमोट या ऑन-साइट नौकरियों के लिए आवेदन करें।' }
     ],
     tags: ['Coding', 'Web Development', 'Full-Stack', 'Free Education', 'High Salary'],
@@ -150,11 +150,11 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Industry-Recognized Google Credential Qualifying You for ₹4.5 LPA - ₹12 LPA Tech Roles + Financial Aid',
-    benefitHeadlineHi: 'गूगल द्वारा प्रमाणित सर्टिफिकेट जिससे बिना डिग्री के भी ₹४.५ लाख से ₹१२ लाख की टेक नौकरियां मिलती हैं',
+    benefitHeadlineHi: 'गूगल द्वारा प्रमाणित सर्टिफिकेट जिससे बिना डिग्री के भी ₹4.5 लाख से ₹12 लाख की टेक नौकरियां मिलती हैं',
     benefitAmount: 50000,
     deadline: 'OPEN_ROUND',
     description: 'Professional certificates designed by Google engineers on Coursera to fast-track job readiness in 3 to 6 months. 100% tuition fee waiver available via Coursera Financial Aid for all Indian students.',
-    descriptionHi: 'गूगल के इंजीनियरों द्वारा तैयार किए गए प्रोफेशनल कोर्सेज। कोर्सएरा फाइनेंशियल एड के जरिए भारतीय छात्रों को यह कोर्स १००% निःशुल्क मिल जाता है।',
+    descriptionHi: 'गूगल के इंजीनियरों द्वारा तैयार किए गए प्रोफेशनल कोर्सेज। कोर्सएरा फाइनेंशियल एड के जरिए भारतीय छात्रों को यह कोर्स 100% निःशुल्क मिल जाता है।',
     gazette: {
       circularNumber: 'GOOGLE-GROW-WITH-GOOGLE/2026/IN',
       issuingAuthority: 'Grow with Google & Coursera Open Initiative',
@@ -169,7 +169,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Visit grow.google/certificates and select your field (Data Analytics, Cyber, IT).', textHi: 'grow.google/certificates पर अपनी पसंद का विषय चुनें।' },
-      { step: 2, text: 'On Coursera page, click "Financial Aid Available", enter ₹0 annual income, and write your study goal.', textHi: 'कोर्सएरा पर फाइनेंशियल एड चुनकर १००% फीस माफी हेतु आवेदन सबमिट करें।' },
+      { step: 2, text: 'On Coursera page, click "Financial Aid Available", enter ₹0 annual income, and write your study goal.', textHi: 'कोर्सएरा पर फाइनेंशियल एड चुनकर 100% फीस माफी हेतु आवेदन सबमिट करें।' },
       { step: 3, text: 'Complete weekly modules, earn official Google badge, and share on LinkedIn.', textHi: 'कोर्स पूरा कर लिंक्डइन पर गूगल का डिजिटल बैज प्रदर्शित करें।' }
     ],
     tags: ['Google Certificate', 'Data Analytics', 'Cybersecurity', 'Free with Aid', 'Job Ready'],
@@ -185,7 +185,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'college_student'],
     benefitHeadline: '600-Hour Residential Technical Certification + 100% Assured Placement in Solar EPC Firms (₹22,000 - ₹38,000/Month)',
-    benefitHeadlineHi: '६०० घंटे का आवासीय तकनीकी प्रशिक्षण + सोलर कंपनियों में ₹२२,००० - ₹३८,००० वेतन पर सीधी नौकरी',
+    benefitHeadlineHi: '600 घंटे का आवासीय तकनीकी प्रशिक्षण + सोलर कंपनियों में ₹22,000 - ₹38,000 वेतन पर सीधी नौकरी',
     benefitAmount: 35000,
     deadline: 'OPEN_ROUND',
     description: 'National Institute of Solar Energy (NISE) flagship program training youth in installation, commissioning, and maintenance of rooftop and utility solar plants under PM Surya Ghar Yojana.',
@@ -200,13 +200,13 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Govt Funded Residential Program)'
     },
     documents: [
-      { id: 'd-surya-1', name: '10th Marksheet + ITI (Electrician/Wireman) or Diploma (Electrical/Mechanical)', nameHi: '१०वीं अंकतालिका + आईटीआई अथवा डिप्लोमा प्रमाण पत्र', isMandatory: true },
-      { id: 'd-surya-2', name: 'Aadhaar Card and 2 Passport Photos', nameHi: 'आधार कार्ड एवं २ पासपोर्ट फोटो', isMandatory: true }
+      { id: 'd-surya-1', name: '10th Marksheet + ITI (Electrician/Wireman) or Diploma (Electrical/Mechanical)', nameHi: '10वीं अंकतालिका + आईटीआई अथवा डिप्लोमा प्रमाण पत्र', isMandatory: true },
+      { id: 'd-surya-2', name: 'Aadhaar Card and 2 Passport Photos', nameHi: 'आधार कार्ड एवं 2 पासपोर्ट फोटो', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Check list of accredited Suryamitra training centers in your district on suryamitra.nise.res.in.', textHi: 'suryamitra.nise.res.in पोर्टल पर अपने जिले के ट्रेनिंग सेंटर की सूची देखें।' },
       { step: 2, text: 'Visit the training center with ITI/Diploma certificates for registration.', textHi: 'प्रमाण पत्रों के साथ नजदीकी सूर्यमित्र केंद्र पर संपर्क करें।' },
-      { step: 3, text: 'Complete 3-month course and clear Skill Council for Green Jobs (SCGJ) assessment.', textHi: '३ माह का कोर्स पूरा कर सरकारी प्रमाण पत्र व नौकरी प्राप्त करें।' }
+      { step: 3, text: 'Complete 3-month course and clear Skill Council for Green Jobs (SCGJ) assessment.', textHi: '3 माह का कोर्स पूरा कर सरकारी प्रमाण पत्र व नौकरी प्राप्त करें।' }
     ],
     tags: ['Suryamitra', 'Solar Energy', 'Free Training', 'Govt Job Placement', 'PM Surya Ghar'],
     is100PercentFree: true
@@ -257,7 +257,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker'],
     benefitHeadline: 'Instant Verification of 1,200+ Universities & Fake University Blacklist to Protect Your Career & Fees',
-    benefitHeadlineHi: '१,२००+ विश्वविद्यालयों की वास्तविक मान्यता जांचें व फर्जी संस्थानों की ब्लैकलिस्ट से अपना भविष्य बचाएं',
+    benefitHeadlineHi: '1,200+ विश्वविद्यालयों की वास्तविक मान्यता जांचें व फर्जी संस्थानों की ब्लैकलिस्ट से अपना भविष्य बचाएं',
     benefitAmount: 0,
     deadline: 'OPEN_ROUND',
     description: 'Centralized directory by UGC and AICTE to verify whether an educational institution or distance degree holds valid statutory approvals before students invest hard-earned money.',
@@ -291,7 +291,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'employed'],
     benefitHeadline: 'Direct Overseas Employment (Salary: ₹1.2 Lakh - ₹3.5 Lakh/Month) + Official Govt Pre-Departure Training',
-    benefitHeadlineHi: 'सीधे विदेशी रोजगार (वेतन: ₹१.२ लाख से ₹३.५ लाख प्रतिमाह) + सरकारी भाषा व कार्य प्रशिक्षण',
+    benefitHeadlineHi: 'सीधे विदेशी रोजगार (वेतन: ₹1.2 लाख से ₹3.5 लाख प्रतिमाह) + सरकारी भाषा व कार्य प्रशिक्षण',
     benefitAmount: 180000,
     deadline: 'OPEN_ROUND',
     description: 'National Skill Development Corporation (NSDC) International facilitates ethical government-to-government overseas recruitment of skilled Indian nurses, technicians, engineers, hospitality workers, and construction managers in Germany, Japan (TITP/SSW), Taiwan, and GCC nations.',
@@ -306,7 +306,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: 'Transparent Standard Processing Fee (Govt MoU)'
     },
     documents: [
-      { id: 'd-nsdc-1', name: 'Valid Indian Passport (Min 2 Years Validity)', nameHi: 'वैध भारतीय पासपोर्ट (न्यूनतम २ वर्ष की वैधता)', isMandatory: true },
+      { id: 'd-nsdc-1', name: 'Valid Indian Passport (Min 2 Years Validity)', nameHi: 'वैध भारतीय पासपोर्ट (न्यूनतम 2 वर्ष की वैधता)', isMandatory: true },
       { id: 'd-nsdc-2', name: 'Diploma / Degree / ITI in Relevant Trade or Nursing', nameHi: 'संबंधित ट्रेड में डिप्लोमा, डिग्री अथवा नर्सिंग सर्टिफिकेट', isMandatory: true }
     ],
     applySteps: [

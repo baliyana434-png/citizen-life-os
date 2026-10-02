@@ -262,7 +262,7 @@ export default function FormsPage() {
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-800 text-xs font-bold border border-red-200 transition-all"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>{language === 'hi' ? '२४x७ हेल्पलाइन' : '24x7 Helplines'}</span>
+                <span>{language === 'hi' ? '24x7 हेल्पलाइन' : '24x7 Helplines'}</span>
               </Link>
 
               {/* 6-Language Switcher */}

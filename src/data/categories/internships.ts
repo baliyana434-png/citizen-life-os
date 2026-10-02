@@ -4,7 +4,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-aicte-portal-intern-01',
     title: 'AICTE National Internship Portal: 1,00,000+ Verified Corporate Internships for College Students',
-    titleHi: 'एआईसीटीई राष्ट्रीय इंटर्नशिप पोर्टल: कॉलेज छात्रों हेतु १,००,०००+ सत्यापित कॉर्पोरेट इंटर्नशिप्स',
+    titleHi: 'एआईसीटीई राष्ट्रीय इंटर्नशिप पोर्टल: कॉलेज छात्रों हेतु 1,00,000+ सत्यापित कॉर्पोरेट इंटर्नशिप्स',
     category: 'internship',
     applicationStatus: 'active_now',
     lifeStage: 'internships',
@@ -12,7 +12,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Pan-India Corporate & Govt Internships (₹8,000 - ₹35,000/Month Stipend) + Academic Credit Transfer',
-    benefitHeadlineHi: 'अखिल भारतीय स्तर पर ₹८,००० से ₹३५,००० मासिक वजीफे पर इंटर्नशिप + कॉलेज क्रेडिट प्रमाण पत्र',
+    benefitHeadlineHi: 'अखिल भारतीय स्तर पर ₹8,000 से ₹35,000 मासिक वजीफे पर इंटर्नशिप + कॉलेज क्रेडिट प्रमाण पत्र',
     benefitAmount: 25000,
     deadline: 'OPEN_ROUND',
     description: 'Official portal launched by All India Council for Technical Education connecting engineering, diploma, management, and general degree students with direct verified internships in top companies (CISCO, IBM, NHAI, smart cities, and tech giants).',
@@ -42,7 +42,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-pm-internship-01',
     title: 'PM Internship Scheme 2026: 12-Month Paid Internship in Top 500 Companies',
-    titleHi: 'प्रधानमंत्री इंटर्नशिप योजना २०२६: भारत की शीर्ष ५०० कंपनियों में १ वर्ष की सवेतन इंटर्नशिप',
+    titleHi: 'प्रधानमंत्री इंटर्नशिप योजना 2026: भारत की शीर्ष 500 कंपनियों में 1 वर्ष की सवेतन इंटर्नशिप',
     category: 'internship',
     applicationStatus: 'active_now',
     lifeStage: 'internships',
@@ -50,11 +50,11 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: '₹5,000/Month Govt Stipend + ₹6,000 One-Time Grant + 12 Months Corporate Experience in Top 500 Companies',
-    benefitHeadlineHi: '₹५,००० प्रतिमाह वजीफा + ₹६,००० एकमुश्त सहायता + भारत की शीर्ष ५०० कंपनियों में १ वर्ष का अनुभव',
+    benefitHeadlineHi: '₹5,000 प्रतिमाह वजीफा + ₹6,000 एकमुश्त सहायता + भारत की शीर्ष 500 कंपनियों में 1 वर्ष का अनुभव',
     benefitAmount: 66000,
     deadline: '2026-10-25',
     description: 'Ministry of Corporate Affairs flagship initiative connecting college youth with paid 12-month internships in India’s leading 500 companies (Reliance, Tata, Mahindra, HDFC, Larsen & Toubro). Includes full insurance coverage under PMJJBY and PMSBY.',
-    descriptionHi: 'कॉर्पोरेट कार्य मंत्रालय की प्रमुख योजना जिसके तहत कॉलेज के युवाओं को भारत की शीर्ष ५०० कंपनियों में ₹५,००० मासिक वजीफे पर १ वर्ष का वास्तविक कॉर्पोरेट कार्य अनुभव मिलता है।',
+    descriptionHi: 'कॉर्पोरेट कार्य मंत्रालय की प्रमुख योजना जिसके तहत कॉलेज के युवाओं को भारत की शीर्ष 500 कंपनियों में ₹5,000 मासिक वजीफे पर 1 वर्ष का वास्तविक कॉर्पोरेट कार्य अनुभव मिलता है।',
     gazette: {
       circularNumber: 'MCA/PM-INTERNSHIP/2026/01',
       issuingAuthority: 'Ministry of Corporate Affairs (Govt of India)',
@@ -66,13 +66,13 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-pmi-1', name: 'Aadhaar Card (Linked with Mobile)', nameHi: 'आधार कार्ड (मोबाइल से लिंक)', isMandatory: true },
-      { id: 'd-pmi-2', name: 'Class 10, 12 & Degree/Diploma Marksheets', nameHi: '१०वीं, १२वीं एवं कॉलेज डिग्री/डिप्लोमा अंकतालिका', isMandatory: true },
+      { id: 'd-pmi-2', name: 'Class 10, 12 & Degree/Diploma Marksheets', nameHi: '10वीं, 12वीं एवं कॉलेज डिग्री/डिप्लोमा अंकतालिका', isMandatory: true },
       { id: 'd-pmi-3', name: 'Bank Account with Aadhaar NPCI Seeding', nameHi: 'आधार से डीबीटी लिंक बैंक खाता विवरण', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register on pminternship.mca.gov.in using Aadhaar OTP verification.', textHi: 'pminternship.mca.gov.in पर आधार ओटीपी द्वारा निःशुल्क पंजीकरण करें।' },
       { step: 2, text: 'Complete digital profile with educational qualifications and district preferences.', textHi: 'अपनी शैक्षणिक योग्यता एवं जिले की पसंद भरकर प्रोफाइल पूर्ण करें।' },
-      { step: 3, text: 'Select up to 5 corporate internship roles based on your specialization and submit.', textHi: 'अपनी पसंद की अधिकतम ५ कंपनियों में इंटर्नशिप पद चुनकर फॉर्म सबमिट करें।' }
+      { step: 3, text: 'Select up to 5 corporate internship roles based on your specialization and submit.', textHi: 'अपनी पसंद की अधिकतम 5 कंपनियों में इंटर्नशिप पद चुनकर फॉर्म सबमिट करें।' }
     ],
     tags: ['PM Internship', 'Govt Stipend', 'College Internships', 'Corporate Experience', 'Paid Internship'],
     is100PercentFree: true,
@@ -81,7 +81,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-gsoc-intern-01',
     title: 'Google Summer of Code (GSoC) 2026: Open Source Software Engineering Fellowship',
-    titleHi: 'गूगल समर ऑफ कोड (GSoC) २०२६: $१,५०० - $३,००० वजीफा सहित वैश्विक सॉफ्टवेयर फेलोशिप',
+    titleHi: 'गूगल समर ऑफ कोड (GSoC) 2026: $1,500 - $3,000 वजीफा सहित वैश्विक सॉफ्टवेयर फेलोशिप',
     category: 'internship',
     applicationStatus: 'upcoming',
     lifeStage: 'internships',
@@ -89,7 +89,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: '$1,500 - $3,000 (~₹1.25 Lakh - ₹2.50 Lakh) Direct Payout from Google + 1-on-1 Mentorship from Global Open Source Leaders',
-    benefitHeadlineHi: '$१,५०० - $३,००० (~₹१.२५ लाख - ₹२.५० लाख) गूगल द्वारा सीधा वजीफा + अंतरराष्ट्रीय स्तर पर सॉफ्टवेयर मेंटरशिप',
+    benefitHeadlineHi: '$1,500 - $3,000 (~₹1.25 लाख - ₹2.50 लाख) गूगल द्वारा सीधा वजीफा + अंतरराष्ट्रीय स्तर पर सॉफ्टवेयर मेंटरशिप',
     benefitAmount: 185000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     description: 'Global program organized by Google introducing college students and new open-source contributors to world-renowned open-source organizations (Linux, Apache, Python, Blender, TensorFlow). 100% remote 12-week coding fellowship.',
@@ -110,7 +110,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Review accepted mentoring organizations on summerofcode.withgoogle.com.', textHi: 'आधिकारिक पोर्टल पर मेंटरिंग संगठनों की सूची देखें।' },
       { step: 2, text: 'Engage with community channels and submit project proposal.', textHi: 'ओपन-सोर्स कम्युनिटी से जुड़कर अपना प्रोजेक्ट प्रपोजल जमा करें।' },
-      { step: 3, text: 'Receive project acceptance and write code over 12 weeks with milestone payouts.', textHi: 'स्वीकृति मिलने पर १२ सप्ताह कोडिंग करें और वजीफा प्राप्त करें।' }
+      { step: 3, text: 'Receive project acceptance and write code over 12 weeks with milestone payouts.', textHi: 'स्वीकृति मिलने पर 12 सप्ताह कोडिंग करें और वजीफा प्राप्त करें।' }
     ],
     tags: ['GSoC', 'Google Internship', 'Open Source', 'Software Fellowship', 'High Stipend'],
     is100PercentFree: true,
@@ -119,7 +119,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-msft-student-intern-01',
     title: 'Microsoft India College Internship & Learn Student Ambassador (MLSA) 2026',
-    titleHi: 'माइक्रोसॉफ्ट इंडिया कॉलेज इंटर्नशिप एवं स्टूडेंट एंबेसडर २०२६: ₹५०,००० - ₹१,००,०००/माह',
+    titleHi: 'माइक्रोसॉफ्ट इंडिया कॉलेज इंटर्नशिप एवं स्टूडेंट एंबेसडर 2026: ₹50,000 - ₹1,00,000/माह',
     category: 'internship',
     applicationStatus: 'active_now',
     lifeStage: 'internships',
@@ -127,7 +127,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student'],
     benefitHeadline: '₹50,000 - ₹1,00,000/Month Stipend for Tech Interns + Free Azure Cloud Credits & Direct PPO Gateway to Microsoft India',
-    benefitHeadlineHi: '₹५०,००० - ₹१,००,००० प्रतिमाह वजीफा + निःशुल्क अज़्योर क्लाउड क्रेडिट्स एवं प्री-प्लेसमेंट ऑफर (PPO)',
+    benefitHeadlineHi: '₹50,000 - ₹1,00,000 प्रतिमाह वजीफा + निःशुल्क अज़्योर क्लाउड क्रेडिट्स एवं प्री-प्लेसमेंट ऑफर (PPO)',
     benefitAmount: 80000,
     deadline: '2026-06-30',
     description: 'Microsoft India official student programs providing college engineering and tech students hands-on technical internships across Hyderabad, Bengaluru, and Noida development centers.',
@@ -157,7 +157,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-isro-research-intern-01',
     title: 'ISRO Student Research Project & Internship 2026: Space Applications & Satellite Tech',
-    titleHi: 'इसरो छात्र अनुसंधान एवं तकनीकी इंटर्नशिप २०२६: सैटेलाइट एवं स्पेस टेक्नोलॉजी हैंड्स-ऑन',
+    titleHi: 'इसरो छात्र अनुसंधान एवं तकनीकी इंटर्नशिप 2026: सैटेलाइट एवं स्पेस टेक्नोलॉजी हैंड्स-ऑन',
     category: 'internship',
     applicationStatus: 'active_now',
     lifeStage: 'internships',
@@ -181,7 +181,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-isro-1', name: 'Official Recommendation Letter from College Principal/Dean/HOD', nameHi: 'कॉलेज डीन अथवा विभागाध्यक्ष का आधिकारिक संस्तुति पत्र', isMandatory: true },
-      { id: 'd-isro-2', name: 'All Semester Marksheets with minimum 65% / 6.84 CGPA', nameHi: 'सभी सेमेस्टरों की अंकतालिकाएं (न्यूनतम ६५% अंक)', isMandatory: true }
+      { id: 'd-isro-2', name: 'All Semester Marksheets with minimum 65% / 6.84 CGPA', nameHi: 'सभी सेमेस्टरों की अंकतालिकाएं (न्यूनतम 65% अंक)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Download official student internship application format from isro.gov.in.', textHi: 'isro.gov.in से आधिकारिक इंटर्नशिप फॉर्म डाउनलोड करें।' },
@@ -195,7 +195,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-isro-intern-01',
     title: 'ISRO / VSSC / SAC Space Technology Student Project & Internship 2026',
-    titleHi: 'इसरो (ISRO) अंतरिक्ष प्रौद्योगिकी छात्र प्रोजेक्ट एवं इंटर्नशिप २०२६',
+    titleHi: 'इसरो (ISRO) अंतरिक्ष प्रौद्योगिकी छात्र प्रोजेक्ट एवं इंटर्नशिप 2026',
     category: 'internship',
     applicationStatus: 'active_now',
     lifeStage: 'internships',
@@ -219,7 +219,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-isro-vssc-1', name: 'Forwarding Letter signed by College Principal / Dean', nameHi: 'कॉलेज प्राचार्य द्वारा हस्ताक्षरित संस्तुति पत्र', isMandatory: true },
-      { id: 'd-isro-vssc-2', name: 'Consolidated Marksheets (Min 60% or 6.5 CGPA)', nameHi: 'अंकतालिका (न्यूनतम ६०% अथवा ६.५ सीजीपीए)', isMandatory: true }
+      { id: 'd-isro-vssc-2', name: 'Consolidated Marksheets (Min 60% or 6.5 CGPA)', nameHi: 'अंकतालिका (न्यूनतम 60% अथवा 6.5 सीजीपीए)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Download official academic training application form from vssc.gov.in.', textHi: 'vssc.gov.in पोर्टल से आवेदन प्रपत्र डाउनलोड करें।' },
@@ -232,7 +232,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-tata-student-intern-01',
     title: 'Tata Group Student Internships 2026: Paid Hands-on Industry Experience (TCS, Tata Motors, Tata Steel)',
-    titleHi: 'टाटा ग्रुप स्टूडेंट इंटर्नशिप २०२६: सवेतन व्यावहारिक कॉर्पोरेट अनुभव (टीसीएस, टाटा मोटर्स, टाटा स्टील)',
+    titleHi: 'टाटा ग्रुप स्टूडेंट इंटर्नशिप 2026: सवेतन व्यावहारिक कॉर्पोरेट अनुभव (टीसीएस, टाटा मोटर्स, टाटा स्टील)',
     category: 'internship',
     applicationStatus: 'active_now',
     lifeStage: 'internships',
@@ -240,7 +240,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student'],
     benefitHeadline: 'Stipend ₹15,000 - ₹35,000/Month + Hands-on Mentorship by Senior Tata Executives & Fast-Track Campus Hiring',
-    benefitHeadlineHi: '₹१५,००० - ₹३५,००० प्रतिमाह वजीफा + टाटा के वरिष्ठ अधिकारियों द्वारा मेंटरशिप एवं कैंपस प्लेसमेंट में प्राथमिकता',
+    benefitHeadlineHi: '₹15,000 - ₹35,000 प्रतिमाह वजीफा + टाटा के वरिष्ठ अधिकारियों द्वारा मेंटरशिप एवं कैंपस प्लेसमेंट में प्राथमिकता',
     benefitAmount: 35000,
     deadline: 'OPEN_ROUND',
     description: 'Tata Group conglomerate internships across software engineering, automotive design, heavy manufacturing, supply chain, and retail business operations for Indian college students.',
@@ -270,7 +270,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-amazon-afe-intern-01',
     title: 'Amazon Future Engineer & AWS Student Cloud Internship: ₹45,000/Month Stipend for College Students',
-    titleHi: 'अमेज़न एडब्ल्यूएस स्टूडेंट क्लाउड एवं टेक इंटर्नशिप: ₹४५,००० प्रतिमाह वजीफा + एडब्ल्यूएस सर्टिफिकेशन',
+    titleHi: 'अमेज़न एडब्ल्यूएस स्टूडेंट क्लाउड एवं टेक इंटर्नशिप: ₹45,000 प्रतिमाह वजीफा + एडब्ल्यूएस सर्टिफिकेशन',
     category: 'internship',
     applicationStatus: 'upcoming',
     lifeStage: 'internships',
@@ -278,7 +278,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student'],
     benefitHeadline: '₹45,000/Month Stipend + 100% Free AWS Cloud Practitioner & Solutions Architect Certifications + Amazon Mentorship',
-    benefitHeadlineHi: '₹४५,००० प्रतिमाह वजीफा + निःशुल्क एडब्ल्यूएस क्लाउड प्रमाणन + अमेज़न के वरिष्ठ इंजीनियरों से मेंटरशिप',
+    benefitHeadlineHi: '₹45,000 प्रतिमाह वजीफा + निःशुल्क एडब्ल्यूएस क्लाउड प्रमाणन + अमेज़न के वरिष्ठ इंजीनियरों से मेंटरशिप',
     benefitAmount: 90000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     description: 'Amazon Future Engineer program provides college students from underrepresented backgrounds and meritorious engineering students free cloud computing training, paid internships, and direct interview opportunities for Amazon SDE-1 roles.',
@@ -308,7 +308,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-rbi-summer-intern-01',
     title: 'RBI Summer Internship 2026: Official Reserve Bank of India Research Fellowship',
-    titleHi: 'आरबीआई ग्रीष्मकालीन इंटर्नशिप २०२६: भारतीय रिज़र्व बैंक शोध फेलोशिप',
+    titleHi: 'आरबीआई ग्रीष्मकालीन इंटर्नशिप 2026: भारतीय रिज़र्व बैंक शोध फेलोशिप',
     category: 'internship',
     applicationStatus: 'upcoming',
     lifeStage: 'internships',
@@ -316,11 +316,11 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: '₹45,000/Month Stipend + Work Directly with Central Bank Economists and Policy Makers in Mumbai',
-    benefitHeadlineHi: '₹४५,००० प्रतिमाह वजीफा + रिज़र्व बैंक ऑफ इंडिया के शीर्ष अर्थशास्त्रियों के साथ शोध कार्य',
+    benefitHeadlineHi: '₹45,000 प्रतिमाह वजीफा + रिज़र्व बैंक ऑफ इंडिया के शीर्ष अर्थशास्त्रियों के साथ शोध कार्य',
     benefitAmount: 135000,
     deadline: '2026-12-15',
     description: 'Premier national summer internship program by the Reserve Bank of India for undergraduate/postgraduate students in Economics, Finance, Statistics, Commerce, Management, Law, and Engineering.',
-    descriptionHi: 'भारतीय रिज़र्व बैंक द्वारा अर्थशास्त्र, वाणिज्य, सांख्यिकी, कानून एवं इंजीनियरिंग के कॉलेज छात्रों हेतु ३ माह की प्रतिष्ठित सवेतन इंटर्नशिप।',
+    descriptionHi: 'भारतीय रिज़र्व बैंक द्वारा अर्थशास्त्र, वाणिज्य, सांख्यिकी, कानून एवं इंजीनियरिंग के कॉलेज छात्रों हेतु 3 माह की प्रतिष्ठित सवेतन इंटर्नशिप।',
     gazette: {
       circularNumber: 'RBI/HRMD/INTERN-2026/04',
       issuingAuthority: 'Reserve Bank of India (Central Office Mumbai)',
@@ -358,7 +358,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     benefitAmount: 25000,
     deadline: 'OPEN_ROUND',
     description: 'Premier policy internship by the apex public policy think tank of the Government of India. Open every month from 1st to 10th for undergraduate, postgraduate, and research scholars across all disciplines.',
-    descriptionHi: 'भारत सरकार के शीर्ष थिंक टैंक नीति आयोग में कॉलेज छात्रों हेतु इंटर्नशिप। प्रत्येक माह की १ से १० तारीख तक ऑनलाइन आवेदन खुले रहते हैं।',
+    descriptionHi: 'भारत सरकार के शीर्ष थिंक टैंक नीति आयोग में कॉलेज छात्रों हेतु इंटर्नशिप। प्रत्येक माह की 1 से 10 तारीख तक ऑनलाइन आवेदन खुले रहते हैं।',
     gazette: {
       circularNumber: 'NITI/INTERN/SCHEME/2026',
       issuingAuthority: 'NITI Aayog (National Institution for Transforming India)',
@@ -370,10 +370,10 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-niti-1', name: 'NOC / Recommendation Letter from College Principal or Dean', nameHi: 'कॉलेज प्राचार्य अथवा डीन द्वारा अनापत्ति प्रमाण पत्र (NOC)', isMandatory: true },
-      { id: 'd-niti-2', name: 'Marksheets of 12th & All Completed College Semesters', nameHi: '१२वीं एवं सभी उत्तीर्ण सेमेस्टरों की अंकतालिकाएं', isMandatory: true }
+      { id: 'd-niti-2', name: 'Marksheets of 12th & All Completed College Semesters', nameHi: '12वीं एवं सभी उत्तीर्ण सेमेस्टरों की अंकतालिकाएं', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Visit workforindia.niti.gov.in between 1st and 10th of any calendar month.', textHi: 'किसी भी माह की १ से १० तारीख के बीच पोर्टल पर जाएं।' },
+      { step: 1, text: 'Visit workforindia.niti.gov.in between 1st and 10th of any calendar month.', textHi: 'किसी भी माह की 1 से 10 तारीख के बीच पोर्टल पर जाएं।' },
       { step: 2, text: 'Choose your area of interest (AI, Data Analytics, Agriculture, Education, Health, Infra).', textHi: 'अपनी रुचि का विषय (एआई, स्वास्थ्य, शिक्षा, इंफ्रा) चुनें।' },
       { step: 3, text: 'Submit verified marks percentages and upload Principal recommendation letter.', textHi: 'अंक प्रतिशत भरें और प्राचार्य का संस्तुति पत्र अपलोड कर सबमिट करें।' }
     ],
@@ -392,7 +392,7 @@ export const INTERNSHIP_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Work Directly on 100 Smart City Projects with Urban Local Bodies (ULBs) + Up to ₹25,000/Month Stipend',
-    benefitHeadlineHi: 'स्मार्ट सिटी एवं नगर निगम परियोजनाओं में ₹२५,००० तक मासिक वजीफे पर वास्तविक प्रोजेक्ट कार्य',
+    benefitHeadlineHi: 'स्मार्ट सिटी एवं नगर निगम परियोजनाओं में ₹25,000 तक मासिक वजीफे पर वास्तविक प्रोजेक्ट कार्य',
     benefitAmount: 30000,
     deadline: 'OPEN_ROUND',
     description: 'Joint initiative by Ministry of Housing & Urban Affairs (MoHUA) and AICTE offering Indian fresh graduates and final-year students experiential learning opportunities in 4,400+ Urban Local Bodies and Smart Cities across India.',

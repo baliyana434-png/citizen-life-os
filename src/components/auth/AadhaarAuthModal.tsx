@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '@/i18n/useTranslation';
-import { GoogleAuthService } from '@/services/googleAuth';
+import { GoogleAuthService, getGoogleAuthErrorMessage } from '@/services/googleAuth';
 import { CitizenProfile } from '@/types';
 import {
   validateRealName,
@@ -131,7 +131,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
         setStep('DIGITAL_KYC_FORM');
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Google साइन-इन विफल रहा।');
+      setErrorMessage(getGoogleAuthErrorMessage(err?.code || err?.message, language));
     } finally {
       setLoading(false);
     }
@@ -292,7 +292,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
               </h2>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 {language === 'hi'
-                  ? '१-क्लिक में Google द्वारा सुरक्षित खाता बनाएं एवं अपनी योजनाएं व अवसर देखें।'
+                  ? '1-क्लिक में Google द्वारा सुरक्षित खाता बनाएं एवं अपनी योजनाएं व अवसर देखें।'
                   : 'Fast 1-click login with Google to unlock opportunities matched to you.'}
               </p>
             </div>

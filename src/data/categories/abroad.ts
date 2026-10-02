@@ -4,7 +4,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-germany-daad-01',
     title: 'Study in Germany: 100% Tuition-Free Bachelor & Master Degrees (Public Universities & DAAD)',
-    titleHi: 'जर्मनी में निःशुल्क उच्च शिक्षा: सरकारी विश्वविद्यालयों में १००% ट्यूशन फीस माफी (DAAD पोर्टल)',
+    titleHi: 'जर्मनी में निःशुल्क उच्च शिक्षा: सरकारी विश्वविद्यालयों में 100% ट्यूशन फीस माफी (DAAD पोर्टल)',
     category: 'study_abroad',
     applicationStatus: 'active_now',
     lifeStage: 'abroad_jobs',
@@ -12,11 +12,11 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker'],
     benefitHeadline: 'Zero Tuition Fees in 400+ Top Public German Universities + 20 Hr/Week Student Job (€1,000/Mo) + 18-Month Post-Study Work Visa',
-    benefitHeadlineHi: '४००+ जर्मन सरकारी विश्वविद्यालयों में शून्य ट्यूशन फीस + ₹९०,००० प्रतिमाह छात्र पार्ट-टाइम कमाई व १८ माह का जॉब सर्च वीजा',
+    benefitHeadlineHi: '400+ जर्मन सरकारी विश्वविद्यालयों में शून्य ट्यूशन फीस + ₹90,000 प्रतिमाह छात्र पार्ट-टाइम कमाई व 18 माह का जॉब सर्च वीजा',
     benefitAmount: 1800000,
     deadline: '2026-07-15',
     description: 'Germany’s public universities charge €0 tuition fees for international students across engineering, IT, management, and basic sciences. Accredited by the Federal Ministry of Education & Research (BMBF) and DAAD.',
-    descriptionHi: 'जर्मनी के सरकारी विश्वविद्यालयों में दुनिया भर के छात्रों के लिए स्नातक एवं परास्नातक स्तर पर कोई ट्यूशन फीस नहीं लगती। केवल नाममात्र सेमेस्टर योगदान (~₹२५,०००) देय होता है।',
+    descriptionHi: 'जर्मनी के सरकारी विश्वविद्यालयों में दुनिया भर के छात्रों के लिए स्नातक एवं परास्नातक स्तर पर कोई ट्यूशन फीस नहीं लगती। केवल नाममात्र सेमेस्टर योगदान (~₹25,000) देय होता है।',
     gazette: {
       circularNumber: 'DAAD/BMBF/STUDY-GERMANY/2026',
       issuingAuthority: 'German Academic Exchange Service (DAAD) & Federal Ministry of Education',
@@ -43,7 +43,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-italy-dsu-01',
     title: 'Italy DSU Regional Government Scholarship: 100% Free Tuition + Free University Hostel & Food + €7,000/Yr Cash',
-    titleHi: 'इटली डीएसयू सरकारी छात्रवृत्ति: १००% मुफ्त ट्यूशन फीस + विश्वविद्यालय हॉस्टल व भोजन + ₹६.५ लाख नकद अनुदान',
+    titleHi: 'इटली डीएसयू सरकारी छात्रवृत्ति: 100% मुफ्त ट्यूशन फीस + विश्वविद्यालय हॉस्टल व भोजन + ₹6.5 लाख नकद अनुदान',
     category: 'study_abroad',
     applicationStatus: 'active_now',
     lifeStage: 'abroad_jobs',
@@ -51,7 +51,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Complete Tuition Waiver + Free Canteen Meals + Free Campus Accommodation + Direct Cash Grant of up to €7,000/Year (~₹6.5 Lakh)',
-    benefitHeadlineHi: 'पूर्ण शिक्षण शुल्क माफी + विश्वविद्यालय कैंटीन में प्रतिदिन मुफ्त भोजन + हॉस्टल आवास + ₹६.५ लाख वार्षिक नकद छात्रवृत्ति',
+    benefitHeadlineHi: 'पूर्ण शिक्षण शुल्क माफी + विश्वविद्यालय कैंटीन में प्रतिदिन मुफ्त भोजन + हॉस्टल आवास + ₹6.5 लाख वार्षिक नकद छात्रवृत्ति',
     benefitAmount: 650000,
     deadline: '2026-08-30',
     description: 'Regional Italian government scholarships (DSU Toscana, EDISU Piemonte, LazioDiSCo) providing 100% financial coverage for meritorious international students admitted to public Italian universities (Politecnico di Milano, Sapienza, Pisa, Bologna).',
@@ -90,7 +90,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'employed'],
     benefitHeadline: 'Direct Verified Foreign Employment (Monthly: ₹1.5 Lakh - ₹3.8 Lakh) in Healthcare, Engineering & Tech under Bilateral Govt MoUs',
-    benefitHeadlineHi: 'भारत सरकार के आधिकारिक समझौतों के तहत नर्सिंग, इंजीनियरिंग व तकनीकी क्षेत्र में ₹१.५ लाख - ₹३.८ लाख प्रतिमाह वेतन',
+    benefitHeadlineHi: 'भारत सरकार के आधिकारिक समझौतों के तहत नर्सिंग, इंजीनियरिंग व तकनीकी क्षेत्र में ₹1.5 लाख - ₹3.8 लाख प्रतिमाह वेतन',
     benefitAmount: 220000,
     deadline: 'OPEN_ROUND',
     description: 'National Skill Development Corporation (NSDC) International facilitates government-to-government ethical recruitment of Indian professionals (nurses, automotive engineers, hospitality, IT specialists) with transparent work permits and language training.',
@@ -105,7 +105,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: 'Regulated Nominal Processing Fee (Government Bilateral Framework)'
     },
     documents: [
-      { id: 'd-nsdc-int-1', name: 'Valid Passport (Minimum 2 Years Validity)', nameHi: 'वैध पासपोर्ट (कम से कम २ वर्ष वैधता)', isMandatory: true },
+      { id: 'd-nsdc-int-1', name: 'Valid Passport (Minimum 2 Years Validity)', nameHi: 'वैध पासपोर्ट (कम से कम 2 वर्ष वैधता)', isMandatory: true },
       { id: 'd-nsdc-int-2', name: 'Degree / Diploma / GNM / B.Sc Nursing / ITI Trade Certificate', nameHi: 'डिग्री, डिप्लोमा, नर्सिंग अथवा आईटीआई प्रमाण पत्र', isMandatory: true }
     ],
     applySteps: [
@@ -120,7 +120,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-japan-ssw-01',
     title: 'Japan Specified Skilled Worker (SSW) & TITP: 5-Year Legal Work Visa (Salary: ₹1.2 Lakh - ₹2.2 Lakh/Month)',
-    titleHi: 'जापान एसएसडब्ल्यू (SSW) एवं टीआईटीपी: ५ वर्षीय कानूनी वर्क वीजा (वेतन: ₹१.२ लाख - ₹२.२ लाख प्रतिमाह)',
+    titleHi: 'जापान एसएसडब्ल्यू (SSW) एवं टीआईटीपी: 5 वर्षीय कानूनी वर्क वीजा (वेतन: ₹1.2 लाख - ₹2.2 लाख प्रतिमाह)',
     category: 'career_consultant',
     applicationStatus: 'active_now',
     lifeStage: 'abroad_jobs',
@@ -128,7 +128,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'college_student', 'employed'],
     benefitHeadline: 'Official 5-Year Japanese Residence Status (SSW-1) + Monthly Pay ¥2,20,000 - ¥3,50,000 + National Pension & Health Coverage',
-    benefitHeadlineHi: 'जापान में ५ वर्ष का वैध वर्क स्टेटस + ₹१.२ लाख से ₹२.२ लाख प्रतिमाह वेतन + पूर्ण पेंशन व स्वास्थ्य बीमा',
+    benefitHeadlineHi: 'जापान में 5 वर्ष का वैध वर्क स्टेटस + ₹1.2 लाख से ₹2.2 लाख प्रतिमाह वेतन + पूर्ण पेंशन व स्वास्थ्य बीमा',
     benefitAmount: 160000,
     deadline: 'OPEN_ROUND',
     description: 'Bilateral skilled migration framework signed between Government of India (MSDE) and Government of Japan (Ministry of Justice & MHLW) covering 14 sectors including Nursing Care, Food Service, Agriculture, Construction, and Machine Parts.',
@@ -159,7 +159,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-chevening-01',
     title: 'Chevening UK Government Scholarship 2026: 100% Fully-Funded Master Degree in United Kingdom',
-    titleHi: 'शेवनिंग यूके सरकार छात्रवृत्ति २०२६: ब्रिटेन के शीर्ष विश्वविद्यालयों में १ वर्ष का मास्टर्स डिग्री अध्ययन पूर्णतः निःशुल्क',
+    titleHi: 'शेवनिंग यूके सरकार छात्रवृत्ति 2026: ब्रिटेन के शीर्ष विश्वविद्यालयों में 1 वर्ष का मास्टर्स डिग्री अध्ययन पूर्णतः निःशुल्क',
     category: 'scholarship',
     applicationStatus: 'active_now',
     lifeStage: 'abroad_jobs',
@@ -167,11 +167,11 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: '100% University Tuition Fees at Oxford, Cambridge, LSE, Imperial + Monthly Living Allowance (£1,400/Month) + Airfare',
-    benefitHeadlineHi: 'ब्रिटेन के ऑक्सफोर्ड, कैम्ब्रिज, एलएसई जैसे संस्थानों में १००% ट्यूशन फीस + ₹१.५ लाख प्रतिमाह निर्वाह भत्ता + हवाई टिकट',
+    benefitHeadlineHi: 'ब्रिटेन के ऑक्सफोर्ड, कैम्ब्रिज, एलएसई जैसे संस्थानों में 100% ट्यूशन फीस + ₹1.5 लाख प्रतिमाह निर्वाह भत्ता + हवाई टिकट',
     benefitAmount: 4500000,
     deadline: '2026-11-05',
     description: 'UK Government’s global scholarship programme funded by the Foreign, Commonwealth and Development Office (FCDO) and partner organisations. Enables outstanding emerging leaders to pursue a one-year master’s degree in any subject at any UK university.',
-    descriptionHi: 'ब्रिटेन सरकार की प्रतिष्ठित फेलोशिप जिसके तहत भारत के प्रतिभाशाली युवाओं को ब्रिटेन के किसी भी विश्वविद्यालय में १ वर्ष का मास्टर्स करने का सम्पूर्ण खर्च ब्रिटिश सरकार वहन करती है।',
+    descriptionHi: 'ब्रिटेन सरकार की प्रतिष्ठित फेलोशिप जिसके तहत भारत के प्रतिभाशाली युवाओं को ब्रिटेन के किसी भी विश्वविद्यालय में 1 वर्ष का मास्टर्स करने का सम्पूर्ण खर्च ब्रिटिश सरकार वहन करती है।',
     gazette: {
       circularNumber: 'UK-FCDO/CHEVENING/2026-27/COHORT',
       issuingAuthority: 'Foreign, Commonwealth & Development Office (UK Government)',
@@ -182,12 +182,12 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '£0 (100% Free Application & Fully Funded Public Award)'
     },
     documents: [
-      { id: 'd-chev-1', name: 'Undergraduate Degree with minimum 2:1 honours equivalent', nameHi: 'स्नातक डिग्री (कम से कम ६०% अंक)', isMandatory: true },
-      { id: 'd-chev-2', name: 'Minimum 2 Years (2,800 Hours) Work Experience (Full-time, Part-time, or Volunteer)', nameHi: 'न्यूनतम २ वर्ष का कार्य अनुभव (पूर्णकालिक/इंटर्नशिप)', isMandatory: true },
-      { id: 'd-chev-3', name: 'Three Eligible UK Master’s Course Choices', nameHi: '३ पसंदीदा यूके मास्टर्स कोर्स चयन', isMandatory: true }
+      { id: 'd-chev-1', name: 'Undergraduate Degree with minimum 2:1 honours equivalent', nameHi: 'स्नातक डिग्री (कम से कम 60% अंक)', isMandatory: true },
+      { id: 'd-chev-2', name: 'Minimum 2 Years (2,800 Hours) Work Experience (Full-time, Part-time, or Volunteer)', nameHi: 'न्यूनतम 2 वर्ष का कार्य अनुभव (पूर्णकालिक/इंटर्नशिप)', isMandatory: true },
+      { id: 'd-chev-3', name: 'Three Eligible UK Master’s Course Choices', nameHi: '3 पसंदीदा यूके मास्टर्स कोर्स चयन', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Submit online application with 4 leadership & networking essays on chevening.org/apply.', textHi: 'chevening.org पर जाकर नेतृत्व एवं नेटवर्किंग से जुड़े ४ निबंध लिखकर आवेदन भरें।' },
+      { step: 1, text: 'Submit online application with 4 leadership & networking essays on chevening.org/apply.', textHi: 'chevening.org पर जाकर नेतृत्व एवं नेटवर्किंग से जुड़े 4 निबंध लिखकर आवेदन भरें।' },
       { step: 2, text: 'Shortlisted candidates attend in-person interview at British High Commission New Delhi or consulates.', textHi: 'ब्रिटिश उच्चायोग में साक्षात्कार दें।' },
       { step: 3, text: 'Secure unconditional offer from an eligible UK university to receive final scholarship letter.', textHi: 'यूके विश्वविद्यालय से प्रवेश पत्र मिलने पर पूर्ण छात्रवृत्ति अवार्ड प्राप्त करें।' }
     ],
@@ -198,7 +198,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-nos-msje-01',
     title: 'National Overseas Scholarship (NOS): 100% Fully Funded Master & Ph.D. in Top 500 QS World Universities',
-    titleHi: 'राष्ट्रीय विदेशी छात्रवृत्ति (NOS): दुनिया के शीर्ष ५०० विश्वविद्यालयों में मास्टर्स एवं पीएचडी का सम्पूर्ण खर्च भारत सरकार द्वारा वहन',
+    titleHi: 'राष्ट्रीय विदेशी छात्रवृत्ति (NOS): दुनिया के शीर्ष 500 विश्वविद्यालयों में मास्टर्स एवं पीएचडी का सम्पूर्ण खर्च भारत सरकार द्वारा वहन',
     category: 'scholarship',
     applicationStatus: 'upcoming',
     lifeStage: 'abroad_jobs',
@@ -206,11 +206,11 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Full Tuition Fees Paid Directly by Govt of India to Foreign University + $15,400/Year Living Allowance + Airfare & Medical Cover',
-    benefitHeadlineHi: 'हार्वर्ड, एमआईटी, ऑक्सफोर्ड में पूर्ण शिक्षण शुल्क + $१५,४०० (~₹१३ लाख) वार्षिक निर्वाह भत्ता + हवाई यात्रा व बीमा भारत सरकार द्वारा देय',
+    benefitHeadlineHi: 'हार्वर्ड, एमआईटी, ऑक्सफोर्ड में पूर्ण शिक्षण शुल्क + $15,400 (~₹13 लाख) वार्षिक निर्वाह भत्ता + हवाई यात्रा व बीमा भारत सरकार द्वारा देय',
     benefitAmount: 6000000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     description: 'Ministry of Social Justice & Empowerment scheme providing 125 annual fully funded slots for meritorious SC, De-notified, Nomadic, Landless Agricultural Labourers, and Traditional Artisans to study Master’s or Ph.D. in top 500 QS world ranked institutions.',
-    descriptionHi: 'सामाजिक न्याय एवं अधिकारिता मंत्रालय द्वारा संचालित सर्वोच्च विदेशी छात्रवृत्ति जिसके तहत दुनिया के शीर्ष ५०० विश्वविद्यालयों में अध्ययन का करोड़ों रुपये का खर्च भारत सरकार सीधे वहन करती है।',
+    descriptionHi: 'सामाजिक न्याय एवं अधिकारिता मंत्रालय द्वारा संचालित सर्वोच्च विदेशी छात्रवृत्ति जिसके तहत दुनिया के शीर्ष 500 विश्वविद्यालयों में अध्ययन का करोड़ों रुपये का खर्च भारत सरकार सीधे वहन करती है।',
     gazette: {
       circularNumber: 'MSJE/NOS/2026/SELECTION-PANEL',
       issuingAuthority: 'Ministry of Social Justice & Empowerment (Govt of India)',
@@ -221,12 +221,12 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free Govt Application)'
     },
     documents: [
-      { id: 'd-nos-1', name: 'Unconditional Admission Offer from Top 500 QS World University', nameHi: 'शीर्ष ५०० विश्व विश्वविद्यालय से बिना शर्त प्रवेश पत्र', isMandatory: true },
+      { id: 'd-nos-1', name: 'Unconditional Admission Offer from Top 500 QS World University', nameHi: 'शीर्ष 500 विश्व विश्वविद्यालय से बिना शर्त प्रवेश पत्र', isMandatory: true },
       { id: 'd-nos-2', name: 'Caste / Artisan / Landless Agriculture Category Certificate', nameHi: 'जाति / कारीगर / भूमिहीन कृषि प्रमाण पत्र', isMandatory: true },
-      { id: 'd-nos-3', name: 'Income Certificate (Family income below ₹8 Lakh/year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹८ लाख से कम)', isMandatory: true }
+      { id: 'd-nos-3', name: 'Income Certificate (Family income below ₹8 Lakh/year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹8 लाख से कम)', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Obtain unconditional admission offer letter from any top 500 QS ranked global university.', textHi: 'शीर्ष ५०० वैश्विक विश्वविद्यालय से प्रवेश पत्र प्राप्त करें।' },
+      { step: 1, text: 'Obtain unconditional admission offer letter from any top 500 QS ranked global university.', textHi: 'शीर्ष 500 वैश्विक विश्वविद्यालय से प्रवेश पत्र प्राप्त करें।' },
       { step: 2, text: 'Register on official portal nosmsje.gov.in with Aadhaar and academic credentials.', textHi: 'nosmsje.gov.in पोर्टल पर अपने विवरण के साथ आवेदन पत्र भरें।' },
       { step: 3, text: 'Govt committee selects awardees and releases tuition fees directly to the foreign university.', textHi: 'सरकारी समिति द्वारा चयन के उपरांत विदेशी विश्वविद्यालय को सीधी फीस जारी की जाती है।' }
     ],
@@ -237,7 +237,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-france-eiffel-01',
     title: 'France Eiffel Excellence Scholarship 2026: Fully Funded Master & Ph.D. in French Elite Institutions',
-    titleHi: 'फ्रांस एफिल एक्सीलेंस स्कॉलरशिप २०२६: फ्रांस में मास्टर्स एवं पीएचडी हेतु पूर्ण सरकारी फेलोशिप',
+    titleHi: 'फ्रांस एफिल एक्सीलेंस स्कॉलरशिप 2026: फ्रांस में मास्टर्स एवं पीएचडी हेतु पूर्ण सरकारी फेलोशिप',
     category: 'scholarship',
     applicationStatus: 'upcoming',
     lifeStage: 'abroad_jobs',
@@ -245,7 +245,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Monthly Allowance of €1,181 (Master) / €1,700 (Ph.D.) + Return International Flights + French Social Security & Cultural Allowance',
-    benefitHeadlineHi: '€१,१८१ (~₹१.१ लाख) से €१,७०० (~₹१.६ लाख) मासिक भत्ता + अंतरराष्ट्रीय हवाई टिकट व मुफ्त फ्रेंच स्वास्थ्य बीमा',
+    benefitHeadlineHi: '€1,181 (~₹1.1 लाख) से €1,700 (~₹1.6 लाख) मासिक भत्ता + अंतरराष्ट्रीय हवाई टिकट व मुफ्त फ्रेंच स्वास्थ्य बीमा',
     benefitAmount: 2500000,
     deadline: '2026-11-10',
     description: 'Prestigious fellowship developed by the French Ministry for Europe and Foreign Affairs to enable French higher education institutions to attract top foreign students for master’s and doctoral degree programs.',
@@ -275,7 +275,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-erasmus-mundus-01',
     title: 'Erasmus Mundus Joint Masters Scholarship: Study Across 2 to 3 European Countries (100% EU Funded)',
-    titleHi: 'इरास्मस मुंडस यूरोपियन छात्रवृत्ति: २ से ३ यूरोपीय देशों में मास्टर्स अध्ययन (१००% यूरोपीय संघ द्वारा वित्तपोषित)',
+    titleHi: 'इरास्मस मुंडस यूरोपियन छात्रवृत्ति: 2 से 3 यूरोपीय देशों में मास्टर्स अध्ययन (100% यूरोपीय संघ द्वारा वित्तपोषित)',
     category: 'scholarship',
     applicationStatus: 'active_now',
     lifeStage: 'abroad_jobs',
@@ -283,11 +283,11 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Full Tuition Fee Waiver + €1,400/Month Living Allowance (~₹1.25 Lakh/Mo) + Travel & Visa Installation Grants',
-    benefitHeadlineHi: 'यूरोपीय संघ के कई देशों में निःशुल्क पढ़ाई + ₹१.२५ लाख प्रतिमाह निर्वाह भत्ता + हवाई टिकट व यात्रा अनुदान',
+    benefitHeadlineHi: 'यूरोपीय संघ के कई देशों में निःशुल्क पढ़ाई + ₹1.25 लाख प्रतिमाह निर्वाह भत्ता + हवाई टिकट व यात्रा अनुदान',
     benefitAmount: 3600000,
     deadline: '2026-01-15',
     description: 'High-level integrated study programmes designed and delivered by international partnerships of higher education institutions across the European Union. Students study in at least 2 different European countries and earn a joint or double degree.',
-    descriptionHi: 'यूरोपीय संघ का सबसे प्रतिष्ठित छात्रवृत्ति कार्यक्रम जिसमें छात्र २ वर्ष के दौरान २ या ३ अलग-अलग यूरोपीय देशों (जैसे जर्मनी, फ्रांस, स्पेन, स्वीडन) के विश्वविद्यालयों में अध्ययन करते हैं और डबल डिग्री प्राप्त करते हैं।',
+    descriptionHi: 'यूरोपीय संघ का सबसे प्रतिष्ठित छात्रवृत्ति कार्यक्रम जिसमें छात्र 2 वर्ष के दौरान 2 या 3 अलग-अलग यूरोपीय देशों (जैसे जर्मनी, फ्रांस, स्पेन, स्वीडन) के विश्वविद्यालयों में अध्ययन करते हैं और डबल डिग्री प्राप्त करते हैं।',
     gazette: {
       circularNumber: 'EU-COMMISSION/ERASMUS-MUNDUS/2026',
       issuingAuthority: 'European Education and Culture Executive Agency (EACEA), European Commission',
@@ -302,8 +302,8 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
       { id: 'd-eras-2', name: 'English Language Certificate (IELTS/TOEFL) and Motivation Letter', nameHi: 'अंग्रेजी भाषा प्रमाण पत्र एवं प्रेरणा पत्र (Motivation Letter)', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Search 100+ master programmes in the official Erasmus Mundus Catalogue online.', textHi: 'आधिकारिक कैटलॉग में १००+ मास्टर्स प्रोग्राम खोजें।' },
-      { step: 2, text: 'Select up to 3 consortia programmes and submit your application directly on the consortium portal.', textHi: 'अधिकतम ३ प्रोग्राम चुनकर उनके पोर्टल पर ऑनलाइन आवेदन जमा करें।' },
+      { step: 1, text: 'Search 100+ master programmes in the official Erasmus Mundus Catalogue online.', textHi: 'आधिकारिक कैटलॉग में 100+ मास्टर्स प्रोग्राम खोजें।' },
+      { step: 2, text: 'Select up to 3 consortia programmes and submit your application directly on the consortium portal.', textHi: 'अधिकतम 3 प्रोग्राम चुनकर उनके पोर्टल पर ऑनलाइन आवेदन जमा करें।' },
       { step: 3, text: 'Shortlisted applicants receive full EU fellowship award letter and Schengen student visa.', textHi: 'चयनित होने पर पूर्ण यूरोपीय संघ छात्रवृत्ति पत्र प्राप्त करें।' }
     ],
     tags: ['Erasmus Mundus', 'European Union', 'Double Degree', 'Study in Europe', 'High Stipend'],
@@ -313,7 +313,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-abroad-aus-pgwp-01',
     title: 'Australia & Canada Post-Study Work Visa (Subclass 485 & PGWP): 2 to 4 Years Unrestricted Work Rights',
-    titleHi: 'ऑस्ट्रेलिया एवं कनाडा पोस्ट-स्टडी वर्क वीजा: २ से ४ वर्ष का कानूनी वर्क परमिट (न्यूनतम वेतन $२३/घंटा)',
+    titleHi: 'ऑस्ट्रेलिया एवं कनाडा पोस्ट-स्टडी वर्क वीजा: 2 से 4 वर्ष का कानूनी वर्क परमिट (न्यूनतम वेतन $23/घंटा)',
     category: 'study_abroad',
     applicationStatus: 'active_now',
     lifeStage: 'abroad_jobs',
@@ -321,7 +321,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Earn AUD $4,000 - $6,500/Month (~₹2.2 Lakh - ₹3.6 Lakh/Mo) with Guaranteed Full-Time Work Rights & PR Pathway',
-    benefitHeadlineHi: 'ऑस्ट्रेलिया या कनाडा में पढ़ाई के बाद २-४ वर्ष तक कानूनी रूप से नौकरी करने व ₹२.२ लाख से ₹३.६ लाख कमाने का अधिकार',
+    benefitHeadlineHi: 'ऑस्ट्रेलिया या कनाडा में पढ़ाई के बाद 2-4 वर्ष तक कानूनी रूप से नौकरी करने व ₹2.2 लाख से ₹3.6 लाख कमाने का अधिकार',
     benefitAmount: 250000,
     deadline: 'OPEN_ROUND',
     description: 'Official government post-study pathways (Australia Temporary Graduate Subclass 485 and Canada Post-Graduation Work Permit) granting Indian graduates unrestricted employment rights to recover tuition costs and qualify for permanent residency (PR).',
@@ -341,7 +341,7 @@ export const ABROAD_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Verify your institution on immi.homeaffairs.gov.au or canada.ca DLI list.', textHi: 'सरकारी इमिग्रेशन पोर्टल पर कॉलेज की वर्क परमिट पात्रता जांचें।' },
-      { step: 2, text: 'Submit post-study visa application online within 6 months of graduation.', textHi: 'कोर्स पूरा होने के ६ माह के भीतर सरकारी पोर्टल पर ऑनलाइन आवेदन करें।' },
+      { step: 2, text: 'Submit post-study visa application online within 6 months of graduation.', textHi: 'कोर्स पूरा होने के 6 माह के भीतर सरकारी पोर्टल पर ऑनलाइन आवेदन करें।' },
       { step: 3, text: 'Receive unrestricted multi-year full-time open work visa.', textHi: 'बहु-वर्षीय खुला कार्य वीजा प्राप्त कर नौकरी शुरू करें।' }
     ],
     tags: ['Work in Australia', 'Post Study Work', 'Canada PGWP', 'Permanent Residency', 'Global Careers'],

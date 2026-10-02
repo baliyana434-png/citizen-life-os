@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
     if (!cleanPhone || cleanPhone.length !== 10) {
       return NextResponse.json(
-        { success: false, message: 'कृपया मान्य १० अंकों का मोबाइल नंबर प्रदान करें।' },
+        { success: false, message: 'कृपया मान्य 10 अंकों का मोबाइल नंबर प्रदान करें।' },
         { status: 400 }
       );
     }

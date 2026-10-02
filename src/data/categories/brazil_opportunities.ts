@@ -12,7 +12,7 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker'],
     benefitHeadline: '100% Full (or 50% Partial) Tuition Exemption for Private University Undergraduate Degrees',
-    benefitHeadlineHi: 'निजी विश्वविद्यालयों में स्नातक डिग्री हेतु १००% पूर्ण (अथवा ५०% आंशिक) ट्यूशन फीस की संपूर्ण माफी',
+    benefitHeadlineHi: 'निजी विश्वविद्यालयों में स्नातक डिग्री हेतु 100% पूर्ण (अथवा 50% आंशिक) ट्यूशन फीस की संपूर्ण माफी',
     benefitAmount: 0,
     deadline: '2026-11-20',
     daysRemaining: 54,
@@ -20,7 +20,7 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     isNew: true,
     applicationStatus: 'active_now',
     description: 'The Programa Universidade para Todos (ProUni), managed by the Brazilian Ministry of Education (MEC), offers full (100%) and partial (50%) scholarships to low-income students who have taken the ENEM national exam. It provides zero-tuition undergraduate degree access across top accredited private universities in Brazil.',
-    descriptionHi: 'ब्राजील के संघीय शिक्षा मंत्रालय (MEC) द्वारा संचालित प्रोउनी (ProUni) कार्यक्रम एनेम (ENEM) राष्ट्रीय परीक्षा उत्तीर्ण करने वाले छात्रों को देश के शीर्ष निजी विश्वविद्यालयों में १००% अथवा ५०% ट्यूशन फीस छूट के साथ स्नातक पाठ्यक्रम में मुफ्त शिक्षा का अवसर देता है।',
+    descriptionHi: 'ब्राजील के संघीय शिक्षा मंत्रालय (MEC) द्वारा संचालित प्रोउनी (ProUni) कार्यक्रम एनेम (ENEM) राष्ट्रीय परीक्षा उत्तीर्ण करने वाले छात्रों को देश के शीर्ष निजी विश्वविद्यालयों में 100% अथवा 50% ट्यूशन फीस छूट के साथ स्नातक पाठ्यक्रम में मुफ्त शिक्षा का अवसर देता है।',
     gazette: {
       circularNumber: 'BR-MEC-PROUNI-2026',
       issuingAuthority: 'Ministério da Educação (MEC, Governo Federal do Brasil)',
@@ -32,8 +32,8 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'cpf_rg', name: 'Cadastro de Pessoas Físicas (CPF) and RG Identity Card', nameHi: 'सीपीएफ (CPF) एवं राष्ट्रीय पहचान पत्र (RG)', isMandatory: true },
-      { id: 'enem_score', name: 'Official ENEM Exam Scorecard (minimum 450 points average, no zero in essay)', nameHi: 'एनेम (ENEM) परीक्षा स्कोरकार्ड (न्यूनतम ४५० अंक एवं निबंध में उत्तीर्ण)', isMandatory: true },
-      { id: 'income_proof', name: 'Proof of Household Per Capita Gross Income (up to 1.5 minimum wages for 100% grant)', nameHi: 'पारिवारिक सकल आय प्रमाणपत्र (१.५ न्यूनतम वेतन सीमा)', isMandatory: true },
+      { id: 'enem_score', name: 'Official ENEM Exam Scorecard (minimum 450 points average, no zero in essay)', nameHi: 'एनेम (ENEM) परीक्षा स्कोरकार्ड (न्यूनतम 450 अंक एवं निबंध में उत्तीर्ण)', isMandatory: true },
+      { id: 'income_proof', name: 'Proof of Household Per Capita Gross Income (up to 1.5 minimum wages for 100% grant)', nameHi: 'पारिवारिक सकल आय प्रमाणपत्र (1.5 न्यूनतम वेतन सीमा)', isMandatory: true },
     ],
     applySteps: [
       { step: 1, text: 'Access the official portal acessounico.mec.gov.br and log in with your Gov.br account.', textHi: 'आधिकारिक पोर्टल acessounico.mec.gov.br पर Gov.br खाते के माध्यम से लॉगिन करें।' },
@@ -53,7 +53,7 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'school_student', 'job_seeker'],
     benefitHeadline: 'Zero-Interest (0% Interest Rate) Federal Student Financing for Accredited University Degrees',
-    benefitHeadlineHi: 'मान्यता प्राप्त विश्वविद्यालय डिग्री हेतु शून्य प्रतिशत (०% ब्याज दर) संघीय छात्र शिक्षा ऋण',
+    benefitHeadlineHi: 'मान्यता प्राप्त विश्वविद्यालय डिग्री हेतु शून्य प्रतिशत (0% ब्याज दर) संघीय छात्र शिक्षा ऋण',
     benefitAmount: 0,
     deadline: '2026-11-30',
     daysRemaining: 64,
@@ -73,8 +73,8 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'gov_id', name: 'CPF and National Identification Document (RG, CNH, or equivalent)', nameHi: 'सीपीएफ एवं फोटोयुक्त राष्ट्रीय पहचान पत्र', isMandatory: true },
-      { id: 'enem_history', name: 'Proof of ENEM completion (taken from 2010 onward with minimum 450 score)', nameHi: 'एनेम परीक्षा उत्तीर्ण प्रमाणपत्र (न्यूनतम ४५० अंक)', isMandatory: true },
-      { id: 'family_income_proof', name: 'Proof of per capita household income within 3 minimum wages limit', nameHi: 'पारिवारिक प्रति व्यक्ति आय प्रमाण (३ न्यूनतम वेतन सीमा तक)', isMandatory: true },
+      { id: 'enem_history', name: 'Proof of ENEM completion (taken from 2010 onward with minimum 450 score)', nameHi: 'एनेम परीक्षा उत्तीर्ण प्रमाणपत्र (न्यूनतम 450 अंक)', isMandatory: true },
+      { id: 'family_income_proof', name: 'Proof of per capita household income within 3 minimum wages limit', nameHi: 'पारिवारिक प्रति व्यक्ति आय प्रमाण (3 न्यूनतम वेतन सीमा तक)', isMandatory: true },
     ],
     applySteps: [
       { step: 1, text: 'Register during the open call on acessounico.mec.gov.br/fies using your Gov.br credentials.', textHi: 'acessounico.mec.gov.br/fies पर Gov.br क्रेडेंशियल्स के साथ ऑनलाइन पंजीकरण करें।' },
@@ -94,7 +94,7 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker'],
     benefitHeadline: 'Guaranteed Monthly Wage (R$700 - R$1,412) + FGTS + Fully Paid Vocational Course (SENAI/SENAC)',
-    benefitHeadlineHi: 'गारंटीकृत मासिक वैधानिक वेतन (R$७०० - R$१,४१२) + FGTS लाभ + निःशुल्क व्यावसायिक पाठ्यक्रम (SENAI/SENAC)',
+    benefitHeadlineHi: 'गारंटीकृत मासिक वैधानिक वेतन (R$700 - R$1,412) + FGTS लाभ + निःशुल्क व्यावसायिक पाठ्यक्रम (SENAI/SENAC)',
     benefitAmount: 1412,
     deadline: '2026-12-31',
     daysRemaining: 95,
@@ -102,7 +102,7 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     isNew: false,
     applicationStatus: 'active_now',
     description: 'Regulated by Brazilian Federal Law 10.097/2000, the Programa Jovem Aprendiz mandates medium and large enterprises to employ young talent aged 14 to 24. Participants receive hands-on professional work experience combined with technical courses delivered by accredited Sistema S schools (SENAI, SENAC, CIEE) with full statutory benefits.',
-    descriptionHi: 'ब्राजील के संघीय कानून १०,०९७/२००० के तहत संचालित जोवेम अप्रेंटिस कार्यक्रम १४ से २४ वर्ष के युवाओं को कंपनियों में औपचारिक रोजगार और सिस्टेमा एस (SENAI/SENAC) के माध्यम से निःशुल्क तकनीकी प्रशिक्षण प्रदान करता है, जिसमें पूर्ण श्रम अधिकार और वेतन सुनिश्चित होता है।',
+    descriptionHi: 'ब्राजील के संघीय कानून 10,097/2000 के तहत संचालित जोवेम अप्रेंटिस कार्यक्रम 14 से 24 वर्ष के युवाओं को कंपनियों में औपचारिक रोजगार और सिस्टेमा एस (SENAI/SENAC) के माध्यम से निःशुल्क तकनीकी प्रशिक्षण प्रदान करता है, जिसमें पूर्ण श्रम अधिकार और वेतन सुनिश्चित होता है।',
     gazette: {
       circularNumber: 'BR-MTE-APRENDIZ-2026',
       issuingAuthority: 'Ministério do Trabalho e Emprego (MTE, Governo Federal do Brasil)',
@@ -115,7 +115,7 @@ export const BRAZIL_OPPORTUNITIES: Opportunity[] = [
     documents: [
       { id: 'ctps_digital', name: 'Digital Work Card (Carteira de Trabalho Digital - CTPS)', nameHi: 'डिजिटल श्रम कार्ड (सीटीपीएस डिजिटल)', isMandatory: true },
       { id: 'school_enrollment', name: 'Proof of School Enrollment and Regular Attendance (or High School Completion Certificate)', nameHi: 'विद्यालय में सक्रिय नामांकन एवं नियमित उपस्थिति प्रमाणपत्र', isMandatory: true },
-      { id: 'id_guardian', name: 'Identity Card (RG/CPF) of Apprentice and Legal Guardian (if under 18)', nameHi: 'पहचान पत्र (RG/CPF) एवं अभिभावक सहमति प्रपत्र (१८ वर्ष से कम होने पर)', isMandatory: true },
+      { id: 'id_guardian', name: 'Identity Card (RG/CPF) of Apprentice and Legal Guardian (if under 18)', nameHi: 'पहचान पत्र (RG/CPF) एवं अभिभावक सहमति प्रपत्र (18 वर्ष से कम होने पर)', isMandatory: true },
     ],
     applySteps: [
       { step: 1, text: 'Register your candidate profile on official accredited intermediary portals such as CIEE, Espro, or corporate career sites.', textHi: 'CIEE, Espro अथवा कंपनियों के आधिकारिक करियर पोर्टल पर अपना बायोडाटा पंजीकृत करें।' },

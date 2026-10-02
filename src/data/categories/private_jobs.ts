@@ -4,7 +4,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-tcs-nqt-01',
     title: 'TCS NQT 2026: National Qualifier Test for 45,000+ Fresher & IT Roles Across 1,000+ Top Companies',
-    titleHi: 'टीसीएस एनक्यूटी २०२६: १,०००+ शीर्ष कंपनियों में ४५,०००+ फ्रेशर्स व आईटी पदों पर राष्ट्रीय भर्ती',
+    titleHi: 'टीसीएस एनक्यूटी 2026: 1,000+ शीर्ष कंपनियों में 45,000+ फ्रेशर्स व आईटी पदों पर राष्ट्रीय भर्ती',
     category: 'private_job',
     applicationStatus: 'active_now',
     lifeStage: 'private_jobs',
@@ -12,11 +12,11 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Single Test Score Valid for TCS Ninja, Digital & Prime Roles (₹3.6 LPA - ₹9.0 LPA) + Tata Motors & Titan',
-    benefitHeadlineHi: 'एक टेस्ट से टीसीएस निंजा, डिजिटल एवं प्राइम पदों (वेतन: ₹३.६ लाख से ₹९.० लाख) में सीधा चयन',
+    benefitHeadlineHi: 'एक टेस्ट से टीसीएस निंजा, डिजिटल एवं प्राइम पदों (वेतन: ₹3.6 लाख से ₹9.0 लाख) में सीधा चयन',
     benefitAmount: 55000,
     deadline: '2026-04-15',
     description: 'Tata Consultancy Services official national assessment standardized across India. High scores qualify candidates directly for technical interviews in TCS, Tata Elxsi, TVS, Jio, and 1,000+ corporate hiring partners.',
-    descriptionHi: 'टाटा कंसल्टेंसी सर्विसेज (TCS) द्वारा संचालित अखिल भारतीय राष्ट्रीय परीक्षा जिसके स्कोर के आधार पर देश की १,०००+ प्रमुख निजी कंपनियों में सॉफ्टवेयर, डेटा और बिजनेस ऑपरेशंस के पदों पर सीधी भर्ती होती है।',
+    descriptionHi: 'टाटा कंसल्टेंसी सर्विसेज (TCS) द्वारा संचालित अखिल भारतीय राष्ट्रीय परीक्षा जिसके स्कोर के आधार पर देश की 1,000+ प्रमुख निजी कंपनियों में सॉफ्टवेयर, डेटा और बिजनेस ऑपरेशंस के पदों पर सीधी भर्ती होती है।',
     gazette: {
       circularNumber: 'TCS-iON/NQT-2026/NATIONAL-CYCLE',
       issuingAuthority: 'Tata Consultancy Services (TCS iON)',
@@ -42,7 +42,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-infosys-hiring-01',
     title: 'Infosys National Fresher & Lateral Recruitment 2026 (Systems Engineer & Specialist Programmer)',
-    titleHi: 'इन्फोसिस राष्ट्रीय भर्ती २०२६: सिस्टम्स इंजीनियर एवं स्पेशलिस्ट प्रोग्रामर भर्ती (३.६ - ९.५ लाख)',
+    titleHi: 'इन्फोसिस राष्ट्रीय भर्ती 2026: सिस्टम्स इंजीनियर एवं स्पेशलिस्ट प्रोग्रामर भर्ती (3.6 - 9.5 लाख)',
     category: 'private_job',
     applicationStatus: 'active_now',
     lifeStage: 'private_jobs',
@@ -50,7 +50,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Pan-India Hiring for SE (₹3.6 LPA) and Specialist Programmer / Digital Specialist (₹9.5 LPA)',
-    benefitHeadlineHi: 'सिस्टम्स इंजीनियर (₹३.६ लाख) एवं स्पेशलिस्ट प्रोग्रामर (₹९.५ लाख) पदों पर अखिल भारतीय भर्ती',
+    benefitHeadlineHi: 'सिस्टम्स इंजीनियर (₹3.6 लाख) एवं स्पेशलिस्ट प्रोग्रामर (₹9.5 लाख) पदों पर अखिल भारतीय भर्ती',
     benefitAmount: 60000,
     deadline: '2026-05-30',
     description: 'Infosys official nationwide recruitment drive for fresh engineers, MCA, and MSc graduates across development centers in Bengaluru, Pune, Hyderabad, Chennai, and Indore.',
@@ -80,7 +80,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-google-careers-01',
     title: 'Google India Engineering & Tech Careers 2026: Direct Corporate Openings (Bengaluru, Hyderabad, Gurugram)',
-    titleHi: 'गूगल इंडिया इंजीनियरिंग एवं टेक करियर २०२६: बेंगलुरु, हैदराबाद व गुरुग्राम में सीधी भर्ती',
+    titleHi: 'गूगल इंडिया इंजीनियरिंग एवं टेक करियर 2026: बेंगलुरु, हैदराबाद व गुरुग्राम में सीधी भर्ती',
     category: 'private_job',
     applicationStatus: 'active_now',
     lifeStage: 'private_jobs',
@@ -88,7 +88,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Starting CTC ₹18 LPA - ₹42 LPA + Google Stock Units (GSUs), World-Class Health Insurance & Free Meals',
-    benefitHeadlineHi: 'प्रारंभिक पैकेज ₹१८ लाख - ₹४२ लाख + गूगल स्टॉक (GSUs), विश्वस्तरीय स्वास्थ्य बीमा एवं निःशुल्क भोजन',
+    benefitHeadlineHi: 'प्रारंभिक पैकेज ₹18 लाख - ₹42 लाख + गूगल स्टॉक (GSUs), विश्वस्तरीय स्वास्थ्य बीमा एवं निःशुल्क भोजन',
     benefitAmount: 180000,
     deadline: 'OPEN_ROUND',
     description: 'Direct applications open for Software Engineers (Early Career), Cloud Support Specialists, AI Prompt Evaluators, and Technical Solutions Associates across Google offices in India.',
@@ -108,7 +108,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Search India roles on careers.google.com and filter by "Early Career" or your experience level.', textHi: 'careers.google.com पर भारत के पदों को सर्च करें।' },
-      { step: 2, text: 'Upload 1-page PDF resume with clear metrics and technical stack.', textHi: '१ पेज का बायोडाटा अपलोड कर फॉर्म भरें।' },
+      { step: 2, text: 'Upload 1-page PDF resume with clear metrics and technical stack.', textHi: '1 पेज का बायोडाटा अपलोड कर फॉर्म भरें।' },
       { step: 3, text: 'Complete online Technical Assessment (Google OA) if shortlisted.', textHi: 'शॉर्टलिस्ट होने पर ऑनलाइन कोडिंग टेस्ट दें।' }
     ],
     tags: ['Google India', 'Top MNC', 'High Salary', 'Software Engineer', 'Cloud'],
@@ -118,7 +118,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-amazon-jobs-01',
     title: 'Amazon India Operations, Customer & Tech Support: 20,000+ Corporate & Operations Roles',
-    titleHi: 'अमेज़न इंडिया ऑपरेशंस एवं कस्टमर सपोर्ट: देश भर में २०,०००+ पदों पर सीधी भर्ती',
+    titleHi: 'अमेज़न इंडिया ऑपरेशंस एवं कस्टमर सपोर्ट: देश भर में 20,000+ पदों पर सीधी भर्ती',
     category: 'private_job',
     applicationStatus: 'active_now',
     lifeStage: 'private_jobs',
@@ -126,11 +126,11 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Salary ₹3.2 LPA - ₹8.5 LPA + Performance Bonuses, Night Shift Allowances & Comprehensive Medical Coverage',
-    benefitHeadlineHi: 'वेतन ₹३.२ लाख - ₹८.५ लाख + कार्य प्रदर्शन बोनस, नाइट अलाउंस व ५ लाख का कैशलेस मेडिकल कवर',
+    benefitHeadlineHi: 'वेतन ₹3.2 लाख - ₹8.5 लाख + कार्य प्रदर्शन बोनस, नाइट अलाउंस व 5 लाख का कैशलेस मेडिकल कवर',
     benefitAmount: 45000,
     deadline: 'OPEN_ROUND',
     description: 'Amazon India hiring across fulfillment centers, digital customer service, AWS cloud support, and logistics monitoring in 25+ cities across India.',
-    descriptionHi: 'अमेज़न इंडिया द्वारा देश के २५+ शहरों में ग्राहक सेवा, लॉजिस्टिक्स निगरानी, एडब्ल्यूएस क्लाउड ऑपरेशंस हेतु फ्रेशर्स और अनुभवी युवाओं की सीधी भर्ती।',
+    descriptionHi: 'अमेज़न इंडिया द्वारा देश के 25+ शहरों में ग्राहक सेवा, लॉजिस्टिक्स निगरानी, एडब्ल्यूएस क्लाउड ऑपरेशंस हेतु फ्रेशर्स और अनुभवी युवाओं की सीधी भर्ती।',
     gazette: {
       circularNumber: 'AMZN-IN/RECRUIT/OPS-TECH/2026',
       issuingAuthority: 'Amazon Development Centre India',
@@ -141,12 +141,12 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free Direct Application)'
     },
     documents: [
-      { id: 'd-amz-1', name: '12th / Graduation Marksheet in Any Stream', nameHi: '१२वीं अथवा किसी भी विषय में स्नातक अंकतालिका', isMandatory: true },
+      { id: 'd-amz-1', name: '12th / Graduation Marksheet in Any Stream', nameHi: '12वीं अथवा किसी भी विषय में स्नातक अंकतालिका', isMandatory: true },
       { id: 'd-amz-2', name: 'Aadhaar Card and PAN Card', nameHi: 'आधार कार्ड एवं पैन कार्ड', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Visit amazon.jobs and search openings in your nearest city.', textHi: 'amazon.jobs पर अपने शहर के नजदीकी पद खोजें।' },
-      { step: 2, text: 'Submit online application and take standard 30-minute virtual aptitude test.', textHi: 'आवेदन पत्र भरकर ३० मिनट का ऑनलाइन टेस्ट दें।' },
+      { step: 2, text: 'Submit online application and take standard 30-minute virtual aptitude test.', textHi: 'आवेदन पत्र भरकर 30 मिनट का ऑनलाइन टेस्ट दें।' },
       { step: 3, text: 'Receive offer letter with direct reporting date at nearest Amazon centre.', textHi: 'चयनित होने पर आधिकारिक ऑफर लेटर प्राप्त करें।' }
     ],
     tags: ['Amazon Jobs', 'Customer Support', 'Operations', 'Work From Home / Office', 'MNC Hiring'],
@@ -156,7 +156,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-wipro-nth-01',
     title: 'Wipro Elite National Talent Hunt (NTH) 2026: Project Engineer & Cloud Analyst',
-    titleHi: 'विप्रो एलीट नेशनल टैलेंट हंट २०२६: प्रोजेक्ट इंजीनियर एवं क्लाउड एनालिस्ट भर्ती',
+    titleHi: 'विप्रो एलीट नेशनल टैलेंट हंट 2026: प्रोजेक्ट इंजीनियर एवं क्लाउड एनालिस्ट भर्ती',
     category: 'private_job',
     applicationStatus: 'upcoming',
     lifeStage: 'private_jobs',
@@ -164,7 +164,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'National Engineering Hiring Drive with Starting Package of ₹3.50 LPA - ₹6.50 LPA + ₹25,000 Joining Bonus',
-    benefitHeadlineHi: 'इंजीनियरिंग छात्रों हेतु विप्रो में ₹३.५ लाख से ₹६.५ लाख पैकेज पर स्थायी प्रोजेक्ट इंजीनियर पद',
+    benefitHeadlineHi: 'इंजीनियरिंग छात्रों हेतु विप्रो में ₹3.5 लाख से ₹6.5 लाख पैकेज पर स्थायी प्रोजेक्ट इंजीनियर पद',
     benefitAmount: 40000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     description: 'Wipro off-campus assessment for fresh B.E., B.Tech, and 5-year integrated M.Tech candidates across India looking to kickstart their technical career in software development and cloud operations.',
@@ -179,7 +179,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free Campus Drive)'
     },
     documents: [
-      { id: 'd-wip-1', name: 'B.E. / B.Tech Marksheets (Min 60% with no active backlogs)', nameHi: 'बीटेक अंकतालिका (न्यूनतम ६०% अंक)', isMandatory: true },
+      { id: 'd-wip-1', name: 'B.E. / B.Tech Marksheets (Min 60% with no active backlogs)', nameHi: 'बीटेक अंकतालिका (न्यूनतम 60% अंक)', isMandatory: true },
       { id: 'd-wip-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
@@ -202,7 +202,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: 'Salary ₹6 LPA - ₹25 LPA + High-Upside Startup Equity (ESOPs) & Remote Flexibility',
-    benefitHeadlineHi: 'वेतन ₹६ लाख - ₹२५ लाख + स्टार्टअप इक्विटी (ESOPs) एवं घर बैठे रिमोट काम की सुविधा',
+    benefitHeadlineHi: 'वेतन ₹6 लाख - ₹25 लाख + स्टार्टअप इक्विटी (ESOPs) एवं घर बैठे रिमोट काम की सुविधा',
     benefitAmount: 85000,
     deadline: 'OPEN_ROUND',
     description: 'Connect directly with funded tech startups backed by Y Combinator, Sequoia, and Peak XV. Apply with 1-click directly to founders without HR screening filters.',
@@ -232,7 +232,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-zomato-ops-01',
     title: 'Zomato & Blinkit City Operations Associate: Ground Fulfillment & Merchant Onboarding',
-    titleHi: 'ज़ोमैटो एवं ब्लिंकिट सिटी ऑपरेशंस: ५००+ शहरों में डार्क स्टोर व मर्चेंट ऑनबोर्डिंग पद (२५,००० - ३५,०००/माह)',
+    titleHi: 'ज़ोमैटो एवं ब्लिंकिट सिटी ऑपरेशंस: 500+ शहरों में डार्क स्टोर व मर्चेंट ऑनबोर्डिंग पद (25,000 - 35,000/माह)',
     category: 'private_job',
     applicationStatus: 'active_now',
     lifeStage: 'private_jobs',
@@ -240,11 +240,11 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Monthly ₹25,000 - ₹35,000 + Fuel Allowance, Performance Incentives & ESIC Health Card',
-    benefitHeadlineHi: '₹२५,००० - ₹३५,००० प्रतिमाह + पेट्रोल भत्ता, प्रोत्साहन राशि एवं ईएसआईसी स्वास्थ्य कार्ड',
+    benefitHeadlineHi: '₹25,000 - ₹35,000 प्रतिमाह + पेट्रोल भत्ता, प्रोत्साहन राशि एवं ईएसआईसी स्वास्थ्य कार्ड',
     benefitAmount: 30000,
     deadline: 'OPEN_ROUND',
     description: 'Ground operations and quick-commerce dark store management associate roles across Tier-1, Tier-2, and Tier-3 cities managing merchant onboarding, rider coordination, and supply chain fulfillment.',
-    descriptionHi: 'देश के ५००+ छोटे-बड़े शहरों में ज़ोमैटो एवं ब्लिंकिट के डार्क स्टोर प्रबंधन, रेस्टोरेंट ऑनबोर्डिंग और फील्ड ऑपरेशंस हेतु युवाओं की सीधी भर्ती।',
+    descriptionHi: 'देश के 500+ छोटे-बड़े शहरों में ज़ोमैटो एवं ब्लिंकिट के डार्क स्टोर प्रबंधन, रेस्टोरेंट ऑनबोर्डिंग और फील्ड ऑपरेशंस हेतु युवाओं की सीधी भर्ती।',
     gazette: {
       circularNumber: 'ZOMATO/BLINKIT-OPS/2026/CAREERS',
       issuingAuthority: 'Zomato Limited Human Resources',
@@ -255,13 +255,13 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free Direct Application)'
     },
     documents: [
-      { id: 'd-zom-1', name: '10th / 12th / Graduation Certificate', nameHi: '१०वीं/१२वीं अथवा स्नातक अंकतालिका', isMandatory: true },
+      { id: 'd-zom-1', name: '10th / 12th / Graduation Certificate', nameHi: '10वीं/12वीं अथवा स्नातक अंकतालिका', isMandatory: true },
       { id: 'd-zom-2', name: 'PAN Card, Aadhaar Card & Driving Licence', nameHi: 'पैन, आधार कार्ड एवं ड्राइविंग लाइसेंस', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Check local city operations vacancies on zomato.com/careers.', textHi: 'zomato.com/careers पर अपने शहर की रिक्तियां देखें।' },
       { step: 2, text: 'Submit resume and select your nearest city hub.', textHi: 'बायोडाटा सबमिट कर नजदीकी हब का चयन करें।' },
-      { step: 3, text: 'Attend local branch interview and complete 3-day training.', textHi: 'स्थानीय शाखा में साक्षात्कार देकर ३-दिवसीय प्रशिक्षण पूरा करें।' }
+      { step: 3, text: 'Attend local branch interview and complete 3-day training.', textHi: 'स्थानीय शाखा में साक्षात्कार देकर 3-दिवसीय प्रशिक्षण पूरा करें।' }
     ],
     tags: ['Zomato', 'Blinkit', 'Private Job', 'Operations', 'Fresher Friendly'],
     is100PercentFree: true,
@@ -278,11 +278,11 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['homemaker', 'farmer', 'business_owner', 'employed', 'senior_citizen', 'job_seeker'],
     benefitHeadline: 'Earn ₹20,000 - ₹50,000/Month Working from Mobile with Top IRDAI Approved Insurers',
-    benefitHeadlineHi: 'मोबाइल से काम करके शीर्ष बीमा कंपनियों के साथ ₹२०,००० - ₹५०,००० प्रतिमाह कमीशन कमाएं',
+    benefitHeadlineHi: 'मोबाइल से काम करके शीर्ष बीमा कंपनियों के साथ ₹20,000 - ₹50,000 प्रतिमाह कमीशन कमाएं',
     benefitAmount: 35000,
     deadline: 'OPEN_ROUND',
     description: 'Point of Sales Person (POSP) is an IRDAI-authorized official career path allowing any 10th pass adult to sell life, health, motor, and crop insurance policies directly to community members with 100% transparent payouts.',
-    descriptionHi: 'भारतीय बीमा विनियामक एवं विकास प्राधिकरण (आईआरडीएआई) द्वारा मान्यता प्राप्त करियर मार्ग जिसमें न्यूनतम १०वीं पास वयस्क बीमा सलाहकार बनकर आजीवन आय कमा सकते हैं।',
+    descriptionHi: 'भारतीय बीमा विनियामक एवं विकास प्राधिकरण (आईआरडीएआई) द्वारा मान्यता प्राप्त करियर मार्ग जिसमें न्यूनतम 10वीं पास वयस्क बीमा सलाहकार बनकर आजीवन आय कमा सकते हैं।',
     gazette: {
       circularNumber: 'IRDAI/POSP/2026/REGULATION-04',
       issuingAuthority: 'Insurance Regulatory and Development Authority of India',
@@ -293,13 +293,13 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free Training & Certification)'
     },
     documents: [
-      { id: 'd-posp-1', name: '10th Standard Pass Certificate', nameHi: '१०वीं उत्तीर्ण प्रमाण पत्र', isMandatory: true },
+      { id: 'd-posp-1', name: '10th Standard Pass Certificate', nameHi: '10वीं उत्तीर्ण प्रमाण पत्र', isMandatory: true },
       { id: 'd-posp-2', name: 'PAN Card & Aadhaar Card', nameHi: 'पैन कार्ड एवं आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register with any IRDAI-licensed insurance broker (PolicyBazaar, Turtlemint, etc.).', textHi: 'आईआरडीएआई पंजीकृत ब्रोकर पोर्टल पर निःशुल्क पंजीकरण करें।' },
-      { step: 2, text: 'Complete mandatory 15-hour online video training on insurance modules.', textHi: 'अनिवार्य १५ घंटे का ऑनलाइन वीडियो प्रशिक्षण पूरा करें।' },
-      { step: 3, text: 'Pass official 30-minute online POSP test and get licensed to advise clients.', textHi: '३० मिनट की परीक्षा उत्तीर्ण कर आधिकारिक सलाहकार लाइसेंस प्राप्त करें।' }
+      { step: 2, text: 'Complete mandatory 15-hour online video training on insurance modules.', textHi: 'अनिवार्य 15 घंटे का ऑनलाइन वीडियो प्रशिक्षण पूरा करें।' },
+      { step: 3, text: 'Pass official 30-minute online POSP test and get licensed to advise clients.', textHi: '30 मिनट की परीक्षा उत्तीर्ण कर आधिकारिक सलाहकार लाइसेंस प्राप्त करें।' }
     ],
     tags: ['POSP', 'Insurance Consultant', 'Work from Home', 'Zero Investment', 'Flexible Income'],
     is100PercentFree: true
@@ -315,11 +315,11 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['job_seeker', 'college_student', 'homemaker', 'employed'],
     benefitHeadline: '$18 - $24 Per Hour (~₹1,500 - ₹2,000/hr) Direct to Indian Bank via PayPal/Stripe',
-    benefitHeadlineHi: '$१८ - $२४ प्रति घंटा (~₹१,५०० - ₹२,०००/घंटा) सीधे भारतीय बैंक खाते में',
+    benefitHeadlineHi: '$18 - $24 प्रति घंटा (~₹1,500 - ₹2,000/घंटा) सीधे भारतीय बैंक खाते में',
     benefitAmount: 90000,
     deadline: 'OPEN_ROUND',
     description: 'Work from home for international AI research laboratories evaluating generative models in Hindi and English. Flexible 10-20 hours per week.',
-    descriptionHi: 'घर बैठे अंतरराष्ट्रीय एआई अनुसंधान प्रयोगशालाओं के लिए हिंदी और अंग्रेजी भाषा में मॉडल्स का मूल्यांकन। सप्ताह में १०-२० घंटे का लचीला कार्य।',
+    descriptionHi: 'घर बैठे अंतरराष्ट्रीय एआई अनुसंधान प्रयोगशालाओं के लिए हिंदी और अंग्रेजी भाषा में मॉडल्स का मूल्यांकन। सप्ताह में 10-20 घंटे का लचीला कार्य।',
     gazette: {
       circularNumber: 'REMOTE-CORP-VERIFIED/2026/IN',
       issuingAuthority: 'Direct Corporate Enterprise Partner (Scale AI / Outlier)',
@@ -335,7 +335,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Create applicant profile on verified portal.', textHi: 'सत्यापित पोर्टल पर अपना आवेदक विवरण भरें।' },
-      { step: 2, text: 'Complete 20-minute language comprehension screening test.', textHi: '२० मिनट का निःशुल्क भाषा ज्ञान परीक्षण पूरा करें।' },
+      { step: 2, text: 'Complete 20-minute language comprehension screening test.', textHi: '20 मिनट का निःशुल्क भाषा ज्ञान परीक्षण पूरा करें।' },
       { step: 3, text: 'Start evaluating AI training tasks and receive weekly dollar payouts.', textHi: 'कार्य शुरू करें और प्रति सप्ताह सीधे खाते में डॉलर भुगतान प्राप्त करें।' }
     ],
     tags: ['Remote Job', 'Earn in Dollars', 'AI Training', 'Flexible Hours', 'Verified Global Work'],
@@ -344,7 +344,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-amazon-wow-01',
     title: 'Amazon WOW 2026: Technology Mentorship & SDE Hiring Drive Exclusively for Women Engineers',
-    titleHi: 'अमेज़न वाओ २०२६: महिला इंजीनियरिंग छात्राओं हेतु सॉफ्टवेयर डेवलपमेंट इंजीनियर (SDE) भर्ती एवं मेंटरशिप',
+    titleHi: 'अमेज़न वाओ 2026: महिला इंजीनियरिंग छात्राओं हेतु सॉफ्टवेयर डेवलपमेंट इंजीनियर (SDE) भर्ती एवं मेंटरशिप',
     category: 'private_job',
     applicationStatus: 'active_now',
     lifeStage: 'private_jobs',
@@ -353,7 +353,7 @@ export const PRIVATE_JOB_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: '₹1,10,000/Month Paid SDE Internship + Pre-Placement Offer (₹28 LPA - ₹44 LPA) at Amazon India Development Centers',
-    benefitHeadlineHi: '₹१,१०,००० प्रतिमाह पेड इंटर्नशिप + अमेज़न इंडिया में ₹२८ से ₹४४ लाख वार्षिक पैकेज पर स्थायी सॉफ्टवेयर इंजीनियर जॉब',
+    benefitHeadlineHi: '₹1,10,000 प्रतिमाह पेड इंटर्नशिप + अमेज़न इंडिया में ₹28 से ₹44 लाख वार्षिक पैकेज पर स्थायी सॉफ्टवेयर इंजीनियर जॉब',
     benefitAmount: 110000,
     deadline: '2026-05-15',
     description: 'Amazon WOW is a dedicated initiative designed to skill, mentor, and hire women students pursuing B.Tech, B.E., M.Tech, or MCA across Indian engineering institutes directly for software development engineer (SDE) roles.',

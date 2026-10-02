@@ -7,14 +7,14 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-nirf-top-colleges-01',
     title: 'NIRF 2026 Official College & University Ranking Finder (Govt of India MoE)',
-    titleHi: 'एनआईआरएफ २०२६ आधिकारिक कॉलेज एवं विश्वविद्यालय रैंकिंग पोर्टल (भारत सरकार)',
+    titleHi: 'एनआईआरएफ 2026 आधिकारिक कॉलेज एवं विश्वविद्यालय रैंकिंग पोर्टल (भारत सरकार)',
     category: 'college_finder',
     lifeStage: 'education',
     targetAges: [15, 30],
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student', 'job_seeker'],
     benefitHeadline: '1-Click Access to Official Cutoffs, Fee Structures & Audited Placement Packages of 8,000+ Colleges',
-    benefitHeadlineHi: 'देश के ८,०००+ सरकारी व निजी कॉलेजों की वास्तविक प्लेसमेंट रिपोर्ट, फीस व सरकारी रैंकिंग एक क्लिक में देखें',
+    benefitHeadlineHi: 'देश के 8,000+ सरकारी व निजी कॉलेजों की वास्तविक प्लेसमेंट रिपोर्ट, फीस व सरकारी रैंकिंग एक क्लिक में देखें',
     benefitAmount: 0,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'ongoing',
@@ -42,7 +42,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-neet-01',
     title: 'NTA NEET UG 2026: National Eligibility cum Entrance Test (MBBS/BDS Admissions)',
-    titleHi: 'एनटीए नीट यूजी २०२६: एमबीबीएस एवं बीडीएस आधिकारिक राष्ट्रीय प्रवेश परीक्षा',
+    titleHi: 'एनटीए नीट यूजी 2026: एमबीबीएस एवं बीडीएस आधिकारिक राष्ट्रीय प्रवेश परीक्षा',
     category: 'competitive_exam',
     lifeStage: 'education',
     targetAges: [17, 25],
@@ -66,7 +66,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-neet-1', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true },
-      { id: 'd-neet-2', name: 'Class 10 & 12 Marksheets (PCB)', nameHi: '१०वीं एवं १२वीं (भौतिक, रसायन, जीव विज्ञान) अंकतालिका', isMandatory: true },
+      { id: 'd-neet-2', name: 'Class 10 & 12 Marksheets (PCB)', nameHi: '10वीं एवं 12वीं (भौतिक, रसायन, जीव विज्ञान) अंकतालिका', isMandatory: true },
       { id: 'd-neet-3', name: 'Postcard & Passport Size Photographs', nameHi: 'पासपोर्ट एवं पोस्टकार्ड साइज फोटो', isMandatory: true }
     ],
     applySteps: [
@@ -81,7 +81,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-jee-01',
     title: 'NTA JEE Main 2026: Premier Engineering College Entrance Examination',
-    titleHi: 'एनटीए जेईई मेन २०२६: शीर्ष इंजीनियरिंग संस्थान प्रवेश परीक्षा',
+    titleHi: 'एनटीए जेईई मेन 2026: शीर्ष इंजीनियरिंग संस्थान प्रवेश परीक्षा',
     category: 'competitive_exam',
     lifeStage: 'education',
     targetAges: [16, 22],
@@ -104,7 +104,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹1,000 (General) / ₹500 (Reserved)'
     },
     documents: [
-      { id: 'd-jee-1', name: 'Class 10 & 12 Marksheet', nameHi: 'कक्षा १० एवं १२ की अंकतालिका', isMandatory: true },
+      { id: 'd-jee-1', name: 'Class 10 & 12 Marksheet', nameHi: 'कक्षा 10 एवं 12 की अंकतालिका', isMandatory: true },
       { id: 'd-jee-2', name: 'Passport Size Photo & Signature', nameHi: 'पासपोर्ट साइज फोटो एवं हस्ताक्षर', isMandatory: true }
     ],
     applySteps: [
@@ -119,19 +119,19 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-jee-adv-01',
     title: 'JEE Advanced 2026: Direct Admission to 23 Indian Institutes of Technology (IITs)',
-    titleHi: 'जेईई एडवांस्ड २०२६: देश के २३ भारतीय प्रौद्योगिकी संस्थानों (आईआईटी) में प्रवेश',
+    titleHi: 'जेईई एडवांस्ड 2026: देश के 23 भारतीय प्रौद्योगिकी संस्थानों (आईआईटी) में प्रवेश',
     category: 'competitive_exam',
     lifeStage: 'education',
     targetAges: [16, 22],
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student'],
     benefitHeadline: 'Direct B.Tech Admission to Premier IIT Bombay, IIT Delhi, IIT Madras with Top Tech Career Opportunities',
-    benefitHeadlineHi: 'भारत के शीर्ष २३ आईआईटी संस्थानों में प्रतिष्ठित बीटेक उपाधि हेतु संयुक्त प्रवेश परीक्षा',
+    benefitHeadlineHi: 'भारत के शीर्ष 23 आईआईटी संस्थानों में प्रतिष्ठित बीटेक उपाधि हेतु संयुक्त प्रवेश परीक्षा',
     benefitAmount: 1500000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Joint Entrance Examination Advanced conducted by the rotating IIT for top 2,50,000 qualifiers of JEE Main seeking undergraduate engineering degrees in IITs.',
-    descriptionHi: 'जेईई मेन के शीर्ष २,५०,००० सफल उम्मीदवारों हेतु आईआईटी बॉम्बे, दिल्ली, कानपुर आदि में बीटेक प्रवेश परीक्षा।',
+    descriptionHi: 'जेईई मेन के शीर्ष 2,50,000 सफल उम्मीदवारों हेतु आईआईटी बॉम्बे, दिल्ली, कानपुर आदि में बीटेक प्रवेश परीक्षा।',
     gazette: {
       circularNumber: 'JAB/IIT-JEE-ADV/2026',
       issuingAuthority: 'Joint Admission Board (IITs)',
@@ -142,13 +142,13 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹3,200 (Male Gen/OBC) / ₹1,600 (Female / SC / ST / PwD)'
     },
     documents: [
-      { id: 'd-jadv-1', name: 'JEE Main 2026 Scorecard', nameHi: 'जेईई मेन २०२६ स्कोरकार्ड', isMandatory: true },
-      { id: 'd-jadv-2', name: 'Class 12th Board Marksheet (Top 20 Percentile or 75%+)', nameHi: '१२वीं बोर्ड अंकतालिका (७५% या टॉप २० परसेंटाइल)', isMandatory: true }
+      { id: 'd-jadv-1', name: 'JEE Main 2026 Scorecard', nameHi: 'जेईई मेन 2026 स्कोरकार्ड', isMandatory: true },
+      { id: 'd-jadv-2', name: 'Class 12th Board Marksheet (Top 20 Percentile or 75%+)', nameHi: '12वीं बोर्ड अंकतालिका (75% या टॉप 20 परसेंटाइल)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register on jeeadv.ac.in using JEE Main Application Number & Password.', textHi: 'jeeadv.ac.in पर जेईई मेन नंबर से लॉगिन कर पंजीकरण करें।' },
       { step: 2, text: 'Select exam cities and pay examination fee online.', textHi: 'परीक्षा शहर चुनें और ऑनलाइन परीक्षा शुल्क का भुगतान करें।' },
-      { step: 3, text: 'Appear for Paper 1 & Paper 2 (both mandatory) and participate in JoSAA counselling.', textHi: 'पेपर १ और २ में सम्मिलित होकर जोसा (JoSAA) काउंसलिंग में सीट प्राप्त करें।' }
+      { step: 3, text: 'Appear for Paper 1 & Paper 2 (both mandatory) and participate in JoSAA counselling.', textHi: 'पेपर 1 और 2 में सम्मिलित होकर जोसा (JoSAA) काउंसलिंग में सीट प्राप्त करें।' }
     ],
     tags: ['IIT', 'JEE Advanced', 'Engineering', 'Premier Institutes'],
     is100PercentFree: false
@@ -156,14 +156,14 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-cuet-ug-01',
     title: 'NTA CUET UG 2026: Central Universities Common Entrance Test (DU, BHU, JNU)',
-    titleHi: 'एनटीए सीयूईटी यूजी २०२६: दिल्ली यूनिवर्सिटी, बीएचयू, जेएनयू संयुक्त विश्वविद्यालय प्रवेश परीक्षा',
+    titleHi: 'एनटीए सीयूईटी यूजी 2026: दिल्ली यूनिवर्सिटी, बीएचयू, जेएनयू संयुक्त विश्वविद्यालय प्रवेश परीक्षा',
     category: 'competitive_exam',
     lifeStage: 'education',
     targetAges: [16, 24],
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student'],
     benefitHeadline: 'Single National Gateway to 250+ Central, State & Deemed Universities (3 Lakh+ Undergraduate Seats)',
-    benefitHeadlineHi: 'देश के २५०+ केंद्रीय, राज्य एवं डीम्ड विश्वविद्यालयों में बीए, बीएससी, बीकॉम प्रवेश हेतु एकमात्र राष्ट्रीय परीक्षा',
+    benefitHeadlineHi: 'देश के 250+ केंद्रीय, राज्य एवं डीम्ड विश्वविद्यालयों में बीए, बीएससी, बीकॉम प्रवेश हेतु एकमात्र राष्ट्रीय परीक्षा',
     benefitAmount: 400000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
@@ -179,7 +179,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹1,000 (Up to 3 subjects) / ₹400 (per additional subject)'
     },
     documents: [
-      { id: 'd-cuet-1', name: 'Class 10 & 12 Marksheet', nameHi: '१०वीं एवं १२वीं अंकतालिका', isMandatory: true },
+      { id: 'd-cuet-1', name: 'Class 10 & 12 Marksheet', nameHi: '10वीं एवं 12वीं अंकतालिका', isMandatory: true },
       { id: 'd-cuet-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
@@ -194,19 +194,19 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-clat-01',
     title: 'CLAT 2026: Common Law Admission Test for 26 National Law Universities (NLUs)',
-    titleHi: 'क्लैट २०२६: देश के २६ राष्ट्रीय विधि विश्वविद्यालयों में बीए एलएलबी प्रवेश परीक्षा',
+    titleHi: 'क्लैट 2026: देश के 26 राष्ट्रीय विधि विश्वविद्यालयों में बीए एलएलबी प्रवेश परीक्षा',
     category: 'competitive_exam',
     lifeStage: 'education',
     targetAges: [16, 25],
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student'],
     benefitHeadline: 'Direct Entry to NLSIU Bengaluru, NALSAR Hyderabad for 5-Year Integrated B.A. LL.B (Hons)',
-    benefitHeadlineHi: 'शीर्ष राष्ट्रीय लॉ कॉलेजों से ५-वर्षीय बीए एलएलबी कर कॉर्पोरेट लॉयर एवं न्यायाधीश बनने का मार्ग',
+    benefitHeadlineHi: 'शीर्ष राष्ट्रीय लॉ कॉलेजों से 5-वर्षीय बीए एलएलबी कर कॉर्पोरेट लॉयर एवं न्यायाधीश बनने का मार्ग',
     benefitAmount: 1800000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'National-level entrance exam for admissions to 5-year integrated undergraduate and one-year postgraduate law degree programmes at 26 participating NLUs.',
-    descriptionHi: 'देश के २६ प्रमुख राष्ट्रीय विधि विश्वविद्यालयों में कानून की पढ़ाई हेतु आयोजित प्रतिष्ठित राष्ट्रीय परीक्षा।',
+    descriptionHi: 'देश के 26 प्रमुख राष्ट्रीय विधि विश्वविद्यालयों में कानून की पढ़ाई हेतु आयोजित प्रतिष्ठित राष्ट्रीय परीक्षा।',
     gazette: {
       circularNumber: 'CONSORTIUM-NLUS/CLAT-2026',
       issuingAuthority: 'Consortium of National Law Universities',
@@ -217,7 +217,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹4,000 (General) / ₹3,500 (SC / ST / BPL)'
     },
     documents: [
-      { id: 'd-clat-1', name: '12th Class Pass Certificate (45% for Gen, 40% for SC/ST)', nameHi: '१२वीं बोर्ड अंकतालिका', isMandatory: true },
+      { id: 'd-clat-1', name: '12th Class Pass Certificate (45% for Gen, 40% for SC/ST)', nameHi: '12वीं बोर्ड अंकतालिका', isMandatory: true },
       { id: 'd-clat-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
@@ -231,7 +231,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-cat-01',
     title: 'IIM CAT 2026: Common Admission Test for 21 Indian Institutes of Management',
-    titleHi: 'कैट २०२६: देश के २१ भारतीय प्रबंध संस्थानों (आईआईएम) में एमबीए प्रवेश परीक्षा',
+    titleHi: 'कैट 2026: देश के 21 भारतीय प्रबंध संस्थानों (आईआईएम) में एमबीए प्रवेश परीक्षा',
     category: 'competitive_exam',
     lifeStage: 'education',
     targetAges: [20, 35],
@@ -254,12 +254,12 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹2,500 (General / OBC) / ₹1,250 (SC / ST / PwD)'
     },
     documents: [
-      { id: 'd-cat-1', name: 'Bachelor Degree Certificate (50% or equivalent CGPA)', nameHi: 'स्नातक डिग्री प्रमाण पत्र (न्यूनतम ५०%)', isMandatory: true },
+      { id: 'd-cat-1', name: 'Bachelor Degree Certificate (50% or equivalent CGPA)', nameHi: 'स्नातक डिग्री प्रमाण पत्र (न्यूनतम 50%)', isMandatory: true },
       { id: 'd-cat-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register on iimcat.ac.in and generate User ID and Password.', textHi: 'iimcat.ac.in पर जाकर यूजर आईडी और पासवर्ड बनाएं।' },
-      { step: 2, text: 'Fill academic history and select all 21 IIM interview preferences.', textHi: 'शैक्षणिक विवरण भरें और सभी २१ आईआईएम के विकल्प चुनें।' },
+      { step: 2, text: 'Fill academic history and select all 21 IIM interview preferences.', textHi: 'शैक्षणिक विवरण भरें और सभी 21 आईआईएम के विकल्प चुनें।' },
       { step: 3, text: 'Pay online application fee and print confirmation receipt.', textHi: 'परीक्षा शुल्क जमा करें और पुष्टि रसीद डाउनलोड करें।' }
     ],
     tags: ['CAT', 'MBA', 'IIM', 'Management', 'Corporate Leadership'],
@@ -280,12 +280,12 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     incomeCeiling: 450000,
     targetOccupations: ['college_student', 'school_student'],
     benefitHeadline: 'Direct Cash DBT of ₹12,000/Year for 3 Years (UG) & ₹20,000/Year (PG) Directly in Aadhaar Bank Account',
-    benefitHeadlineHi: 'स्नातक हेतु ₹१२,०००/वर्ष एवं स्नातकोत्तर हेतु ₹२०,०००/वर्ष सीधे बैंक खाते में (डीबीटी नेशनल स्कॉलरशिप पोर्टल)',
+    benefitHeadlineHi: 'स्नातक हेतु ₹12,000/वर्ष एवं स्नातकोत्तर हेतु ₹20,000/वर्ष सीधे बैंक खाते में (डीबीटी नेशनल स्कॉलरशिप पोर्टल)',
     benefitAmount: 76000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Ministry of Education flagship scholarship for top 20th percentile Class 12 board pass-outs pursuing regular graduation and post-graduation courses.',
-    descriptionHi: 'शिक्षा मंत्रालय द्वारा १२वीं कक्षा में शीर्ष २०% (८० परसेंटाइल से ऊपर) अंक प्राप्त करने वाले कॉलेज छात्रों को स्नातक एवं स्नातकोत्तर की पढ़ाई हेतु दी जाने वाली वार्षिक नकद छात्रवृत्ति।',
+    descriptionHi: 'शिक्षा मंत्रालय द्वारा 12वीं कक्षा में शीर्ष 20% (80 परसेंटाइल से ऊपर) अंक प्राप्त करने वाले कॉलेज छात्रों को स्नातक एवं स्नातकोत्तर की पढ़ाई हेतु दी जाने वाली वार्षिक नकद छात्रवृत्ति।',
     gazette: {
       circularNumber: 'MOE/SCHOLARSHIP/PM-USP/2026',
       issuingAuthority: 'Ministry of Education, Higher Education Department',
@@ -296,8 +296,8 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free National Scholarship Portal)'
     },
     documents: [
-      { id: 'd-usp-1', name: 'Class 12th Board Marksheet with Top 20th Percentile Rank', nameHi: '१२वीं बोर्ड अंकतालिका (८०+ परसेंटाइल)', isMandatory: true },
-      { id: 'd-usp-2', name: 'Income Certificate (Family income below ₹4.5 Lakh)', nameHi: 'पारिवारिक आय प्रमाण पत्र (₹४.५ लाख से कम)', isMandatory: true },
+      { id: 'd-usp-1', name: 'Class 12th Board Marksheet with Top 20th Percentile Rank', nameHi: '12वीं बोर्ड अंकतालिका (80+ परसेंटाइल)', isMandatory: true },
+      { id: 'd-usp-2', name: 'Income Certificate (Family income below ₹4.5 Lakh)', nameHi: 'पारिवारिक आय प्रमाण पत्र (₹4.5 लाख से कम)', isMandatory: true },
       { id: 'd-usp-3', name: 'Aadhaar Seeded Bank Account Details', nameHi: 'आधार से डीबीटी लिंक बैंक खाता पासबुक', isMandatory: true }
     ],
     applySteps: [
@@ -312,7 +312,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-aicte-pragati-01',
     title: 'AICTE Pragati & Saksham Scholarships: ₹50,000/Year for Girls & Differently-Abled Students',
-    titleHi: 'एआईसीटीई प्रगति एवं सक्षम छात्रवृत्ति: छात्राओं एवं दिव्यांग छात्रों हेतु ₹५०,००० प्रतिवर्ष',
+    titleHi: 'एआईसीटीई प्रगति एवं सक्षम छात्रवृत्ति: छात्राओं एवं दिव्यांग छात्रों हेतु ₹50,000 प्रतिवर्ष',
     category: 'scholarship',
     lifeStage: 'education',
     targetAges: [17, 25],
@@ -320,12 +320,12 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     incomeCeiling: 800000,
     targetOccupations: ['college_student', 'school_student'],
     benefitHeadline: '₹50,000 Per Annum for Every Year of Degree/Diploma Course (Up to ₹2,00,000 Total Financial Assistance)',
-    benefitHeadlineHi: 'तकनीकी डिग्री एवं डिप्लोमा की पढ़ाई के प्रत्येक वर्ष ₹५०,००० सीधे बैंक खाते में (कुल ₹२,००,००० तक सहायता)',
+    benefitHeadlineHi: 'तकनीकी डिग्री एवं डिप्लोमा की पढ़ाई के प्रत्येक वर्ष ₹50,000 सीधे बैंक खाते में (कुल ₹2,00,000 तक सहायता)',
     benefitAmount: 200000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'AICTE scheme to empower girls and differently-abled students admitted to AICTE approved technical colleges (B.Tech, B.Pharm, Diploma) with ₹50,000/year assistance.',
-    descriptionHi: 'अखिल भारतीय तकनीकी शिक्षा परिषद (एआईसीटीई) द्वारा तकनीकी कॉलेजों में बीटेक, बीफार्मा या डिप्लोमा कर रही बालिकाओं और दिव्यांग छात्रों को ₹५०,००० प्रतिवर्ष की आर्थिक सहायता।',
+    descriptionHi: 'अखिल भारतीय तकनीकी शिक्षा परिषद (एआईसीटीई) द्वारा तकनीकी कॉलेजों में बीटेक, बीफार्मा या डिप्लोमा कर रही बालिकाओं और दिव्यांग छात्रों को ₹50,000 प्रतिवर्ष की आर्थिक सहायता।',
     gazette: {
       circularNumber: 'AICTE/PRAGATI-SAKSHAM/2026/PORTAL',
       issuingAuthority: 'All India Council for Technical Education (AICTE)',
@@ -337,13 +337,13 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-prag-1', name: 'Admission Proof in AICTE Approved Technical Institution', nameHi: 'एआईसीटीई मान्यता प्राप्त कॉलेज प्रवेश रसीद', isMandatory: true },
-      { id: 'd-prag-2', name: 'Family Income Certificate (Below ₹8 Lakh/Year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹८ लाख से कम)', isMandatory: true },
+      { id: 'd-prag-2', name: 'Family Income Certificate (Below ₹8 Lakh/Year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹8 लाख से कम)', isMandatory: true },
       { id: 'd-prag-3', name: 'Aadhaar Card Linked to DBT Enabled Bank Account', nameHi: 'आधार लिंक डीबीटी बैंक खाता', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register on National Scholarship Portal scholarships.gov.in with OTR.', textHi: 'scholarships.gov.in पर अपने OTR नंबर से लॉगिन करें।' },
       { step: 2, text: 'Select AICTE Pragati (for girls) or Saksham (for differently-abled) scheme.', textHi: 'एआईसीटीई प्रगति अथवा सक्षम छात्रवृत्ति योजना चुनें।' },
-      { step: 3, text: 'Submit required documents and track sanction status online.', textHi: 'आवश्यक दस्तावेज अपलोड करें और डीबीटी द्वारा ₹५०,००० प्राप्त करें।' }
+      { step: 3, text: 'Submit required documents and track sanction status online.', textHi: 'आवश्यक दस्तावेज अपलोड करें और डीबीटी द्वारा ₹50,000 प्राप्त करें।' }
     ],
     tags: ['Girl Child', 'Women Empowerment', 'AICTE', 'Engineering', 'Scholarship'],
     is100PercentFree: true,
@@ -379,7 +379,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: 'Official semester course fee only (SC/ST full fee waiver on BA/BCom/BSc)'
     },
     documents: [
-      { id: 'd-ignou-1', name: '10th / 12th / Graduation Marksheet', nameHi: '१०वीं / १२वीं / स्नातक अंकतालिका', isMandatory: true },
+      { id: 'd-ignou-1', name: '10th / 12th / Graduation Marksheet', nameHi: '10वीं / 12वीं / स्नातक अंकतालिका', isMandatory: true },
       { id: 'd-ignou-2', name: 'Aadhaar Card', nameHi: 'आधार कार्ड', isMandatory: true }
     ],
     applySteps: [
@@ -393,19 +393,19 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-nios-adult-01',
     title: 'NIOS Open Basic & Senior Secondary (10th/12th) Certification for Adults',
-    titleHi: 'एनआईओएस मुक्त बुनियादी एवं वरिष्ठ माध्यमिक (१०वीं/१२वीं) वयस्क प्रमाणन',
+    titleHi: 'एनआईओएस मुक्त बुनियादी एवं वरिष्ठ माध्यमिक (10वीं/12वीं) वयस्क प्रमाणन',
     category: 'college_finder',
     lifeStage: 'education',
     targetAges: [14, 80],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'homemaker', 'employed', 'job_seeker'],
     benefitHeadline: 'Govt Recognized 10th & 12th Board Certificate with Home Study & On-Demand Exams for Any Age',
-    benefitHeadlineHi: 'भारत सरकार मान्यता प्राप्त १०वीं एवं १२वीं बोर्ड परीक्षा (बिना किसी ऊपरी आयु सीमा के घर बैठे तैयारी)',
+    benefitHeadlineHi: 'भारत सरकार मान्यता प्राप्त 10वीं एवं 12वीं बोर्ड परीक्षा (बिना किसी ऊपरी आयु सीमा के घर बैठे तैयारी)',
     benefitAmount: 20000,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'ongoing',
     description: 'National Institute of Open Schooling under the Ministry of Education allows any citizen to pass Class 10 and 12 with flexible subject combinations and online exam booking.',
-    descriptionHi: 'शिक्षा मंत्रालय, भारत सरकार के अंतर्गत संचालित राष्ट्रीय मुक्त विद्यालयी शिक्षा संस्थान से किसी भी उम्र में १०वीं एवं १२वीं उत्तीर्ण करें।',
+    descriptionHi: 'शिक्षा मंत्रालय, भारत सरकार के अंतर्गत संचालित राष्ट्रीय मुक्त विद्यालयी शिक्षा संस्थान से किसी भी उम्र में 10वीं एवं 12वीं उत्तीर्ण करें।',
     gazette: {
       circularNumber: 'NIOS/SSS/OPEN-BASIC/2026',
       issuingAuthority: 'National Institute of Open Schooling, Ministry of Education',
@@ -421,7 +421,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     ],
     applySteps: [
       { step: 1, text: 'Register online at sdmis.nios.ac.in Stream 1/2.', textHi: 'sdmis.nios.ac.in पर ऑनलाइन स्ट्रीम चुनें।' },
-      { step: 2, text: 'Choose 5 subjects with easy combinations (e.g. Hindi, English, Data Entry).', textHi: 'अपनी पसंद के ५ विषयों का चयन करें।' },
+      { step: 2, text: 'Choose 5 subjects with easy combinations (e.g. Hindi, English, Data Entry).', textHi: 'अपनी पसंद के 5 विषयों का चयन करें।' },
       { step: 3, text: 'Appear for exams when ready at nearby Kendriya Vidyalaya center.', textHi: 'निकटतम केंद्रीय विद्यालय में जाकर परीक्षा दें और बोर्ड मार्कशीट प्राप्त करें।' }
     ],
     tags: ['NIOS', '10th Board', '12th Board', 'Adult Education', 'Second Chance'],
@@ -441,7 +441,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Zero Tuition Fees in 300+ Top Public German Universities (B.Tech, M.Sc, MBA) + 18-Month Post-Study Job Visa',
-    benefitHeadlineHi: 'जर्मनी की ३००+ शीर्ष सरकारी यूनिवर्सिटीज में १००% मुफ्त ट्यूशन फीस + पढ़ाई के बाद १८ माह का यूरोपीय वर्क वीजा',
+    benefitHeadlineHi: 'जर्मनी की 300+ शीर्ष सरकारी यूनिवर्सिटीज में 100% मुफ्त ट्यूशन फीस + पढ़ाई के बाद 18 माह का यूरोपीय वर्क वीजा',
     benefitAmount: 2500000,
     deadline: '2026-07-15',
     applicationStatus: 'ongoing',
@@ -458,7 +458,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-ger-1', name: 'APS Certificate (Mandatory for Indian students applying to Germany)', nameHi: 'एपीएस प्रमाण पत्र (APS Certificate)', isMandatory: true },
-      { id: 'd-ger-2', name: '12th Certificate / Bachelor Degree Transcripts', nameHi: '१२वीं अथवा स्नातक डिग्री अंकतालिका', isMandatory: true },
+      { id: 'd-ger-2', name: '12th Certificate / Bachelor Degree Transcripts', nameHi: '12वीं अथवा स्नातक डिग्री अंकतालिका', isMandatory: true },
       { id: 'd-ger-3', name: 'English Proficiency (IELTS 6.5+ or TOEFL) or German A1/B1', nameHi: 'आईईएलटीएस (IELTS) अथवा जर्मन भाषा प्रमाण पत्र', isMandatory: true }
     ],
     applySteps: [
@@ -473,19 +473,19 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-national-overseas-01',
     title: 'National Overseas Scholarship (NOS): 100% Fully Funded Master & Ph.D. in Top 500 Global Universities',
-    titleHi: 'राष्ट्रीय विदेशी छात्रवृत्ति (NOS): विदेश के शीर्ष ५०० विश्वविद्यालयों में मास्टर्स एवं पीएचडी हेतु १००% सरकारी अनुदान',
+    titleHi: 'राष्ट्रीय विदेशी छात्रवृत्ति (NOS): विदेश के शीर्ष 500 विश्वविद्यालयों में मास्टर्स एवं पीएचडी हेतु 100% सरकारी अनुदान',
     category: 'scholarship',
     lifeStage: 'education',
     targetAges: [21, 35],
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker'],
     benefitHeadline: 'Full Tuition Fees Paid Directly by Govt of India + $15,400/Year Living Allowance + Airfare & Medical Insurance',
-    benefitHeadlineHi: 'पूर्ण शिक्षण शुल्क + $१५,४०० (~₹१३ लाख) वार्षिक निर्वाह भत्ता + हवाई टिकट व चिकित्सा बीमा भारत सरकार द्वारा देय',
+    benefitHeadlineHi: 'पूर्ण शिक्षण शुल्क + $15,400 (~₹13 लाख) वार्षिक निर्वाह भत्ता + हवाई टिकट व चिकित्सा बीमा भारत सरकार द्वारा देय',
     benefitAmount: 6000000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'Ministry of Social Justice & Empowerment prestigious scholarship providing 100% financial assistance to meritorious SC, Nomadic, Semi-Nomadic, Landless Agricultural Labourers, and Traditional Artisans to pursue Master’s degree or Ph.D. in top 500 QS world-ranked universities.',
-    descriptionHi: 'भारत सरकार के सामाजिक न्याय एवं अधिकारिता मंत्रालय द्वारा दुनिया के शीर्ष ५०० विश्वविद्यालयों में मास्टर्स और पीएचडी करने हेतु सम्पूर्ण खर्च (ट्यूशन फीस, रहना, खाना, हवाई यात्रा) प्रदान करने वाली प्रमुख छात्रवृत्ति।',
+    descriptionHi: 'भारत सरकार के सामाजिक न्याय एवं अधिकारिता मंत्रालय द्वारा दुनिया के शीर्ष 500 विश्वविद्यालयों में मास्टर्स और पीएचडी करने हेतु सम्पूर्ण खर्च (ट्यूशन फीस, रहना, खाना, हवाई यात्रा) प्रदान करने वाली प्रमुख छात्रवृत्ति।',
     gazette: {
       circularNumber: 'MSJE/NOS/2026/SELECTION-PANEL',
       issuingAuthority: 'Ministry of Social Justice & Empowerment (Govt of India)',
@@ -496,12 +496,12 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (100% Free Govt Application)'
     },
     documents: [
-      { id: 'd-nos-1', name: 'Unconditional Admission Offer from Top 500 QS World University', nameHi: 'शीर्ष ५०० विश्व विश्वविद्यालय से बिना शर्त प्रवेश पत्र', isMandatory: true },
+      { id: 'd-nos-1', name: 'Unconditional Admission Offer from Top 500 QS World University', nameHi: 'शीर्ष 500 विश्व विश्वविद्यालय से बिना शर्त प्रवेश पत्र', isMandatory: true },
       { id: 'd-nos-2', name: 'Caste Certificate / Artisan / Landless Agriculture Certificate', nameHi: 'जाति / कारीगर / भूमिहीन कृषि प्रमाण पत्र', isMandatory: true },
-      { id: 'd-nos-3', name: 'Income Certificate (Family income below ₹8 Lakh/year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹८ लाख से कम)', isMandatory: true }
+      { id: 'd-nos-3', name: 'Income Certificate (Family income below ₹8 Lakh/year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹8 लाख से कम)', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Obtain unconditional admission offer letter from any top 500 ranked global university.', textHi: 'शीर्ष ५०० वैश्विक विश्वविद्यालय से प्रवेश पत्र प्राप्त करें।' },
+      { step: 1, text: 'Obtain unconditional admission offer letter from any top 500 ranked global university.', textHi: 'शीर्ष 500 वैश्विक विश्वविद्यालय से प्रवेश पत्र प्राप्त करें।' },
       { step: 2, text: 'Register on official portal nosmsje.gov.in with Aadhaar and academic credentials.', textHi: 'nosmsje.gov.in पोर्टल पर अपने विवरण के साथ आवेदन पत्र भरें।' },
       { step: 3, text: 'Govt committee selects awardees and releases tuition fees directly to the foreign university.', textHi: 'सरकारी समिति द्वारा चयन के उपरांत विदेशी विश्वविद्यालय को सीधी फीस जारी की जाती है।' }
     ],
@@ -512,19 +512,19 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-chevening-scholarship-01',
     title: 'Chevening UK Government Scholarship 2026: 100% Fully-Funded Master Degree in UK',
-    titleHi: 'शेवनिंग यूके सरकार छात्रवृत्ति २०२६: ब्रिटेन में १ वर्ष का मास्टर्स डिग्री अध्ययन पूर्णतः निःशुल्क',
+    titleHi: 'शेवनिंग यूके सरकार छात्रवृत्ति 2026: ब्रिटेन में 1 वर्ष का मास्टर्स डिग्री अध्ययन पूर्णतः निःशुल्क',
     category: 'scholarship',
     lifeStage: 'education',
     targetAges: [21, 40],
     stateEligibility: ['ALL'],
     targetOccupations: ['college_student', 'job_seeker', 'employed'],
     benefitHeadline: '100% Full Tuition Waiver + Monthly Living Stipend (~£1,400/Mo) + Return Economy Flight Tickets to UK',
-    benefitHeadlineHi: 'पूर्ण शिक्षण शुल्क माफ + मासिक निर्वाह भत्ता (~£१,४००) + यूके आने-जाने का हवाई टिकट मुफ्त',
+    benefitHeadlineHi: 'पूर्ण शिक्षण शुल्क माफ + मासिक निर्वाह भत्ता (~£1,400) + यूके आने-जाने का हवाई टिकट मुफ्त',
     benefitAmount: 4500000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'UK government’s global scholarship programme funded by the Foreign, Commonwealth and Development Office (FCDO) offering full financial support for future leaders to study for any eligible master’s degree at any UK university.',
-    descriptionHi: 'ब्रिटेन सरकार द्वारा संचालित विश्व प्रसिद्ध छात्रवृत्ति जिसके अंतर्गत भारतीय स्नातकों को कैम्ब्रिज, ऑक्सफ़ोर्ड, एलएसई, इम्पीरियल कॉलेज सहित किसी भी ब्रिटिश विश्वविद्यालय में १ वर्ष का मास्टर्स पूरी तरह मुफ्त कराया जाता है।',
+    descriptionHi: 'ब्रिटेन सरकार द्वारा संचालित विश्व प्रसिद्ध छात्रवृत्ति जिसके अंतर्गत भारतीय स्नातकों को कैम्ब्रिज, ऑक्सफ़ोर्ड, एलएसई, इम्पीरियल कॉलेज सहित किसी भी ब्रिटिश विश्वविद्यालय में 1 वर्ष का मास्टर्स पूरी तरह मुफ्त कराया जाता है।',
     gazette: {
       circularNumber: 'CHEV/UK/FCO-2026/IN',
       issuingAuthority: 'UK Foreign, Commonwealth & Development Office (FCDO)',
@@ -535,12 +535,12 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '£0 (100% Free Application)'
     },
     documents: [
-      { id: 'd-chev-1', name: 'Undergraduate Degree with Minimum 2 Years Work Experience (2,800 hours)', nameHi: 'स्नातक डिग्री एवं न्यूनतम २ वर्ष (२,८०० घंटे) का कार्य अनुभव', isMandatory: true },
-      { id: 'd-chev-2', name: '3 UK Master’s Course Choices', nameHi: '३ यूके विश्वविद्यालयों के मास्टर्स कोर्स चयन', isMandatory: true },
-      { id: 'd-chev-3', name: '2 Academic / Professional Reference Letters', nameHi: '२ संदर्भ पत्र (Reference Letters)', isMandatory: true }
+      { id: 'd-chev-1', name: 'Undergraduate Degree with Minimum 2 Years Work Experience (2,800 hours)', nameHi: 'स्नातक डिग्री एवं न्यूनतम 2 वर्ष (2,800 घंटे) का कार्य अनुभव', isMandatory: true },
+      { id: 'd-chev-2', name: '3 UK Master’s Course Choices', nameHi: '3 यूके विश्वविद्यालयों के मास्टर्स कोर्स चयन', isMandatory: true },
+      { id: 'd-chev-3', name: '2 Academic / Professional Reference Letters', nameHi: '2 संदर्भ पत्र (Reference Letters)', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Submit comprehensive online application with 4 leadership essays on chevening.org.', textHi: 'chevening.org पर ४ नेतृत्व निबंधों (Essays) के साथ ऑनलाइन फॉर्म भरें।' },
+      { step: 1, text: 'Submit comprehensive online application with 4 leadership essays on chevening.org.', textHi: 'chevening.org पर 4 नेतृत्व निबंधों (Essays) के साथ ऑनलाइन फॉर्म भरें।' },
       { step: 2, text: 'Attend in-person interview at British High Commission New Delhi / Consulates if shortlisted.', textHi: 'शॉर्टलिस्ट होने पर ब्रिटिश उच्चायोग नई दिल्ली में व्यक्तिगत साक्षात्कार दें।' },
       { step: 3, text: 'Receive final award letter, UK student visa waiver, and flight tickets.', textHi: 'अंतिम चयन पत्र, यूके वीजा एवं हवाई टिकट प्राप्त करें।' }
     ],
@@ -551,7 +551,7 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-aicte-pragati-01',
     title: 'AICTE Pragati Scholarship for Girls: ₹50,000/Year for Technical Degree & Diploma Students',
-    titleHi: 'एआईसीटीई प्रगति छात्रा छात्रवृत्ति: बीटेक एवं तकनीकी डिप्लोमा छात्राओं हेतु ₹५०,००० प्रतिवर्ष',
+    titleHi: 'एआईसीटीई प्रगति छात्रा छात्रवृत्ति: बीटेक एवं तकनीकी डिप्लोमा छात्राओं हेतु ₹50,000 प्रतिवर्ष',
     category: 'scholarship',
     lifeStage: 'education',
     targetAges: [16, 25],
@@ -559,12 +559,12 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student'],
     benefitHeadline: 'Direct Bank Transfer of ₹50,000 Each Year for College Fees, Laptop & Hostel Charges (Up to ₹2,00,000 Total)',
-    benefitHeadlineHi: 'कॉलेज फीस, लैपटॉप व हॉस्टल खर्च हेतु ₹५०,००० प्रतिवर्ष (कुल ₹२,००,००० तक) सीधे बैंक खाते में डीबीटी',
+    benefitHeadlineHi: 'कॉलेज फीस, लैपटॉप व हॉस्टल खर्च हेतु ₹50,000 प्रतिवर्ष (कुल ₹2,00,000 तक) सीधे बैंक खाते में डीबीटी',
     benefitAmount: 200000,
     deadline: 'UPCOMING_ANNUAL_CYCLE',
     applicationStatus: 'upcoming',
     description: 'All India Council for Technical Education (AICTE) flagship scheme empowering meritorious girl students admitted to 1st year of technical degree or diploma programs in AICTE-approved institutions across India.',
-    descriptionHi: 'अखिल भारतीय तकनीकी शिक्षा परिषद (AICTE) द्वारा तकनीकी शिक्षा (बीटेक, बीई, पॉलिटेक्निक डिप्लोमा) प्राप्त कर रही मेधावी छात्राओं को प्रतिवर्ष ₹५०,००० की सरकारी सहायता।',
+    descriptionHi: 'अखिल भारतीय तकनीकी शिक्षा परिषद (AICTE) द्वारा तकनीकी शिक्षा (बीटेक, बीई, पॉलिटेक्निक डिप्लोमा) प्राप्त कर रही मेधावी छात्राओं को प्रतिवर्ष ₹50,000 की सरकारी सहायता।',
     gazette: {
       circularNumber: 'AICTE/STDC/PRAGATI-GIRLS/2026',
       issuingAuthority: 'All India Council for Technical Education (AICTE, MoE)',
@@ -576,8 +576,8 @@ export const EDUCATION_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'd-prag-1', name: 'AICTE-Approved College Admission Proof / Fee Receipt', nameHi: 'एआईसीटीई मान्यता प्राप्त कॉलेज प्रवेश रसीद', isMandatory: true },
-      { id: 'd-prag-2', name: '10th & 12th Marksheet Proof of Merit', nameHi: '१०वीं एवं १२वीं अंकतालिका', isMandatory: true },
-      { id: 'd-prag-3', name: 'Family Income Certificate (Below ₹8 Lakh/Year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹८ लाख से कम)', isMandatory: true }
+      { id: 'd-prag-2', name: '10th & 12th Marksheet Proof of Merit', nameHi: '10वीं एवं 12वीं अंकतालिका', isMandatory: true },
+      { id: 'd-prag-3', name: 'Family Income Certificate (Below ₹8 Lakh/Year)', nameHi: 'आय प्रमाण पत्र (पारिवारिक आय ₹8 लाख से कम)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Register on National Scholarship Portal (NSP) scholarships.gov.in with OTR (One Time Registration).', textHi: 'राष्ट्रीय छात्रवृत्ति पोर्टल (NSP) पर ओटीआर रजिस्ट्रेशन करें।' },

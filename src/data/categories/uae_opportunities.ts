@@ -53,7 +53,7 @@ export const UAE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['school_student', 'college_student'],
     benefitHeadline: '100% Full Tuition Coverage + Comprehensive Health Insurance + Monthly Stipend up to AED 10,000',
-    benefitHeadlineHi: '१००% पूर्ण ट्यूशन फीस कवरेज + संपूर्ण स्वास्थ्य बीमा + प्रति माह AED १०,००० तक का निर्वाह वजीफा',
+    benefitHeadlineHi: '100% पूर्ण ट्यूशन फीस कवरेज + संपूर्ण स्वास्थ्य बीमा + प्रति माह AED 10,000 तक का निर्वाह वजीफा',
     benefitAmount: 10000,
     deadline: '2026-10-31',
     daysRemaining: 34,
@@ -73,7 +73,7 @@ export const UAE_OPPORTUNITIES: Opportunity[] = [
     },
     documents: [
       { id: 'eid_family_book', name: 'Valid Emirates ID and Family Book (Khulasat Al Qaid for UAE Nationals)', nameHi: 'वैध एमिरेट्स आईडी एवं पारिवारिक नागरिकता प्रपत्र (खुलासात अल कैद)', isMandatory: true },
-      { id: 'academic_record', name: 'Official High School or Bachelor Transcripts with minimum 90% or 3.6 GPA equivalent', nameHi: 'न्यूनतम ९०% या ३.६ जीपीए के साथ आधिकारिक शैक्षणिक अंकतालिका', isMandatory: true },
+      { id: 'academic_record', name: 'Official High School or Bachelor Transcripts with minimum 90% or 3.6 GPA equivalent', nameHi: 'न्यूनतम 90% या 3.6 जीपीए के साथ आधिकारिक शैक्षणिक अंकतालिका', isMandatory: true },
       { id: 'english_score', name: 'Standardized English Proficiency Certificate (IELTS Academic 6.5+ or EmSAT 1550+)', nameHi: 'अंग्रेजी भाषा दक्षता प्रमाण पत्र (आईईएलटीएस अथवा एमसैट)', isMandatory: true },
     ],
     applySteps: [
@@ -94,7 +94,7 @@ export const UAE_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['business_owner', 'job_seeker', 'employed'],
     benefitHeadline: 'Up to AED 3,000,000 Interest-Free Seed Financing + Full Incubation & Govt Procurement Priority',
-    benefitHeadlineHi: 'AED ३०,००,००० तक का ब्याज-मुक्त सीड फंडिंग ऋण + संपूर्ण व्यावसायिक इनक्यूबेशन एवं सरकारी अनुबंध प्राथमिकता',
+    benefitHeadlineHi: 'AED 30,00,000 तक का ब्याज-मुक्त सीड फंडिंग ऋण + संपूर्ण व्यावसायिक इनक्यूबेशन एवं सरकारी अनुबंध प्राथमिकता',
     benefitAmount: 3000000,
     deadline: '2026-12-31',
     daysRemaining: 95,
@@ -102,7 +102,7 @@ export const UAE_OPPORTUNITIES: Opportunity[] = [
     isNew: false,
     applicationStatus: 'active_now',
     description: 'The Khalifa Fund for Enterprise Development is an apex government entity supporting entrepreneurship in the UAE. It provides competitive interest-free funding of up to AED 3 million, business incubation, capacity building, and priority quotas in government procurement contracts for innovative startups.',
-    descriptionHi: 'खलीफा फंड संयुक्त अरब अमीरात में उद्यमिता विकास हेतु अबू धाबी सरकार की शीर्ष संस्था है। यह नए और अभिनव उद्यमों को ३० लाख दिरहम तक का शून्य-ब्याज ऋण, व्यावसायिक मेंटरशिप और सरकारी खरीद निविदाओं में विशेष प्राथमिकता प्रदान करती है।',
+    descriptionHi: 'खलीफा फंड संयुक्त अरब अमीरात में उद्यमिता विकास हेतु अबू धाबी सरकार की शीर्ष संस्था है। यह नए और अभिनव उद्यमों को 30 लाख दिरहम तक का शून्य-ब्याज ऋण, व्यावसायिक मेंटरशिप और सरकारी खरीद निविदाओं में विशेष प्राथमिकता प्रदान करती है।',
     gazette: {
       circularNumber: 'AE-KFED-ENT-2026',
       issuingAuthority: 'Khalifa Fund for Enterprise Development (Abu Dhabi, UAE)',
@@ -113,7 +113,7 @@ export const UAE_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: 'AED 0 (Completely Free)',
     },
     documents: [
-      { id: 'business_plan_doc', name: 'Comprehensive Business Feasibility Plan and 3-Year Financial Forecast', nameHi: 'विस्तृत व्यावसायिक व्यवहार्यता योजना एवं ३-वर्षीय वित्तीय अनुमान', isMandatory: true },
+      { id: 'business_plan_doc', name: 'Comprehensive Business Feasibility Plan and 3-Year Financial Forecast', nameHi: 'विस्तृत व्यावसायिक व्यवहार्यता योजना एवं 3-वर्षीय वित्तीय अनुमान', isMandatory: true },
       { id: 'trade_name_cert', name: 'Commercial License or Initial Trade Name Approval Certificate', nameHi: 'वाणिज्यिक व्यापार लाइसेंस अथवा प्रारंभिक व्यापार नाम स्वीकृति प्रमाण', isMandatory: true },
       { id: 'partners_eid', name: 'Emirates ID and Passport Copies of Founding Partners', nameHi: 'संस्थापक साझेदारों की एमिरेट्स आईडी और पासपोर्ट प्रतिलिपियां', isMandatory: true },
     ],

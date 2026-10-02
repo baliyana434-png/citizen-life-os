@@ -4,18 +4,18 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-ayushman-01',
     title: 'Ayushman Bharat PM-JAY: ₹5,00,000 Free Cashless Hospital Care',
-    titleHi: 'आयुष्मान भारत प्रधानमंत्री जन आरोग्य योजना: ₹५,००,००० निःशुल्क कैशलेस उपचार',
+    titleHi: 'आयुष्मान भारत प्रधानमंत्री जन आरोग्य योजना: ₹5,00,000 निःशुल्क कैशलेस उपचार',
     category: 'healthcare_free',
     lifeStage: 'health',
     targetAges: [0, 99],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'homemaker', 'senior_citizen', 'job_seeker', 'business_owner', 'employed'],
     benefitHeadline: '₹5 Lakh per Family per Year for Surgery, ICU & Serious Illnesses in 27,000+ Hospitals',
-    benefitHeadlineHi: 'प्रति परिवार ₹५ लाख प्रतिवर्ष तक का ऑपरेशन, आईसीयू एवं गंभीर बीमारियों का निःशुल्क उपचार',
+    benefitHeadlineHi: 'प्रति परिवार ₹5 लाख प्रतिवर्ष तक का ऑपरेशन, आईसीयू एवं गंभीर बीमारियों का निःशुल्क उपचार',
     benefitAmount: 500000,
     deadline: 'OPEN_ROUND',
     description: 'The world\'s largest health assurance scheme providing secondary and tertiary care hospitalization across public and private empaneled hospitals.',
-    descriptionHi: 'विश्व की सबसे बड़ी स्वास्थ्य आश्वासन योजना जिसके तहत देश के २७,००० से अधिक सरकारी व निजी अस्पतालों में कैशलेस उपचार मिलता है।',
+    descriptionHi: 'विश्व की सबसे बड़ी स्वास्थ्य आश्वासन योजना जिसके तहत देश के 27,000 से अधिक सरकारी व निजी अस्पतालों में कैशलेस उपचार मिलता है।',
     gazette: {
       circularNumber: 'NHA/AB-PMJAY/2026/EXP-SENIOR',
       issuingAuthority: 'National Health Authority (NHA)',
@@ -40,18 +40,18 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-jan-aushadhi-01',
     title: 'Pradhan Mantri Jan Aushadhi: 80% Discounted Generic Salt Medicines',
-    titleHi: 'प्रधानमंत्री भारतीय जनऔषधि केंद्र: ८०% तक सस्ती प्रमाणित जेनेरिक दवाइयां',
+    titleHi: 'प्रधानमंत्री भारतीय जनऔषधि केंद्र: 80% तक सस्ती प्रमाणित जेनेरिक दवाइयां',
     category: 'healthcare_free',
     lifeStage: 'health',
     targetAges: [0, 99],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'homemaker', 'senior_citizen', 'employed', 'business_owner', 'job_seeker'],
     benefitHeadline: 'Save ₹2,000 - ₹5,000 Every Month on Monthly BP, Diabetes, Heart & Thyroid Prescriptions',
-    benefitHeadlineHi: 'बीपी, शुगर, हृदय रोग एवं थायरॉयड की दवाइयों पर प्रतिमाह ₹२,००० - ₹५,००० तक की भारी बचत',
+    benefitHeadlineHi: 'बीपी, शुगर, हृदय रोग एवं थायरॉयड की दवाइयों पर प्रतिमाह ₹2,000 - ₹5,000 तक की भारी बचत',
     benefitAmount: 36000,
     deadline: 'OPEN_ROUND',
     description: 'Over 10,000 government-run Jan Aushadhi stores across India dispensing identical salt chemical composition drugs matching branded medicines at 50% to 90% cheaper prices.',
-    descriptionHi: 'देश भर में १०,००० से अधिक सरकारी जनऔषधि केंद्र जहां ब्रांडेड दवाइयों का वही सॉल्ट ८०% तक कम कीमत में मिलता है।',
+    descriptionHi: 'देश भर में 10,000 से अधिक सरकारी जनऔषधि केंद्र जहां ब्रांडेड दवाइयों का वही सॉल्ट 80% तक कम कीमत में मिलता है।',
     gazette: {
       circularNumber: 'PMBI/JAN-AUSHADHI/2026/PRICE-LIST',
       issuingAuthority: 'Pharmaceuticals & Medical Devices Bureau of India (PMBI)',
@@ -67,7 +67,7 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Search your required medicine on janaushadhi.gov.in product list.', textHi: 'janaushadhi.gov.in पर अपनी दवा का सॉल्ट नाम खोजें।' },
       { step: 2, text: 'Use "Locate Kendra" tool to find nearest store in your district.', textHi: '"लोकेट केंद्र" टूल से अपने नजदीकी सरकारी स्टोर का पता लगाएं।' },
-      { step: 3, text: 'Show prescription and purchase medicines at 80% subsidized prices.', textHi: 'डॉक्टर का पर्चा दिखाकर ८०% तक कम मूल्य पर दवाइयां प्राप्त करें।' }
+      { step: 3, text: 'Show prescription and purchase medicines at 80% subsidized prices.', textHi: 'डॉक्टर का पर्चा दिखाकर 80% तक कम मूल्य पर दवाइयां प्राप्त करें।' }
     ],
     tags: ['Cheap Medicines', 'Generic Drugs', 'Healthcare Savings', 'Jan Aushadhi'],
     is100PercentFree: true
@@ -75,7 +75,7 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-senior-eye-01',
     title: 'National Cataract Blindness Control (Free Motiyabind Eye Surgery & Lens)',
-    titleHi: 'राष्ट्रीय अंधता नियंत्रण कार्यक्रम: वरिष्ठ नागरिकों हेतु १००% निःशुल्क मोतियाबिंद ऑपरेशन एवं लेंस',
+    titleHi: 'राष्ट्रीय अंधता नियंत्रण कार्यक्रम: वरिष्ठ नागरिकों हेतु 100% निःशुल्क मोतियाबिंद ऑपरेशन एवं लेंस',
     category: 'healthcare_free',
     lifeStage: 'health',
     targetAges: [50, 95],
@@ -97,7 +97,7 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
       officialGovtFee: '₹0 (Completely Free for 50+)'
     },
     documents: [
-      { id: 'd-eye-1', name: 'Aadhaar Card (Showing Age 50+)', nameHi: 'आधार कार्ड (आयु ५०+ दर्शाने वाला)', isMandatory: true }
+      { id: 'd-eye-1', name: 'Aadhaar Card (Showing Age 50+)', nameHi: 'आधार कार्ड (आयु 50+ दर्शाने वाला)', isMandatory: true }
     ],
     applySteps: [
       { step: 1, text: 'Visit Eye OPD at nearest District Hospital or Community Health Centre.', textHi: 'निकटतम जिला अस्पताल अथवा सामुदायिक स्वास्थ्य केंद्र की नेत्र ओपीडी में जाएं।' },
@@ -110,14 +110,14 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-nikshay-tb-01',
     title: 'Ni-kshay Poshan Yojana: 100% Free TB Treatment + ₹500/Month Nutrition DBT',
-    titleHi: 'निक्षय पोषण योजना: १००% निःशुल्क टीबी उपचार एवं दवाइयां + ₹५०० प्रतिमाह पोषण भत्ता',
+    titleHi: 'निक्षय पोषण योजना: 100% निःशुल्क टीबी उपचार एवं दवाइयां + ₹500 प्रतिमाह पोषण भत्ता',
     category: 'healthcare_free',
     lifeStage: 'health',
     targetAges: [0, 99],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'homemaker', 'senior_citizen', 'job_seeker', 'employed'],
     benefitHeadline: 'Complete Free Diagnostic Tests, Full Medicine Course & Direct Bank Transfer of ₹500/Month for Diet',
-    benefitHeadlineHi: 'टीबी की सभी जांचें, संपूर्ण दवा कोर्स निःशुल्क + पौष्टिक आहार हेतु प्रति माह ₹५०० सीधे खाते में',
+    benefitHeadlineHi: 'टीबी की सभी जांचें, संपूर्ण दवा कोर्स निःशुल्क + पौष्टिक आहार हेतु प्रति माह ₹500 सीधे खाते में',
     benefitAmount: 6000,
     deadline: 'OPEN_ROUND',
     description: 'National Tuberculosis Elimination Programme (NTEP) providing free sputum tests, CBNAAT molecular testing, daily fixed-dose combination drugs, and financial nutrition incentives.',
@@ -137,7 +137,7 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Visit nearest Primary Health Centre (PHC) or District TB Centre for free testing.', textHi: 'निकटतम प्राथमिक स्वास्थ्य केंद्र (PHC) पर निःशुल्क बलगम जांच करवाएं।' },
       { step: 2, text: 'Register on Ni-kshay portal with Aadhaar and bank details for DBT.', textHi: 'निक्षय पोर्टल पर पंजीकरण करवाकर बैंक खाता लिंक करवाएं।' },
-      { step: 3, text: 'Collect monthly medicine pack and receive ₹500 direct in bank account.', textHi: 'मासिक दवा किट प्राप्त करें और ₹५०० प्रति माह पोषण सहायता बैंक में पाएं।' }
+      { step: 3, text: 'Collect monthly medicine pack and receive ₹500 direct in bank account.', textHi: 'मासिक दवा किट प्राप्त करें और ₹500 प्रति माह पोषण सहायता बैंक में पाएं।' }
     ],
     tags: ['TB Treatment', 'Free Medicine', 'Nutrition DBT', 'Public Health'],
     is100PercentFree: true
@@ -145,7 +145,7 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-arogya-mandir-01',
     title: 'Ayushman Arogya Mandir: Free Primary Health Checkup, BP/Sugar Diagnostics & 172 Medicines',
-    titleHi: 'आयुष्मान आरोग्य मंदिर: निःशुल्क प्राथमिक स्वास्थ्य जांच, बीपी/शुगर परीक्षण एवं १७२ आवश्यक दवाइयां',
+    titleHi: 'आयुष्मान आरोग्य मंदिर: निःशुल्क प्राथमिक स्वास्थ्य जांच, बीपी/शुगर परीक्षण एवं 172 आवश्यक दवाइयां',
     category: 'healthcare_free',
     lifeStage: 'health',
     targetAges: [18, 99],

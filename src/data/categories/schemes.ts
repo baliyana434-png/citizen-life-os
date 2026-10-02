@@ -4,18 +4,18 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-vishwakarma-01',
     title: 'PM Vishwakarma Yojana: ₹15,000 Free Toolkit + ₹3,00,000 Loan at 5%',
-    titleHi: 'प्रधानमंत्री विश्वकर्मा योजना: ₹१५,००० निःशुल्क टूलकिट + ₹३,००,००० सस्ता ऋण',
+    titleHi: 'प्रधानमंत्री विश्वकर्मा योजना: ₹15,000 निःशुल्क टूलकिट + ₹3,00,000 सस्ता ऋण',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 65],
     stateEligibility: ['ALL'],
     targetOccupations: ['business_owner', 'farmer', 'homemaker', 'employed'],
     benefitHeadline: '₹15,000 Free Modern Equipment Voucher + ₹3 Lakh Collateral-Free Credit + ₹500/day Stipend',
-    benefitHeadlineHi: '₹१५,००० का आधुनिक टूलकिट वाउचर + ₹३ लाख बिना गारंटी ५% ब्याज ऋण + ₹५०० दैनिक प्रशिक्षण भत्ता',
+    benefitHeadlineHi: '₹15,000 का आधुनिक टूलकिट वाउचर + ₹3 लाख बिना गारंटी 5% ब्याज ऋण + ₹500 दैनिक प्रशिक्षण भत्ता',
     benefitAmount: 315000,
     deadline: 'OPEN_ROUND',
     description: 'Central government mega support scheme for 18 traditional trades including carpenters, blacksmiths, goldsmiths, tailors, barbers, masons, and cobblers.',
-    descriptionHi: 'पारंपरिक १८ शिल्पकारों और कारीगरों (दर्जी, बढ़ई, लोहार, सुनार, नाई, राजमिस्त्री) के लिए केंद्र सरकार की व्यापक कल्याणकारी योजना।',
+    descriptionHi: 'पारंपरिक 18 शिल्पकारों और कारीगरों (दर्जी, बढ़ई, लोहार, सुनार, नाई, राजमिस्त्री) के लिए केंद्र सरकार की व्यापक कल्याणकारी योजना।',
     gazette: {
       circularNumber: 'MSME/PM-VISHWAKARMA/2023-26/01',
       issuingAuthority: 'Ministry of MSME, Govt of India',
@@ -32,8 +32,8 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Aadhaar biometric authentication at nearest CSC or official portal.', textHi: 'निकटतम सीएससी केंद्र या आधिकारिक पोर्टल पर बायोमेट्रिक सत्यापन करवाएं।' },
       { step: 2, text: 'Gram Panchayat or Urban Local Body verification of your trade.', textHi: 'ग्राम पंचायत अथवा नगर पालिका द्वारा आपके पारंपरिक कार्य का सत्यापन।' },
-      { step: 3, text: 'Attend 5-7 days basic skill training with ₹500 daily stipend.', textHi: '५-७ दिनों का कौशल प्रशिक्षण लें (प्रतिदिन ₹५०० भत्ता प्राप्त करें)।' },
-      { step: 4, text: 'Receive ₹15,000 e-voucher for tools and apply for ₹1 Lakh initial loan.', textHi: 'टूलकिट हेतु ₹१५,००० का वाउचर प्राप्त करें एवं ५% ब्याज पर ऋण लें।' }
+      { step: 3, text: 'Attend 5-7 days basic skill training with ₹500 daily stipend.', textHi: '5-7 दिनों का कौशल प्रशिक्षण लें (प्रतिदिन ₹500 भत्ता प्राप्त करें)।' },
+      { step: 4, text: 'Receive ₹15,000 e-voucher for tools and apply for ₹1 Lakh initial loan.', textHi: 'टूलकिट हेतु ₹15,000 का वाउचर प्राप्त करें एवं 5% ब्याज पर ऋण लें।' }
     ],
     tags: ['Artisans', 'Business Loan', 'Central Govt', 'Vishwakarma'],
     is100PercentFree: true
@@ -41,14 +41,14 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-kisan-01',
     title: 'PM-KISAN: Direct Bank Benefit of ₹6,000/Year to Farmers',
-    titleHi: 'प्रधानमंत्री किसान सम्मान निधि: ₹६,००० प्रतिवर्ष सीधी बैंक सहायता',
+    titleHi: 'प्रधानमंत्री किसान सम्मान निधि: ₹6,000 प्रतिवर्ष सीधी बैंक सहायता',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 75],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer'],
     benefitHeadline: '₹2,000 Deposited in 3 Installments Directly via Aadhaar DBT',
-    benefitHeadlineHi: '₹२,००० की ३ किस्तों में प्रतिवर्ष ₹६,००० सीधे बैंक खाते में',
+    benefitHeadlineHi: '₹2,000 की 3 किस्तों में प्रतिवर्ष ₹6,000 सीधे बैंक खाते में',
     benefitAmount: 6000,
     deadline: 'OPEN_ROUND',
     description: 'Income support scheme for all landholding farmer families across the country with instant direct bank transfer.',
@@ -77,14 +77,14 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-pmay-01',
     title: 'Pradhan Mantri Awas Yojana (PMAY-2.0): ₹2.50 Lakh House Subsidy',
-    titleHi: 'प्रधानमंत्री आवास योजना (PMAY २.०): पक्के मकान हेतु ₹२.५० लाख की सरकारी सब्सिडी',
+    titleHi: 'प्रधानमंत्री आवास योजना (PMAY 2.0): पक्के मकान हेतु ₹2.50 लाख की सरकारी सब्सिडी',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [21, 70],
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'homemaker', 'business_owner', 'employed', 'job_seeker'],
     benefitHeadline: 'Direct Financial Assistance & Interest Subsidy of ₹2,50,000 for Pucca House Construction',
-    benefitHeadlineHi: 'अपना पक्का मकान बनाने हेतु ₹२,५०,००० की सीधी वित्तीय सहायता एवं ब्याज अनुदान',
+    benefitHeadlineHi: 'अपना पक्का मकान बनाने हेतु ₹2,50,000 की सीधी वित्तीय सहायता एवं ब्याज अनुदान',
     benefitAmount: 250000,
     deadline: 'OPEN_ROUND',
     description: 'Central and state government joint mission to provide pucca houses with water connection, toilet, and electricity to all eligible urban and rural families.',
@@ -106,7 +106,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Submit citizen assessment application on pmaymis.gov.in or CSC.', textHi: 'pmaymis.gov.in अथवा नजदीकी सीएससी पर ऑनलाइन आवेदन करें।' },
       { step: 2, text: 'Field geo-tagging inspection by district housing officer.', textHi: 'आवास विकास अधिकारी द्वारा जमीन का भौतिक एवं जियो-टैगिंग सत्यापन।' },
-      { step: 3, text: 'Direct DBT subsidy credited in 3 construction milestone stages.', textHi: 'निर्माण के ३ चरणों में सीधी सब्सिडी राशि बैंक खाते में हस्तांतरित।' }
+      { step: 3, text: 'Direct DBT subsidy credited in 3 construction milestone stages.', textHi: 'निर्माण के 3 चरणों में सीधी सब्सिडी राशि बैंक खाते में हस्तांतरित।' }
     ],
     tags: ['Housing', 'Family Subsidy', 'Pucca House', 'PMAY'],
     is100PercentFree: true
@@ -114,7 +114,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-sukanya-01',
     title: 'Sukanya Samriddhi Yojana: 8.2% Tax-Free Compound Interest for Daughters',
-    titleHi: 'सुकन्या समृद्धि योजना: बेटियों के भविष्य हेतु ८.२% कर-मुक्त चक्रवृद्धि ब्याज',
+    titleHi: 'सुकन्या समृद्धि योजना: बेटियों के भविष्य हेतु 8.2% कर-मुक्त चक्रवृद्धि ब्याज',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [22, 60],
@@ -122,7 +122,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['farmer', 'homemaker', 'business_owner', 'employed'],
     benefitHeadline: 'Deposit as low as ₹250/year and get ₹70 Lakh+ maturity for daughter\'s higher education and marriage',
-    benefitHeadlineHi: 'प्रतिवर्ष न्यूनतम ₹२५० जमा करके बेटी की उच्च शिक्षा हेतु ₹७० लाख+ का कर-मुक्त कोष बनाएं',
+    benefitHeadlineHi: 'प्रतिवर्ष न्यूनतम ₹250 जमा करके बेटी की उच्च शिक्षा हेतु ₹70 लाख+ का कर-मुक्त कोष बनाएं',
     benefitAmount: 1500000,
     deadline: 'OPEN_ROUND',
     description: 'Government of India backed small deposit scheme for a girl child launched as part of the "Beti Bachao, Beti Padhao" campaign with highest sovereign guaranteed interest.',
@@ -151,7 +151,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-atal-pension-01',
     title: 'Atal Pension Yojana (APY): Guaranteed ₹1,000 to ₹5,000 Monthly Govt Pension',
-    titleHi: 'अटल पेंशन योजना (एपीवाई): ६० वर्ष के पश्चात आजीवन ₹१,००० से ₹५,००० मासिक सरकारी पेंशन',
+    titleHi: 'अटल पेंशन योजना (एपीवाई): 60 वर्ष के पश्चात आजीवन ₹1,000 से ₹5,000 मासिक सरकारी पेंशन',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 40],
@@ -187,7 +187,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-pm-ujjwala-01',
     title: 'Pradhan Mantri Ujjwala Yojana 2.0: 100% Free LPG Gas Connection + Stove + Refill',
-    titleHi: 'प्रधानमंत्री उज्ज्वला योजना २.०: १००% निःशुल्क एलपीजी गैस कनेक्शन + गैस चूल्हा + पहला सिलेंडर',
+    titleHi: 'प्रधानमंत्री उज्ज्वला योजना 2.0: 100% निःशुल्क एलपीजी गैस कनेक्शन + गैस चूल्हा + पहला सिलेंडर',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 70],
@@ -224,14 +224,14 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-standup-india-01',
     title: 'Stand-Up India Scheme: ₹10 Lakh to ₹1 Crore Business Loan for SC/ST & Women',
-    titleHi: 'स्टैंड-अप इंडिया योजना: अनुसूचित जाति, जनजाति एवं महिला उद्यमियों हेतु ₹१० लाख से ₹१ करोड़ का ऋण',
+    titleHi: 'स्टैंड-अप इंडिया योजना: अनुसूचित जाति, जनजाति एवं महिला उद्यमियों हेतु ₹10 लाख से ₹1 करोड़ का ऋण',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 65],
     stateEligibility: ['ALL'],
     targetOccupations: ['business_owner', 'homemaker', 'job_seeker'],
     benefitHeadline: 'Low-Interest Composite Green-Field Business Loan Backed by Govt of India Credit Guarantee',
-    benefitHeadlineHi: 'विनिर्माण, सेवा अथवा कृषि संबद्ध व्यापार शुरू करने हेतु ₹१ करोड़ तक का सरकारी गारंटी युक्त बैंक ऋण',
+    benefitHeadlineHi: 'विनिर्माण, सेवा अथवा कृषि संबद्ध व्यापार शुरू करने हेतु ₹1 करोड़ तक का सरकारी गारंटी युक्त बैंक ऋण',
     benefitAmount: 2500000,
     deadline: 'OPEN_ROUND',
     description: 'Department of Financial Services initiative facilitating bank loans between ₹10 lakh and ₹1 crore to at least one SC or ST borrower and at least one woman borrower per bank branch.',
@@ -260,7 +260,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-lakhpati-didi-01',
     title: 'Lakhpati Didi Yojana: ₹1,00,000+ Annual Income Mission for SHG Women (Zero-Interest Capital + Drone Training)',
-    titleHi: 'लखपति दीदी योजना: स्वयं सहायता समूह (SHG) महिलाओं हेतु ₹१,००,०००+ वार्षिक आय मिशन एवं ड्रोन प्रशिक्षण',
+    titleHi: 'लखपति दीदी योजना: स्वयं सहायता समूह (SHG) महिलाओं हेतु ₹1,00,000+ वार्षिक आय मिशन एवं ड्रोन प्रशिक्षण',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 60],
@@ -268,12 +268,12 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['homemaker', 'farmer', 'business_owner'],
     benefitHeadline: 'Zero-Interest Community Investment Fund + ₹1-5 Lakh Microcredit + Free Agri-Drone Pilot & Business Training',
-    benefitHeadlineHi: 'बिना ब्याज सामुदायिक ऋण + ₹१-५ लाख वित्तीय सहायता + निःशुल्क नमो ड्रोन दीदी एवं उद्यमिता प्रशिक्षण',
+    benefitHeadlineHi: 'बिना ब्याज सामुदायिक ऋण + ₹1-5 लाख वित्तीय सहायता + निःशुल्क नमो ड्रोन दीदी एवं उद्यमिता प्रशिक्षण',
     benefitAmount: 150000,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'active_now',
     description: 'Ministry of Rural Development flagship initiative under Deendayal Antyodaya Yojana - National Rural Livelihoods Mission (DAY-NRLM) aimed at enabling 3 crore rural women to earn sustainable income of ₹1 lakh or more per year.',
-    descriptionHi: 'ग्रामीण विकास मंत्रालय द्वारा संचालित राष्ट्रीय ग्रामीण आजीविका मिशन के तहत देश की ३ करोड़ स्वयं सहायता समूह महिलाओं को आर्थिक रूप से सशक्त बनाकर प्रतिवर्ष न्यूनतम ₹१ लाख की आय सुनिश्चित करने की योजना।',
+    descriptionHi: 'ग्रामीण विकास मंत्रालय द्वारा संचालित राष्ट्रीय ग्रामीण आजीविका मिशन के तहत देश की 3 करोड़ स्वयं सहायता समूह महिलाओं को आर्थिक रूप से सशक्त बनाकर प्रतिवर्ष न्यूनतम ₹1 लाख की आय सुनिश्चित करने की योजना।',
     gazette: {
       circularNumber: 'MORD/DAY-NRLM/LAKHPATI-DIDI/2026/08',
       issuingAuthority: 'Ministry of Rural Development (Govt of India)',
@@ -299,7 +299,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-pmmvy-01',
     title: 'Pradhan Mantri Matru Vandana Yojana (PMMVY): Direct DBT Cash Support of ₹5,000 - ₹6,000 for Mothers',
-    titleHi: 'प्रधानमंत्री मातृ वंदना योजना (PMMVY): गर्भवती एवं धात्री माताओं को ₹५,००० - ₹६,००० सीधी बैंक सहायता',
+    titleHi: 'प्रधानमंत्री मातृ वंदना योजना (PMMVY): गर्भवती एवं धात्री माताओं को ₹5,000 - ₹6,000 सीधी बैंक सहायता',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [19, 45],
@@ -307,7 +307,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['homemaker', 'farmer', 'employed', 'job_seeker'],
     benefitHeadline: 'Direct Cash Transfer into Mother\'s Aadhaar-Linked Bank Account for Health, Nutrition & Child Immunization',
-    benefitHeadlineHi: 'पोषण एवं स्वास्थ्य देखभाल हेतु गर्भवती महिला के आधार लिंक बैंक खाते में सीधे ₹५,००० से ₹६,००० डीबीटी अंतरण',
+    benefitHeadlineHi: 'पोषण एवं स्वास्थ्य देखभाल हेतु गर्भवती महिला के आधार लिंक बैंक खाते में सीधे ₹5,000 से ₹6,000 डीबीटी अंतरण',
     benefitAmount: 6000,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'active_now',
@@ -338,7 +338,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-mssc-01',
     title: 'Mahila Samman Savings Certificate (MSSC): 7.5% Sovereign Guaranteed Fixed Return for Women & Girls',
-    titleHi: 'महिला सम्मान बचत प्रमाण पत्र (MSSC): बालिकाओं एवं महिलाओं हेतु ७.५% सुरक्षित सरकारी ब्याज योजना',
+    titleHi: 'महिला सम्मान बचत प्रमाण पत्र (MSSC): बालिकाओं एवं महिलाओं हेतु 7.5% सुरक्षित सरकारी ब्याज योजना',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [10, 80],
@@ -346,12 +346,12 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['homemaker', 'school_student', 'college_student', 'employed', 'business_owner'],
     benefitHeadline: '7.5% Compound Annual Interest Rate + ₹2 Lakh Maximum Sovereign Deposit + Partial Withdrawal Allowed After 1 Year',
-    benefitHeadlineHi: '७.५% वार्षिक चक्रवृद्धि ब्याज + ₹२ लाख तक पूर्ण सरकारी सुरक्षा + १ वर्ष बाद ४०% आंशिक निकासी सुविधा',
+    benefitHeadlineHi: '7.5% वार्षिक चक्रवृद्धि ब्याज + ₹2 लाख तक पूर्ण सरकारी सुरक्षा + 1 वर्ष बाद 40% आंशिक निकासी सुविधा',
     benefitAmount: 200000,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'ongoing',
     description: 'Ministry of Finance small savings initiative exclusively designed for women and girl children to foster financial independence and security with quarterly compounded interest.',
-    descriptionHi: 'वित्त मंत्रालय द्वारा महिलाओं एवं बालिकाओं के वित्तीय सशक्तिकरण हेतु डाकघरों और अधिकृत बैंकों में संचालित २ वर्ष की विशेष उच्च ब्याज बचत योजना।',
+    descriptionHi: 'वित्त मंत्रालय द्वारा महिलाओं एवं बालिकाओं के वित्तीय सशक्तिकरण हेतु डाकघरों और अधिकृत बैंकों में संचालित 2 वर्ष की विशेष उच्च ब्याज बचत योजना।',
     gazette: {
       circularNumber: 'MOF/DEA/MSSC-SCHEME/2023-26',
       issuingAuthority: 'Department of Economic Affairs, Ministry of Finance',
@@ -366,7 +366,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
       { id: 'd-mssc-2', name: 'Passport Size Photographs & KYC Form', nameHi: 'पासपोर्ट साइज फोटो एवं केवाईसी फॉर्म', isMandatory: true }
     ],
     applySteps: [
-      { step: 1, text: 'Download Form-1 (Application for opening MSSC account) from India Post portal.', textHi: 'इंडिया पोस्ट पोर्टल से फॉर्म-१ डाउनलोड करें अथवा डाकघर से प्राप्त करें।' },
+      { step: 1, text: 'Download Form-1 (Application for opening MSSC account) from India Post portal.', textHi: 'इंडिया पोस्ट पोर्टल से फॉर्म-1 डाउनलोड करें अथवा डाकघर से प्राप्त करें।' },
       { step: 2, text: 'Submit form with KYC documents and deposit amount (₹1,000 to ₹2 Lakh) at post office or bank.', textHi: 'दस्तावेज एवं जमा राशि के साथ डाकघर/बैंक में फॉर्म जमा करें।' },
       { step: 3, text: 'Receive official MSSC Passbook with guaranteed maturity value.', textHi: 'गारंटीकृत परिपक्वता मूल्य के साथ आधिकारिक पासबुक प्राप्त करें।' }
     ],
@@ -376,7 +376,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
   {
     id: 'opp-silai-machine-01',
     title: 'PM Vishwakarma Free Sewing Machine Scheme: ₹15,000 Voucher + Free Tailoring Certification for Women',
-    titleHi: 'प्रधानमंत्री सिलाई मशीन योजना (विश्वकर्मा दर्जी): ₹१५,००० निःशुल्क आधुनिक सिलाई मशीन वाउचर + प्रशिक्षण',
+    titleHi: 'प्रधानमंत्री सिलाई मशीन योजना (विश्वकर्मा दर्जी): ₹15,000 निःशुल्क आधुनिक सिलाई मशीन वाउचर + प्रशिक्षण',
     category: 'govt_scheme',
     lifeStage: 'schemes',
     targetAges: [18, 55],
@@ -384,12 +384,12 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     stateEligibility: ['ALL'],
     targetOccupations: ['homemaker', 'job_seeker', 'business_owner'],
     benefitHeadline: '₹15,000 Digital E-Voucher for Modern Electric Sewing Machine + ₹500/Day Training Stipend + Govt Certificate',
-    benefitHeadlineHi: 'निःशुल्क इलेक्ट्रॉनिक सिलाई मशीन हेतु ₹१५,००० का ई-वाउचर + प्रतिदिन ₹५०० प्रशिक्षण भत्ता + सरकारी प्रमाण पत्र',
+    benefitHeadlineHi: 'निःशुल्क इलेक्ट्रॉनिक सिलाई मशीन हेतु ₹15,000 का ई-वाउचर + प्रतिदिन ₹500 प्रशिक्षण भत्ता + सरकारी प्रमाण पत्र',
     benefitAmount: 18500,
     deadline: 'OPEN_ROUND',
     applicationStatus: 'active_now',
     description: 'Central government initiative under PM Vishwakarma (Tailor/Darzi Trade) providing modern electric sewing machines, 5-day professional tailoring training with stipend, and collateral-free enterprise loan support to women across India.',
-    descriptionHi: 'प्रधानमंत्री विश्वकर्मा योजना के दर्जी घटक के अंतर्गत देश की महिलाओं को आत्मनिर्भर बनाने हेतु आधुनिक इलेक्ट्रॉनिक सिलाई मशीन, ५ दिवसीय निःशुल्क प्रशिक्षण एवं प्रमाण पत्र।',
+    descriptionHi: 'प्रधानमंत्री विश्वकर्मा योजना के दर्जी घटक के अंतर्गत देश की महिलाओं को आत्मनिर्भर बनाने हेतु आधुनिक इलेक्ट्रॉनिक सिलाई मशीन, 5 दिवसीय निःशुल्क प्रशिक्षण एवं प्रमाण पत्र।',
     gazette: {
       circularNumber: 'MSME/PM-VISHWAKARMA/TAILOR-TRADE/2026',
       issuingAuthority: 'Ministry of Micro, Small and Medium Enterprises (MSME)',
@@ -407,7 +407,7 @@ export const SCHEME_OPPORTUNITIES: Opportunity[] = [
     applySteps: [
       { step: 1, text: 'Complete free biometric Aadhaar verification at nearest CSC or on pmvishwakarma.gov.in.', textHi: 'निकटतम सीएससी अथवा पोर्टल पर आधार बायोमेट्रिक सत्यापन करें।' },
       { step: 2, text: 'Select "Darzi (Tailor)" trade and submit Gram Panchayat / Urban verification.', textHi: 'दर्जी ट्रेड का चयन करें और पंचायत सत्यापन पूरा कराएं।' },
-      { step: 3, text: 'Attend 5-day basic training (receive ₹500/day allowance) and get ₹15,000 toolkit voucher for sewing machine.', textHi: '५ दिवसीय प्रशिक्षण पूर्ण कर सिलाई मशीन हेतु ₹१५,००० का डिजिटल वाउचर प्राप्त करें।' }
+      { step: 3, text: 'Attend 5-day basic training (receive ₹500/day allowance) and get ₹15,000 toolkit voucher for sewing machine.', textHi: '5 दिवसीय प्रशिक्षण पूर्ण कर सिलाई मशीन हेतु ₹15,000 का डिजिटल वाउचर प्राप्त करें।' }
     ],
     tags: ['Free Sewing Machine', 'Silai Machine', 'Tailoring', 'Women Empowerment', 'PM Vishwakarma'],
     is100PercentFree: true,

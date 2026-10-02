@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
     if (!otp || otp.length < 6) {
       return NextResponse.json(
-        { success: false, message: 'कृपया ६ अंकों का वैध यूआईडीएआई ओटीपी दर्ज करें।' },
+        { success: false, message: 'कृपया 6 अंकों का वैध यूआईडीएआई ओटीपी दर्ज करें।' },
         { status: 400 }
       );
     }
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json(
             {
               success: false,
-              message: cfData.message || 'अमान्य ओटीपी कोड। कृपया अपने मोबाइल पर आया सही ६-अंकीय कोड दर्ज करें।',
+              message: cfData.message || 'अमान्य ओटीपी कोड। कृपया अपने मोबाइल पर आया सही 6-अंकीय कोड दर्ज करें।',
             },
             { status: 400 }
           );

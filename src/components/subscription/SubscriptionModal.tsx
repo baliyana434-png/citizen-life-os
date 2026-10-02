@@ -155,7 +155,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           <h3 className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
             <Award className="w-5 h-5 text-amber-400 shrink-0" />
             <span>
-              {language === 'hi' ? '१-वर्षीय राष्ट्रीय नागरिक सदस्यता पास' : '1-Year National Citizen Access Pass'}
+              {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक सदस्यता पास' : '1-Year National Citizen Access Pass'}
             </span>
           </h3>
 
@@ -164,7 +164,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               {currencySymbol}{planAmount}
             </span>
             <span className="text-xs text-slate-300 font-medium">
-              {language === 'hi' ? '/ १ वर्ष (३६५ दिन की असीमित पहुंच)' : '/ 1 Year (365 Days Full Access)'}
+              {language === 'hi' ? '/ 1 वर्ष (365 दिन की असीमित पहुंच)' : '/ 1 Year (365 Days Full Access)'}
             </span>
             {country !== 'IN' && (
               <span className="text-[11px] text-slate-400 ml-1">
@@ -190,7 +190,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>
-                    <strong>{language === 'hi' ? '१००% आधिकारिक सरकारी राजपत्र पोर्टल:' : '100% Verified Official Circulars:'}</strong>{' '}
+                    <strong>{language === 'hi' ? '100% आधिकारिक सरकारी राजपत्र पोर्टल:' : '100% Verified Official Circulars:'}</strong>{' '}
                     {language === 'hi' ? 'सीधा सरकारी फॉर्म लिंक, बिना किसी बिचौलिए या एजेंट के।' : 'Direct official portals without commercial intermediary scams.'}
                   </span>
                 </div>

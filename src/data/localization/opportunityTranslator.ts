@@ -637,7 +637,7 @@ export function getLocalizedOpportunity(
   // 4. Official Fee Resolution
   let officialFee = opportunity.gazette.officialGovtFee;
   if (language === 'hi') {
-    officialFee = officialFee.replace('₹0', '₹०').replace('Free', 'निःशुल्क');
+    officialFee = officialFee.replace('Free', 'निःशुल्क');
   } else if (i18nEntry?.officialFee) {
     officialFee = i18nEntry.officialFee;
   } else if (language === 'es') {
@@ -723,15 +723,27 @@ export function getLocalizedOpportunity(
     };
   });
 
+  const toMathDigits = (str: string | undefined): string => {
+    if (!str) return str || '';
+    return str.replace(/[०-९]/g, (d) => String('०१२३४५६७८९'.indexOf(d)));
+  };
+
   return {
-    title,
-    benefitHeadline,
-    description,
-    officialFee,
-    scamWarning,
-    issuingAuthority: localizeAuthority(opportunity.gazette.issuingAuthority, language),
-    documents,
-    applySteps,
-    applicationStatusText,
+    title: toMathDigits(title),
+    benefitHeadline: toMathDigits(benefitHeadline),
+    description: toMathDigits(description),
+    officialFee: toMathDigits(officialFee),
+    scamWarning: toMathDigits(scamWarning),
+    issuingAuthority: toMathDigits(localizeAuthority(opportunity.gazette.issuingAuthority, language)),
+    documents: documents.map((doc) => ({
+      ...doc,
+      name: toMathDigits(doc.name),
+      notes: doc.notes ? toMathDigits(doc.notes) : undefined,
+    })),
+    applySteps: applySteps.map((step) => ({
+      ...step,
+      text: toMathDigits(step.text),
+    })),
+    applicationStatusText: toMathDigits(applicationStatusText),
   };
 }

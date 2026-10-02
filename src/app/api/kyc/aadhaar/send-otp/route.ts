@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     // 1. Strict 12-digit Format Validation
     if (!cleanAadhaar || cleanAadhaar.length !== 12 || !/^\d{12}$/.test(cleanAadhaar)) {
       return NextResponse.json(
-        { success: false, message: 'कृपया १२ अंकों का वैध आधार नंबर दर्ज करें।' },
+        { success: false, message: 'कृपया 12 अंकों का वैध आधार नंबर दर्ज करें।' },
         { status: 400 }
       );
     }
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     // 2. Aadhaar Cannot Start with 0 or 1 per UIDAI Standard
     if (cleanAadhaar.startsWith('0') || cleanAadhaar.startsWith('1')) {
       return NextResponse.json(
-        { success: false, message: 'अमान्य आधार नंबर। यूआईडीएआई नियमानुसार आधार ० या १ से शुरू नहीं हो सकता।' },
+        { success: false, message: 'अमान्य आधार नंबर। यूआईडीएआई नियमानुसार आधार 0 या 1 से शुरू नहीं हो सकता।' },
         { status: 400 }
       );
     }
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     const isVerhoeffValid = validateVerhoeff(cleanAadhaar);
     if (!isVerhoeffValid) {
       return NextResponse.json(
-        { success: false, message: 'अमान्य आधार नंबर। कृपया अपने आधार कार्ड पर छपा सही १२ अंकों का नंबर जांचें।' },
+        { success: false, message: 'अमान्य आधार नंबर। कृपया अपने आधार कार्ड पर छपा सही 12 अंकों का नंबर जांचें।' },
         { status: 400 }
       );
     }
