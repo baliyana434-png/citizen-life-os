@@ -22,6 +22,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   profile,
+  onOpenAuth,
   onOpenProfile,
   onOpenOnboarding,
   onLogout,
@@ -181,73 +182,38 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-[11px] font-mono font-black text-slate-900">{countryMeta.alpha3 || country}</span>
             </div>
 
-            {/* Distinct Sign In vs Sign Up Buttons (Guest) OR Verified Profile Chip */}
+            {/* Single Profile / Auth Button (Zero Extra Buttons) */}
             {!profile.isAadhaarVerified ? (
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                {/* Sign In Button */}
-                <button
-                  type="button"
-                  onClick={onOpenProfile}
-                  className="h-9 px-2 sm:px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-bold text-xs flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-2xs"
-                  title={language === 'hi' ? 'साइन इन करें' : 'Sign In'}
-                >
-                  <LogIn className="w-3.5 h-3.5 text-slate-700 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-bold">{language === 'hi' ? 'साइन इन' : 'Sign In'}</span>
-                </button>
-
-                {/* Sign Up Button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenOnboarding) {
-                      onOpenOnboarding();
-                    } else {
-                      onOpenProfile();
-                    }
-                  }}
-                  className="h-9 px-2.5 sm:px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-extrabold text-xs flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-xs"
-                  title={language === 'hi' ? 'नया नागरिक पंजीकरण (साइन अप)' : 'New Citizen Sign Up'}
-                >
-                  <UserPlus className="w-3.5 h-3.5 text-white shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-extrabold">{language === 'hi' ? 'साइन अप' : 'Sign Up'}</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={onOpenAuth || onOpenProfile}
+                className="h-9 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-extrabold text-xs flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-xs"
+                title={language === 'hi' ? 'लॉगिन / पंजीकरण करें' : 'Login / Register'}
+              >
+                <User className="w-3.5 h-3.5 text-white shrink-0" />
+                <span className="text-xs font-extrabold">{language === 'hi' ? 'लॉगिन' : 'Login'}</span>
+              </button>
             ) : (
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                {/* Profile Avatar Button */}
-                <button
-                  type="button"
-                  onClick={onOpenProfile}
-                  className="h-9 px-2.5 sm:px-3 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center gap-2 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer shrink-0 shadow-2xs"
-                  aria-label={t('profile_btn')}
-                >
-                  <div className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
-                    {profile.photoURL ? (
-                      <img src={profile.photoURL} alt={profile.fullName} className="w-full h-full object-cover" />
-                    ) : (
-                      profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User className="w-3 h-3 text-slate-300" />
-                    )}
-                  </div>
-                  <span className="hidden sm:inline text-xs font-bold max-w-[90px] truncate">
-                    {profile.fullName.split(' ')[0]}
-                  </span>
-                  {profile.subscription?.status === 'active' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white shrink-0" title="1-Year Active Citizen Pass" />
+              <button
+                type="button"
+                onClick={onOpenProfile}
+                className="h-9 px-2.5 sm:px-3 rounded-full border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center gap-2 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer shrink-0 shadow-2xs"
+                aria-label={t('profile_btn')}
+              >
+                <div className="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
+                  {profile.photoURL ? (
+                    <img src={profile.photoURL} alt={profile.fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User className="w-3 h-3 text-slate-300" />
                   )}
-                </button>
-
-                {/* Direct Header Log Out Button */}
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="h-9 px-2 sm:px-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-2xs active:scale-[0.98]"
-                  title={language === 'hi' ? 'लॉग आउट करें' : 'Log Out'}
-                  aria-label="Log Out"
-                >
-                  <LogOut className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                  <span className="hidden md:inline text-xs font-bold">{language === 'hi' ? 'लॉग आउट' : 'Log Out'}</span>
-                </button>
-              </div>
+                </div>
+                <span className="hidden sm:inline text-xs font-bold max-w-[90px] truncate">
+                  {profile.fullName.split(' ')[0]}
+                </span>
+                {profile.subscription?.status === 'active' && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white shrink-0" title="1-Year Active Citizen Pass" />
+                )}
+              </button>
             )}
           </div>
         </div>

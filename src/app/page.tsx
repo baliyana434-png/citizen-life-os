@@ -6,7 +6,7 @@ import { Footer } from '@/components/layout/Footer';
 import { LifeStageTabs } from '@/components/layout/LifeStageTabs';
 import { OpportunityCard } from '@/components/cards/OpportunityCard';
 import { DetailBottomSheet } from '@/components/drawers/DetailBottomSheet';
-import { AadhaarAuthModal } from '@/components/auth/AadhaarAuthModal';
+import { AuthModal, AuthScreen } from '@/components/auth/AuthModal';
 import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { GoogleAccountChooserModal } from '@/components/auth/GoogleAccountChooserModal';
@@ -104,6 +104,7 @@ export default function HomePage() {
 
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
+  const [authModalScreen, setAuthModalScreen] = useState<AuthScreen>('login');
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
   const [isGoogleChooserOpen, setIsGoogleChooserOpen] = useState<boolean>(false);
@@ -577,7 +578,10 @@ export default function HomePage() {
       {/* 1. Header */}
       <Header
         profile={profile}
-        onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenAuth={() => {
+          setAuthModalScreen('login');
+          setIsAuthOpen(true);
+        }}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenOnboarding={() => {
           setPendingGoogleUser(null);
@@ -794,11 +798,13 @@ export default function HomePage() {
         onToggleFavorite={handleToggleFavorite}
       />
 
-      {/* 4. Real Aadhaar & Mobile OTP Modal */}
-      <AadhaarAuthModal
+      {/* 4. Unified 3-Screen Auth Modal (Login, Signup, Forgot Password with Google OAuth) */}
+      <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onVerificationComplete={handleVerificationComplete}
+        initialScreen={authModalScreen}
+        onLoginSuccess={handleVerificationComplete}
+        onGoogleSuccess={handleGoogleAuthSuccess}
       />
 
       {/* 5. User Profile & Settings Drawer */}
@@ -822,6 +828,11 @@ export default function HomePage() {
           }
         }}
         onLogout={handleLogout}
+        onOpenAuth={() => {
+          setIsProfileOpen(false);
+          setAuthModalScreen('login');
+          setIsAuthOpen(true);
+        }}
         onOpenOnboarding={() => {
           setPendingGoogleUser(null);
           setIsOnboardingOpen(true);
