@@ -559,14 +559,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col antialiased relative selection:bg-emerald-500 selection:text-white">
-      {/* Ambient 3D Aurora Mesh Glows */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
-      </div>
-
+    <div className="min-h-screen bg-slate-50 flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
       {/* 1. Header */}
       <Header
         profile={profile}
@@ -675,11 +668,11 @@ export default function HomePage() {
                 <Award className="w-4 h-4" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
                   <span className="font-bold text-white block">
                     {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹19 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹19 / 1 Year'}
                   </span>
-                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-600/50">
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-600/50 shrink-0">
                     {language === 'hi' ? `₹${totalBenefitSum.toLocaleString('en-IN')} के लाभ अनलॉक करें` : `Unlock ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()} Benefits`}
                   </span>
                 </div>

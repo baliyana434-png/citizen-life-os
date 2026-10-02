@@ -318,13 +318,13 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
           )}
         </div>
 
-        {/* 3. Bottom Sticky Action Hub */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-2 sm:gap-3">
+        {/* 3. Bottom Sticky Action Hub (Solid Gaps, Zero Touching) */}
+        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 sm:gap-4">
           <a
             href={opportunity.gazette.officialPortalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+            className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.99]"
           >
             <span>{t('drawer.official_portal_btn')}</span>
             <ExternalLink className="w-4 h-4" />
@@ -333,17 +333,17 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
           {/* 1-Click Google Calendar Deadline Reminder */}
           <button
             onClick={handleOpenGoogleCalendar}
-            className="py-3 px-3.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
+            className="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer shrink-0"
             title={t('drawer.add_google_calendar')}
           >
-            <Calendar className="w-4 h-4 text-emerald-600" />
+            <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="hidden sm:inline">{t('drawer.add_google_calendar')}</span>
             <span className="sm:hidden">Calendar</span>
           </button>
 
           <button
             onClick={onClose}
-            className="py-3 px-4 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold transition-colors cursor-pointer shrink-0"
+            className="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
           >
             {t('drawer.close')}
           </button>

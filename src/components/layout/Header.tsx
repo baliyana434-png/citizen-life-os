@@ -97,20 +97,20 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* 3. Action Hub */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* 3. Action Hub (Generous Gaps, Zero Touching, Solid Dimensions) */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
 
             {/* Language Switcher Dropdown */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => {
                   setIsLangMenuOpen(!isLangMenuOpen);
                 }}
-                className="inline-flex items-center gap-1 px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-800 transition-all cursor-pointer"
+                className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-800 transition-all cursor-pointer shrink-0"
                 title={t('settings.language_label')}
               >
-                <Globe className="w-3.5 h-3.5 text-slate-600" />
-                <span className="text-[11px] uppercase">{language}</span>
+                <Globe className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                <span className="text-[11px] uppercase font-mono">{language}</span>
               </button>
 
               {isLangMenuOpen && (
@@ -148,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Helpline Navigation Link */}
             <Link
               href="/helpline"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold border border-red-200 transition-all"
+              className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold border border-red-200 transition-all shrink-0"
             >
               <PhoneCall className="w-3.5 h-3.5 text-red-700 shrink-0" />
               <span className="hidden md:inline">{t('tabs.health').split(' ')[0]}</span>
@@ -157,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Favourites / Saved Navigation Button */}
             <Link
               href="/saved"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs transition-all"
+              className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs transition-all shrink-0"
             >
               <Star className={`w-3.5 h-3.5 ${liveFavCount > 0 ? 'fill-amber-400 text-amber-600' : 'text-amber-600'} shrink-0`} />
               <span className="hidden md:inline">{t('subfilters.favorites').split(' ')[0]}</span>
@@ -170,17 +170,17 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Country Flag & Alpha-3 Code Badge */}
             <div 
-              className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 border border-slate-200 text-xs font-bold text-slate-800 shadow-xs cursor-default"
+              className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 border border-slate-200 text-xs font-bold text-slate-800 shadow-xs cursor-default shrink-0"
               title={`${countryMeta.name} (${countryMeta.alpha3 || country})`}
             >
-              <span className="text-sm">{countryMeta.flag}</span>
+              <span className="text-sm shrink-0">{countryMeta.flag}</span>
               <span className="text-[11px] font-mono font-black text-slate-900">{countryMeta.alpha3 || country}</span>
             </div>
 
             {/* Profile Avatar Button */}
             <button
               onClick={onOpenProfile}
-              className={`h-8 sm:h-9 px-2 sm:px-2.5 rounded-full border flex items-center gap-1.5 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer ${
+              className={`h-9 px-2.5 sm:px-3 rounded-full border flex items-center gap-2 transition-all focus:ring-2 focus:ring-emerald-500/30 relative overflow-hidden cursor-pointer shrink-0 ${
                 profile.isAadhaarVerified
                   ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-950 font-bold text-xs'
                   : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700 font-medium text-xs'

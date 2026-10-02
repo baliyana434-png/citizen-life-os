@@ -48,102 +48,81 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  // Dynamic category top border accent
-  const getCategoryAccent = () => {
-    switch (opportunity.lifeStage) {
-      case 'exams':
-        return 'from-blue-600 to-indigo-600';
-      case 'private_jobs':
-      case 'career':
-        return 'from-violet-600 to-purple-600';
-      case 'health':
-        return 'from-rose-500 to-teal-500';
-      case 'education':
-      case 'internships':
-        return 'from-amber-500 to-emerald-600';
-      case 'schemes':
-      default:
-        return 'from-emerald-600 to-teal-600';
-    }
-  };
-
   return (
     <div
       onClick={() => onSelect(opportunity)}
-      className="group relative card-3d rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer border border-slate-200/90 hover:border-emerald-500/50 transition-all duration-300 h-full overflow-hidden"
+      className="group relative bg-white rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer border border-slate-200/90 hover:border-emerald-500/60 shadow-xs hover:shadow-lg transition-all duration-200 h-full overflow-visible"
     >
-      {/* 3D Top Accent Glow Line */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${getCategoryAccent()} opacity-75 group-hover:opacity-100 transition-opacity`} />
-
-      {/* Red Rotating Badge */}
+      {/* Red Rotating Starburst Badge (100% Visible, Never Clipped) */}
       {opportunity.isNew && (
-        <div className="absolute -top-3.5 -left-2 z-10 pointer-events-none">
+        <div className="absolute -top-3.5 -left-2.5 z-20 pointer-events-none">
           <RotatingNewBadge size="md" />
         </div>
       )}
 
       {/* Top Content Block */}
       <div>
-        {/* 1. Authority Badge & Status */}
-        <div className="flex items-start justify-between gap-2 mb-3">
+        {/* 1. Header: Issuing Authority Badge (Left) & Star Favorite Button (Right) */}
+        <div className="flex items-center justify-between gap-3 mb-2.5">
           {/* Issuing Authority Badge */}
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100/90 border border-slate-200 text-slate-800 text-[11px] font-bold min-w-0 max-w-[65%]">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-[11px] font-bold min-w-0 max-w-[70%]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span className="truncate">
               {localized.issuingAuthority.split('(')[0].trim()}
             </span>
           </div>
 
-          {/* Status Badge & Star */}
-          <div className="shrink-0 flex items-center gap-1.5">
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border whitespace-nowrap shrink-0 ${
-              opportunity.applicationStatus === 'active_now'
-                ? 'bg-emerald-50 text-emerald-950 border-emerald-300'
-                : opportunity.applicationStatus === 'upcoming'
-                ? 'bg-blue-50 text-blue-950 border-blue-200'
-                : 'bg-slate-100 text-slate-700 border-slate-200'
-            }`}>
-              {opportunity.applicationStatus === 'active_now' ? (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 radar-pulse" />
-              ) : (
-                <Calendar className="w-3 h-3 text-slate-600 shrink-0" />
-              )}
-              <span>{localized.applicationStatusText}</span>
-            </span>
-
-            {/* Star Favorite Button */}
-            {onToggleFavorite && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleFavorite(opportunity.id);
-                }}
-                className={`p-1.5 rounded-xl border transition-all ${
-                  isFavorite
-                    ? 'bg-amber-100 text-amber-500 border-amber-300 hover:bg-amber-200'
-                    : 'bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 border-slate-200'
-                }`}
-                title={t('subfilters.favorites')}
-                aria-label="Favorite"
-              >
-                <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-amber-400 text-amber-500' : ''}`} />
-              </button>
-            )}
-          </div>
+          {/* Star Favorite Button */}
+          {onToggleFavorite && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite(opportunity.id);
+              }}
+              className={`p-1.5 rounded-xl border transition-all cursor-pointer shrink-0 ${
+                isFavorite
+                  ? 'bg-amber-100 text-amber-500 border-amber-300 hover:bg-amber-200'
+                  : 'bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 border-slate-200'
+              }`}
+              title={t('subfilters.favorites')}
+              aria-label="Favorite"
+            >
+              <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-amber-400 text-amber-500' : ''}`} />
+            </button>
+          )}
         </div>
 
-        {/* 1B. Citizen Eligibility Match Indicator */}
-        {citizenProfile?.isOnboarded && eligibility.isEligible && (
-          <div className="mb-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 border border-emerald-300/80 text-emerald-950 text-[11px] font-extrabold shadow-2xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span className="truncate">{t('card.eligible_100')} • {t('card.eligible_age_match')}</span>
-          </div>
-        )}
+        {/* 1B. Second Row: Status Badge & Citizen Eligibility Pill (Never touch authority or star) */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {/* Status Badge */}
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border whitespace-nowrap shrink-0 ${
+            opportunity.applicationStatus === 'active_now'
+              ? 'bg-emerald-50 text-emerald-950 border-emerald-300'
+              : opportunity.applicationStatus === 'upcoming'
+              ? 'bg-blue-50 text-blue-950 border-blue-200'
+              : 'bg-slate-100 text-slate-700 border-slate-200'
+          }`}>
+            {opportunity.applicationStatus === 'active_now' ? (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 radar-pulse" />
+            ) : (
+              <Calendar className="w-3 h-3 text-slate-600 shrink-0" />
+            )}
+            <span>{localized.applicationStatusText}</span>
+          </span>
+
+          {/* Citizen Eligibility Match Indicator */}
+          {citizenProfile?.isOnboarded && eligibility.isEligible && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-950 text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap shrink-0">
+              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+              <span>{t('card.eligible_100')} • {t('card.eligible_age_match')}</span>
+            </span>
+          )}
+        </div>
 
         {/* 2. Title & Speech Reader */}
         <div className="mb-2">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2 min-h-[2.5rem]">
+            <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2 min-h-[2.6rem]">
               {localized.title}
             </h3>
             <div className="shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
@@ -152,8 +131,8 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           </div>
         </div>
 
-        {/* 3. Benefit Headline */}
-        <div className="mb-3 p-2.5 rounded-2xl bg-gradient-to-br from-emerald-50/90 to-teal-50/50 border border-emerald-200/80">
+        {/* 3. Benefit Headline Box */}
+        <div className="mb-3 p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200">
           <span className="text-xs font-bold text-emerald-950 block leading-snug">
             {localized.benefitHeadline}
           </span>
@@ -165,7 +144,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </p>
       </div>
 
-      {/* 5. Footer Details & Actions (Crash-Proof 2-Row Layout) */}
+      {/* 5. Footer Details & Actions (Crash-Proof 2-Row Layout, Never Touching) */}
       <div className="pt-3 border-t border-slate-100 mt-auto space-y-2.5">
         {/* Row A: Deadline Date Pill & 100% Free Badge */}
         <div className="flex items-center justify-between gap-2 text-xs">
@@ -186,27 +165,27 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
 
         {/* Row B: Official Fee Full-Width Card (Never overlaps or collides) */}
-        <div className="p-2 rounded-xl bg-slate-50/90 border border-slate-200/80 text-[11px] text-slate-700 flex items-start gap-1.5 leading-snug">
+        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-700 flex items-start gap-2 leading-snug">
           <Banknote className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
           <span className="font-semibold text-slate-800 break-words flex-1">
             {localized.officialFee}
           </span>
         </div>
 
-        {/* Row C: Action Buttons */}
-        <div className="flex items-center gap-2 pt-0.5">
+        {/* Row C: Action Buttons (Explicit Heights & Generous Gap) */}
+        <div className="flex items-center gap-3 pt-1">
           <button
             onClick={() => onSelect(opportunity)}
-            className="flex-1 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md cursor-pointer active:scale-[0.99]"
+            className="flex-1 h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs hover:shadow-sm cursor-pointer"
           >
             <span>{t('card.view_details')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
 
-          {/* 1-Click Google Calendar Reminder Button */}
+          {/* 1-Click Google Calendar Reminder Button (Clean Separated Box) */}
           <button
             onClick={handleAddToCalendar}
-            className="p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-colors cursor-pointer flex items-center justify-center shrink-0 active:scale-95"
+            className="w-10 h-10 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-600 hover:text-emerald-700 transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             title={t('card.add_calendar')}
             aria-label="Add Deadline to Google Calendar"
           >
