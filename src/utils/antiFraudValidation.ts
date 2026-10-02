@@ -526,3 +526,234 @@ export function validateRealNationalId(
   return { valid: true, cleanId: cleanGeneric };
 }
 
+// =========================================================
+// 8. Real Email Authenticity & Disposable Domain Blocklist
+// =========================================================
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  '10minutemail.com', '10minutemail.net', '10minmail.com', 'tempmail.com', 'temp-mail.org',
+  'mailinator.com', 'guerrillamail.com', 'guerrillamail.net', 'guerrillamail.org', 'guerrillamail.biz',
+  'guerrillamailblock.com', 'sharklasers.com', 'grr.la', 'pokemail.net', 'spam4.me',
+  'trashmail.com', 'trashmail.net', 'trashmail.me', 'trashmail.ws', 'trashmail.club',
+  'yopmail.com', 'yopmail.fr', 'yopmail.net', 'dispostable.com', 'getairmail.com',
+  'throwawaymail.com', 'fakemail.net', 'burnermail.io', 'crazymailing.com', 'mohmal.com',
+  'nada.ltd', 'generator.email', 'emailondeck.com', 'tempmailaddress.com', 'mytemp.email',
+  'tempail.com', 'dropmail.me', 'fakemailgenerator.com', 'inboxbear.com', 'getnada.com',
+  'maildrop.cc', 'tempinbox.com', 'armyspy.com', 'cuvox.de', 'dayrep.com', 'fleckens.hu',
+  'gustr.com', 'jourrapide.com', 'rhyta.com', 'superrito.com', 'teleworm.us', 'einrot.com',
+  'clipmail.eu', 'zillamail.com', 'mailnesia.com', 'discard.email', 'spambox.us', 'mailcatch.com',
+  'mytrashmail.com', 'fakeinbox.com', 'inboxkitten.com', 'instantemailaddress.com',
+]);
+
+const FAKE_DOMAINS = new Set([
+  'example.com', 'example.org', 'example.net', 'test.com', 'dummy.com', 'fake.com',
+  'sample.com', 'domain.com', 'email.com', 'mail.com', 'abc.com', 'xyz.com', 'local.host',
+  'localhost', 'none.com', 'null.com', 'unknown.com', 'temp.com', 'site.com'
+]);
+
+const FAKE_EMAIL_PREFIXES = new Set([
+  'test', 'testing', 'fake', 'dummy', 'demo', 'asdf', 'qwerty', '123456', 'xyz',
+  'admin', 'administrator', 'noemail', 'sample', 'temp', 'random', 'anon', 'anonymous',
+  'user', 'nobody', 'null', 'undefined', 'na', 'tester', 'bot', 'fakeuser'
+]);
+
+/**
+ * Validates real email address
+ * Enforces RFC standard, rejects dummy prefixes, placeholder domains, and disposable burner emails.
+ */
+export function validateRealEmail(
+  email: string,
+  lang: SupportedLanguage = 'en'
+): { valid: boolean; cleanEmail: string; error?: string } {
+  const trimmed = (email || '').trim().toLowerCase();
+  if (!trimmed) {
+    return {
+      valid: false,
+      cleanEmail: '',
+      error: lang === 'hi' ? 'कृपया अपना ईमेल पता दर्ज करें।' : 'Please enter your email address.',
+    };
+  }
+
+  // Basic RFC 5322 regex validation
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  if (!emailRegex.test(trimmed)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'अमान्य ईमेल प्रारूप! कृपया सही ईमेल दर्ज करें (उदा. username@gmail.com)।'
+        : 'Invalid email format! Please enter a valid email address (e.g. username@gmail.com).',
+    };
+  }
+
+  const parts = trimmed.split('@');
+  if (parts.length !== 2) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi' ? 'अमान्य ईमेल संरचना।' : 'Invalid email structure.',
+    };
+  }
+
+  const [username, domain] = parts;
+
+  // Check username length
+  if (username.length < 2) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi' ? 'ईमेल का यूजरनेम बहुत छोटा है।' : 'Email username is too short.',
+    };
+  }
+
+  // Check fake username prefix
+  const cleanUsername = username.replace(/[._+-]/g, '');
+  if (FAKE_EMAIL_PREFIXES.has(username) || FAKE_EMAIL_PREFIXES.has(cleanUsername) || /^(.)\1{3,}$/.test(cleanUsername)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'फर्जी अथवा डमी ईमेल अस्वीकार्य है! कृपया अपना वास्तविक एवं सक्रिय ईमेल पता दर्ज करें।'
+        : 'Fake or dummy email addresses are not permitted. Please enter a genuine email.',
+    };
+  }
+
+  // Check placeholder domain
+  if (FAKE_DOMAINS.has(domain)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? `डमी या अमान्य डोमेन (${domain}) अस्वीकार्य है। कृपया वैध प्रदाता का ईमेल दर्ज करें।`
+        : `Dummy or placeholder domain (${domain}) is not allowed. Please enter a genuine email.`,
+    };
+  }
+
+  // Check disposable / burner email provider
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'डिस्पोजेबल या अस्थायी (Temporary Burner) ईमेल की अनुमति नहीं है। कृपया Gmail, Yahoo, Outlook आदि का वास्तविक ईमेल उपयोग करें।'
+        : 'Disposable or temporary email services are strictly prohibited. Please use a verified provider like Gmail, Yahoo, or Outlook.',
+    };
+  }
+
+  // Check domain TLD extension
+  const domainParts = domain.split('.');
+  const tld = domainParts[domainParts.length - 1];
+  if (!tld || tld.length < 2 || !/^[a-z]+$/.test(tld)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi' ? 'अमान्य डोमेन एक्सटेंशन (TLD)।' : 'Invalid domain extension.',
+    };
+  }
+
+  return { valid: true, cleanEmail: trimmed };
+}
+
+// =========================================================
+// 9. Real Password Complexity & Anti-Dummy Entropy Engine
+// =========================================================
+
+/**
+ * Validates real password security & complexity
+ * Rejects weak/common dummy passwords and enforces industry-standard entropy.
+ */
+export function validateRealPassword(
+  password: string,
+  name?: string,
+  email?: string,
+  lang: SupportedLanguage = 'en'
+): { valid: boolean; error?: string } {
+  if (!password) {
+    return {
+      valid: false,
+      error: lang === 'hi' ? 'कृपया पासवर्ड दर्ज करें।' : 'Please enter a password.',
+    };
+  }
+
+  if (password.length < 8) {
+    return {
+      valid: false,
+      error: lang === 'hi'
+        ? 'पासवर्ड न्यूनतम 8 वर्णों (Characters) का होना चाहिए।'
+        : 'Password must be at least 8 characters long.',
+    };
+  }
+
+  if (password.length > 64) {
+    return {
+      valid: false,
+      error: lang === 'hi'
+        ? 'पासवर्ड अधिकतम 64 वर्णों का हो सकता है।'
+        : 'Password cannot exceed 64 characters.',
+    };
+  }
+
+  // Reject common/trivial dummy passwords
+  const commonPasswords = new Set([
+    '12345678', '123456789', '1234567890', 'password', 'password1', 'password123',
+    'pass1234', 'admin123', 'qwertyuiop', 'qwerty123', 'welcome1', 'welcome123',
+    'abcdefgh', 'iloveyou', '11111111', '00000000', 'letmein123', 'testing123',
+    'asdfghjk', 'india123', 'pass@123', 'password@1', 'admin@123'
+  ]);
+
+  if (commonPasswords.has(password.toLowerCase())) {
+    return {
+      valid: false,
+      error: lang === 'hi'
+        ? 'यह पासवर्ड बहुत सामान्य व असुरक्षित है! कृपया एक मजबूत और वास्तविक पासवर्ड चुनें।'
+        : 'This password is too common and easily guessed. Please choose a strong, unique password.',
+    };
+  }
+
+  // Reject 4+ repeated consecutive characters (e.g. 'aaaa', '1111')
+  if (/(.)\1{3,}/.test(password)) {
+    return {
+      valid: false,
+      error: lang === 'hi'
+        ? 'पासवर्ड में लगातार 4 समान वर्ण नहीं होने चाहिए।'
+        : 'Password cannot contain 4 consecutive identical characters.',
+    };
+  }
+
+  // Reject password matching username from email
+  if (email && email.includes('@')) {
+    const emailPrefix = email.split('@')[0].toLowerCase();
+    if (emailPrefix.length >= 3 && password.toLowerCase().includes(emailPrefix)) {
+      return {
+        valid: false,
+        error: lang === 'hi'
+          ? 'सुरक्षा कारणों से पासवर्ड में आपका ईमेल नाम नहीं होना चाहिए।'
+          : 'For security, password should not contain your email username.',
+      };
+    }
+  }
+
+  // Complexity rules: Uppercase, Lowercase, Number, Special symbol
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
+
+  if (!hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+    const missing: string[] = [];
+    if (!hasUpper) missing.push(lang === 'hi' ? 'कम से कम 1 बड़ा अक्षर (A-Z)' : '1 uppercase letter (A-Z)');
+    if (!hasLower) missing.push(lang === 'hi' ? 'कम से कम 1 छोटा अक्षर (a-z)' : '1 lowercase letter (a-z)');
+    if (!hasNumber) missing.push(lang === 'hi' ? 'कम से कम 1 अंक (0-9)' : '1 number (0-9)');
+    if (!hasSpecial) missing.push(lang === 'hi' ? 'कम से कम 1 विशेष चिह्न (@, #, $, आदि)' : '1 special symbol (@, #, $, etc.)');
+
+    return {
+      valid: false,
+      error: lang === 'hi'
+        ? `कमजोर पासवर्ड! आवश्यक है: ${missing.join(', ')}।`
+        : `Weak password! Required: ${missing.join(', ')}.`,
+    };
+  }
+
+  return { valid: true };
+}
+

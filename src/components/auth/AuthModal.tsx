@@ -10,6 +10,8 @@ import {
   validateRealDob,
   calculateExactAge,
   validateRealNationalId,
+  validateRealEmail,
+  validateRealPassword,
 } from '@/utils/antiFraudValidation';
 import {
   ChevronLeft,
@@ -145,6 +147,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return validateRealNationalId(nationalIdInput.trim(), country, language);
   }, [nationalIdInput, country, language]);
 
+  const emailValidation = useMemo(() => {
+    if (!email.trim()) return null;
+    return validateRealEmail(email.trim(), language);
+  }, [email, language]);
+
+  const passwordValidation = useMemo(() => {
+    if (!password) return null;
+    return validateRealPassword(password, name, email, language);
+  }, [password, name, email, language]);
+
+  const confirmPasswordValidation = useMemo(() => {
+    if (!confirmPassword) return null;
+    if (confirmPassword !== password) {
+      return {
+        valid: false,
+        error: language === 'hi' ? 'दोनों पासवर्ड समान होने चाहिए।' : 'Passwords do not match.',
+      };
+    }
+    return { valid: true };
+  }, [confirmPassword, password, language]);
+
   if (!isOpen) return null;
 
   // Google OAuth Sign In (Single Official Google Provider)
@@ -184,39 +207,59 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Submit Handler for Email/Password Login
+  // Submit Handler for Email/Password Login (Strict Real Account Check)
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!email || !email.includes('@')) {
-      setErrorMessage(language === 'hi' ? 'कृपया मान्य ईमेल दर्ज करें।' : 'Please enter a valid email address.');
+    // 1. Client-Side Real Email Validation
+    const emailCheck = validateRealEmail(email, language);
+    if (!emailCheck.valid) {
+      setErrorMessage(
+        emailCheck.error ||
+          (language === 'hi'
+            ? 'कृपया मान्य एवं सक्रिय ईमेल पता दर्ज करें।'
+            : 'Please enter a valid, active email address.')
+      );
       return;
     }
-    if (!password || password.length < 6) {
-      setErrorMessage(language === 'hi' ? 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।' : 'Password must be at least 6 characters.');
+
+    if (!password) {
+      setErrorMessage(language === 'hi' ? 'कृपया अपना पासवर्ड दर्ज करें।' : 'Please enter your password.');
       return;
     }
 
     setIsLoading(true);
     try {
-      // Check server database for existing registered profile by email
-      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+      // Authenticate against /api/auth/login
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: emailCheck.cleanEmail,
+          password,
+          lang: language,
+        }),
+      });
+
       const data = await res.json();
 
-      if (data.success && data.citizen && data.citizen.isAadhaarVerified) {
-        onClose();
-        onLoginSuccess(data.citizen);
-      } else {
-        // If not found, inform user to create account or continue
+      if (!res.ok || !data.success) {
         setErrorMessage(
-          language === 'hi'
-            ? 'इस ईमेल से पंजीकृत नागरिक नहीं मिला। कृपया नीचे "Sign Up here" से नया खाता बनाएं।'
-            : 'No registered profile found for this email. Please click "Sign Up here" to create an account.'
+          data.message || (language === 'hi' ? 'अमान्य ईमेल अथवा पासवर्ड।' : 'Invalid email or password.')
         );
+        return;
       }
+
+      // Valid account and verified credentials!
+      onClose();
+      onLoginSuccess(data.citizen);
     } catch (err: any) {
-      setErrorMessage(language === 'hi' ? 'लॉगिन में समस्या आई। पुनः प्रयास करें।' : 'Login failed. Please try again.');
+      setErrorMessage(
+        language === 'hi'
+          ? 'लॉगिन प्रक्रिया में तकनीकी त्रुटि आई। कृपया पुनः प्रयास करें।'
+          : 'Login failed due to a network error. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -227,22 +270,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     e.preventDefault();
     setErrorMessage(null);
 
-    // 1. Real Name
+    // 1. Real Legal Name Validation
     const nameCheck = validateRealName(name, language);
     if (!nameCheck.valid) {
       setErrorMessage(nameCheck.error || 'Invalid name');
       return;
     }
 
-    // 2. Email
-    if (!email || !email.includes('@')) {
-      setErrorMessage(language === 'hi' ? 'कृपया मान्य ईमेल पता दर्ज करें।' : 'Please enter a valid email address.');
+    // 2. Real Email (Anti-Fake, Anti-Disposable Burner Domain)
+    const emailCheck = validateRealEmail(email, language);
+    if (!emailCheck.valid) {
+      setErrorMessage(emailCheck.error || 'Invalid email');
       return;
     }
 
-    // 3. Password
-    if (!password || password.length < 6) {
-      setErrorMessage(language === 'hi' ? 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।' : 'Password must be at least 6 characters.');
+    // 3. Real Password (Anti-Dummy, High Complexity)
+    const passwordCheck = validateRealPassword(password, name, emailCheck.cleanEmail, language);
+    if (!passwordCheck.valid) {
+      setErrorMessage(passwordCheck.error || 'Weak password');
       return;
     }
     if (password !== confirmPassword) {
@@ -250,14 +295,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // 4. DOB & Age
+    // 4. DOB & Exact Age Verification
     const dobCheck = validateRealDob(dob, language);
     if (!dobCheck.valid) {
       setErrorMessage(dobCheck.error || 'Invalid date of birth');
       return;
     }
 
-    // 5. National ID Checksum (UIDAI Verhoeff for India, SSN, SIN, etc.)
+    // 5. National ID Checksum (UIDAI Verhoeff for India, SSN, SIN, CPF, etc.)
     const idCheck = validateRealNationalId(nationalIdInput, country, language);
     if (!idCheck.valid) {
       setErrorMessage(idCheck.error || 'Invalid National ID');
@@ -267,86 +312,88 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setIsLoading(true);
 
     try {
-      const cleanDigits = idCheck.cleanId;
-      let maskedId = '';
-      if (country === 'IN' && cleanDigits.length === 12) {
-        maskedId = `XXXX-XXXX-${cleanDigits.slice(-4)}`;
-      } else if (country === 'US' && cleanDigits.length === 9) {
-        maskedId = `XXX-XX-${cleanDigits.slice(-4)}`;
-      } else {
-        maskedId = `***-${cleanDigits.slice(-4)}`;
-      }
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: name.trim(),
+          email: emailCheck.cleanEmail,
+          password,
+          dob,
+          nationalId: nationalIdInput,
+          country,
+          casteCategory,
+          gender,
+          administrativeDivision: division,
+          lifePhase: selectedRole,
+          nationalIdName: countryMeta.nationalIdName,
+          lang: language,
+        }),
+      });
 
-      const randomSeq = Math.floor(1000 + Math.random() * 9000);
-      const generatedCitizenId = `${countryMeta.alpha3 || country}-CIT-2026-${randomSeq}`;
+      const data = await res.json();
 
-      const newCitizen: CitizenProfile = {
-        id: `cit-${Date.now()}`,
-        fullName: name.trim(),
-        email: email.trim().toLowerCase(),
-        phoneNumber: '',
-        age: dobCheck.age,
-        dob,
-        casteCategory,
-        gender,
-        country,
-        state: division,
-        district: division,
-        pincode: '208001',
-        administrativeDivision: division,
-        lifePhase: selectedRole,
-        isAadhaarVerified: true,
-        isOnboarded: true,
-        nationalIdName: countryMeta.nationalIdName,
-        nationalIdMasked: maskedId || generatedCitizenId,
-        aadhaarNumberMasked: maskedId || generatedCitizenId,
-        familyIncomeAnnual: 250000,
-        educationLevel: 'graduate',
-        activeGoal: 'Verified National Citizen Access',
-        notificationsEnabled: {
-          webPush: true,
-          whatsApp: true,
-          urgentDeadlinesOnly: false,
-        },
-      };
-
-      // Save to server
-      try {
-        await fetch('/api/citizens/profile', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newCitizen),
-        });
-      } catch (err) {
-        console.warn('Server sync notice:', err);
+      if (!res.ok || !data.success) {
+        setErrorMessage(
+          data.message || (language === 'hi' ? 'पंजीकरण विफल रहा।' : 'Registration failed.')
+        );
+        return;
       }
 
       onClose();
-      onLoginSuccess(newCitizen);
+      onLoginSuccess(data.citizen);
+    } catch (err: any) {
+      setErrorMessage(
+        language === 'hi'
+          ? 'तकनीकी समस्या आई। कृपया पुनः प्रयास करें।'
+          : 'Registration failed due to a network error. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Submit Handler for Forgot Password
-  const handleForgotPasswordSubmit = (e: React.FormEvent) => {
+  // Submit Handler for Forgot Password (Real Account Verification)
+  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setSuccessNotice(null);
 
-    if (!email || !email.includes('@')) {
-      setErrorMessage(language === 'hi' ? 'कृपया मान्य ईमेल दर्ज करें।' : 'Please enter a valid email address.');
+    const emailCheck = validateRealEmail(email, language);
+    if (!emailCheck.valid) {
+      setErrorMessage(
+        emailCheck.error ||
+          (language === 'hi' ? 'कृपया मान्य ईमेल दर्ज करें।' : 'Please enter a valid email address.')
+      );
       return;
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setSuccessNotice(
-        language === 'hi'
-          ? `पासवर्ड रीसेट लिंक "${email}" पर भेज दिया गया है। अपना ईमेल इनबॉक्स जांचें।`
-          : `A password reset link has been sent to "${email}". Please check your inbox.`
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailCheck.cleanEmail, lang: language }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setErrorMessage(
+          data.message ||
+            (language === 'hi' ? 'पासवर्ड रीसेट लिंक भेजने में समस्या आई।' : 'Failed to send reset link.')
+        );
+        return;
+      }
+
+      setSuccessNotice(data.message);
+    } catch (err: any) {
+      setErrorMessage(
+        language === 'hi' ? 'तकनीकी समस्या आई। पुनः प्रयास करें।' : 'Network error. Please try again.'
       );
-    }, 800);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -443,18 +490,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {screen === 'login' && (
           <form onSubmit={handleLoginSubmit} className="mt-5 space-y-3.5">
             {/* Email Address */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Mail className="w-4 h-4" />
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={language === 'hi' ? 'ईमेल पता' : 'Email address'}
+                  className={`w-full pl-10 pr-4 py-3.5 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
+                    emailValidation && !emailValidation.valid
+                      ? 'border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
+                      : 'border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10'
+                  }`}
+                />
               </div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={language === 'hi' ? 'ईमेल पता' : 'Email address'}
-                className="w-full pl-10 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all"
-              />
+              {emailValidation && !emailValidation.valid && (
+                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2">
+                  {emailValidation.error}
+                </p>
+              )}
             </div>
 
             {/* Password */}
@@ -597,62 +655,102 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
 
             {/* Email Address */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Mail className="w-4 h-4" />
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={language === 'hi' ? 'ईमेल पता (उदा. name@gmail.com)' : 'Email address (e.g. name@gmail.com)'}
+                  className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
+                    emailValidation && !emailValidation.valid
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-slate-200 focus:border-emerald-500'
+                  }`}
+                />
               </div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={language === 'hi' ? 'ईमेल पता (Email address)' : 'Email address'}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
-              />
+              {emailValidation && !emailValidation.valid && (
+                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2">
+                  {emailValidation.error}
+                </p>
+              )}
             </div>
 
             {/* Password */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Lock className="w-4 h-4" />
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={language === 'hi' ? 'सुरक्षित पासवर्ड (8+ वर्ण, A-Z, a-z, 0-9, @#$)' : 'Secure Password (8+ chars, A-Z, a-z, 0-9, @#$)'}
+                  className={`w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
+                    passwordValidation && !passwordValidation.valid
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-slate-200 focus:border-emerald-500'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={language === 'hi' ? 'पासवर्ड (Password)' : 'Password'}
-                className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+              {passwordValidation && !passwordValidation.valid ? (
+                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2 leading-tight">
+                  {passwordValidation.error}
+                </p>
+              ) : (
+                password && (
+                  <p className="text-[10px] font-semibold text-emerald-600 mt-1 pl-2 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span>{language === 'hi' ? 'पासवर्ड मजबूत एवं सुरक्षित है' : 'Strong & secure password'}</span>
+                  </p>
+                )
+              )}
             </div>
 
             {/* Confirm Password */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Lock className="w-4 h-4" />
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder={language === 'hi' ? 'पासवर्ड पुष्टि (Confirm Password)' : 'Confirm Password'}
+                  className={`w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
+                    confirmPassword && confirmPassword !== password
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-slate-200 focus:border-emerald-500'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={language === 'hi' ? 'पासवर्ड पुष्टि (Confirm Password)' : 'Confirm Password'}
-                className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer"
-              >
-                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
+              {confirmPassword && confirmPassword !== password && (
+                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2">
+                  {language === 'hi' ? 'दोनों पासवर्ड समान होने चाहिए।' : 'Passwords do not match.'}
+                </p>
+              )}
             </div>
 
             {/* --- Real Base Fields Section --- */}
