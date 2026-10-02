@@ -107,6 +107,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   }, [dob]);
 
+  // Dynamic DOB boundaries (min 14 years old, max 100 years old)
+  const { maxDob, minDob } = useMemo(() => {
+    const today = new Date();
+    const max = `${today.getFullYear() - 14}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const min = `${today.getFullYear() - 100}-01-01`;
+    return { maxDob: max, minDob: min };
+  }, []);
+
   // Social categories for selected country
   const availableCategories = useMemo(() => {
     if (countryMeta.socialCategories && countryMeta.socialCategories.length > 0) {
@@ -190,7 +198,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           console.warn('Server lookup error:', e);
         }
 
-        // If new user, populate signup with verified Google details
+        // If onGoogleSuccess callback is provided, transition to the full onboarding wizard
+        if (onGoogleSuccess) {
+          onClose();
+          onGoogleSuccess({
+            name: result.name,
+            email: result.email,
+            photoURL: result.photoURL,
+          });
+          return;
+        }
+
+        // If new user and no external onboarding, populate signup with verified Google details
         setName(result.name);
         setEmail(result.email);
         setScreen('signup');
@@ -238,6 +257,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         body: JSON.stringify({
           email: emailCheck.cleanEmail,
           password,
+          rememberMe,
           lang: language,
         }),
       });
@@ -252,6 +272,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
 
       // Valid account and verified credentials!
+      try {
+        if (rememberMe) {
+          localStorage.setItem('citizen_remember_email', emailCheck.cleanEmail);
+        } else {
+          localStorage.removeItem('citizen_remember_email');
+        }
+      } catch (e) {}
+
       onClose();
       onLoginSuccess(data.citizen);
     } catch (err: any) {
@@ -796,8 +824,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     type="date"
                     required
                     value={dob}
-                    max="2012-12-31"
-                    min="1926-01-01"
+                    max={maxDob}
+                    min={minDob}
                     onChange={(e) => setDob(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none"
                   />
@@ -889,6 +917,58 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       {d}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              {/* Gender Selection */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1 px-1">
+                  {language === 'hi' ? 'लिंग (Gender) *' : 'Gender *'}
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'male', label: 'Male', labelHi: 'पुरुष' },
+                    { id: 'female', label: 'Female', labelHi: 'महिला' },
+                    { id: 'other', label: 'Other', labelHi: 'अन्य' },
+                  ].map((g) => (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => setGender(g.id as CitizenProfile['gender'])}
+                      className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center ${
+                        gender === g.id
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-2xs font-extrabold'
+                          : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      {language === 'hi' ? g.labelHi : g.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Citizen Life Phase / Role Selection */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1 px-1 flex items-center justify-between">
+                  <span>{language === 'hi' ? 'वर्तमान भूमिका / पेशा (Role) *' : 'Occupation / Role *'}</span>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    {language === 'hi' ? 'अवसर अनुकूलन' : 'Customized Feed'}
+                  </span>
+                </label>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value as CitizenProfile['lifePhase'])}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none cursor-pointer"
+                >
+                  <option value="school_student">{language === 'hi' ? 'स्कूली छात्र (School Student)' : 'School Student'}</option>
+                  <option value="college_student">{language === 'hi' ? 'कॉलेज छात्र / डिग्री (College Student)' : 'College Student'}</option>
+                  <option value="exam_aspirant">{language === 'hi' ? 'प्रतियोगी परीक्षा अभ्यर्थी (Exam Aspirant)' : 'Exam Aspirant'}</option>
+                  <option value="job_seeker">{language === 'hi' ? 'नौकरी तलाशकर्ता (Job Seeker)' : 'Job Seeker'}</option>
+                  <option value="employed">{language === 'hi' ? 'कार्यरत / कर्मचारी (Employed)' : 'Employed'}</option>
+                  <option value="business_owner">{language === 'hi' ? 'व्यवसायी / उद्यमी (Business Owner / Startup)' : 'Business Owner / Startup'}</option>
+                  <option value="farmer">{language === 'hi' ? 'किसान / कृषि (Farmer)' : 'Farmer'}</option>
+                  <option value="homemaker">{language === 'hi' ? 'गृहणी (Homemaker)' : 'Homemaker'}</option>
+                  <option value="senior_citizen">{language === 'hi' ? 'वरिष्ठ नागरिक (Senior Citizen 60+)' : 'Senior Citizen (60+)'}</option>
                 </select>
               </div>
             </div>

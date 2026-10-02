@@ -65,9 +65,9 @@ export async function POST(req: NextRequest) {
       country: body.country || existing?.country || 'IN',
       nationalIdName: body.nationalIdName || existing?.nationalIdName || undefined,
       nationalIdMasked: body.nationalIdMasked || existing?.nationalIdMasked || undefined,
-      aadhaarNumberMasked: body.aadhaarNumberMasked || existing?.aadhaarNumberMasked || 'XXXX-XXXX-8921',
+      aadhaarNumberMasked: body.aadhaarNumberMasked || existing?.aadhaarNumberMasked || undefined,
       age: Number(body.age) || existing?.age || 21,
-      dob: body.dob || existing?.dob || '2003-08-14',
+      dob: body.dob || existing?.dob || undefined,
       gender: body.gender || existing?.gender || 'male',
       state: body.state || existing?.state || '',
       administrativeDivision: body.administrativeDivision || existing?.administrativeDivision || undefined,
@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
       registeredAt: existing?.registeredAt || new Date().toISOString(),
       status: 'verified',
       isOnboarded: body.isOnboarded !== undefined ? Boolean(body.isOnboarded) : (existing?.isOnboarded ?? true),
-      subscription: body.subscription || existing?.subscription || undefined,
+      // SECURITY: Subscription status cannot be granted via generic profile update
+      subscription: existing?.subscription || undefined,
     };
 
     const saved = await DatabaseService.saveCitizen(citizenRecord);

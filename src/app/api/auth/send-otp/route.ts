@@ -115,14 +115,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 6. Smart Development / Sandbox Fallback (When gateway key is pending or KYC needed)
-    let fallbackMsg = `टेस्ट ओटीपी ${maskedNumber} के लिए सक्रिय है (सत्यापन के लिए ${otp} या 123456 दर्ज करें)।`;
+    // 6. SMS Gateway Fallback (When gateway key is pending or KYC needed)
+    // SECURITY: Never leak OTP in API response. OTP is stored server-side only.
+    let fallbackMsg = `ओटीपी ${maskedNumber} पर भेजा गया है। कृपया अपना SMS इनबॉक्स जांचें।`;
     if (gatewayWarning) {
       if (typeof gatewayWarning === 'string' && (gatewayWarning.includes('website verification') || gatewayWarning.includes('OTP Message menu'))) {
-        fallbackMsg = `⚠️ Fast2SMS KYC Pending: रियल SMS के लिए Fast2SMS में OTP KYC/Website verify करें। अभी टेस्ट कोड ${otp} या 123456 दर्ज करें।`;
+        fallbackMsg = `SMS गेटवे KYC लंबित है। कृपया व्यवस्थापक से संपर्क करें या गूगल लॉगिन का उपयोग करें।`;
       } else if (typeof gatewayWarning === 'string' && gatewayWarning.includes('100 INR')) {
-        fallbackMsg = `⚠️ Fast2SMS Recharge Required: रियल SMS के लिए Fast2SMS में ₹100 रिचार्ज करें। अभी टेस्ट कोड ${otp} या 123456 दर्ज करें।`;
+        fallbackMsg = `SMS गेटवे रिचार्ज आवश्यक है। कृपया गूगल लॉगिन का उपयोग करें।`;
       }
+    }
+
+    // Log OTP to server console ONLY for development debugging (never sent to client)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[DEV ONLY] OTP for ${maskedNumber}: ${otp}`);
     }
 
     return NextResponse.json({
@@ -130,8 +136,7 @@ export async function POST(req: NextRequest) {
       isLive: false,
       maskedNumber,
       message: fallbackMsg,
-      gatewayError: gatewayWarning || null,
-      devOtp: otp,
+      gatewayError: gatewayWarning ? 'SMS gateway configuration pending' : null,
     });
   } catch (error: any) {
     console.error('Send OTP error:', error);

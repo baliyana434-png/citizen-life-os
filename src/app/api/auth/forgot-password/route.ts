@@ -26,26 +26,18 @@ export async function POST(req: NextRequest) {
     // 2. Verify Account Exists in Reality
     const citizen = await DatabaseService.findCitizen({ email: cleanEmail });
 
-    if (!citizen) {
-      return NextResponse.json(
-        {
-          success: false,
-          errorType: 'ACCOUNT_NOT_FOUND',
-          message:
-            lang === 'hi'
-              ? 'इस ईमेल से कोई खाता पंजीकृत नहीं है। कृपया सही ईमेल दर्ज करें या नया खाता बनाएं।'
-              : 'No account is registered with this email address. Please check your email or create a new account.',
-        },
-        { status: 404 }
-      );
+    // SECURITY: Always return the same response whether citizen exists or not to prevent account enumeration
+    if (citizen) {
+      // In production, dispatch actual password reset email/token here
+      console.log(`[Forgot Password] Reset requested for existing user: ${cleanEmail}`);
     }
 
     return NextResponse.json({
       success: true,
       message:
         lang === 'hi'
-          ? `पासवर्ड रीसेट लिंक आपके पंजीकृत ईमेल "${cleanEmail}" पर भेज दिया गया है। अपना इनबॉक्स जांचें।`
-          : `A password reset link has been dispatched to your registered email "${cleanEmail}". Please check your inbox.`,
+          ? `यदि यह ईमेल पंजीकृत है, तो पासवर्ड रीसेट लिंक "${cleanEmail}" पर भेज दिया गया है। अपना इनबॉक्स जांचें।`
+          : `If an account is associated with "${cleanEmail}", a password reset link has been dispatched. Please check your inbox.`,
     });
   } catch (error: any) {
     console.error('Forgot Password API Error:', error);

@@ -63,16 +63,19 @@ export async function POST(req: Request) {
           const dobRaw = parts[3] || '';
           const genderRaw = (parts[4] || '').toUpperCase();
           const dist = parts[6] || parts[5] || '';
-          const pincode = parts[parts.length - 2] || parts[parts.length - 1] || '208001';
-          const state = parts[parts.length - 1] || 'Uttar Pradesh';
+          const rawPincode = parts[parts.length - 2] || parts[parts.length - 1] || '';
+          const state = parts[parts.length - 1] || '';
 
           // Format DOB (DD-MM-YYYY to YYYY-MM-DD)
           const dobParts = dobRaw.split(/[\-\/]/);
-          let formattedDob = '2003-08-14';
-          let age = 21;
+          let formattedDob = '';
+          let age = 0;
           if (dobParts.length === 3) {
-            formattedDob = `${dobParts[2]}-${dobParts[1].padStart(2, '0')}-${dobParts[0].padStart(2, '0')}`;
-            age = Math.max(1, new Date().getFullYear() - parseInt(dobParts[2], 10));
+            const parsedYear = parseInt(dobParts[2], 10);
+            if (!isNaN(parsedYear)) {
+              formattedDob = `${dobParts[2]}-${dobParts[1].padStart(2, '0')}-${dobParts[0].padStart(2, '0')}`;
+              age = Math.max(1, new Date().getFullYear() - parsedYear);
+            }
           }
 
           const parsedData: ParsedAadhaarData = {
@@ -83,7 +86,7 @@ export async function POST(req: Request) {
             gender: genderRaw.startsWith('F') ? 'female' : 'male',
             district: dist,
             state: state,
-            pincode: pincode.replace(/\D/g, '').slice(0, 6) || '208001',
+            pincode: rawPincode.replace(/\D/g, '').slice(0, 6) || '',
             rawSource: 'SECURE_QR_V2',
           };
 

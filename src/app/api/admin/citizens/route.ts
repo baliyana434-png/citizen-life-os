@@ -11,6 +11,16 @@ import {
   validateRealIncome,
 } from '@/utils/antiFraudValidation';
 
+// SECURITY: Admin API key authentication
+function verifyAdminAuth(req: NextRequest): boolean {
+  const adminKey = req.headers.get('x-admin-key');
+  const serverAdminKey = process.env.ADMIN_API_KEY;
+  if (!serverAdminKey || !adminKey || adminKey !== serverAdminKey) {
+    return false;
+  }
+  return true;
+}
+
 export interface RegisteredCitizen {
   id: string;
   fullName: string;
@@ -116,7 +126,14 @@ async function writeCitizens(citizens: RegisteredCitizen[]): Promise<void> {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!verifyAdminAuth(req)) {
+    return NextResponse.json(
+      { success: false, message: 'Unauthorized. Admin API key required in x-admin-key header.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const citizens = await readCitizens();
     return NextResponse.json({
@@ -133,6 +150,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!verifyAdminAuth(req)) {
+    return NextResponse.json(
+      { success: false, message: 'Unauthorized. Admin API key required in x-admin-key header.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await req.json();
 

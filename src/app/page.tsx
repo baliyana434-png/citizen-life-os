@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LifeStageTabs } from '@/components/layout/LifeStageTabs';
@@ -32,26 +32,26 @@ import {
 } from 'lucide-react';
 
 const DEFAULT_PROFILE: CitizenProfile = {
-  id: 'cit-101',
-  fullName: 'Abhay Kumar',
-  phoneNumber: '9876543210',
-  aadhaarNumberMasked: 'XXXX-XXXX-8921',
-  isAadhaarVerified: true,
+  id: 'cit-default',
+  fullName: '',
+  phoneNumber: '',
+  aadhaarNumberMasked: '',
+  isAadhaarVerified: false,
   isOnboarded: false,
   age: 21,
-  dob: '2003-08-14',
+  dob: '',
   gender: 'male',
-  state: 'Uttar Pradesh',
-  district: 'Kanpur Nagar',
-  pincode: '208001',
+  state: '',
+  district: '',
+  pincode: '',
   lifePhase: 'college_student',
-  casteCategory: 'OBC',
-  familyIncomeAnnual: 180000,
+  casteCategory: 'General',
+  familyIncomeAnnual: 0,
   educationLevel: '12th_pass',
-  activeGoal: 'Complete Degree & Get Verified Job / Free Device',
+  activeGoal: '',
   notificationsEnabled: {
-    webPush: true,
-    whatsApp: true,
+    webPush: false,
+    whatsApp: false,
     urgentDeadlinesOnly: false,
   },
 };
@@ -219,11 +219,12 @@ export default function HomePage() {
 
       const opp = opportunities.find((o) => o.id === oppId);
       const title = opp ? (language === 'hi' ? opp.titleHi : opp.title) : '';
+      const displayTitle = title.length > 45 ? title.slice(0, 45) + '...' : title;
       if (isAdding) {
         setPaymentSuccessToast(
           language === 'hi'
-            ? `"${title.slice(0, 45)}..." सहेजे गए अवसरों में जोड़ दिया गया।`
-            : `"${title.slice(0, 45)}..." saved to your list.`
+            ? `"${displayTitle}" सहेजे गए अवसरों में जोड़ दिया गया।`
+            : `"${displayTitle}" saved to your list.`
         );
       } else {
         setPaymentSuccessToast(
@@ -452,7 +453,7 @@ export default function HomePage() {
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Live (Auto-Sync)');
 
   // Live Internet Background Crawler & Sync
-  const fetchLiveSync = async (targetCountry?: string) => {
+  const fetchLiveSync = useCallback(async (targetCountry?: string) => {
     try {
       setIsSyncing(true);
       const activeCountryCode = targetCountry || country;
@@ -475,14 +476,14 @@ export default function HomePage() {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [country]);
 
   useEffect(() => {
     fetchLiveSync(country);
     // Auto-poll live internet feeds every 60 seconds
     const interval = setInterval(() => fetchLiveSync(country), 60000);
     return () => clearInterval(interval);
-  }, [country]);
+  }, [country, fetchLiveSync]);
 
   // Filtered and Scored Opportunities
   const filteredOpportunities = useMemo(() => {
@@ -556,7 +557,7 @@ export default function HomePage() {
       // Priority 3: Higher benefit value first
       return (b.benefitAmount || 0) - (a.benefitAmount || 0);
     });
-  }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, activeProfile.state, activeProfile.administrativeDivision, opportunities, favoriteIds, country]);
+  }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, activeProfile.state, activeProfile.administrativeDivision, opportunities, country]);
 
   // Total Available Benefit Amount
   const totalBenefitSum = useMemo(() => {
