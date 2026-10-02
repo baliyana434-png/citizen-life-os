@@ -34,16 +34,16 @@
     "desc": "Please choose a different filter or change your search query."
   },
   "tabs": {
-    "exams": "Competitive Exams and Government Jobs",
-    "private_jobs": "Corporate and Professional Careers",
-    "internships": "College and University Internships",
-    "education": "Higher Education and Scholarships",
-    "abroad_jobs": "Study Abroad and Global Opportunities",
-    "career": "Skills Training and Certifications",
-    "startups": "Startup Grants and Business Programs",
-    "schemes": "Government Schemes and Financial Aid",
-    "freebies": "Free Digital Tools and Tech Benefits",
-    "health": "Healthcare and Medical Services"
+    "exams": "Competitive Exams",
+    "private_jobs": "Corporate Jobs",
+    "internships": "Internships",
+    "education": "Higher Education",
+    "abroad_jobs": "Study Abroad",
+    "career": "Skill Training",
+    "startups": "Startup Grants",
+    "schemes": "Govt Schemes",
+    "freebies": "Free Tools",
+    "health": "Healthcare"
   },
   "subfilters": {
     "all": "All Eligible",

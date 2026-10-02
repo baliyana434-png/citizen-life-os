@@ -55,7 +55,7 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex-1 min-w-[130px] sm:min-w-[150px] flex items-center justify-center gap-2 py-2.5 px-3.5 rounded-xl text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
+              className={`shrink-0 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
                 isActive
                   ? 'bg-white text-slate-950 shadow-sm border border-slate-200 font-extrabold'
                   : 'text-slate-600 hover:text-slate-950 hover:bg-white/60 font-semibold'
