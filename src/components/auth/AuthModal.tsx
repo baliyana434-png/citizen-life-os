@@ -834,8 +834,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                     <span>
                       {country === 'IN'
-                        ? 'UIDAI Verhoeff चेकसम सत्यापित'
-                        : `मान्य ${countryMeta.nationalIdName} प्रारूप`}
+                        ? (language === 'hi' ? 'UIDAI Verhoeff चेकसम सत्यापित' : 'UIDAI Verhoeff Checksum Verified')
+                        : (language === 'hi' ? `मान्य ${countryMeta.nationalIdName} प्रारूप` : `Valid ${countryMeta.nationalIdName} format`)}
                     </span>
                   </p>
                 )}

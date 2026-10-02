@@ -452,10 +452,11 @@ export default function HomePage() {
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Live (Auto-Sync)');
 
   // Live Internet Background Crawler & Sync
-  const fetchLiveSync = async () => {
+  const fetchLiveSync = async (targetCountry?: string) => {
     try {
       setIsSyncing(true);
-      const res = await fetch('/api/live-sync');
+      const activeCountryCode = targetCountry || country;
+      const res = await fetch(`/api/live-sync?country=${encodeURIComponent(activeCountryCode)}`);
       if (!res.ok) throw new Error('Live sync failed');
       const data = await res.json();
       if (data.newOpportunities && data.newOpportunities.length > 0) {
@@ -477,11 +478,11 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetchLiveSync();
+    fetchLiveSync(country);
     // Auto-poll live internet feeds every 60 seconds
-    const interval = setInterval(fetchLiveSync, 60000);
+    const interval = setInterval(() => fetchLiveSync(country), 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [country]);
 
   // Filtered and Scored Opportunities
   const filteredOpportunities = useMemo(() => {
@@ -737,7 +738,7 @@ export default function HomePage() {
               {opportunities.length} {language === 'hi' ? 'सत्यापित अवसर लाइव' : 'Opportunities Live'}
             </span>
             <button
-              onClick={fetchLiveSync}
+              onClick={() => fetchLiveSync(country)}
               disabled={isSyncing}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95 text-xs cursor-pointer"
               title="Sync Feed"
