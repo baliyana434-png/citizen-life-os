@@ -100,7 +100,7 @@ export interface CitizenProfile {
   pincode: string;
   administrativeDivision?: string;
   lifePhase: 'school_student' | 'college_student' | 'exam_aspirant' | 'job_seeker' | 'employed' | 'business_owner' | 'farmer' | 'homemaker' | 'senior_citizen';
-  casteCategory: 'General' | 'OBC' | 'SC' | 'ST' | 'EWS' | 'Minority';
+  casteCategory: 'General' | 'OBC' | 'SC' | 'ST' | 'EWS' | 'Minority' | string;
   familyIncomeAnnual: number;
   educationLevel: 'below_10th' | '10th_pass' | '12th_pass' | 'graduate' | 'post_graduate';
   activeGoal: string;

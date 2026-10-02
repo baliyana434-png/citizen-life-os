@@ -3,7 +3,7 @@
  * 100% Free Lifetime Verification (UIDAI Verhoeff Checksum + TRAI Rules + India Post Rules)
  */
 
-import { SupportedLanguage } from '@/types';
+import { SupportedLanguage, CountryCode } from '@/types';
 
 // 1. UIDAI Verhoeff Checksum Algorithm
 // Dihedral group D5 multiplication and permutation matrices
@@ -384,3 +384,145 @@ export function validateRealIncome(income: number, lang: SupportedLanguage = 'en
   }
   return { valid: true };
 }
+
+// 9. Exact Age Calculation from Date of Birth
+export function calculateExactAge(dobString: string): number {
+  if (!dobString) return 0;
+  const birth = new Date(dobString);
+  if (isNaN(birth.getTime())) return 0;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const m = now.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) {
+    age--;
+  }
+  return Math.max(0, age);
+}
+
+// 10. Multi-Country National Identity Anti-Fraud Validation
+export function validateRealNationalId(
+  idValue: string,
+  country: CountryCode = 'IN',
+  lang: SupportedLanguage = 'en'
+): { valid: boolean; cleanId: string; error?: string } {
+  const raw = (idValue || '').trim();
+  if (!raw) {
+    return {
+      valid: false,
+      cleanId: '',
+      error: lang === 'hi' ? 'राष्ट्रीय पहचान पत्र नंबर दर्ज करना अनिवार्य है।' : 'National Identity Number is required.',
+    };
+  }
+
+  // India - Strict 12-Digit UIDAI Verhoeff Checksum
+  if (country === 'IN') {
+    const res = validateRealAadhaar(raw, lang);
+    return { valid: res.valid, cleanId: res.cleanAadhaar, error: res.error };
+  }
+
+  // United States - 9-digit SSN
+  if (country === 'US') {
+    const cleanSSN = raw.replace(/\D/g, '');
+    if (cleanSSN.length !== 9) {
+      return {
+        valid: false,
+        cleanId: cleanSSN,
+        error: lang === 'hi' ? 'अमेरिकी एसएसएन ठीक 9 अंकों का होना चाहिए।' : 'US SSN must be exactly 9 digits.',
+      };
+    }
+    const area = cleanSSN.slice(0, 3);
+    const group = cleanSSN.slice(3, 5);
+    const serial = cleanSSN.slice(5, 9);
+    if (area === '000' || area === '666' || Number(area) >= 900 || group === '00' || serial === '0000') {
+      return {
+        valid: false,
+        cleanId: cleanSSN,
+        error: lang === 'hi' ? 'अमान्य अमेरिकी एसएसएन संरचना।' : 'Invalid US SSN format according to Social Security rules.',
+      };
+    }
+    return { valid: true, cleanId: `${area}-${group}-${serial}` };
+  }
+
+  // United Kingdom - NINO
+  if (country === 'GB') {
+    const cleanNino = raw.replace(/\s/g, '').toUpperCase();
+    const ninoRegex = /^[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-D]{1}$/;
+    if (!ninoRegex.test(cleanNino)) {
+      return {
+        valid: false,
+        cleanId: cleanNino,
+        error: lang === 'hi' ? 'अमान्य ब्रिटेन NINO नंबर (प्रारूप: QQ 12 34 56 A)।' : 'Invalid UK National Insurance Number format (e.g. QQ 12 34 56 A).',
+      };
+    }
+    return { valid: true, cleanId: cleanNino };
+  }
+
+  // Canada - 9-digit SIN with Luhn Checksum
+  if (country === 'CA') {
+    const cleanSin = raw.replace(/\D/g, '');
+    if (cleanSin.length !== 9) {
+      return {
+        valid: false,
+        cleanId: cleanSin,
+        error: lang === 'hi' ? 'कनाडा एसआईएन ठीक 9 अंकों का होना चाहिए।' : 'Canada SIN must be exactly 9 digits.',
+      };
+    }
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      let digit = Number(cleanSin[i]);
+      if (i % 2 === 1) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+    }
+    if (sum % 10 !== 0) {
+      return {
+        valid: false,
+        cleanId: cleanSin,
+        error: lang === 'hi' ? 'अमान्य कनाडा एसआईएन चेकसम (Luhn Checksum Failed)।' : 'Invalid Canada SIN checksum.',
+      };
+    }
+    return { valid: true, cleanId: cleanSin };
+  }
+
+  // Brazil - 11-digit CPF with dual modulus checksum
+  if (country === 'BR') {
+    const cleanCpf = raw.replace(/\D/g, '');
+    if (cleanCpf.length !== 11 || /^(\d)\1{10}$/.test(cleanCpf)) {
+      return {
+        valid: false,
+        cleanId: cleanCpf,
+        error: lang === 'hi' ? 'ब्राजील सीपीएफ ठीक 11 अंकों का होना चाहिए।' : 'Brazil CPF must be exactly 11 digits.',
+      };
+    }
+    let sum1 = 0;
+    for (let i = 0; i < 9; i++) sum1 += Number(cleanCpf[i]) * (10 - i);
+    let rev1 = 11 - (sum1 % 11);
+    if (rev1 >= 10) rev1 = 0;
+    if (rev1 !== Number(cleanCpf[9])) {
+      return { valid: false, cleanId: cleanCpf, error: lang === 'hi' ? 'अमान्य ब्राजील सीपीएफ चेकसम।' : 'Invalid Brazil CPF checksum.' };
+    }
+    let sum2 = 0;
+    for (let i = 0; i < 10; i++) sum2 += Number(cleanCpf[i]) * (11 - i);
+    let rev2 = 11 - (sum2 % 11);
+    if (rev2 >= 10) rev2 = 0;
+    if (rev2 !== Number(cleanCpf[10])) {
+      return { valid: false, cleanId: cleanCpf, error: lang === 'hi' ? 'अमान्य ब्राजील सीपीएफ चेकसम।' : 'Invalid Brazil CPF checksum.' };
+    }
+    return { valid: true, cleanId: cleanCpf };
+  }
+
+  // Generic national ID for other countries
+  const cleanGeneric = raw.replace(/[^a-zA-Z0-9-]/g, '');
+  if (cleanGeneric.length < 5 || cleanGeneric.length > 25) {
+    return {
+      valid: false,
+      cleanId: cleanGeneric,
+      error: lang === 'hi' ? 'राष्ट्रीय पहचान संख्या 5 से 25 वर्णों की होनी चाहिए।' : 'National Identity Number must be between 5 and 25 characters.',
+    };
+  }
+
+  return { valid: true, cleanId: cleanGeneric };
+}
+

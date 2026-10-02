@@ -338,6 +338,7 @@ export default function HomePage() {
     photoURL?: string;
     lifePhase: CitizenProfile['lifePhase'];
     age: number;
+    dob?: string;
     casteCategory: CitizenProfile['casteCategory'];
     state: string;
     gender: CitizenProfile['gender'];
@@ -363,6 +364,7 @@ export default function HomePage() {
       photoURL: completed.photoURL,
       lifePhase: completed.lifePhase,
       age: completed.age,
+      dob: completed.dob,
       casteCategory: completed.casteCategory,
       state: completed.state,
       gender: completed.gender,
@@ -565,6 +567,10 @@ export default function HomePage() {
         profile={profile}
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenOnboarding={() => {
+          setPendingGoogleUser(null);
+          setIsOnboardingOpen(true);
+        }}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         favoriteCount={favoriteIds.size}
@@ -826,6 +832,10 @@ export default function HomePage() {
         googleUser={pendingGoogleUser}
         initialRole={profile.lifePhase}
         onComplete={handleOnboardingComplete}
+        onSwitchToSignIn={() => {
+          setIsOnboardingOpen(false);
+          setIsProfileOpen(true);
+        }}
       />
 
       {/* 8. 1-Year Citizen Access Subscription Modal (₹19 / Year) */}
