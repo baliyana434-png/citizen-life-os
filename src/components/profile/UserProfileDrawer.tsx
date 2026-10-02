@@ -9,8 +9,6 @@ import {
   X,
   ShieldCheck,
   CheckCircle2,
-  Bell,
-  Smartphone,
   LogOut,
   AlertTriangle,
   Lock,
@@ -122,24 +120,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     if (onOpenOnboarding) {
       onOpenOnboarding();
     }
-  };
-
-  const handleToggleWhatsApp = (enabled: boolean) => {
-    onUpdateProfile({
-      notificationsEnabled: {
-        ...profile.notificationsEnabled,
-        whatsApp: enabled,
-      },
-    });
-  };
-
-  const handleToggleWebPush = (enabled: boolean) => {
-    onUpdateProfile({
-      notificationsEnabled: {
-        ...profile.notificationsEnabled,
-        webPush: enabled,
-      },
-    });
   };
 
   // Reset logout confirmation when drawer closes
@@ -392,85 +372,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                     <span className="text-emerald-400">365 Days Unlocked</span>
                   </div>
                 )}
-              </div>
-
-              {/* Total Unlocked Value Counter Card */}
-              {totalBenefitsUnlocked !== undefined && totalBenefitsUnlocked > 0 && (
-                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 border border-emerald-500/40 text-white shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{language === 'hi' ? 'कुल अनलॉक अवसर मूल्य' : 'Total Unlocked Benefits'}</span>
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-900/80 px-2 py-0.5 rounded-md border border-emerald-600">
-                      ₹19 Pass
-                    </span>
-                  </div>
-                  <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400 my-1">
-                    {countryMeta.currencySymbol}{totalBenefitsUnlocked.toLocaleString('en-IN')}
-                  </div>
-                  <p className="text-[11px] text-slate-300 leading-snug">
-                    {language === 'hi'
-                      ? 'आपकी आयु एवं क्षेत्र के आधार पर सत्यापित छात्रवृत्तियां, सरकारी योजनाएं, स्वास्थ्य कवर एवं करियर अवसर।'
-                      : 'Verified scholarships, subsidies, health coverage & career vacancies unlocked for your profile.'}
-                  </p>
-                </div>
-              )}
-
-              {/* Notification Preferences */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
-                  <Bell className="w-4 h-4 text-emerald-600" />
-                  <span>{t('profile.direct_alerts')}</span>
-                </h4>
-
-                <div className="space-y-2">
-                  {/* WhatsApp Alerts */}
-                  <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                        <Smartphone className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold text-slate-900 block">
-                          {t('settings.whatsapp_alerts')}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block">
-                          {t('settings.urgent_only')}
-                        </span>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={profile.notificationsEnabled?.whatsApp ?? true}
-                      onChange={(e) => handleToggleWhatsApp(e.target.checked)}
-                      className="w-4 h-4 text-emerald-600 rounded-sm border-slate-300 focus:ring-emerald-500"
-                    />
-                  </label>
-
-                  {/* Web Push Alerts */}
-                  <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center">
-                        <Bell className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold text-slate-900 block">
-                          {t('settings.push_alerts')}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block">
-                          {t('settings.push_subtext')}
-                        </span>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={profile.notificationsEnabled?.webPush ?? true}
-                      onChange={(e) => handleToggleWebPush(e.target.checked)}
-                      className="w-4 h-4 text-emerald-600 rounded-sm border-slate-300 focus:ring-emerald-500"
-                    />
-                  </label>
-                </div>
               </div>
 
               {/* Logout Button Section */}
