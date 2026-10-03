@@ -82,7 +82,7 @@
     "educationLevel": "12th_pass",
     "activeGoal": "Browse Verified Opportunities",
     "notificationsEnabled": {
-      "webPush": false,
+      "webPush": true,
       "whatsApp": false,
       "urgentDeadlinesOnly": false
     },

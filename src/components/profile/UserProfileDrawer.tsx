@@ -26,10 +26,7 @@ import {
   LogIn,
   UserPlus,
   ArrowRight,
-  Bell,
-  BellRing,
 } from 'lucide-react';
-import { pushNotificationService } from '@/services/pushNotification';
 
 interface UserProfileDrawerProps {
   isOpen: boolean;
@@ -69,43 +66,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState<boolean>(false);
   const [isGoogleLoggingIn, setIsGoogleLoggingIn] = useState<boolean>(false);
   const [googleLoginError, setGoogleLoginError] = useState<string | null>(null);
-  const [isTestingPush, setIsTestingPush] = useState<boolean>(false);
-  const [pushStatusText, setPushStatusText] = useState<string | null>(null);
-
-  const handleTestOrEnablePush = async () => {
-    setIsTestingPush(true);
-    setPushStatusText(null);
-    try {
-      const res = await pushNotificationService.requestPermission({
-        email: profile.email,
-        phone: profile.phoneNumber,
-        citizenId: profile.id,
-        country: profile.country || country,
-      });
-
-      if (res.success) {
-        await pushNotificationService.sendLocalTestNotification(language === 'hi' ? 'hi' : 'en');
-        setPushStatusText(
-          language === 'hi'
-            ? 'टेस्ट नोटिफिकेशन आपके स्क्रीन पर भेज दिया गया है!'
-            : 'Test notification sent to your screen!'
-        );
-        onUpdateProfile({
-          notificationsEnabled: {
-            ...profile.notificationsEnabled,
-            webPush: true,
-          }
-        });
-      } else {
-        setPushStatusText(res.error || 'Permission error');
-      }
-    } catch (err: any) {
-      setPushStatusText(err?.message || 'Notification error');
-    } finally {
-      setIsTestingPush(false);
-      setTimeout(() => setPushStatusText(null), 4000);
-    }
-  };
 
   const handleSignInGoogle = async () => {
     setIsGoogleLoggingIn(true);
@@ -284,51 +244,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                   </button>
                 </div>
               </div>
-
-              {/* Guest Push Notifications Card */}
-              <div className="rounded-2xl p-4 border border-slate-200 bg-white shadow-xs space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
-                      <BellRing className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 block">
-                        {language === 'hi' ? 'Lock Screen सरकारी अलर्ट' : 'Lock Screen Govt Alerts'}
-                      </span>
-                      <span className="text-[10px] text-slate-500">
-                        {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
-                          ? (language === 'hi' ? 'सक्रिय • सभी अपडेट सीधे फोन पर' : 'Active • Receiving alerts')
-                          : (language === 'hi' ? 'अलर्ट चालू करें व टेस्ट करें' : 'Enable & test device alert')}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleTestOrEnablePush}
-                    disabled={isTestingPush}
-                    className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-60 shrink-0"
-                  >
-                    {isTestingPush ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Bell className="w-3.5 h-3.5" />
-                    )}
-                    <span>
-                      {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
-                        ? (language === 'hi' ? 'टेस्ट अलर्ट' : 'Test Alert')
-                        : (language === 'hi' ? 'चालू करें' : 'Enable')}
-                    </span>
-                  </button>
-                </div>
-
-                {pushStatusText && (
-                  <p className="text-[11px] font-bold text-emerald-700 bg-emerald-50 p-2 rounded-xl border border-emerald-200 animate-in fade-in">
-                    {pushStatusText}
-                  </p>
-                )}
-              </div>
             </div>
           ) : (
             /* Verified Citizen Mode */
@@ -456,51 +371,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                     <span>Txn: {profile.subscription.transactionId}</span>
                     <span className="text-emerald-400">365 Days Unlocked</span>
                   </div>
-                )}
-              </div>
-
-              {/* Push Notifications Section */}
-              <div className="rounded-2xl p-4 border border-slate-200 bg-slate-50 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                      <BellRing className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 block">
-                        {language === 'hi' ? 'Lock Screen सरकारी अलर्ट' : 'Lock Screen Govt Alerts'}
-                      </span>
-                      <span className="text-[10px] text-slate-500">
-                        {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
-                          ? (language === 'hi' ? 'सक्रिय • सभी अपडेट सीधे फोन पर' : 'Active • Receiving alerts')
-                          : (language === 'hi' ? 'अलर्ट चालू करें व टेस्ट करें' : 'Enable & test device alert')}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleTestOrEnablePush}
-                    disabled={isTestingPush}
-                    className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-60 shrink-0"
-                  >
-                    {isTestingPush ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Bell className="w-3.5 h-3.5" />
-                    )}
-                    <span>
-                      {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
-                        ? (language === 'hi' ? 'टेस्ट अलर्ट' : 'Test Alert')
-                        : (language === 'hi' ? 'चालू करें' : 'Enable')}
-                    </span>
-                  </button>
-                </div>
-
-                {pushStatusText && (
-                  <p className="text-[11px] font-bold text-emerald-700 bg-emerald-100/60 p-2 rounded-xl border border-emerald-200 animate-in fade-in">
-                    {pushStatusText}
-                  </p>
                 )}
               </div>
 
