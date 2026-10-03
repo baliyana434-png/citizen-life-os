@@ -18,14 +18,28 @@ export const isFirebaseConfigured = (): boolean => {
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 
+export const getFirebaseApp = (): FirebaseApp | null => {
+  if (typeof window === 'undefined') return null;
+  if (!app && isFirebaseConfigured()) {
+    try {
+      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    } catch (error) {
+      console.warn('Firebase app initialization error:', error);
+    }
+  }
+  return app;
+};
+
 export const getFirebaseAuth = (): Auth | null => {
   if (typeof window === 'undefined') return null;
   if (!auth && isFirebaseConfigured()) {
     try {
-      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-      auth = getAuth(app);
+      const firebaseApp = getFirebaseApp();
+      if (firebaseApp) {
+        auth = getAuth(firebaseApp);
+      }
     } catch (error) {
-      console.warn('Firebase initialization error:', error);
+      console.warn('Firebase auth initialization error:', error);
     }
   }
   return auth;

@@ -11,6 +11,7 @@ import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { GoogleAccountChooserModal } from '@/components/auth/GoogleAccountChooserModal';
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
+import { PushNotificationBanner } from '@/components/notifications/PushNotificationBanner';
 import { GoogleAuthService } from '@/services/googleAuth';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
@@ -871,6 +872,18 @@ export default function HomePage() {
         citizenName={profile.fullName || 'Citizen'}
         citizenId={profile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`}
         onSubscriptionSuccess={handleSubscriptionSuccess}
+      />
+
+      {/* 9. Floating Push Notification Permission & Alert Prompt */}
+      <PushNotificationBanner
+        onNotificationEnabled={() => {
+          setPaymentSuccessToast(
+            language === 'hi'
+              ? 'Lock Screen नोटिफिकेशन सक्रिय हो गया! एक टेस्ट अलर्ट भेजा गया है।'
+              : 'Lock screen alerts enabled! A test notification was sent.'
+          );
+          setTimeout(() => setPaymentSuccessToast(null), 5000);
+        }}
       />
     </div>
   );

@@ -94,6 +94,11 @@ export interface CitizenRecord {
   status: 'verified';
   isOnboarded?: boolean;
   subscription?: CitizenSubscription;
+  notificationsEnabled?: {
+    webPush?: boolean;
+    whatsApp?: boolean;
+    urgentDeadlinesOnly?: boolean;
+  };
   passwordHash?: string;
   passwordSalt?: string;
 }
