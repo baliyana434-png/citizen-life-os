@@ -7,8 +7,7 @@ import {
   Search,
   BookOpen,
   Play,
-  Bookmark,
-  BookmarkCheck,
+  Star,
   CheckCircle2,
   ExternalLink,
   Clock,
@@ -16,65 +15,122 @@ import {
   Sparkles,
   TrendingUp,
   X,
-  Share2,
   Laptop,
   Landmark,
   Video,
   IndianRupee,
   Wrench,
-  MessageSquare,
   HeartPulse,
   Compass,
-  Star
+  Globe,
+  Camera,
+  Layers,
+  ChevronRight,
+  Filter
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { SKILL_SECTORS, SKILL_TOPICS, SkillSector, SkillTopic, SkillVideo } from '@/data/skillsData';
 
 export default function SkillsPage() {
   const { language } = useTranslation();
-  const [selectedSector, setSelectedSector] = useState<string>('all');
+  const [selectedSector, setSelectedSector] = useState<string>('foreign_languages');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [difficultyFilter, setDifficultyFilter] = useState<'all' | 'Beginner' | 'Intermediate'>('all');
+  const [levelFilter, setLevelFilter] = useState<'all' | 'Beginner' | 'Intermediate' | 'Advanced'>('all');
   
   // Selected topic for detailed video view
-  const [activeTopic, setActiveTopic] = useState<SkillTopic>(SKILL_TOPICS[0]);
+  const [activeTopicId, setActiveTopicId] = useState<string>('german_language');
   
   // Active playing video modal
   const [playingVideo, setPlayingVideo] = useState<SkillVideo | null>(null);
 
-  // Saved / Bookmarked skills
-  const [savedSkillIds, setSavedSkillIds] = useState<Set<string>>(new Set());
+  // Saved individual video IDs & topic IDs
+  const [savedVideoIds, setSavedVideoIds] = useState<Set<string>>(new Set());
+  const [savedTopicIds, setSavedTopicIds] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Load saved bookmarks from localStorage
+  // Hydrate saved bookmarks from localStorage
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('citizen_saved_skills');
-      if (stored) {
-        setSavedSkillIds(new Set(JSON.parse(stored)));
+      const storedVideos = localStorage.getItem('citizen_saved_videos');
+      if (storedVideos) {
+        const parsed = JSON.parse(storedVideos);
+        setSavedVideoIds(new Set(Array.isArray(parsed) ? parsed.map((v: any) => v.id || v) : []));
+      }
+      const storedTopics = localStorage.getItem('citizen_saved_skills');
+      if (storedTopics) {
+        setSavedTopicIds(new Set(JSON.parse(storedTopics)));
       }
     } catch (e) {
       console.warn('Failed to load saved skills:', e);
     }
   }, []);
 
-  const toggleSaveSkill = (topicId: string, topicName: string) => {
-    setSavedSkillIds((prev) => {
-      const next = new Set(prev);
-      const isSaving = !next.has(topicId);
-      if (isSaving) {
-        next.add(topicId);
-        showToast(language === 'hi' ? `"${topicName}" को बाद में देखने के लिए सेव कर लिया गया!` : `"${topicName}" saved to your learning list!`);
-      } else {
-        next.delete(topicId);
-        showToast(language === 'hi' ? `सेव सूची से हटाया गया` : `Removed from saved list`);
-      }
+  // Listen to cross-tab / cross-component storage updates
+  useEffect(() => {
+    const handleSync = () => {
       try {
-        localStorage.setItem('citizen_saved_skills', JSON.stringify(Array.from(next)));
-        window.dispatchEvent(new Event('skills_updated'));
+        const storedVideos = localStorage.getItem('citizen_saved_videos');
+        if (storedVideos) {
+          const parsed = JSON.parse(storedVideos);
+          setSavedVideoIds(new Set(Array.isArray(parsed) ? parsed.map((v: any) => v.id || v) : []));
+        }
+      } catch (e) {}
+    };
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('videos_updated', handleSync);
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('videos_updated', handleSync);
+    };
+  }, []);
+
+  // Save or Unsave a PARTICULAR VIDEO
+  const toggleSaveVideo = (video: SkillVideo, topic: SkillTopic) => {
+    setSavedVideoIds((prev) => {
+      const next = new Set(prev);
+      const isSaving = !next.has(video.id);
+
+      let videoList: any[] = [];
+      try {
+        const raw = localStorage.getItem('citizen_saved_videos');
+        videoList = raw ? JSON.parse(raw) : [];
       } catch (e) {
-        console.error('Failed to update storage:', e);
+        videoList = [];
       }
+
+      if (isSaving) {
+        next.add(video.id);
+        const newEntry = {
+          id: video.id,
+          youtubeId: video.youtubeId,
+          title: video.title,
+          titleHi: video.titleHi,
+          channelName: video.channelName,
+          duration: video.duration,
+          language: video.language,
+          level: video.level,
+          topicId: topic.id,
+          topicName: topic.name,
+          topicNameHi: topic.nameHi,
+          sectorId: topic.sectorId,
+          savedAt: new Date().toISOString(),
+        };
+        // Avoid duplicate in array
+        videoList = [newEntry, ...videoList.filter((v: any) => v.id !== video.id)];
+        showToast(language === 'hi' ? `"${video.titleHi}" वीडियो सेव हो गया!` : `"${video.title}" saved to your watchlist!`);
+      } else {
+        next.delete(video.id);
+        videoList = videoList.filter((v: any) => v.id !== video.id);
+        showToast(language === 'hi' ? `वीडियो सेव सूची से हटाया गया` : `Removed video from saved list`);
+      }
+
+      try {
+        localStorage.setItem('citizen_saved_videos', JSON.stringify(videoList));
+        window.dispatchEvent(new Event('videos_updated'));
+      } catch (e) {
+        console.error('Storage error:', e);
+      }
+
       return next;
     });
   };
@@ -84,79 +140,103 @@ export default function SkillsPage() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Filter topics based on sector, search, and difficulty
+  // Filter topics based on sector, search, and level
   const filteredTopics = useMemo(() => {
     return SKILL_TOPICS.filter((t) => {
       if (selectedSector !== 'all' && t.sectorId !== selectedSector) return false;
-      if (difficultyFilter !== 'all' && t.difficulty !== difficultyFilter) return false;
+      
+      // If user filters by a specific level, ensure the topic contains that level video
+      if (levelFilter !== 'all') {
+        const hasLevelVideo = t.videos.some((v) => v.level === levelFilter);
+        if (!hasLevelVideo) return false;
+      }
+
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchName = t.name.toLowerCase().includes(q) || t.nameHi.includes(q);
         const matchDesc = t.shortDesc.toLowerCase().includes(q) || t.shortDescHi.includes(q);
-        const matchVideos = t.videos.some((v) => v.title.toLowerCase().includes(q) || v.channelName.toLowerCase().includes(q));
+        const matchVideos = t.videos.some((v) => 
+          v.title.toLowerCase().includes(q) || 
+          v.titleHi.toLowerCase().includes(q) || 
+          v.channelName.toLowerCase().includes(q)
+        );
         if (!matchName && !matchDesc && !matchVideos) return false;
       }
       return true;
     });
-  }, [selectedSector, searchQuery, difficultyFilter]);
+  }, [selectedSector, searchQuery, levelFilter]);
 
-  // Keep active topic synchronized with filter results
+  // Active topic object
+  const activeTopic = useMemo(() => {
+    const found = filteredTopics.find((t) => t.id === activeTopicId);
+    return found || filteredTopics[0] || SKILL_TOPICS[0];
+  }, [filteredTopics, activeTopicId]);
+
+  // Keep active topic ID valid
   useEffect(() => {
-    if (filteredTopics.length > 0 && !filteredTopics.some((t) => t.id === activeTopic.id)) {
-      setActiveTopic(filteredTopics[0]);
+    if (filteredTopics.length > 0 && !filteredTopics.some((t) => t.id === activeTopicId)) {
+      setActiveTopicId(filteredTopics[0].id);
     }
-  }, [filteredTopics, activeTopic.id]);
+  }, [filteredTopics, activeTopicId]);
+
+  // Videos under active topic filtered strictly by level if specified
+  const displayVideos = useMemo(() => {
+    if (!activeTopic) return [];
+    if (levelFilter === 'all') return activeTopic.videos;
+    return activeTopic.videos.filter((v) => v.level === levelFilter);
+  }, [activeTopic, levelFilter]);
 
   // Helper for sector icons
   const renderSectorIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Laptop': return <Laptop className="w-4 h-4 text-sky-400" />;
-      case 'Landmark': return <Landmark className="w-4 h-4 text-amber-400" />;
-      case 'Video': return <Video className="w-4 h-4 text-rose-400" />;
-      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-emerald-400" />;
-      case 'IndianRupee': return <IndianRupee className="w-4 h-4 text-yellow-400" />;
-      case 'Wrench': return <Wrench className="w-4 h-4 text-orange-400" />;
-      case 'MessageSquare': return <MessageSquare className="w-4 h-4 text-indigo-400" />;
-      case 'HeartPulse': return <HeartPulse className="w-4 h-4 text-red-400" />;
-      default: return <Compass className="w-4 h-4 text-emerald-400" />;
+      case 'Globe': return <Globe className="w-4 h-4 text-emerald-600" />;
+      case 'Video': return <Video className="w-4 h-4 text-rose-500" />;
+      case 'Camera': return <Camera className="w-4 h-4 text-indigo-500" />;
+      case 'Laptop': return <Laptop className="w-4 h-4 text-sky-500" />;
+      case 'Landmark': return <Landmark className="w-4 h-4 text-amber-500" />;
+      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-teal-600" />;
+      case 'IndianRupee': return <IndianRupee className="w-4 h-4 text-emerald-600" />;
+      case 'Wrench': return <Wrench className="w-4 h-4 text-orange-500" />;
+      case 'HeartPulse': return <HeartPulse className="w-4 h-4 text-red-500" />;
+      default: return <Compass className="w-4 h-4 text-emerald-600" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-emerald-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
       
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 border border-emerald-500/50 text-emerald-300 text-xs sm:text-sm font-semibold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
+        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 border border-emerald-500/60 text-white text-xs sm:text-sm font-semibold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* 1. Header Navigation Bar */}
-      <header className="sticky top-0 z-30 w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+      {/* 1. Header Navigation Bar (Clean White Background Matching Home Page) */}
+      <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <Link
               href="/"
-              className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer"
+              className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-all cursor-pointer border border-slate-200"
               title={language === 'hi' ? 'मुख्य पृष्ठ पर वापस जाएं' : 'Back to Home'}
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-white text-base sm:text-lg tracking-tight">
+                <span className="font-black text-slate-900 text-base sm:text-lg tracking-tight">
                   {language === 'hi' ? 'कौशल एवं वीडियो सीख केंद्र' : 'Skills & Video Learning Hub'}
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
-                  100% Free
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                  Verified Free
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
+              <p className="text-[11px] text-slate-500 hidden sm:block">
                 {language === 'hi'
-                  ? 'हर क्षेत्र की शीर्ष 3 सत्यापित वीडियोज, व्यावहारिक रोडमैप व फ्री सरकारी सर्टिफिकेट'
-                  : 'Top 3 curated YouTube masterclasses, structured roadmaps & free certification links'}
+                  ? 'विदेशी भाषाएं, वीडियो एडिटिंग, फोटोग्राफी, कोडिंग व सरकारी परीक्षा के टॉप 3 वीडियो'
+                  : 'Foreign languages, video editing, photography, coding & exam prep with top 3 curated masterclasses'}
               </p>
             </div>
           </div>
@@ -164,13 +244,13 @@ export default function SkillsPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/saved"
-              className="h-9 px-3 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 text-amber-300 border border-amber-800/60 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              className="h-9 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
             >
-              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-              <span>{language === 'hi' ? 'सेव की गई स्किल्स' : 'Saved List'}</span>
-              {savedSkillIds.size > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black">
-                  {savedSkillIds.size}
+              <Star className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
+              <span>{language === 'hi' ? 'सेव्ड वीडियोज' : 'Saved Watchlist'}</span>
+              {savedVideoIds.size > 0 && (
+                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px] font-black">
+                  {savedVideoIds.size}
                 </span>
               )}
             </Link>
@@ -178,36 +258,44 @@ export default function SkillsPage() {
         </div>
       </header>
 
-      {/* 2. Hero Search & Sector Selector Banner */}
-      <section className="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800/80 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto space-y-5">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-700/50 text-xs font-bold mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'युवाओं व सभी नागरिकों हेतु उपयोगी हुनर' : 'Empowering Youth & Citizens with Practical Skills'}</span>
-            </span>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+      {/* 2. Hero Section (Matching Home Page Dark Slate Card) */}
+      <section className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+        <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-7 border border-slate-800 shadow-xl relative overflow-hidden space-y-4 sm:space-y-5">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 max-w-3xl space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-700/60 text-[11px] font-bold">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{language === 'hi' ? 'युवाओं व सभी नागरिकों हेतु उपयोगी हुनर' : 'High-Income Practical Skills for Youth & Adults'}</span>
+              </span>
+              <span className="text-[11px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+                Level-wise Verified
+              </span>
+            </div>
+
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug">
               {language === 'hi'
-                ? 'आपको किस क्षेत्र में कौशल सीखना है?'
-                : 'Which high-income skill do you want to learn today?'}
+                ? 'कौन सा हुनर सीखना है? टॉप 3 वीडियोज से आज ही शुरू करें'
+                : 'Learn Any In-Demand Skill with Top 3 Handpicked Videos'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
               {language === 'hi'
-                ? 'नीचे दिए गए किसी भी क्षेत्र को चुनें। आपको उस विषय से संबंधित सबसे बेहतरीन टॉप 3 यूट्यूब वीडियो, चरणबद्ध रोडमैप और फ्री सर्टिफिकेट सीधे मिलेंगे।'
-                : 'Select any sector below. Get the top 3 handpicked YouTube videos, step-by-step roadmap, and official free certification without spam or confusion.'}
+                ? 'विदेशी भाषाएं (जर्मन/जापानी), वीडियो एडिटिंग, फोटोग्राफी, कोडिंग, व सरकारी नौकरी गणित सीखें। हर विषय पर स्तर अनुसार (Beginner, Intermediate, Advanced) वीडियोज उपलब्ध हैं।'
+                : 'Master German, Japanese, Video Editing, Photography, Coding & Aptitude with verified YouTube masterclasses categorized accurately by difficulty level.'}
             </p>
           </div>
 
-          {/* Search Bar & Difficulty Switch */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {/* Search Bar & Accurate Level Filter Chips */}
+          <div className="relative z-10 flex flex-col md:flex-row items-stretch md:items-center gap-2.5 pt-1">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={language === 'hi' ? 'विषय या कौशल खोजें (जैसे: Web Development, Vedic Maths, CapCut, Tally, Solar...)' : 'Search any skill or topic (e.g. Python, Govt Maths, Reels Editing, Tally, EV...)'}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 text-white placeholder-slate-500 rounded-xl border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs sm:text-sm transition-all"
+                placeholder={language === 'hi' ? 'हुनर या विषय खोजें (जैसे: German, Japanese, Video Editing, Photography, Python, Vedic Maths)...' : 'Search any skill (e.g. German, Video Editing, Photography, Lightroom, Python)...'}
+                className="w-full pl-10 pr-9 py-2.5 bg-slate-950/80 text-white placeholder-slate-400 rounded-xl border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs sm:text-sm transition-all"
               />
               {searchQuery && (
                 <button
@@ -219,153 +307,161 @@ export default function SkillsPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-1.5 p-1 bg-slate-900 rounded-xl border border-slate-800 shrink-0 self-start sm:self-auto">
-              {(['all', 'Beginner', 'Intermediate'] as const).map((level) => (
+            {/* Level Filter: Beginner / Intermediate / Advanced */}
+            <div className="flex items-center gap-1 p-1 bg-slate-950/90 rounded-xl border border-slate-700 shrink-0 overflow-x-auto no-scrollbar">
+              <span className="text-[10px] uppercase font-bold text-slate-400 px-2 flex items-center gap-1 shrink-0">
+                <Filter className="w-3 h-3 text-emerald-400" />
+                <span>Level:</span>
+              </span>
+              {(['all', 'Beginner', 'Intermediate', 'Advanced'] as const).map((lvl) => (
                 <button
-                  key={level}
-                  onClick={() => setDifficultyFilter(level)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    difficultyFilter === level
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'text-slate-400 hover:text-white'
+                  key={lvl}
+                  onClick={() => setLevelFilter(lvl)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    levelFilter === lvl
+                      ? 'bg-emerald-500 text-slate-950 font-black shadow-xs'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
                   }`}
                 >
-                  {level === 'all'
+                  {lvl === 'all'
                     ? (language === 'hi' ? 'सभी स्तर' : 'All Levels')
-                    : (level === 'Beginner' ? (language === 'hi' ? 'शुरुआती' : 'Beginner') : (language === 'hi' ? 'मध्यम' : 'Intermediate'))}
+                    : (lvl === 'Beginner'
+                        ? (language === 'hi' ? 'शुरुआती (Beginner)' : 'Beginner')
+                        : lvl === 'Intermediate'
+                          ? (language === 'hi' ? 'मध्यम (Intermediate)' : 'Intermediate')
+                          : (language === 'hi' ? 'उन्नत (Advanced)' : 'Advanced'))}
                 </button>
               ))}
             </div>
           </div>
-
-          {/* Sector Selection Grid */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <button
-              onClick={() => setSelectedSector('all')}
-              className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                selectedSector === 'all'
-                  ? 'bg-white text-slate-950 font-black shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <Compass className="w-3.5 h-3.5" />
-              <span>{language === 'hi' ? 'सभी क्षेत्र (All Sectors)' : 'All Sectors'}</span>
-              <span className="text-[10px] opacity-70">({SKILL_TOPICS.length})</span>
-            </button>
-
-            {SKILL_SECTORS.map((sector) => {
-              const isSelected = selectedSector === sector.id;
-              const sectorTopicsCount = SKILL_TOPICS.filter((t) => t.sectorId === sector.id).length;
-              return (
-                <button
-                  key={sector.id}
-                  onClick={() => setSelectedSector(sector.id)}
-                  className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-emerald-500 text-slate-950 font-black shadow-md'
-                      : 'bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800'
-                  }`}
-                >
-                  {renderSectorIcon(sector.icon)}
-                  <span>{language === 'hi' ? sector.nameHi : sector.name}</span>
-                  <span className="text-[10px] opacity-75">({sectorTopicsCount})</span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       </section>
 
-      {/* 3. Main Dual-Pane Workspace */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+      {/* 3. Sectors Pill Carousel (Mobile-Friendly Smooth Scroll) */}
+      <section className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-4 pb-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <button
+            onClick={() => setSelectedSector('all')}
+            className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+              selectedSector === 'all'
+                ? 'bg-slate-900 text-white border-slate-900 font-extrabold shadow-sm'
+                : 'bg-white text-slate-700 hover:bg-slate-100 border-slate-200'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>{language === 'hi' ? 'सभी क्षेत्र (All)' : 'All Sectors'}</span>
+            <span className="text-[10px] opacity-75">({SKILL_TOPICS.length})</span>
+          </button>
+
+          {SKILL_SECTORS.map((sec) => {
+            const isSelected = selectedSector === sec.id;
+            const count = SKILL_TOPICS.filter((t) => t.sectorId === sec.id).length;
+
+            return (
+              <button
+                key={sec.id}
+                onClick={() => setSelectedSector(sec.id)}
+                className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                  isSelected
+                    ? 'bg-emerald-600 text-white border-emerald-600 font-extrabold shadow-sm'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border-slate-200'
+                }`}
+              >
+                {renderSectorIcon(sec.icon)}
+                <span>{language === 'hi' ? sec.nameHi : sec.name}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  isSelected ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-600'
+                }`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 4. Main Two-Column Workspace (Clean White / Light Slate Theme) */}
+      <main className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 flex-1">
         {filteredTopics.length === 0 ? (
-          <div className="p-12 text-center bg-slate-900/50 rounded-3xl border border-slate-800 max-w-xl mx-auto space-y-3">
-            <BookOpen className="w-10 h-10 text-slate-600 mx-auto" />
-            <h3 className="text-base font-bold text-white">
+          <div className="p-10 text-center bg-white rounded-3xl border border-slate-200 max-w-lg mx-auto space-y-3 shadow-xs my-8">
+            <BookOpen className="w-10 h-10 text-slate-400 mx-auto" />
+            <h3 className="text-base font-extrabold text-slate-900">
               {language === 'hi' ? 'कोई कौशल नहीं मिला' : 'No matching skills found'}
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               {language === 'hi'
                 ? 'कृपया दूसरा कीवर्ड सर्च करें या किसी अन्य सेक्टर का चयन करें।'
-                : 'Try searching with another keyword or reset the sector filter.'}
+                : 'Try adjusting your search query or reset the level filter.'}
             </p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setSelectedSector('all');
-                setDifficultyFilter('all');
+                setLevelFilter('all');
               }}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer"
             >
               {language === 'hi' ? 'सारे फिल्टर्स रीसेट करें' : 'Reset All Filters'}
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             
-            {/* Left Pane: A to Z Skill Topics List (4 Cols on Desktop) */}
-            <div className="lg:col-span-4 space-y-3 order-2 lg:order-1">
+            {/* Left Column: Topics Selector (4 Cols on Desktop, Compact Mobile Pills) */}
+            <div className="lg:col-span-4 space-y-2.5">
               <div className="flex items-center justify-between px-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  {language === 'hi' ? `उपलब्ध कौशल (${filteredTopics.length})` : `Available Skills (${filteredTopics.length})`}
+                <span className="text-xs font-black uppercase tracking-wider text-slate-500">
+                  {language === 'hi' ? `उपलब्ध विषय (${filteredTopics.length})` : `Topics (${filteredTopics.length})`}
                 </span>
-                <span className="text-[11px] text-emerald-400 font-semibold">
-                  {language === 'hi' ? 'क्लिक करके वीडियो देखें' : 'Click to view videos'}
+                <span className="text-[11px] text-emerald-700 font-bold hidden sm:inline">
+                  {language === 'hi' ? 'क्लिक करके वीडियो देखें' : 'Select to view videos'}
                 </span>
               </div>
 
-              <div className="space-y-2.5 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
+              {/* Mobile-Friendly Compact Topic List with Max Height */}
+              <div className="space-y-2 max-h-[460px] sm:max-h-[calc(100vh-230px)] overflow-y-auto pr-1">
                 {filteredTopics.map((topic) => {
                   const isActive = topic.id === activeTopic.id;
-                  const isSaved = savedSkillIds.has(topic.id);
+                  const hasSavedVideosInTopic = topic.videos.some((v) => savedVideoIds.has(v.id));
 
                   return (
                     <div
                       key={topic.id}
-                      onClick={() => setActiveTopic(topic)}
-                      className={`p-3.5 rounded-2xl border transition-all cursor-pointer relative group ${
+                      onClick={() => setActiveTopicId(topic.id)}
+                      className={`p-3 rounded-2xl border transition-all cursor-pointer relative ${
                         isActive
-                          ? 'bg-slate-900 border-emerald-500 shadow-md ring-1 ring-emerald-500/20'
-                          : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800/80 hover:border-slate-700'
+                          ? 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-500/20 shadow-xs'
+                          : 'bg-white hover:bg-slate-50 border-slate-200'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <div className="space-y-1">
-                          <h3 className={`text-xs sm:text-sm font-extrabold leading-snug ${isActive ? 'text-white' : 'text-slate-200'}`}>
+                        <div className="space-y-0.5 min-w-0">
+                          <h3 className={`text-xs sm:text-sm font-extrabold leading-snug truncate ${
+                            isActive ? 'text-emerald-950 font-black' : 'text-slate-900'
+                          }`}>
                             {language === 'hi' ? topic.nameHi : topic.name}
                           </h3>
-                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                          <p className="text-[11px] text-slate-500 line-clamp-1 leading-snug">
                             {language === 'hi' ? topic.shortDescHi : topic.shortDesc}
                           </p>
                         </div>
 
-                        {/* Save Bookmark Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleSaveSkill(topic.id, language === 'hi' ? topic.nameHi : topic.name);
-                          }}
-                          className={`p-1.5 rounded-lg transition-all shrink-0 cursor-pointer ${
-                            isSaved
-                              ? 'text-amber-400 bg-amber-950/40 hover:bg-amber-900/50'
-                              : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
-                          }`}
-                          title={isSaved ? 'Remove Bookmark' : 'Save for Later'}
-                        >
-                          {isSaved ? <BookmarkCheck className="w-4 h-4 fill-amber-400" /> : <Bookmark className="w-4 h-4" />}
-                        </button>
+                        {hasSavedVideosInTopic && (
+                          <span className="shrink-0 p-1 text-amber-500" title="Contains saved video">
+                            <Star className="w-3.5 h-3.5 fill-amber-500" />
+                          </span>
+                        )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-2 mt-3 pt-2.5 border-t border-slate-800/60 text-[10px]">
-                        <span className="font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-800/50">
+                      <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-100 text-[10px]">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono font-bold">
                           {topic.estTimeToLearn}
                         </span>
-                        <span className="text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded-md">
+                        <span className="text-slate-500">
                           {topic.difficulty}
                         </span>
-                        <span className="text-slate-400 ml-auto font-medium">
-                          3 Top Videos
+                        <span className="ml-auto font-bold text-emerald-700">
+                          3 Videos
                         </span>
                       </div>
                     </div>
@@ -374,187 +470,216 @@ export default function SkillsPage() {
               </div>
             </div>
 
-            {/* Right Pane: Selected Skill Detail & Top 3 YouTube Videos (8 Cols on Desktop) */}
-            <div className="lg:col-span-8 space-y-6 order-1 lg:order-2">
+            {/* Right Column: Active Topic Details & Top 3 Verified Videos (8 Cols on Desktop) */}
+            <div className="lg:col-span-8 space-y-4">
               
-              {/* Active Topic Banner */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -z-0 pointer-events-none" />
-
-                <div className="relative z-10 space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-700/60 text-emerald-400 text-xs font-bold">
-                        {activeTopic.difficulty}
-                      </span>
-                      <span className="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-mono font-bold">
-                        {activeTopic.estTimeToLearn}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => toggleSaveSkill(activeTopic.id, language === 'hi' ? activeTopic.nameHi : activeTopic.name)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                          savedSkillIds.has(activeTopic.id)
-                            ? 'bg-amber-950/50 text-amber-300 border border-amber-800'
-                            : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                        }`}
-                      >
-                        {savedSkillIds.has(activeTopic.id) ? (
-                          <>
-                            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                            <span>{language === 'hi' ? 'सेव्ड है' : 'Saved'}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Bookmark className="w-3.5 h-3.5" />
-                            <span>{language === 'hi' ? 'बाद के लिए सेव करें' : 'Save for Later'}</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
+              {/* Topic Header Card (Clean White) */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-xs space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-black border border-emerald-200">
+                      {activeTopic.difficulty}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-mono font-bold">
+                      {activeTopic.estTimeToLearn}
+                    </span>
                   </div>
 
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                      {language === 'hi' ? activeTopic.nameHi : activeTopic.name}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-300 mt-1.5 leading-relaxed">
-                      {language === 'hi' ? activeTopic.shortDescHi : activeTopic.shortDesc}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3">
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">
-                        {language === 'hi' ? 'अनुमानित मासिक कमाई क्षमता' : 'Expected Earning Potential'}
-                      </span>
-                      <span className="text-xs sm:text-sm font-extrabold text-emerald-400 font-mono">
-                        {activeTopic.averageEarningMonthly}
-                      </span>
-                    </div>
-
-                    {activeTopic.govtCertificateUrl && (
-                      <a
-                        href={activeTopic.govtCertificateUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-slate-950/70 hover:bg-slate-950 border border-slate-800/80 hover:border-emerald-600/50 rounded-2xl p-3 transition-all flex items-center justify-between group cursor-pointer"
-                      >
-                        <div>
-                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">
-                            {language === 'hi' ? 'आधिकारिक फ्री सर्टिफिकेट' : 'Official Free Certificate'}
-                          </span>
-                          <span className="text-xs font-bold text-slate-200 group-hover:text-emerald-300 transition-colors">
-                            {activeTopic.govtCertificateTitle}
-                          </span>
-                        </div>
-                        <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
-                      </a>
-                    )}
+                  <div className="text-[11px] font-extrabold text-emerald-700">
+                    {activeTopic.averageEarningMonthly}
                   </div>
                 </div>
+
+                <div>
+                  <h2 className="text-lg sm:text-xl font-black text-slate-900 leading-snug">
+                    {language === 'hi' ? activeTopic.nameHi : activeTopic.name}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                    {language === 'hi' ? activeTopic.shortDescHi : activeTopic.shortDesc}
+                  </p>
+                </div>
+
+                {/* Free Official Certificate Link */}
+                {activeTopic.govtCertificateUrl && (
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5 text-slate-600">
+                      <Award className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span className="text-[11px] font-bold">
+                        {language === 'hi' ? 'आधिकारिक फ्री सर्टिफिकेट:' : 'Official Free Certificate:'}
+                      </span>
+                      <span className="text-[11px] font-semibold text-slate-800">
+                        {activeTopic.govtCertificateTitle}
+                      </span>
+                    </div>
+                    <a
+                      href={activeTopic.govtCertificateUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center gap-1 transition-colors shrink-0"
+                    >
+                      <span>{language === 'hi' ? 'सर्टिफिकेट लिंक' : 'Open Link'}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                )}
               </div>
 
-              {/* Top 3 Verified YouTube Videos */}
+              {/* Videos Section with Level Indicator */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between px-1">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                    <h3 className="text-sm font-extrabold text-white tracking-tight">
-                      {language === 'hi' ? 'शीर्ष 3 सर्वश्रेष्ठ यूट्यूब वीडियोज (बिना भटके तुरंत सीखें)' : 'Top 3 Curated YouTube Masterclasses'}
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+                    <h3 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                      {language === 'hi'
+                        ? `शीर्ष 3 सत्यापित वीडियोज (${levelFilter === 'all' ? 'शुरुआती से एक्सपर्ट स्तर' : levelFilter + ' स्तर'})`
+                        : `Top 3 Verified Masterclasses (${levelFilter === 'all' ? 'Beginner to Advanced' : levelFilter + ' Level'})`}
                     </h3>
                   </div>
-                  <span className="text-xs text-slate-400 font-mono">
-                    3/3 Selected
+
+                  <span className="text-[11px] font-mono text-slate-500 font-bold">
+                    {displayVideos.length} {language === 'hi' ? 'वीडियो उपलब्ध' : 'Videos'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  {activeTopic.videos.map((vid, idx) => (
-                    <div
-                      key={vid.id}
-                      className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 transition-all shadow-md space-y-3 group"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
-                          <div className="w-7 h-7 rounded-xl bg-red-950 text-red-400 border border-red-800/60 font-black text-xs flex items-center justify-center shrink-0">
-                            #{idx + 1}
-                          </div>
-                          <div className="space-y-1">
-                            <h4 className="text-xs sm:text-sm font-extrabold text-white leading-snug group-hover:text-emerald-300 transition-colors">
-                              {language === 'hi' ? vid.titleHi : vid.title}
-                            </h4>
-                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
-                              <span className="font-semibold text-slate-300">{vid.channelName}</span>
-                              <span>•</span>
-                              <span>{vid.duration}</span>
-                              <span>•</span>
-                              <span className="text-emerald-400 font-mono">{vid.language}</span>
-                              {vid.viewsApprox && (
-                                <>
-                                  <span>•</span>
-                                  <span>{vid.viewsApprox}</span>
-                                </>
-                              )}
+                {/* Video Cards Grid */}
+                <div className="space-y-3">
+                  {displayVideos.map((video, idx) => {
+                    const isVideoSaved = savedVideoIds.has(video.id);
+
+                    return (
+                      <div
+                        key={video.id}
+                        className="bg-white border border-slate-200 hover:border-emerald-300 rounded-2xl p-4 shadow-xs transition-all space-y-3 group"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                          <div className="flex items-start gap-3 min-w-0">
+                            {/* Step Badge */}
+                            <div className="w-7 h-7 rounded-xl bg-slate-100 text-slate-800 font-black text-xs flex items-center justify-center shrink-0 border border-slate-200">
+                              #{idx + 1}
+                            </div>
+
+                            <div className="space-y-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className={`px-2 py-0.2 rounded-md text-[10px] font-black uppercase ${
+                                  video.level === 'Beginner'
+                                    ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                                    : video.level === 'Intermediate'
+                                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                      : 'bg-rose-100 text-rose-800 border border-rose-200'
+                                }`}>
+                                  {video.level}
+                                </span>
+                                <span className="text-[10px] font-mono text-slate-500">
+                                  {video.duration}
+                                </span>
+                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
+                                  {video.language}
+                                </span>
+                              </div>
+
+                              <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug group-hover:text-emerald-700 transition-colors">
+                                {language === 'hi' ? video.titleHi : video.title}
+                              </h4>
+
+                              <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                                <span className="font-bold text-slate-700">{video.channelName}</span>
+                                {video.viewsApprox && (
+                                  <>
+                                    <span>•</span>
+                                    <span>{video.viewsApprox}</span>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
+
+                          {/* Action Buttons: Play + Bookmark Video */}
+                          <div className="flex items-center gap-2 self-end sm:self-start shrink-0">
+                            {/* Watch Video Button */}
+                            <button
+                              type="button"
+                              onClick={() => setPlayingVideo(video)}
+                              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                            >
+                              <Play className="w-3.5 h-3.5 fill-white" />
+                              <span>{language === 'hi' ? 'यहीं देखें' : 'Watch Here'}</span>
+                            </button>
+
+                            {/* Particular Video Bookmark Button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleSaveVideo(video, activeTopic)}
+                              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                                isVideoSaved
+                                  ? 'bg-amber-100 border-amber-300 text-amber-700 shadow-xs'
+                                  : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-600'
+                              }`}
+                              title={isVideoSaved ? 'Remove from Saved' : 'Save Video for Later'}
+                            >
+                              <Star className={`w-3.5 h-3.5 ${isVideoSaved ? 'fill-amber-500 text-amber-500' : ''}`} />
+                            </button>
+
+                            {/* Direct YouTube Link */}
+                            <a
+                              href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
+                              title="Open on YouTube App"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => setPlayingVideo(vid)}
-                            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                          >
-                            <Play className="w-3.5 h-3.5 fill-slate-950" />
-                            <span>{language === 'hi' ? 'यहीं देखें' : 'Watch Here'}</span>
-                          </button>
+                        {/* Video Description & Key Takeaways */}
+                        <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 space-y-2 text-xs">
+                          <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
+                            {language === 'hi' ? video.descriptionHi : video.description}
+                          </p>
 
-                          <a
-                            href={`https://www.youtube.com/watch?v=${vid.youtubeId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer"
-                            title="Open on YouTube"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
+                          {video.keyTakeaways && video.keyTakeaways.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {video.keyTakeaways.map((point, kIdx) => (
+                                <span
+                                  key={kIdx}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-700"
+                                >
+                                  <span className="w-1 h-1 rounded-full bg-emerald-500" />
+                                  <span>{point}</span>
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
-
-                      <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed bg-slate-950/60 rounded-xl p-2.5 border border-slate-800/60">
-                        {language === 'hi' ? vid.descriptionHi : vid.description}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Step-by-Step Practical Roadmap */}
-              <div className="bg-slate-900/70 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-4">
+              {/* 3-Step Practical Learning Roadmap */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-xs space-y-3">
                 <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-emerald-400" />
-                  <h3 className="text-sm font-extrabold text-white tracking-tight">
-                    {language === 'hi' ? '3-चरणीय व्यावहारिक रोडमैप (शुरुआत से कमाई तक)' : '3-Step Practical Learning Roadmap'}
+                  <Award className="w-4 h-4 text-emerald-600" />
+                  <h3 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                    {language === 'hi' ? '3-चरणीय व्यावहारिक रोडमैप (शुरुआत से कमाई तक)' : '3-Step Action Roadmap'}
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {activeTopic.careerRoadmapSteps.map((step) => (
                     <div
                       key={step.stepNumber}
-                      className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-3.5 space-y-1.5 relative overflow-hidden"
+                      className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-1"
                     >
-                      <div className="w-6 h-6 rounded-full bg-emerald-950 border border-emerald-700/60 text-emerald-400 text-xs font-black flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-black text-[11px] flex items-center justify-center">
                         {step.stepNumber}
                       </div>
-                      <h4 className="text-xs font-extrabold text-white">
+                      <h4 className="text-xs font-extrabold text-slate-900 pt-1">
                         {language === 'hi' ? step.titleHi : step.title}
                       </h4>
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                      <p className="text-[11px] text-slate-500 leading-relaxed">
                         {language === 'hi' ? step.descHi : step.desc}
                       </p>
                     </div>
@@ -568,40 +693,52 @@ export default function SkillsPage() {
         )}
       </main>
 
-      {/* 4. Embedded Video Player Modal */}
+      {/* 5. In-Built Video Player Modal (Distraction-Free) */}
       {playingVideo && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
           <div className="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
             
             {/* Modal Header */}
-            <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between gap-3">
+            <div className="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between gap-3 text-white">
               <div className="flex items-center gap-2 min-w-0">
                 <div className="w-6 h-6 rounded-lg bg-red-600 flex items-center justify-center text-white shrink-0">
                   <Play className="w-3 h-3 fill-white" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-extrabold text-white truncate">
+                  <h4 className="text-xs sm:text-sm font-extrabold truncate">
                     {language === 'hi' ? playingVideo.titleHi : playingVideo.title}
                   </h4>
                   <span className="text-[10px] text-slate-400">
-                    {playingVideo.channelName} • {playingVideo.duration}
+                    {playingVideo.channelName} • {playingVideo.level} • {playingVideo.duration}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => toggleSaveVideo(playingVideo, activeTopic)}
+                  className={`p-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                    savedVideoIds.has(playingVideo.id)
+                      ? 'bg-amber-950/80 border-amber-500 text-amber-300'
+                      : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+                  }`}
+                  title="Bookmark Video"
+                >
+                  <Star className={`w-3.5 h-3.5 ${savedVideoIds.has(playingVideo.id) ? 'fill-amber-400 text-amber-400' : ''}`} />
+                </button>
                 <a
                   href={`https://www.youtube.com/watch?v=${playingVideo.youtubeId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">YouTube</span>
                 </a>
                 <button
                   onClick={() => setPlayingVideo(null)}
-                  className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                  className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -620,15 +757,15 @@ export default function SkillsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 bg-slate-950 text-xs text-slate-400 flex items-center justify-between gap-3">
-              <span>
+            <div className="p-3.5 bg-slate-950 text-xs text-slate-400 flex items-center justify-between gap-3">
+              <span className="text-[11px] truncate">
                 {language === 'hi'
-                  ? 'यह वीडियो आधिकारिक ट्यूटोरियल है। इसे पूरा देखकर नोट्स बनाएं व प्रैक्टिकल अभ्यास करें।'
+                  ? 'यह आधिकारिक ट्यूटोरियल है। इसे पूरा देखकर नोट्स बनाएं व प्रैक्टिकल अभ्यास करें।'
                   : 'Distraction-free learning player. Take structured notes and practice hands-on.'}
               </span>
               <button
                 onClick={() => setPlayingVideo(null)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shrink-0 cursor-pointer"
+                className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shrink-0 cursor-pointer"
               >
                 {language === 'hi' ? 'बंद करें' : 'Close Player'}
               </button>

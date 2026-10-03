@@ -26,6 +26,8 @@ import {
   LogIn,
   UserPlus,
   ArrowRight,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 interface UserProfileDrawerProps {
@@ -66,6 +68,29 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState<boolean>(false);
   const [isGoogleLoggingIn, setIsGoogleLoggingIn] = useState<boolean>(false);
   const [googleLoginError, setGoogleLoginError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  // Sync theme with document class / localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('citizen_theme') === 'dark';
+      setTheme(isDark ? 'dark' : 'light');
+    }
+  }, [isOpen]);
+
+  const handleToggleTheme = (newTheme: 'light' | 'dark') => {
+    setTheme(newTheme);
+    if (typeof window !== 'undefined') {
+      if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('citizen_theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('citizen_theme', 'light');
+      }
+      window.dispatchEvent(new Event('citizen_theme_changed'));
+    }
+  };
 
   const handleSignInGoogle = async () => {
     setIsGoogleLoggingIn(true);
@@ -131,18 +156,18 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
       <div className="fixed inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800 flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/60">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-slate-900 flex items-center justify-center text-emerald-400 font-bold shadow-xs">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+              <h3 className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">
                 {t('profile.title')}
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 {isVerified ? profile.fullName : t('profile.guest_title')}
               </p>
             </div>
@@ -150,7 +175,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -419,6 +444,52 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
               </div>
             </>
           )}
+
+          {/* Theme Switcher Section (Light / Dark) */}
+          <div className="p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between transition-colors shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700/80 flex items-center justify-center text-slate-700 dark:text-amber-400">
+                {theme === 'dark' ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
+              </div>
+              <div>
+                <span className="text-xs font-extrabold text-slate-900 dark:text-white block">
+                  {language === 'hi' ? 'थीम प्राथमिकता (Theme)' : 'Theme Preference'}
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  {theme === 'dark'
+                    ? (language === 'hi' ? 'डार्क मोड सक्रिय' : 'Dark Mode Active')
+                    : (language === 'hi' ? 'लाइट मोड सक्रिय' : 'Light Mode Active')}
+                </span>
+              </div>
+            </div>
+
+            <div className="inline-flex p-1 rounded-xl bg-slate-200/90 dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => handleToggleTheme('light')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  theme === 'light'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+                <span>{language === 'hi' ? 'लाइट' : 'Light'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleToggleTheme('dark')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-slate-800 text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Moon className="w-3.5 h-3.5 text-indigo-400" />
+                <span>{language === 'hi' ? 'डार्क' : 'Dark'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

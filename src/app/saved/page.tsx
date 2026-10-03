@@ -37,6 +37,7 @@ export default function SavedPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'opportunities' | 'skills'>('opportunities');
   const [savedSkillIds, setSavedSkillIds] = useState<Set<string>>(new Set<string>());
+  const [savedVideosList, setSavedVideosList] = useState<any[]>([]);
   const [playingSkillVideo, setPlayingSkillVideo] = useState<SkillVideo | null>(null);
 
   // Combine initial catalog with live-synced crawler circulars
@@ -66,6 +67,10 @@ export default function SavedPage() {
       if (savedSkillsStore) {
         setSavedSkillIds(new Set(JSON.parse(savedSkillsStore)));
       }
+      const savedVideosStore = localStorage.getItem('citizen_saved_videos');
+      if (savedVideosStore) {
+        try { setSavedVideosList(JSON.parse(savedVideosStore)); } catch (e) { setSavedVideosList([]); }
+      }
       const savedProf = localStorage.getItem('citizen_profile');
       if (savedProf) {
         setProfile(JSON.parse(savedProf));
@@ -75,7 +80,7 @@ export default function SavedPage() {
     }
   }, []);
 
-  // Listen to storage and custom favorites_updated / skills_updated events
+  // Listen to storage and custom favorites_updated / skills_updated / videos_updated events
   useEffect(() => {
     const handleStorageUpdate = () => {
       try {
@@ -92,19 +97,29 @@ export default function SavedPage() {
         } else {
           setSavedSkillIds(new Set());
         }
+
+        const savedVideosStore = localStorage.getItem('citizen_saved_videos');
+        if (savedVideosStore) {
+          try { setSavedVideosList(JSON.parse(savedVideosStore)); } catch (e) { setSavedVideosList([]); }
+        } else {
+          setSavedVideosList([]);
+        }
       } catch (e) {
         setFavoriteIds(new Set());
         setSavedSkillIds(new Set());
+        setSavedVideosList([]);
       }
     };
 
     window.addEventListener('storage', handleStorageUpdate);
     window.addEventListener('favorites_updated', handleStorageUpdate);
     window.addEventListener('skills_updated', handleStorageUpdate);
+    window.addEventListener('videos_updated', handleStorageUpdate);
     return () => {
       window.removeEventListener('storage', handleStorageUpdate);
       window.removeEventListener('favorites_updated', handleStorageUpdate);
       window.removeEventListener('skills_updated', handleStorageUpdate);
+      window.removeEventListener('videos_updated', handleStorageUpdate);
     };
   }, []);
 
@@ -155,6 +170,19 @@ export default function SavedPage() {
       return next;
     });
     setToastMessage(language === 'hi' ? `"${topicName}" हटाया गया` : `"${topicName}" removed from saved skills`);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleRemoveSavedVideo = (videoId: string, videoTitle: string) => {
+    setSavedVideosList((prev) => {
+      const next = prev.filter((v) => v.id !== videoId);
+      try {
+        localStorage.setItem('citizen_saved_videos', JSON.stringify(next));
+        window.dispatchEvent(new Event('videos_updated'));
+      } catch (e) {}
+      return next;
+    });
+    setToastMessage(language === 'hi' ? `"${videoTitle}" वॉचलिस्ट से हटाया गया` : `"${videoTitle}" removed from watchlist`);
     setTimeout(() => setToastMessage(null), 3000);
   };
 
@@ -333,9 +361,9 @@ export default function SavedPage() {
             }`}
           >
             <GraduationCap className={`w-3.5 h-3.5 ${activeTab === 'skills' ? 'text-emerald-600' : ''}`} />
-            <span>{language === 'hi' ? 'कौशल व वीडियो कोर्स' : 'Skills & Video Courses'}</span>
+            <span>{language === 'hi' ? 'कौशल व वीडियो' : 'Saved Videos & Skills'}</span>
             <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
-              {savedSkills.length}
+              {savedVideosList.length + savedSkills.length}
             </span>
           </button>
         </div>
@@ -436,8 +464,8 @@ export default function SavedPage() {
 
         {/* Tab 2: Saved Skills & Video Courses */}
         {activeTab === 'skills' && (
-          <div className="space-y-4">
-            {savedSkills.length === 0 ? (
+          <div className="space-y-6">
+            {savedVideosList.length === 0 && savedSkills.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-3xl border border-emerald-200/80 p-8 space-y-4 shadow-sm max-w-2xl mx-auto my-6">
                 <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-100 to-teal-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-inner">
                   <GraduationCap className="w-8 h-8" />
@@ -445,12 +473,12 @@ export default function SavedPage() {
                 
                 <div className="space-y-1.5">
                   <h2 className="text-lg sm:text-xl font-black text-slate-900">
-                    {language === 'hi' ? 'कोई कौशल कोर्स सेव नहीं किया गया है' : 'No Saved Skills or Courses Yet'}
+                    {language === 'hi' ? 'कोई वीडियो या कोर्स सेव नहीं किया गया है' : 'No Saved Videos or Courses Yet'}
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                     {language === 'hi'
-                      ? 'कौशल सीख केंद्र (Skills Hub) पर जाकर किसी भी कोडिंग, वीडियो एडिटिंग, सरकारी परीक्षा गणित, या वोकेशनल कोर्स को बाद में देखने के लिए सेव करें।'
-                      : 'Visit the Skills Hub and bookmark any coding, editing, speed maths, or vocational course to watch later here.'}
+                      ? 'कौशल सीख केंद्र (Skills Hub) पर जाकर किसी भी विदेशी भाषा, वीडियो एडिटिंग, फोटोग्राफी, या सरकारी परीक्षा के किसी भी वीडियो पर स्टार आइकन दबाकर यहाँ सेव करें।'
+                      : 'Visit the Skills Hub and bookmark any specific video or topic in German, Japanese, Video Editing, Photography or Coding to watch here later.'}
                   </p>
                 </div>
 
@@ -465,95 +493,146 @@ export default function SavedPage() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {savedSkills.map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="bg-white border border-slate-200 hover:border-emerald-300 rounded-3xl p-5 shadow-xs transition-all space-y-4 relative"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
-                            {skill.difficulty}
-                          </span>
-                          <span className="text-[10px] font-mono text-slate-500">
-                            {skill.estTimeToLearn}
-                          </span>
-                        </div>
-                        <h3 className="text-base font-extrabold text-slate-900">
-                          {language === 'hi' ? skill.nameHi : skill.name}
+              <div className="space-y-6">
+                {/* 1. Saved Individual Videos Section */}
+                {savedVideosList.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                          {language === 'hi' ? `सुरक्षित किए गए वीडियोज (${savedVideosList.length})` : `Saved Videos (${savedVideosList.length})`}
                         </h3>
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                          {language === 'hi' ? skill.shortDescHi : skill.shortDesc}
-                        </p>
                       </div>
-
-                      <button
-                        onClick={() => handleRemoveSkill(skill.id, language === 'hi' ? skill.nameHi : skill.name)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
-                        title="Remove from saved"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <span className="text-[11px] text-slate-500 font-bold">
+                        {language === 'hi' ? 'बाद में देखने हेतु' : 'Watch Later'}
+                      </span>
                     </div>
 
-                    {/* Top 3 Videos Quick Access */}
-                    <div className="space-y-2 pt-1 border-t border-slate-100">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                        {language === 'hi' ? 'शीर्ष 3 यूट्यूब वीडियोज' : 'Top 3 YouTube Videos'}
-                      </span>
-                      <div className="space-y-2">
-                        {skill.videos.map((vid, idx) => (
-                          <div
-                            key={vid.id}
-                            className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-xs"
-                          >
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="w-5 h-5 rounded-md bg-slate-200 text-slate-700 font-bold text-[10px] flex items-center justify-center shrink-0">
-                                {idx + 1}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {savedVideosList.map((video) => (
+                        <div
+                          key={video.id}
+                          className="bg-white border border-slate-200 hover:border-emerald-300 rounded-2xl p-4 shadow-xs transition-all flex flex-col justify-between gap-3 group"
+                        >
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className={`px-2 py-0.2 rounded-md text-[10px] font-black uppercase ${
+                                video.level === 'Beginner'
+                                  ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                                  : video.level === 'Intermediate'
+                                    ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                    : 'bg-rose-100 text-rose-800 border border-rose-200'
+                              }`}>
+                                {video.level || 'Tutorial'}
                               </span>
-                              <span className="font-semibold text-slate-800 truncate text-[11px]">
-                                {language === 'hi' ? vid.titleHi : vid.title}
-                              </span>
+
+                              <button
+                                onClick={() => handleRemoveSavedVideo(video.id, language === 'hi' ? video.titleHi || video.title : video.title)}
+                                className="p-1 text-slate-400 hover:text-red-600 transition-colors"
+                                title="Remove from Watchlist"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
 
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <button
-                                onClick={() => setPlayingSkillVideo(vid)}
-                                className="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] flex items-center gap-1 cursor-pointer"
-                              >
-                                <Play className="w-3 h-3 fill-white" />
-                                <span>{language === 'hi' ? 'देखें' : 'Play'}</span>
-                              </button>
-                              <a
-                                href={`https://www.youtube.com/watch?v=${vid.youtubeId}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-1 rounded-lg hover:bg-slate-200 text-slate-500"
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-emerald-700 block truncate">
+                                {language === 'hi' ? video.topicNameHi || video.topicName : video.topicName}
+                              </span>
+                              <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug line-clamp-2 mt-0.5 group-hover:text-emerald-700 transition-colors">
+                                {language === 'hi' ? video.titleHi || video.title : video.title}
+                              </h4>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                              <span className="font-semibold text-slate-700 truncate">{video.channelName}</span>
+                              <span>•</span>
+                              <span className="font-mono">{video.duration}</span>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                      <span className="text-[11px] font-extrabold text-emerald-700">
-                        {skill.averageEarningMonthly}
-                      </span>
-                      <Link
-                        href="/skills"
-                        className="text-[11px] font-bold text-slate-600 hover:text-emerald-700 flex items-center gap-1"
-                      >
-                        <span>{language === 'hi' ? 'कौशल हब में खोलें' : 'Open in Skills Hub'}</span>
-                        <ArrowLeft className="w-3 h-3 rotate-180" />
-                      </Link>
+                          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                            <button
+                              type="button"
+                              onClick={() => setPlayingSkillVideo(video)}
+                              className="flex-1 py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5 fill-white" />
+                              <span>{language === 'hi' ? 'यहीं देखें' : 'Watch Video'}</span>
+                            </button>
+                            <a
+                              href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors shrink-0"
+                              title="Open on YouTube"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+                )}
+
+                {/* 2. Saved Topics Section if any */}
+                {savedSkills.length > 0 && (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                        {language === 'hi' ? `सुरक्षित किए गए पूरे कोर्स (${savedSkills.length})` : `Saved Complete Courses (${savedSkills.length})`}
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {savedSkills.map((skill) => (
+                        <div
+                          key={skill.id}
+                          className="bg-white border border-slate-200 hover:border-emerald-300 rounded-2xl p-4 shadow-xs transition-all space-y-3"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="flex items-center gap-1.5 mb-1">
+                                <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                                  {skill.difficulty}
+                                </span>
+                                <span className="text-[10px] font-mono text-slate-500">
+                                  {skill.estTimeToLearn}
+                                </span>
+                              </div>
+                              <h3 className="text-sm font-extrabold text-slate-900">
+                                {language === 'hi' ? skill.nameHi : skill.name}
+                              </h3>
+                            </div>
+
+                            <button
+                              onClick={() => handleRemoveSkill(skill.id, language === 'hi' ? skill.nameHi : skill.name)}
+                              className="p-1 text-slate-400 hover:text-red-600 transition-colors"
+                              title="Remove topic"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                            <span className="text-[11px] font-extrabold text-emerald-700">
+                              {skill.averageEarningMonthly}
+                            </span>
+                            <Link
+                              href="/skills"
+                              className="text-[11px] font-bold text-slate-700 hover:text-emerald-700 flex items-center gap-1"
+                            >
+                              <span>{language === 'hi' ? 'कौशल हब में खोलें' : 'Open in Skills Hub'}</span>
+                              <ArrowLeft className="w-3 h-3 rotate-180" />
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
