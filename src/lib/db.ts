@@ -136,7 +136,11 @@ export const DatabaseService = {
         const conditions: any[] = [];
         if (email) conditions.push({ email: email });
         if (phone) conditions.push({ phoneNumber: phone });
-        if (id) conditions.push({ id: id });
+        if (id) {
+          conditions.push({ id: id });
+          conditions.push({ nationalIdMasked: id });
+          conditions.push({ aadhaarNumberMasked: id });
+        }
 
         if (conditions.length > 0) {
           query.$or = conditions;
@@ -154,7 +158,7 @@ export const DatabaseService = {
       citizens.find((c) => {
         if (email && c.email?.toLowerCase() === email) return true;
         if (phone && c.phoneNumber === phone) return true;
-        if (id && c.id === id) return true;
+        if (id && (c.id === id || c.nationalIdMasked === id || c.aadhaarNumberMasked === id)) return true;
         return false;
       }) || null
     );

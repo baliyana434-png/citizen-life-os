@@ -171,6 +171,14 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
     }
   }, [dob]);
 
+  // Dynamic DOB boundaries (min 14 years old, max 100 years old)
+  const { maxDob, minDob } = useMemo(() => {
+    const today = new Date();
+    const max = `${today.getFullYear() - 14}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const min = `${today.getFullYear() - 100}-01-01`;
+    return { maxDob: max, minDob: min };
+  }, []);
+
   // Live Anti-Fraud Validations
   const nameValidation = useMemo(() => {
     const val = fullName.trim() || (googleUser?.name || '');
@@ -498,8 +506,8 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
                   type="date"
                   required
                   value={dob}
-                  max="2012-12-31"
-                  min="1926-01-01"
+                  max={maxDob}
+                  min={minDob}
                   onChange={(e) => setDob(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none cursor-pointer"
                 />

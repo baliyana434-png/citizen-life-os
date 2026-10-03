@@ -734,7 +734,7 @@ export function getLocalizedOpportunity(
     description: toMathDigits(description),
     officialFee: toMathDigits(officialFee),
     scamWarning: toMathDigits(scamWarning),
-    issuingAuthority: toMathDigits(localizeAuthority(opportunity.gazette.issuingAuthority, language)),
+    issuingAuthority: toMathDigits(localizeAuthority(opportunity.gazette?.issuingAuthority || 'Official Authority', language)),
     documents: documents.map((doc) => ({
       ...doc,
       name: toMathDigits(doc.name),

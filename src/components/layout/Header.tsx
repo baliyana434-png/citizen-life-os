@@ -156,7 +156,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold border border-red-200 transition-all shrink-0"
             >
               <PhoneCall className="w-3.5 h-3.5 text-red-700 shrink-0" />
-              <span className="hidden md:inline">{t('tabs.health').split(' ')[0]}</span>
+              <span className="hidden md:inline">{language === 'hi' ? 'हेल्पलाइन' : 'Helpline'}</span>
             </Link>
 
             {/* Favourites / Saved Navigation Button */}

@@ -115,13 +115,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     }
   };
 
-  const handleSignUpClick = () => {
-    onClose();
-    if (onOpenOnboarding) {
-      onOpenOnboarding();
-    }
-  };
-
   // Reset logout confirmation when drawer closes
   useEffect(() => {
     if (!isOpen) {

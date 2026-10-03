@@ -82,12 +82,14 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       }
 
       // 2. Cryptographically verify payment on server & get tamper-proof HMAC signature
+      const simPaymentToken = 'SIM_TOKEN_' + orderData.order.orderId + '_' + Date.now();
       const verifyRes = await fetch('/api/subscription/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           citizenId,
           orderId: orderData.order.orderId,
+          paymentToken: simPaymentToken,
           paymentMethod: methodUsed,
         }),
       });

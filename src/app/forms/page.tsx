@@ -29,27 +29,28 @@ import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { LiveFeedService } from '@/services/liveFeedService';
 import { Opportunity, CitizenProfile } from '@/types';
 
-// Default Citizen Profile for quick copying
-const DEFAULT_PROFILE: CitizenProfile = {
-  id: 'cit-001',
-  fullName: 'Abhay Kumar',
-  phoneNumber: '+91 98765 43210',
-  aadhaarNumberMasked: 'XXXX-XXXX-4819',
-  isAadhaarVerified: true,
-  age: 21,
-  dob: '2003-08-14',
+// Guest Citizen Profile (No dummy/fake data)
+const GUEST_PROFILE: CitizenProfile = {
+  id: 'cit-guest',
+  fullName: '',
+  phoneNumber: '',
+  aadhaarNumberMasked: '',
+  isAadhaarVerified: false,
+  isOnboarded: false,
+  age: 0,
+  dob: '',
   gender: 'male',
-  state: 'Uttar Pradesh',
-  district: 'Kanpur Nagar',
-  pincode: '208001',
+  state: '',
+  district: '',
+  pincode: '',
   lifePhase: 'college_student',
-  casteCategory: 'OBC',
-  familyIncomeAnnual: 180000,
+  casteCategory: 'General',
+  familyIncomeAnnual: 0,
   educationLevel: '12th_pass',
-  activeGoal: 'Complete Degree & Get Verified Job',
+  activeGoal: '',
   notificationsEnabled: {
-    webPush: true,
-    whatsApp: true,
+    webPush: false,
+    whatsApp: false,
     urgentDeadlinesOnly: false,
   },
 };
@@ -60,7 +61,7 @@ export default function FormsPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [profile, setProfile] = useState<CitizenProfile>(DEFAULT_PROFILE);
+  const [profile, setProfile] = useState<CitizenProfile>(GUEST_PROFILE);
 
   // Combine initial catalog with live-synced crawler circulars (e.g. IBPS RRB CRP-XV active now)
   const ALL_OPPORTUNITIES = useMemo(() => {
@@ -295,114 +296,158 @@ export default function FormsPage() {
                 </p>
               </div>
             </div>
-            <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-medium">
-              ✓ {language === 'hi' ? 'सत्यापित नागरिक प्रोफाइल' : 'Verified Citizen Profile'}
-            </span>
+            {profile.isAadhaarVerified ? (
+              <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-medium">
+                ✓ {language === 'hi' ? 'सत्यापित नागरिक प्रोफाइल' : 'Verified Citizen Profile'}
+              </span>
+            ) : (
+              <span className="text-[11px] text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 font-medium">
+                {language === 'hi' ? 'अतिथि मोड (लॉगिन आवश्यक)' : 'Guest Mode (Login required)'}
+              </span>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-            {/* Full Name */}
-            <button
-              onClick={() => copyToClipboard(profile.fullName || (language === 'hi' ? 'नागरिक आवेदक' : 'Citizen Applicant'), 'name')}
-              className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between"
-            >
-              <span className="text-[10px] text-slate-500 block uppercase font-medium">
-                {language === 'hi' ? 'पूरा नाम' : 'Full Name'}
-              </span>
-              <span className="text-xs font-bold text-slate-900 truncate block mt-0.5">
-                {profile.fullName || (language === 'hi' ? 'नागरिक आवेदक' : 'Citizen Applicant')}
-              </span>
-              <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
-                {copiedField === 'name' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
-                {copiedField === 'name' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
-              </span>
-            </button>
+          {!profile.isAadhaarVerified ? (
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">
+                    {language === 'hi' ? '1-क्लिक फॉर्म कॉपी टूल सक्रिय करें' : 'Enable 1-Click Form Autofill'}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {language === 'hi'
+                      ? 'अपने पंजीकृत नागरिक खाते में लॉगिन करें ताकि आपके वास्तविक विवरण (नाम, पहचान पत्र, जन्म तिथि) यहाँ कॉपी करने हेतु उपलब्ध हो सकें।'
+                      : 'Sign in to access your authentic details (name, national ID, DOB) for 1-click clipboard copying.'}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/"
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 transition-all shadow-xs"
+              >
+                {language === 'hi' ? 'लॉगिन / साइन अप करें' : 'Login / Sign Up'}
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              {/* Full Name */}
+              {profile.fullName && (
+                <button
+                  onClick={() => copyToClipboard(profile.fullName, 'name')}
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between cursor-pointer"
+                >
+                  <span className="text-[10px] text-slate-500 block uppercase font-medium">
+                    {language === 'hi' ? 'पूरा नाम' : 'Full Name'}
+                  </span>
+                  <span className="text-xs font-bold text-slate-900 truncate block mt-0.5">
+                    {profile.fullName}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+                    {copiedField === 'name' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
+                    {copiedField === 'name' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
+                  </span>
+                </button>
+              )}
 
-            {/* National ID */}
-            <button
-              onClick={() => copyToClipboard(profile.nationalIdMasked || countryMeta.nationalIdPlaceholder, 'natId')}
-              className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between"
-            >
-              <span className="text-[10px] text-slate-500 block uppercase font-medium truncate">
-                {countryMeta.nationalIdName}
-              </span>
-              <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
-                {profile.nationalIdMasked || countryMeta.nationalIdPlaceholder}
-              </span>
-              <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
-                {copiedField === 'natId' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
-                {copiedField === 'natId' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
-              </span>
-            </button>
+              {/* National ID */}
+              {(profile.nationalIdMasked || profile.aadhaarNumberMasked) && (
+                <button
+                  onClick={() => copyToClipboard(profile.nationalIdMasked || profile.aadhaarNumberMasked || '', 'natId')}
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between cursor-pointer"
+                >
+                  <span className="text-[10px] text-slate-500 block uppercase font-medium truncate">
+                    {countryMeta.nationalIdName}
+                  </span>
+                  <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
+                    {profile.nationalIdMasked || profile.aadhaarNumberMasked}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+                    {copiedField === 'natId' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
+                    {copiedField === 'natId' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
+                  </span>
+                </button>
+              )}
 
-            {/* Date of Birth */}
-            <button
-              onClick={() => copyToClipboard(profile.dob || '2003-08-14', 'dob')}
-              className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between"
-            >
-              <span className="text-[10px] text-slate-500 block uppercase font-medium">
-                {language === 'hi' ? 'जन्म तिथि' : 'DOB (YYYY-MM-DD)'}
-              </span>
-              <span className="text-xs font-bold text-slate-900 truncate block mt-0.5">
-                {profile.dob || '2003-08-14'}
-              </span>
-              <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
-                {copiedField === 'dob' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
-                {copiedField === 'dob' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
-              </span>
-            </button>
+              {/* Date of Birth */}
+              {profile.dob && (
+                <button
+                  onClick={() => copyToClipboard(profile.dob || '', 'dob')}
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between cursor-pointer"
+                >
+                  <span className="text-[10px] text-slate-500 block uppercase font-medium">
+                    {language === 'hi' ? 'जन्म तिथि' : 'DOB (YYYY-MM-DD)'}
+                  </span>
+                  <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
+                    {profile.dob}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+                    {copiedField === 'dob' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
+                    {copiedField === 'dob' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
+                  </span>
+                </button>
+              )}
 
-            {/* Email Address */}
-            <button
-              onClick={() => copyToClipboard(profile.email || `applicant@${countryMeta.code.toLowerCase()}.gov`, 'email')}
-              className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between"
-            >
-              <span className="text-[10px] text-slate-500 block uppercase font-medium">
-                {language === 'hi' ? 'ईमेल पता' : 'Email Address'}
-              </span>
-              <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
-                {profile.email || `applicant@${countryMeta.code.toLowerCase()}.gov`}
-              </span>
-              <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
-                {copiedField === 'email' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
-                {copiedField === 'email' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
-              </span>
-            </button>
+              {/* Email Address */}
+              {profile.email && (
+                <button
+                  onClick={() => copyToClipboard(profile.email || '', 'email')}
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between cursor-pointer"
+                >
+                  <span className="text-[10px] text-slate-500 block uppercase font-medium">
+                    {language === 'hi' ? 'ईमेल पता' : 'Email Address'}
+                  </span>
+                  <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
+                    {profile.email}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+                    {copiedField === 'email' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
+                    {copiedField === 'email' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
+                  </span>
+                </button>
+              )}
 
-            {/* State / Province */}
-            <button
-              onClick={() => copyToClipboard(profile.state || countryMeta.divisions[0] || 'Region', 'address')}
-              className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between"
-            >
-              <span className="text-[10px] text-slate-500 block uppercase font-medium truncate">
-                {countryMeta.administrativeLabel}
-              </span>
-              <span className="text-xs font-bold text-slate-900 truncate block mt-0.5">
-                {profile.state || countryMeta.divisions[0] || 'Region'}
-              </span>
-              <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
-                {copiedField === 'address' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
-                {copiedField === 'address' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
-              </span>
-            </button>
+              {/* State / Province */}
+              {(profile.state || profile.administrativeDivision) && (
+                <button
+                  onClick={() => copyToClipboard(profile.administrativeDivision || profile.state || '', 'address')}
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between cursor-pointer"
+                >
+                  <span className="text-[10px] text-slate-500 block uppercase font-medium truncate">
+                    {countryMeta.administrativeLabel}
+                  </span>
+                  <span className="text-xs font-bold text-slate-900 truncate block mt-0.5">
+                    {profile.administrativeDivision || profile.state}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+                    {copiedField === 'address' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
+                    {copiedField === 'address' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
+                  </span>
+                </button>
+              )}
 
-            {/* Postal Code / ZIP */}
-            <button
-              onClick={() => copyToClipboard(profile.pincode || (country === 'US' ? '10001' : country === 'GB' ? 'SW1A 1AA' : country === 'CA' ? 'K1A 0B1' : '110001'), 'pincode')}
-              className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between"
-            >
-              <span className="text-[10px] text-slate-500 block uppercase font-medium">
-                {country === 'US' ? 'ZIP Code' : country === 'GB' ? 'Postcode' : (language === 'hi' ? 'पिनकोड' : 'Postal Code')}
-              </span>
-              <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
-                {profile.pincode || (country === 'US' ? '10001' : country === 'GB' ? 'SW1A 1AA' : country === 'CA' ? 'K1A 0B1' : '110001')}
-              </span>
-              <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
-                {copiedField === 'pincode' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
-                {copiedField === 'pincode' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
-              </span>
-            </button>
-          </div>
+              {/* Postal Code / ZIP */}
+              {profile.pincode && (
+                <button
+                  onClick={() => copyToClipboard(profile.pincode, 'pincode')}
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left transition-all group flex flex-col justify-between cursor-pointer"
+                >
+                  <span className="text-[10px] text-slate-500 block uppercase font-medium">
+                    {country === 'US' ? 'ZIP Code' : country === 'GB' ? 'Postcode' : (language === 'hi' ? 'पिनकोड' : 'Postal Code')}
+                  </span>
+                  <span className="text-xs font-bold text-slate-900 truncate block mt-0.5 font-mono">
+                    {profile.pincode}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+                    {copiedField === 'pincode' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 opacity-60" />}
+                    {copiedField === 'pincode' ? (language === 'hi' ? 'कॉपी हुआ' : 'Copied') : (language === 'hi' ? 'कॉपी' : 'Copy')}
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* 2. Document Readiness Checklist Box (Zero Cartoon Emojis) */}

@@ -31,12 +31,12 @@ export function generateGoogleCalendarUrl(
 
   const eventTitle = `[Deadline Alert] ${localizedTitle}`;
   const details = [
-    `📌 Official Deadline Reminder for: ${localizedTitle}`,
-    `🏛️ Issuing Authority: ${localizedAuthority}`,
-    `📜 Notice/Circular: ${circularNo}`,
-    `🔗 Official Direct Portal: ${portalUrl}`,
+    `Official Deadline Reminder for: ${localizedTitle}`,
+    `Issuing Authority: ${localizedAuthority}`,
+    `Notice/Circular: ${circularNo}`,
+    `Official Direct Portal: ${portalUrl}`,
     '',
-    '🛡️ Verified via Citizen Life OS (Zero-Commission, Zero-Scam Official Gateway).'
+    'Verified via Citizen Life OS (Zero-Commission, Zero-Scam Official Gateway).'
   ].join('\n');
 
   const params = new URLSearchParams({

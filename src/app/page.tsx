@@ -304,12 +304,26 @@ export default function HomePage() {
       ...updated,
       age: calculatedAge,
       isAadhaarVerified: true,
+      isOnboarded: updated.isOnboarded !== undefined ? updated.isOnboarded : true,
     };
+
+    if (updated.country) {
+      setCountry(updated.country);
+    }
+    if (updated.lifePhase) {
+      handleRoleAutoSwitch(updated.lifePhase);
+    }
+
     try {
       localStorage.removeItem('citizen_logged_out');
       localStorage.setItem('citizen_profile', JSON.stringify(newProfile));
     } catch (e) {}
     setProfile(newProfile);
+
+    // Prompt 1-Year Subscription if newly registered and not active
+    if (!newProfile.subscription || newProfile.subscription.status !== 'active') {
+      setIsSubscriptionOpen(true);
+    }
 
     setPaymentSuccessToast(
       language === 'hi'
@@ -870,7 +884,7 @@ export default function HomePage() {
         isOpen={isSubscriptionOpen}
         onClose={() => setIsSubscriptionOpen(false)}
         citizenName={profile.fullName || 'Citizen'}
-        citizenId={profile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`}
+        citizenId={profile.id && profile.id !== 'cit-guest' && profile.id !== 'cit-default' ? profile.id : (profile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`)}
         onSubscriptionSuccess={handleSubscriptionSuccess}
       />
 

@@ -43,14 +43,19 @@ export default function SavedPage() {
     return list;
   }, []);
 
-  // Read saved IDs from localStorage with safe client mount hydration
+  // Read saved IDs & profile from localStorage with safe client mount hydration
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set<string>());
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('citizen_favorites');
       if (saved) {
         setFavoriteIds(new Set(JSON.parse(saved)));
+      }
+      const savedProf = localStorage.getItem('citizen_profile');
+      if (savedProf) {
+        setProfile(JSON.parse(savedProf));
       }
     } catch (e) {
       console.warn('Storage hydration notice in Saved page:', e);
@@ -330,6 +335,7 @@ export default function SavedPage() {
                 opportunity={opp}
                 onSelect={(opp) => setSelectedOpp(opp)}
                 onShareWhatsApp={handleShareWhatsApp}
+                citizenProfile={profile}
                 isFavorite={true}
                 onToggleFavorite={handleToggleFavorite}
               />
@@ -342,6 +348,7 @@ export default function SavedPage() {
       <DetailBottomSheet
         opportunity={selectedOpp}
         onClose={() => setSelectedOpp(null)}
+        citizenProfile={profile}
         isFavorite={selectedOpp ? favoriteIds.has(selectedOpp.id) : false}
         onToggleFavorite={handleToggleFavorite}
       />
