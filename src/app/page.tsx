@@ -576,6 +576,42 @@ export default function HomePage() {
     });
   }, [activeTab, activeSubFilter, searchQuery, activeProfile.age, activeProfile.gender, activeProfile.state, activeProfile.administrativeDivision, opportunities, country]);
 
+  // Sovereign Portal Opportunities (Strictly count opportunities belonging to the active Country Portal)
+  const portalOpportunities = useMemo(() => {
+    const seen = new Set<string>();
+    return opportunities.filter((opp) => {
+      // 0. Deduplicate
+      if (seen.has(opp.id)) return false;
+      seen.add(opp.id);
+
+      // Strict Country / Portal Matching
+      const isStudyAbroad = opp.lifeStage === 'abroad_jobs' || opp.category === 'study_abroad';
+      const isGlobalFreebie = opp.lifeStage === 'freebies' && (opp.stateEligibility.includes('ALL') || !opp.country);
+      if (!isStudyAbroad && !isGlobalFreebie && opp.country !== country) {
+        return false;
+      }
+
+      // Mandatory Strict Age Filter (when onboarded)
+      if (activeProfile.isOnboarded && opp.targetAges) {
+        const [minAge, maxAge] = opp.targetAges;
+        if (activeProfile.age < minAge || activeProfile.age > maxAge) return false;
+      }
+
+      // Mandatory Strict Gender Filter (when onboarded)
+      if (activeProfile.isOnboarded && opp.genderEligibility && opp.genderEligibility !== 'all') {
+        if (!activeProfile.gender || opp.genderEligibility !== activeProfile.gender) return false;
+      }
+
+      // Mandatory Strict Area / State Filter (when onboarded)
+      if (activeProfile.isOnboarded && opp.stateEligibility && !opp.stateEligibility.includes('ALL')) {
+        const userDivision = activeProfile.administrativeDivision || activeProfile.state;
+        if (userDivision && !opp.stateEligibility.includes(userDivision)) return false;
+      }
+
+      return true;
+    });
+  }, [opportunities, country, activeProfile]);
+
   // Total Available Benefit Amount
   const totalBenefitSum = useMemo(() => {
     return filteredOpportunities.reduce((acc, curr) => acc + (curr.benefitAmount || 0), 0);
@@ -695,8 +731,8 @@ export default function HomePage() {
               </span>
               <span className="font-semibold text-emerald-100">
                 {language === 'hi'
-                  ? `1-वर्षीय सक्रिय सदस्यता (वैधता: ${profile.subscription.validUntil}) • कुल अनलॉक लाभ: ₹${totalBenefitSum.toLocaleString('en-IN')}`
-                  : `1-Year Citizen Pass Active (Valid: ${profile.subscription.validUntil}) • Total Unlocked Benefits: ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()}`}
+                  ? `1-वर्षीय सक्रिय सदस्यता (वैधता: ${profile.subscription.validUntil})`
+                  : `1-Year Citizen Pass Active (Valid: ${profile.subscription.validUntil})`}
               </span>
             </div>
             <span className="text-[10px] font-mono text-emerald-400 bg-black/20 px-2 py-0.5 rounded-md">
@@ -753,7 +789,7 @@ export default function HomePage() {
 
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-400 hidden md:inline">
-              {opportunities.length} {language === 'hi' ? 'सत्यापित अवसर लाइव' : 'Opportunities Live'}
+              {portalOpportunities.length} {language === 'hi' ? 'सत्यापित अवसर लाइव' : 'Opportunities Live'}
             </span>
             <button
               onClick={() => fetchLiveSync(country)}
