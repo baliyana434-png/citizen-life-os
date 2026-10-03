@@ -251,6 +251,7 @@ export default function HomePage() {
       localStorage.setItem('citizen_logged_out', 'true');
       localStorage.removeItem('citizen_profile');
       localStorage.removeItem('citizen_favorites');
+      localStorage.removeItem('citizen_session_token');
       window.dispatchEvent(new Event('favorites_updated'));
     } catch (e) {}
     setPendingGoogleUser(null);
@@ -513,9 +514,10 @@ export default function HomePage() {
       // 1. Life Stage Tab Match
       if (opp.lifeStage !== activeTab) return false;
 
-      // 1B. Strict Country Matching (Show ONLY opportunities for the user's registered country, with exception for study abroad)
+      // 1B. Strict Country Matching (Show opportunities for the user's registered country, with exception for study abroad & global tools)
       const isStudyAbroad = opp.lifeStage === 'abroad_jobs' || opp.category === 'study_abroad';
-      if (!isStudyAbroad && opp.country !== country) {
+      const isGlobalFreebie = opp.lifeStage === 'freebies' && (opp.stateEligibility.includes('ALL') || !opp.country);
+      if (!isStudyAbroad && !isGlobalFreebie && opp.country !== country) {
         return false;
       }
 

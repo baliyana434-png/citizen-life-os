@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, verifyCitizenPassword } from '@/lib/db';
+import { SessionSecurityService } from '@/lib/security';
 import { validateRealEmail } from '@/utils/antiFraudValidation';
 
 export async function POST(req: NextRequest) {
@@ -90,10 +91,13 @@ export async function POST(req: NextRequest) {
     // Don't leak hash/salt back to client
     const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = citizen;
 
+    const sessionToken = SessionSecurityService.generateSessionToken(citizen.id, citizen.email || '');
+
     return NextResponse.json({
       success: true,
       message: lang === 'hi' ? 'लॉगिन सफल रहा!' : 'Login successful!',
       citizen: safeCitizen,
+      sessionToken,
     });
   } catch (error: any) {
     console.error('Auth Login API Error:', error);

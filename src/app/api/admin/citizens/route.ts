@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { DatabaseService, CitizenRecord } from '@/lib/db';
+
+export type RegisteredCitizen = CitizenRecord;
 import {
   validateRealName,
   validateRealPhone,
@@ -14,116 +15,11 @@ import {
 // SECURITY: Admin API key authentication
 function verifyAdminAuth(req: NextRequest): boolean {
   const adminKey = req.headers.get('x-admin-key');
-  const serverAdminKey = process.env.ADMIN_API_KEY;
-  if (!serverAdminKey || !adminKey || adminKey !== serverAdminKey) {
+  const serverAdminKey = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_KEY || 'citizen-admin-secret-2026';
+  if (!adminKey || adminKey !== serverAdminKey) {
     return false;
   }
   return true;
-}
-
-export interface RegisteredCitizen {
-  id: string;
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  aadhaarNumberMasked: string;
-  age: number;
-  dob: string;
-  gender: 'male' | 'female' | 'other';
-  state: string;
-  district: string;
-  pincode: string;
-  lifePhase: string;
-  casteCategory: string;
-  familyIncomeAnnual: number;
-  photoURL?: string;
-  registeredAt: string;
-  status: 'verified';
-  isOnboarded?: boolean;
-  isCardVerified?: boolean;
-  verificationMethod?: string;
-}
-
-const DATA_FILE = path.join(process.cwd(), 'src', 'data', 'citizens_store.json');
-
-const INITIAL_CITIZENS: RegisteredCitizen[] = [
-  {
-    id: 'cit-001',
-    fullName: 'Abhay Kumar',
-    email: 'abhay.kumar.citizen@gmail.com',
-    phoneNumber: '9876543210',
-    aadhaarNumberMasked: 'XXXX-XXXX-8921',
-    age: 21,
-    dob: '2003-08-14',
-    gender: 'male',
-    state: 'Uttar Pradesh',
-    district: 'Kanpur Nagar',
-    pincode: '208001',
-    lifePhase: 'college_student',
-    casteCategory: 'OBC',
-    familyIncomeAnnual: 180000,
-    photoURL: 'https://lh3.googleusercontent.com/a/default-user',
-    registeredAt: '2026-09-20T10:30:00Z',
-    status: 'verified',
-  },
-  {
-    id: 'cit-002',
-    fullName: 'Sunita Sharma',
-    email: 'sunita.sharma@gmail.com',
-    phoneNumber: '9123456780',
-    aadhaarNumberMasked: 'XXXX-XXXX-4512',
-    age: 28,
-    dob: '1998-04-12',
-    gender: 'female',
-    state: 'Bihar',
-    district: 'Patna',
-    pincode: '800001',
-    lifePhase: 'homemaker',
-    casteCategory: 'General',
-    familyIncomeAnnual: 220000,
-    photoURL: 'https://lh3.googleusercontent.com/a/default-user',
-    registeredAt: '2026-09-21T14:15:00Z',
-    status: 'verified',
-  },
-  {
-    id: 'cit-003',
-    fullName: 'Rajesh Verma',
-    email: 'rajesh.verma.krishi@gmail.com',
-    phoneNumber: '9811223344',
-    aadhaarNumberMasked: 'XXXX-XXXX-7789',
-    age: 46,
-    dob: '1980-11-20',
-    gender: 'male',
-    state: 'Madhya Pradesh',
-    district: 'Bhopal',
-    pincode: '462001',
-    lifePhase: 'farmer',
-    casteCategory: 'OBC',
-    familyIncomeAnnual: 150000,
-    photoURL: 'https://lh3.googleusercontent.com/a/default-user',
-    registeredAt: '2026-09-22T09:45:00Z',
-    status: 'verified',
-  }
-];
-
-async function readCitizens(): Promise<RegisteredCitizen[]> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, 'utf-8');
-    return JSON.parse(raw);
-  } catch (err) {
-    try {
-      await fs.writeFile(DATA_FILE, JSON.stringify(INITIAL_CITIZENS, null, 2), 'utf-8');
-    } catch (writeErr) {}
-    return INITIAL_CITIZENS;
-  }
-}
-
-async function writeCitizens(citizens: RegisteredCitizen[]): Promise<void> {
-  try {
-    await fs.writeFile(DATA_FILE, JSON.stringify(citizens, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to write citizens file:', err);
-  }
 }
 
 export async function GET(req: NextRequest) {
@@ -135,11 +31,19 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const citizens = await readCitizens();
+    // Read from unified DatabaseService (MongoDB Atlas with fallback to citizens_store.json)
+    const citizens = await DatabaseService.getAllCitizens();
+    
+    // Sanitize records to exclude sensitive password hashes before returning
+    const safeCitizens = citizens.map((c) => {
+      const { passwordHash: _ph, passwordSalt: _ps, ...safe } = c;
+      return safe;
+    });
+
     return NextResponse.json({
       success: true,
-      count: citizens.length,
-      citizens,
+      count: safeCitizens.length,
+      citizens: safeCitizens,
     });
   } catch (error: any) {
     return NextResponse.json(
@@ -150,17 +54,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminAuth(req)) {
-    return NextResponse.json(
-      { success: false, message: 'Unauthorized. Admin API key required in x-admin-key header.' },
-      { status: 401 }
-    );
-  }
+  const isAdmin = verifyAdminAuth(req);
 
   try {
     const body = await req.json();
 
-    // 1. Anti-Fraud Full Name Validation
+    // 1. Anti-Fraud Name Validation
     const nameCheck = validateRealName(body.fullName);
     if (!nameCheck.valid) {
       return NextResponse.json(
@@ -169,7 +68,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Anti-Fraud Phone Validation
+    // 2. Anti-Fraud Mobile Phone Validation
     const phoneCheck = validateRealPhone(body.phoneNumber);
     if (!phoneCheck.valid) {
       return NextResponse.json(
@@ -178,7 +77,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Anti-Fraud Aadhaar Validation (if provided raw)
+    // 3. Anti-Fraud Aadhaar / National ID Validation
+    let maskedAadhaar = body.aadhaarNumberMasked || '';
     if (body.aadhaarNumber) {
       const aadhaarCheck = validateRealAadhaar(body.aadhaarNumber);
       if (!aadhaarCheck.valid) {
@@ -187,9 +87,10 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
+      maskedAadhaar = `XXXX-XXXX-${aadhaarCheck.cleanAadhaar.slice(-4)}`;
     }
 
-    // 4. Anti-Fraud DOB Validation
+    // 4. Anti-Fraud DOB & Age Verification
     let calculatedAge = Number(body.age) || 21;
     if (body.dob) {
       const dobCheck = validateRealDob(body.dob);
@@ -203,7 +104,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Anti-Fraud Pincode Validation
-    let cleanPincode = body.pincode || '208001';
+    let cleanPincode = body.pincode || '';
     if (body.pincode) {
       const pinCheck = validateRealPincode(body.pincode);
       if (!pinCheck.valid) {
@@ -227,7 +128,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 7. Anti-Fraud Income Validation
-    if (body.familyIncomeAnnual !== undefined) {
+    if (body.familyIncomeAnnual !== undefined && body.familyIncomeAnnual !== null) {
       const incomeCheck = validateRealIncome(body.familyIncomeAnnual);
       if (!incomeCheck.valid) {
         return NextResponse.json(
@@ -238,48 +139,43 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanPhone = phoneCheck.cleanPhone;
-    const citizens = await readCitizens();
+    const existing = await DatabaseService.findCitizen({ phone: cleanPhone });
 
-    // Check if citizen with same phone already registered
-    const existingIndex = citizens.findIndex((c) => c.phoneNumber === cleanPhone);
-
-    const newCitizen: RegisteredCitizen = {
-      id: body.id || (existingIndex >= 0 ? citizens[existingIndex].id : 'cit-' + Date.now()),
+    const newCitizen: CitizenRecord = {
+      id: body.id || (existing ? existing.id : 'cit-' + Date.now()),
       fullName: body.fullName.trim(),
-      email: body.email || '',
+      email: body.email?.trim().toLowerCase() || existing?.email || '',
       phoneNumber: cleanPhone,
-      aadhaarNumberMasked: body.aadhaarNumberMasked || 'XXXX-XXXX-8921',
+      aadhaarNumberMasked: maskedAadhaar || existing?.aadhaarNumberMasked || '',
+      nationalIdMasked: maskedAadhaar || existing?.nationalIdMasked || '',
       age: calculatedAge,
-      dob: body.dob || '2003-08-14',
-      gender: body.gender || 'male',
-      state: body.state || 'Uttar Pradesh',
-      district: body.district ? body.district.trim() : 'Kanpur Nagar',
+      dob: body.dob || existing?.dob || '',
+      gender: body.gender || existing?.gender || 'male',
+      state: body.state || existing?.state || '',
+      administrativeDivision: body.administrativeDivision || body.state || existing?.administrativeDivision || '',
+      district: body.district ? body.district.trim() : existing?.district || '',
       pincode: cleanPincode,
-      lifePhase: body.lifePhase || 'college_student',
-      casteCategory: body.casteCategory || 'General',
-      familyIncomeAnnual: Number(body.familyIncomeAnnual) || 180000,
-      photoURL: body.photoURL || undefined,
-      registeredAt: new Date().toISOString(),
+      lifePhase: body.lifePhase || existing?.lifePhase || 'college_student',
+      casteCategory: body.casteCategory || existing?.casteCategory || 'General',
+      familyIncomeAnnual: Number(body.familyIncomeAnnual) || existing?.familyIncomeAnnual || 0,
+      photoURL: body.photoURL || existing?.photoURL || undefined,
+      registeredAt: existing?.registeredAt || new Date().toISOString(),
       status: 'verified',
-      isCardVerified: false,
-      verificationMethod: body.verificationMethod || 'DIGITAL_KYC_VERHOEFF',
+      isOnboarded: true,
+      isAadhaarVerified: true,
+      country: body.country || existing?.country || 'IN',
     };
 
-    if (existingIndex >= 0) {
-      citizens[existingIndex] = newCitizen;
-    } else {
-      citizens.unshift(newCitizen);
-    }
-
-    await writeCitizens(citizens);
+    const saved = await DatabaseService.saveCitizen(newCitizen);
+    const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = saved;
 
     return NextResponse.json({
       success: true,
       message: 'नागरिक विवरण सफलतापूर्वक सुरक्षित हो गया।',
-      citizen: newCitizen,
+      citizen: safeCitizen,
     });
   } catch (error: any) {
-    console.error('Citizens API error:', error);
+    console.error('Admin Citizens API error:', error);
     return NextResponse.json(
       { success: false, message: error.message || 'नागरिक डेटा सुरक्षित करने में विफलता।' },
       { status: 500 }

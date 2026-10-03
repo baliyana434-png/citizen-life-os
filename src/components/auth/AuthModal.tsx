@@ -278,6 +278,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         } else {
           localStorage.removeItem('citizen_remember_email');
         }
+        if (data.sessionToken) {
+          localStorage.setItem('citizen_session_token', data.sessionToken);
+        }
       } catch (e) {}
 
       onClose();
@@ -367,6 +370,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         );
         return;
       }
+
+      try {
+        if (data.sessionToken) {
+          localStorage.setItem('citizen_session_token', data.sessionToken);
+        }
+      } catch (e) {}
 
       onClose();
       onLoginSuccess(data.citizen);

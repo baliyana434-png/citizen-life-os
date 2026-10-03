@@ -52,7 +52,11 @@ export default function AdminPage() {
   const fetchCitizens = async () => {
     try {
       setIsLoadingCitizens(true);
-      const res = await fetch('/api/admin/citizens');
+      const res = await fetch('/api/admin/citizens', {
+        headers: {
+          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || 'citizen-admin-secret-2026',
+        },
+      });
       const data = await res.json();
       if (data.citizens) {
         setCitizens(data.citizens);
@@ -131,11 +135,11 @@ export default function AdminPage() {
     const q = searchCitizen.toLowerCase();
     return citizens.filter(
       (c) =>
-        c.fullName.toLowerCase().includes(q) ||
-        c.phoneNumber.includes(q) ||
-        c.email.toLowerCase().includes(q) ||
-        c.state.toLowerCase().includes(q) ||
-        c.district.toLowerCase().includes(q)
+        (c.fullName || '').toLowerCase().includes(q) ||
+        (c.phoneNumber || '').includes(q) ||
+        (c.email || '').toLowerCase().includes(q) ||
+        (c.state || '').toLowerCase().includes(q) ||
+        (c.district || '').toLowerCase().includes(q)
     );
   }, [citizens, searchCitizen]);
 
@@ -162,21 +166,21 @@ export default function AdminPage() {
     ];
 
     const rows = citizens.map((c) => [
-      `"${c.id}"`,
-      `"${c.fullName}"`,
-      `"${c.email}"`,
-      `"${c.phoneNumber}"`,
-      `"${c.aadhaarNumberMasked}"`,
-      c.age,
-      `"${c.dob}"`,
-      `"${c.gender}"`,
-      `"${c.state}"`,
-      `"${c.district}"`,
-      `"${c.pincode}"`,
-      `"${c.lifePhase}"`,
-      `"${c.casteCategory}"`,
-      c.familyIncomeAnnual,
-      `"${c.registeredAt}"`,
+      `"${c.id || ''}"`,
+      `"${c.fullName || ''}"`,
+      `"${c.email || ''}"`,
+      `"${c.phoneNumber || ''}"`,
+      `"${c.aadhaarNumberMasked || c.nationalIdMasked || ''}"`,
+      c.age || 0,
+      `"${c.dob || ''}"`,
+      `"${c.gender || ''}"`,
+      `"${c.state || ''}"`,
+      `"${c.district || ''}"`,
+      `"${c.pincode || ''}"`,
+      `"${c.lifePhase || ''}"`,
+      `"${c.casteCategory || ''}"`,
+      c.familyIncomeAnnual || 0,
+      `"${c.registeredAt || ''}"`,
     ]);
 
     const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
@@ -474,28 +478,30 @@ export default function AdminPage() {
                       <td className="py-3 px-4">
                         <div className="space-y-1">
                           <span className="font-mono font-bold text-slate-200 block text-xs">
-                            +91 {c.phoneNumber}
+                            {c.phoneNumber ? `+91 ${c.phoneNumber}` : (c.email ? 'Online Registered' : 'N/A')}
                           </span>
-                          <div className="flex items-center gap-1.5">
-                            <a
-                              href={`tel:${c.phoneNumber}`}
-                              className="px-2 py-0.5 rounded-lg bg-emerald-950 border border-emerald-700/60 text-emerald-300 hover:text-white hover:bg-emerald-800 text-[10px] font-bold flex items-center gap-1 transition-all"
-                              title="Direct Phone Call"
-                            >
-                              <Phone className="w-3 h-3" />
-                              <span>Call</span>
-                            </a>
-                            <a
-                              href={`https://wa.me/91${c.phoneNumber}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-2 py-0.5 rounded-lg bg-green-950 border border-green-700/60 text-green-300 hover:text-white hover:bg-green-800 text-[10px] font-bold flex items-center gap-1 transition-all"
-                              title="Chat on WhatsApp"
-                            >
-                              <MessageCircle className="w-3 h-3" />
-                              <span>WhatsApp</span>
-                            </a>
-                          </div>
+                          {c.phoneNumber && (
+                            <div className="flex items-center gap-1.5">
+                              <a
+                                href={`tel:${c.phoneNumber}`}
+                                className="px-2 py-0.5 rounded-lg bg-emerald-950 border border-emerald-700/60 text-emerald-300 hover:text-white hover:bg-emerald-800 text-[10px] font-bold flex items-center gap-1 transition-all"
+                                title="Direct Phone Call"
+                              >
+                                <Phone className="w-3 h-3" />
+                                <span>Call</span>
+                              </a>
+                              <a
+                                href={`https://wa.me/91${c.phoneNumber}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-2 py-0.5 rounded-lg bg-green-950 border border-green-700/60 text-green-300 hover:text-white hover:bg-green-800 text-[10px] font-bold flex items-center gap-1 transition-all"
+                                title="Chat on WhatsApp"
+                              >
+                                <MessageCircle className="w-3 h-3" />
+                                <span>WhatsApp</span>
+                              </a>
+                            </div>
+                          )}
                         </div>
                       </td>
 
@@ -503,7 +509,7 @@ export default function AdminPage() {
                       <td className="py-3 px-4">
                         <div className="space-y-1">
                           <span className="font-mono text-emerald-400 font-bold bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 text-[11px] block w-fit">
-                            {c.aadhaarNumberMasked}
+                            {c.aadhaarNumberMasked || c.nationalIdMasked || 'N/A'}
                           </span>
                           {c.isCardVerified && (
                             <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-700/50">
@@ -518,25 +524,25 @@ export default function AdminPage() {
                         <div className="flex items-start gap-1">
                           <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-slate-200 font-semibold">{c.state}</p>
-                            <p className="text-[11px] text-slate-400">{c.district} ({c.pincode})</p>
+                            <p className="text-slate-200 font-semibold">{c.state || 'General'}</p>
+                            <p className="text-[11px] text-slate-400">{c.district || c.state || ''} {c.pincode ? `(${c.pincode})` : ''}</p>
                           </div>
                         </div>
                       </td>
 
                       {/* Age & Gender */}
                       <td className="py-3 px-4">
-                        <p className="text-slate-200 font-bold">{c.age} Years</p>
-                        <p className="text-[11px] text-slate-400 capitalize">{c.gender} • {c.dob}</p>
+                        <p className="text-slate-200 font-bold">{c.age || 0} Years</p>
+                        <p className="text-[11px] text-slate-400 capitalize">{c.gender || 'male'} {c.dob ? `• ${c.dob}` : ''}</p>
                       </td>
 
                       {/* Occupation & Income */}
                       <td className="py-3 px-4">
                         <p className="text-slate-200 font-semibold capitalize">
-                          {c.lifePhase.replace('_', ' ')}
+                          {(c.lifePhase || 'student').replace('_', ' ')}
                         </p>
                         <p className="text-[11px] text-emerald-400 font-mono font-bold">
-                          ₹{c.familyIncomeAnnual.toLocaleString('en-IN')}/yr ({c.casteCategory})
+                          ₹{(c.familyIncomeAnnual || 0).toLocaleString('en-IN')}/yr ({c.casteCategory || 'General'})
                         </p>
                       </td>
 

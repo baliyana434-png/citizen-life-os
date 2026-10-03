@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { DatabaseService } from '@/lib/db';
 import { validateRealName } from '@/utils/antiFraudValidation';
-
-const FAMILY_FILE = path.join(process.cwd(), 'src', 'data', 'family_store.json');
 
 export interface StoredFamilyMember {
   id: string;
-  citizenPhone: string;
+  citizenPhone?: string;
   citizenEmail?: string;
   relation: string;
   name: string;
@@ -16,23 +13,6 @@ export interface StoredFamilyMember {
   lifePhase: string;
   isAadhaarVerified?: boolean;
   createdAt: string;
-}
-
-async function readFamily(): Promise<StoredFamilyMember[]> {
-  try {
-    const raw = await fs.readFile(FAMILY_FILE, 'utf-8');
-    return JSON.parse(raw);
-  } catch (err) {
-    return [];
-  }
-}
-
-async function writeFamily(members: StoredFamilyMember[]): Promise<void> {
-  try {
-    await fs.writeFile(FAMILY_FILE, JSON.stringify(members, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to write family file:', err);
-  }
 }
 
 export async function GET(req: NextRequest) {
@@ -48,16 +28,20 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const allMembers = await readFamily();
-    const citizenFamily = allMembers.filter((m) => {
-      if (phone && m.citizenPhone === phone) return true;
-      if (email && m.citizenEmail && m.citizenEmail.toLowerCase() === email) return true;
-      return false;
-    });
+    // Verify citizen actually exists
+    const citizen = await DatabaseService.findCitizen({ email, phone });
+    if (!citizen) {
+      return NextResponse.json(
+        { success: false, message: 'नागरिक प्रोफाइल नहीं मिला।' },
+        { status: 404 }
+      );
+    }
+
+    const familyMembers = await DatabaseService.getFamilyMembers({ email, phone });
 
     return NextResponse.json({
       success: true,
-      familyMembers: citizenFamily,
+      familyMembers,
     });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
@@ -74,6 +58,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { success: false, message: 'नागरिक फोन नंबर या ईमेल आवश्यक है।' },
         { status: 400 }
+      );
+    }
+
+    // Authorization: Verify citizen exists
+    const citizen = await DatabaseService.findCitizen({ email, phone });
+    if (!citizen) {
+      return NextResponse.json(
+        { success: false, message: 'अनाधिकृत: नागरिक खाता अस्तित्व में नहीं है।' },
+        { status: 403 }
       );
     }
 
@@ -96,13 +89,11 @@ export async function POST(req: NextRequest) {
 
     const validRelations = ['father', 'mother', 'spouse', 'son', 'daughter', 'brother', 'sister', 'grandparent', 'other'];
     const relation = validRelations.includes(body.relation) ? body.relation : 'other';
-
-    const allMembers = await readFamily();
     const memberId = body.id || `fam-${Date.now()}`;
 
     const newMember: StoredFamilyMember = {
       id: memberId,
-      citizenPhone: phone,
+      citizenPhone: phone || undefined,
       citizenEmail: email || undefined,
       relation,
       name: body.name.trim(),
@@ -113,26 +104,14 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    const existingIndex = allMembers.findIndex((m) => m.id === memberId);
-    if (existingIndex >= 0) {
-      allMembers[existingIndex] = newMember;
-    } else {
-      allMembers.push(newMember);
-    }
-
-    await writeFamily(allMembers);
-
-    const updatedCitizenFamily = allMembers.filter((m) => {
-      if (phone && m.citizenPhone === phone) return true;
-      if (email && m.citizenEmail && m.citizenEmail.toLowerCase() === email) return true;
-      return false;
-    });
+    await DatabaseService.saveFamilyMember(newMember);
+    const updatedFamily = await DatabaseService.getFamilyMembers({ email, phone });
 
     return NextResponse.json({
       success: true,
       message: 'परिवार का सदस्य सफलतापूर्वक जोड़ दिया गया।',
       member: newMember,
-      familyMembers: updatedCitizenFamily,
+      familyMembers: updatedFamily,
     });
   } catch (error: any) {
     console.error('Add family member error:', error);
@@ -157,26 +136,22 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const allMembers = await readFamily();
-    const filtered = allMembers.filter((m) => {
-      if (m.id !== id) return true;
-      if (phone && m.citizenPhone === phone) return false;
-      if (email && m.citizenEmail && m.citizenEmail.toLowerCase() === email) return false;
-      return true;
-    });
+    // Authorization: Verify citizen exists
+    const citizen = await DatabaseService.findCitizen({ email, phone });
+    if (!citizen) {
+      return NextResponse.json(
+        { success: false, message: 'अनाधिकृत अनुरोध।' },
+        { status: 403 }
+      );
+    }
 
-    await writeFamily(filtered);
-
-    const updatedCitizenFamily = filtered.filter((m) => {
-      if (phone && m.citizenPhone === phone) return true;
-      if (email && m.citizenEmail && m.citizenEmail.toLowerCase() === email) return true;
-      return false;
-    });
+    await DatabaseService.deleteFamilyMember(id, { email, phone });
+    const updatedFamily = await DatabaseService.getFamilyMembers({ email, phone });
 
     return NextResponse.json({
       success: true,
       message: 'परिवार का सदस्य हटा दिया गया।',
-      familyMembers: updatedCitizenFamily,
+      familyMembers: updatedFamily,
     });
   } catch (error: any) {
     console.error('Delete family member error:', error);

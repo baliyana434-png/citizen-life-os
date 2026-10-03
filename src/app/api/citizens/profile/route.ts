@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, CitizenRecord } from '@/lib/db';
+import { SessionSecurityService } from '@/lib/security';
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,9 +28,12 @@ export async function GET(req: NextRequest) {
     const key = phone || email || matchingCitizen.id;
     const citizenFavorites = await DatabaseService.getFavorites(key);
 
+    // SECURITY: Never leak password hash or salt to client
+    const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = matchingCitizen;
+
     return NextResponse.json({
       success: true,
-      citizen: matchingCitizen,
+      citizen: safeCitizen,
       favorites: citizenFavorites,
     });
   } catch (error: any) {
@@ -57,6 +61,19 @@ export async function POST(req: NextRequest) {
     // Check if citizen already exists
     const existing = await DatabaseService.findCitizen({ email, phone, id: body.id });
 
+    // Optional Session verification: if token provided in Authorization header, ensure it matches
+    const authHeader = req.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.slice(7);
+      const session = SessionSecurityService.verifySessionToken(token);
+      if (!session.valid) {
+        return NextResponse.json(
+          { success: false, message: 'सत्र समाप्त या अमान्य है। कृपया पुनः लॉगिन करें।' },
+          { status: 401 }
+        );
+      }
+    }
+
     const citizenRecord: CitizenRecord = {
       id: existing?.id || body.id || 'cit-' + Date.now(),
       fullName: body.fullName || existing?.fullName || 'Citizen',
@@ -80,6 +97,9 @@ export async function POST(req: NextRequest) {
       registeredAt: existing?.registeredAt || new Date().toISOString(),
       status: 'verified',
       isOnboarded: body.isOnboarded !== undefined ? Boolean(body.isOnboarded) : (existing?.isOnboarded ?? true),
+      // SECURITY: Preserve existing password credentials, never allow client-side tampering
+      passwordHash: existing?.passwordHash,
+      passwordSalt: existing?.passwordSalt,
       // SECURITY: Subscription status cannot be granted via generic profile update
       subscription: existing?.subscription || undefined,
     };
@@ -92,10 +112,13 @@ export async function POST(req: NextRequest) {
       await DatabaseService.saveFavorites(favKey, body.favorites);
     }
 
+    // Never leak passwordHash or salt
+    const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = saved;
+
     return NextResponse.json({
       success: true,
       message: 'प्रोफाइल सफलतापूर्वक सुरक्षित हो गई।',
-      citizen: saved,
+      citizen: safeCitizen,
     });
   } catch (error: any) {
     console.error('Citizen profile update error:', error);

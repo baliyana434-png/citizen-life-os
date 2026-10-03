@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, CitizenRecord, hashCitizenPassword } from '@/lib/db';
+import { SessionSecurityService } from '@/lib/security';
 import {
   validateRealName,
   validateRealEmail,
@@ -135,6 +136,8 @@ export async function POST(req: NextRequest) {
     // Remove security fields before returning
     const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = savedCitizen;
 
+    const sessionToken = SessionSecurityService.generateSessionToken(savedCitizen.id, cleanEmail);
+
     return NextResponse.json({
       success: true,
       message:
@@ -142,6 +145,7 @@ export async function POST(req: NextRequest) {
           ? 'खाता सफलतापूर्वक बन गया! आपका वास्तविक प्रोफाइल सत्यापित हो गया है।'
           : 'Account created successfully! Your verified citizen profile is ready.',
       citizen: safeCitizen,
+      sessionToken,
     });
   } catch (error: any) {
     console.error('Auth Sign Up API Error:', error);

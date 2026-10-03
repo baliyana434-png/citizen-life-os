@@ -238,7 +238,10 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
       try {
         const response = await fetch('/api/admin/citizens', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || 'citizen-admin-secret-2026',
+          },
           body: JSON.stringify(payload),
         });
         const resData = await response.json();

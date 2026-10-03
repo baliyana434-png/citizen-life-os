@@ -39,3 +39,43 @@ export class PaymentSecurityService {
     return input.replace(/[<>'"&;]/g, '').trim();
   }
 }
+
+const SESSION_SECRET = process.env.SESSION_SECRET_KEY || process.env.PAYMENT_SECRET_KEY || 'citizen_session_hmac_secret_998124a87b';
+
+export class SessionSecurityService {
+  /**
+   * Generates a signed session token: base64(payload).signature
+   */
+  static generateSessionToken(citizenId: string, email: string): string {
+    const payload = JSON.stringify({
+      citizenId,
+      email: (email || '').toLowerCase().trim(),
+      exp: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+    const encodedPayload = Buffer.from(payload).toString('base64url');
+    const signature = crypto.createHmac('sha256', SESSION_SECRET).update(encodedPayload).digest('base64url');
+    return `${encodedPayload}.${signature}`;
+  }
+
+  /**
+   * Verifies session token authenticity and expiry
+   */
+  static verifySessionToken(token: string): { valid: boolean; citizenId?: string; email?: string } {
+    if (!token || !token.includes('.')) return { valid: false };
+    const [encodedPayload, signature] = token.split('.');
+    if (!encodedPayload || !signature) return { valid: false };
+
+    try {
+      const expectedSignature = crypto.createHmac('sha256', SESSION_SECRET).update(encodedPayload).digest('base64url');
+      if (signature !== expectedSignature) return { valid: false };
+
+      const jsonStr = Buffer.from(encodedPayload, 'base64url').toString('utf-8');
+      const payload = JSON.parse(jsonStr);
+      if (Date.now() > payload.exp) return { valid: false };
+
+      return { valid: true, citizenId: payload.citizenId, email: payload.email };
+    } catch (e) {
+      return { valid: false };
+    }
+  }
+}

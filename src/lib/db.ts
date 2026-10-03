@@ -93,6 +93,8 @@ export interface CitizenRecord {
   registeredAt: string;
   status: 'verified';
   isOnboarded?: boolean;
+  isAadhaarVerified?: boolean;
+  isCardVerified?: boolean;
   subscription?: CitizenSubscription;
   notificationsEnabled?: {
     webPush?: boolean;
@@ -271,5 +273,98 @@ export const DatabaseService = {
     const allFavorites = await readJsonFile<Record<string, string[]>>(FAVORITES_FILE, {});
     allFavorites[cleanKey] = favorites;
     await writeJsonFile(FAVORITES_FILE, allFavorites);
+  },
+
+  /**
+   * Get family members for a citizen
+   */
+  async getFamilyMembers(filter: { email?: string; phone?: string }): Promise<any[]> {
+    const email = filter.email?.trim().toLowerCase();
+    const phone = filter.phone?.replace(/\D/g, '').slice(-10);
+    if (!email && !phone) return [];
+
+    const db = await getMongoDb();
+    if (db) {
+      try {
+        const query: any = {};
+        const orConditions: any[] = [];
+        if (email) orConditions.push({ citizenEmail: email });
+        if (phone) orConditions.push({ citizenPhone: phone });
+        query.$or = orConditions;
+
+        return await db.collection('family').find(query).toArray();
+      } catch (err) {
+        console.warn('MongoDB family read error:', err);
+      }
+    }
+
+    const allMembers = await readJsonFile<any[]>(FAMILY_FILE, []);
+    return allMembers.filter((m) => {
+      if (email && m.citizenEmail?.toLowerCase() === email) return true;
+      if (phone && m.citizenPhone === phone) return true;
+      return false;
+    });
+  },
+
+  /**
+   * Save or update a family member
+   */
+  async saveFamilyMember(member: any): Promise<any> {
+    const db = await getMongoDb();
+    if (db) {
+      try {
+        await db.collection('family').updateOne(
+          { id: member.id },
+          { $set: member },
+          { upsert: true }
+        );
+      } catch (err) {
+        console.warn('MongoDB family write error:', err);
+      }
+    }
+
+    const allMembers = await readJsonFile<any[]>(FAMILY_FILE, []);
+    const idx = allMembers.findIndex((m) => m.id === member.id);
+    if (idx >= 0) {
+      allMembers[idx] = member;
+    } else {
+      allMembers.push(member);
+    }
+    await writeJsonFile(FAMILY_FILE, allMembers);
+    return member;
+  },
+
+  /**
+   * Delete a family member belonging to the citizen
+   */
+  async deleteFamilyMember(memberId: string, filter: { email?: string; phone?: string }): Promise<boolean> {
+    const email = filter.email?.trim().toLowerCase();
+    const phone = filter.phone?.replace(/\D/g, '').slice(-10);
+
+    const db = await getMongoDb();
+    if (db) {
+      try {
+        const deleteQuery: any = { id: memberId };
+        const orConditions: any[] = [];
+        if (email) orConditions.push({ citizenEmail: email });
+        if (phone) orConditions.push({ citizenPhone: phone });
+        if (orConditions.length > 0) deleteQuery.$or = orConditions;
+
+        await db.collection('family').deleteOne(deleteQuery);
+      } catch (err) {
+        console.warn('MongoDB family delete error:', err);
+      }
+    }
+
+    const allMembers = await readJsonFile<any[]>(FAMILY_FILE, []);
+    const filtered = allMembers.filter((m) => {
+      if (m.id !== memberId) return true;
+      // If matches memberId, only delete if belongs to this citizen
+      if (email && m.citizenEmail?.toLowerCase() === email) return false;
+      if (phone && m.citizenPhone === phone) return false;
+      return true;
+    });
+    await writeJsonFile(FAMILY_FILE, filtered);
+    return true;
   },
 };
