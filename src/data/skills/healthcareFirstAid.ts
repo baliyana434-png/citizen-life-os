@@ -136,6 +136,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
   {
     id: 'jan_aushadhi_generic_pharmacy',
     sectorId: 'healthcare_firstaid',
+    country: 'IN',
     name: 'Pradhan Mantri Jan Aushadhi & Generic Medicine Management',
     nameHi: 'प्रधानमंत्री जन औषधि व जेनेरिक दवा प्रबंधन (सस्ती दवाएं व केंद्र खोलना)',
     shortDesc: 'Learn how generic medicines work: reading active chemical salt compositions, finding 50-90% cheaper Jan Aushadhi alternatives to expensive brands, and opening a Jan Aushadhi Kendra.',

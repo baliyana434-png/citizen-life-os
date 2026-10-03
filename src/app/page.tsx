@@ -615,10 +615,10 @@ export default function HomePage() {
     });
   }, [opportunities, country, activeProfile]);
 
-  // Total Available Benefit Amount
+  // Total Available Benefit Amount across OVERALL matched opportunities in the portal
   const totalBenefitSum = useMemo(() => {
-    return filteredOpportunities.reduce((acc, curr) => acc + (curr.benefitAmount || 0), 0);
-  }, [filteredOpportunities]);
+    return portalOpportunities.reduce((acc, curr) => acc + (curr.benefitAmount || 0), 0);
+  }, [portalOpportunities]);
 
   // WhatsApp Share (100% localized, zero-leakage, zero fake emojis)
   const handleShareWhatsApp = (opp: Opportunity) => {
@@ -676,15 +676,11 @@ export default function HomePage() {
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div>
-              {/* Telemetry Status Row */}
-              <div className="flex flex-wrap items-center gap-2 mb-3">
+              {/* Sovereign Portal Indicator */}
+              <div className="flex items-center gap-2 mb-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/40 shadow-xs">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 radar-pulse" />
-                  {activeProfile.isOnboarded ? (
-                    `${countryMeta.flag} ${countryMeta.alpha3 || country} • ${activeProfile.fullName} (${t('hero.age_label')}: ${activeProfile.age} ${t('hero.years_suffix')}${activeProfile.state ? ' • ' + activeProfile.state : ''})`
-                  ) : (
-                    `${countryMeta.flag} ${countryMeta.alpha3 || country} • ${countryMeta.name} • ${t('hero.unverified_status')}`
-                  )}
+                  <span>{countryMeta.flag} {countryMeta.name}</span>
                 </span>
                 <span className="text-[11px] uppercase tracking-wider text-emerald-300/80 font-mono font-bold bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
                   {activeProfile.isAadhaarVerified ? t('hero.verified_status') : t('hero.unverified_status')}

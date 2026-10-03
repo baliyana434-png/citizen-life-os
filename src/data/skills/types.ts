@@ -23,6 +23,7 @@ export interface SkillTopic {
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   estTimeToLearn: string;
   averageEarningMonthly: string;
+  country?: string;
   demandLevel: 'trending' | 'very_high' | 'high';
   demandBadge: string;
   demandBadgeHi: string;

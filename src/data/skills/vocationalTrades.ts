@@ -136,6 +136,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
   {
     id: 'solar_rooftop_tech',
     sectorId: 'vocational_trades',
+    country: 'IN',
     name: 'Solar Rooftop Engineering (On-Grid, Off-Grid & PM Surya Ghar Scheme)',
     nameHi: 'सोलर रूफटॉप इंजीनियरिंग (ऑन-ग्रिड, नेट मीटरिंग व PM सूर्य घर योजना)',
     shortDesc: 'Learn solar rooftop design and installation: structure mounting, monocrystalline PERC panels, on-grid string inverters, net-metering DISCOM approvals, and PM Surya Ghar ₹78,000 subsidy.',

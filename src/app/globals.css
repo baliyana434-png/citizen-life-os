@@ -12,6 +12,7 @@
 .dark {
   --background: #090d16;
   --foreground: #f8fafc;
+  color-scheme: dark;
 }
 
 body {
@@ -25,22 +26,78 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.dark .card-clean {
-  background: #0f172a;
-  border-color: #1e293b;
-  box-shadow: 
-    0 1px 3px 0 rgba(0, 0, 0, 0.4),
-    0 4px 12px -2px rgba(0, 0, 0, 0.3);
+/* Comprehensive Full-Website Dark Mode Rules */
+.dark body {
+  background-color: #090d16 !important;
+  color: #f8fafc !important;
 }
 
-.dark .card-clean:hover {
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 
-    0 14px 28px -6px rgba(0, 0, 0, 0.5),
-    0 4px 10px -2px rgba(0, 0, 0, 0.3);
+.dark .bg-slate-50 {
+  background-color: #090d16 !important;
 }
 
-/* Crisp, High-Contrast Card Styles (Zero Murkiness, Solid White, Razor-Sharp) */
+.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+.dark header {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: #1e293b !important;
+}
+
+.dark .border-slate-200,
+.dark .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+.dark .border-slate-300 {
+  border-color: #334155 !important;
+}
+
+.dark .text-slate-900,
+.dark .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-700,
+.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: #1e293b !important;
+}
+
+.dark .hover\:bg-slate-100:hover {
+  background-color: #334155 !important;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Crisp, High-Contrast Card Styles */
 .card-clean {
   background: #ffffff;
   box-shadow: 
@@ -56,6 +113,21 @@ body {
     0 14px 28px -6px rgba(15, 23, 42, 0.09),
     0 4px 10px -2px rgba(15, 23, 42, 0.03);
   border-color: rgba(16, 185, 129, 0.6);
+}
+
+.dark .card-clean {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  box-shadow: 
+    0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    0 4px 12px -2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .card-clean:hover {
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 
+    0 14px 28px -6px rgba(0, 0, 0, 0.6),
+    0 4px 10px -2px rgba(0, 0, 0, 0.4);
 }
 
 /* Radar Pulse Glows */

@@ -30,10 +30,12 @@ import {
   Flame
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
+import { useCountry } from '@/context/CountryContext';
 import { SKILL_SECTORS, SKILL_TOPICS, SkillSector, SkillTopic, SkillVideo } from '@/data/skillsData';
 
 export default function SkillsPage() {
   const { language } = useTranslation();
+  const { country, countryMeta } = useCountry();
   const [selectedSector, setSelectedSector] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [levelFilter, setLevelFilter] = useState<'all' | 'Beginner' | 'Intermediate' | 'Advanced'>('all');
@@ -142,9 +144,21 @@ export default function SkillsPage() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Filter topics based on sector, search, level, and high demand
+  // All topics available for user's country (Universal skills + Country-specific skills)
+  const countryTopics = useMemo(() => {
+    return SKILL_TOPICS.filter((t) => !t.country || t.country === 'ALL' || t.country === country);
+  }, [country]);
+
+  // Sectors available for the current country
+  const availableSectors = useMemo(() => {
+    return SKILL_SECTORS.filter((sec) => {
+      return countryTopics.some((t) => t.sectorId === sec.id);
+    });
+  }, [countryTopics]);
+
+  // Filter topics based on country, sector, search, level, and high demand
   const filteredTopics = useMemo(() => {
-    return SKILL_TOPICS.filter((t) => {
+    return countryTopics.filter((t) => {
       if (selectedSector !== 'all' && t.sectorId !== selectedSector) return false;
       
       // If user filters by high demand only
@@ -172,7 +186,7 @@ export default function SkillsPage() {
       }
       return true;
     });
-  }, [selectedSector, searchQuery, levelFilter, onlyHighDemand]);
+  }, [countryTopics, selectedSector, searchQuery, levelFilter, onlyHighDemand]);
 
   // Active topic object
   const activeTopic = useMemo(() => {
@@ -186,6 +200,13 @@ export default function SkillsPage() {
       setActiveTopicId(filteredTopics[0].id);
     }
   }, [filteredTopics, activeTopicId]);
+
+  // Keep selected sector valid for current country
+  useEffect(() => {
+    if (selectedSector !== 'all' && !availableSectors.some((s) => s.id === selectedSector)) {
+      setSelectedSector('all');
+    }
+  }, [availableSectors, selectedSector]);
 
   // Videos under active topic filtered strictly by level if specified
   const displayVideos = useMemo(() => {
@@ -372,12 +393,12 @@ export default function SkillsPage() {
           >
             <Compass className="w-3.5 h-3.5" />
             <span>{language === 'hi' ? 'सभी क्षेत्र (All)' : 'All Sectors'}</span>
-            <span className="text-[10px] opacity-75">({SKILL_TOPICS.length})</span>
+            <span className="text-[10px] opacity-75">({countryTopics.length})</span>
           </button>
 
-          {SKILL_SECTORS.map((sec) => {
+          {availableSectors.map((sec) => {
             const isSelected = selectedSector === sec.id;
-            const count = SKILL_TOPICS.filter((t) => t.sectorId === sec.id).length;
+            const count = countryTopics.filter((t) => t.sectorId === sec.id).length;
 
             return (
               <button

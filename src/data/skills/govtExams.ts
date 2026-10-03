@@ -4,6 +4,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
   {
     id: 'maths_fast_tricks',
     sectorId: 'govt_exams',
+    country: 'IN',
     name: 'Quantitative Aptitude & Speed Maths (SSC CGL, CHSL & Railways)',
     nameHi: 'गणित शॉर्ट ट्रिक्स व स्पीड मैथ्स (SSC CGL, रेलवे व पुलिस भर्ती)',
     shortDesc: 'Solve complex competitive exam arithmetic and advance maths in under 30 seconds using Vedic maths shortcuts, digital root method, unit digit logic, and formula-free ratios.',
@@ -68,6 +69,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
   {
     id: 'reasoning_mastery',
     sectorId: 'govt_exams',
+    country: 'IN',
     name: 'Logical & Verbal Reasoning Mastery (Puzzles, Syllogism & Coding)',
     nameHi: 'रीजनिंग मास्टरी (पजल्स, सिटिंग अरेंजमेंट, न्याय निगमन व कोडिंग)',
     shortDesc: 'Score 100% full marks in competitive reasoning: circular & linear seating arrangement, floor puzzles, syllogism (100-50 method), blood relations, and direction sense.',
@@ -132,6 +134,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
   {
     id: 'general_studies_upsc_pcs',
     sectorId: 'govt_exams',
+    country: 'IN',
     name: 'General Studies & NCERT Foundation (UPSC, State PCS & Civil Services)',
     nameHi: 'सामान्य अध्ययन व NCERT फाउंडेशन (UPSC, राज्य PCS व प्रशासनिक परीक्षाएं)',
     shortDesc: 'Build an unbreakable foundation for Indian Polity (Constitution), Modern Indian History, Physical & Indian Geography, and Macroeconomics through NCERT summaries.',
@@ -196,6 +199,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
   {
     id: 'banking_exams_quant_reasoning',
     sectorId: 'govt_exams',
+    country: 'IN',
     name: 'Banking Exams (SBI PO, IBPS PO, Clerk & RBI Assistant)',
     nameHi: 'बैंकिंग परीक्षा तैयारी (SBI PO, IBPS PO, क्लर्क व RBI असिस्टेंट)',
     shortDesc: 'Master high-speed banking exam sections: Data Interpretation (Tabular, Pie, Radar charts), Quadratic Equations, Approximation, and Banking Financial Awareness.',
@@ -260,6 +264,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
   {
     id: 'railway_rrb_exam_prep',
     sectorId: 'govt_exams',
+    country: 'IN',
     name: 'Railway Recruitment (RRB NTPC, Group D, ALP & Technician)',
     nameHi: 'रेलवे भर्ती परीक्षा (RRB NTPC, ग्रुप D, ALP व तकनीशियन)',
     shortDesc: 'Comprehensive preparation for Indian Railways exams: General Science (Physics, Chemistry, Biology), Railway GK, technical trade basics, and fast arithmetic.',
@@ -324,6 +329,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
   {
     id: 'defense_exams_nda_cds',
     sectorId: 'govt_exams',
+    country: 'IN',
     name: 'Defense Exams (NDA, CDS, AFCAT & SSB Interview Strategy)',
     nameHi: 'रक्षा परीक्षाएं (NDA, CDS, AFCAT व SSB इंटरव्यू ऑफिसर तैयारी)',
     shortDesc: 'Prepare to become a commissioned officer in the Indian Armed Forces (Army, Navy, Air Force): written exam syllabus, physical standards, and 5-day SSB interview psychology.',

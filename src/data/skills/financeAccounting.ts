@@ -70,6 +70,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
   {
     id: 'tally_prime_gst',
     sectorId: 'finance_accounting',
+    country: 'IN',
     name: 'Tally Prime with GST & e-Invoicing (Accounting & Taxation)',
     nameHi: 'टैली प्राइम GST के साथ (अकाउंटिंग, बिलिंग, e-वे बिल व बैंक समाधान)',
     shortDesc: 'Master India’s most widely used business accounting software: company creation, ledger vouchers, GST tax invoices, e-Way bills, bank reconciliation, and GSTR-1/3B summary reports.',
@@ -136,6 +137,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
   {
     id: 'income_tax_itr_filing',
     sectorId: 'finance_accounting',
+    country: 'IN',
     name: 'Income Tax Return (ITR-1 & ITR-4) Filing & Legal Tax Saving',
     nameHi: 'इनकम टैक्स रिटर्न (ITR-1 व ITR-4) फाइलिंग व टैक्स बचत के कानूनी तरीके',
     shortDesc: 'Learn how to file Income Tax Returns (ITR) online on the government portal: Form 16, AIS/TIS verification, Old vs New Tax Regime comparison, 80C/80D deductions, and tax consulting practice.',
