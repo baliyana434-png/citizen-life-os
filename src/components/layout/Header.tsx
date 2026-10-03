@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut } from 'lucide-react';
+import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut, GraduationCap } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { CitizenProfile, SupportedLanguage } from '@/types';
@@ -157,6 +157,16 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <PhoneCall className="w-3.5 h-3.5 text-red-700 shrink-0" />
               <span className="hidden md:inline">{language === 'hi' ? 'हेल्पलाइन' : 'Helpline'}</span>
+            </Link>
+
+            {/* Skills & Video Learning Navigation Link */}
+            <Link
+              href="/skills"
+              className="h-9 inline-flex items-center gap-1.5 px-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border border-emerald-300 font-bold text-xs transition-all shrink-0"
+              title={language === 'hi' ? 'कौशल सीखें (शीर्ष 3 यूट्यूब वीडियोज)' : 'Skills Hub (Top 3 YouTube Masterclasses)'}
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+              <span className="hidden md:inline">{language === 'hi' ? 'सीखें (Skills)' : 'Skills Hub'}</span>
             </Link>
 
             {/* Favourites / Saved Navigation Button */}

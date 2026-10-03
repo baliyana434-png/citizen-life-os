@@ -13,7 +13,12 @@ import {
   ExternalLink,
   ShieldCheck,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  GraduationCap,
+  Play,
+  X,
+  BookmarkCheck,
+  Award
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
@@ -23,12 +28,16 @@ import { LiveFeedService } from '@/services/liveFeedService';
 import { Opportunity } from '@/types';
 import { OpportunityCard } from '@/components/cards/OpportunityCard';
 import { DetailBottomSheet } from '@/components/drawers/DetailBottomSheet';
+import { SKILL_TOPICS, SkillTopic, SkillVideo } from '@/data/skillsData';
 
 export default function SavedPage() {
   const { language, setLanguage, t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'opportunities' | 'skills'>('opportunities');
+  const [savedSkillIds, setSavedSkillIds] = useState<Set<string>>(new Set<string>());
+  const [playingSkillVideo, setPlayingSkillVideo] = useState<SkillVideo | null>(null);
 
   // Combine initial catalog with live-synced crawler circulars
   const ALL_OPPORTUNITIES = useMemo(() => {
@@ -53,6 +62,10 @@ export default function SavedPage() {
       if (saved) {
         setFavoriteIds(new Set(JSON.parse(saved)));
       }
+      const savedSkillsStore = localStorage.getItem('citizen_saved_skills');
+      if (savedSkillsStore) {
+        setSavedSkillIds(new Set(JSON.parse(savedSkillsStore)));
+      }
       const savedProf = localStorage.getItem('citizen_profile');
       if (savedProf) {
         setProfile(JSON.parse(savedProf));
@@ -62,7 +75,7 @@ export default function SavedPage() {
     }
   }, []);
 
-  // Listen to storage and custom favorites_updated events
+  // Listen to storage and custom favorites_updated / skills_updated events
   useEffect(() => {
     const handleStorageUpdate = () => {
       try {
@@ -72,16 +85,26 @@ export default function SavedPage() {
         } else {
           setFavoriteIds(new Set());
         }
+
+        const savedSkillsStore = localStorage.getItem('citizen_saved_skills');
+        if (savedSkillsStore) {
+          setSavedSkillIds(new Set(JSON.parse(savedSkillsStore)));
+        } else {
+          setSavedSkillIds(new Set());
+        }
       } catch (e) {
         setFavoriteIds(new Set());
+        setSavedSkillIds(new Set());
       }
     };
 
     window.addEventListener('storage', handleStorageUpdate);
     window.addEventListener('favorites_updated', handleStorageUpdate);
+    window.addEventListener('skills_updated', handleStorageUpdate);
     return () => {
       window.removeEventListener('storage', handleStorageUpdate);
       window.removeEventListener('favorites_updated', handleStorageUpdate);
+      window.removeEventListener('skills_updated', handleStorageUpdate);
     };
   }, []);
 
@@ -104,6 +127,36 @@ export default function SavedPage() {
       return true;
     });
   }, [ALL_OPPORTUNITIES, favoriteIds, searchQuery]);
+
+  // Filter ONLY skills that have been saved by the citizen
+  const savedSkills = useMemo(() => {
+    return SKILL_TOPICS.filter((topic) => {
+      if (!savedSkillIds.has(topic.id)) return false;
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchName = topic.name.toLowerCase().includes(q) || topic.nameHi.includes(q);
+        const matchDesc = topic.shortDesc.toLowerCase().includes(q) || topic.shortDescHi.includes(q);
+        if (!matchName && !matchDesc) return false;
+      }
+
+      return true;
+    });
+  }, [savedSkillIds, searchQuery]);
+
+  const handleRemoveSkill = (topicId: string, topicName: string) => {
+    setSavedSkillIds((prev) => {
+      const next = new Set(prev);
+      next.delete(topicId);
+      try {
+        localStorage.setItem('citizen_saved_skills', JSON.stringify(Array.from(next)));
+        window.dispatchEvent(new Event('skills_updated'));
+      } catch (e) {}
+      return next;
+    });
+    setToastMessage(language === 'hi' ? `"${topicName}" हटाया गया` : `"${topicName}" removed from saved skills`);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Handle Unstar / Toggle Favorite
   const handleToggleFavorite = (oppId: string) => {
@@ -254,95 +307,289 @@ export default function SavedPage() {
           </div>
         )}
 
-        {/* Saved Items Control Bar (Search & Stats & Clear) */}
-        {favoriteIds.size > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
-            <div className="flex items-center gap-2">
-              <div className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-950 text-xs font-extrabold flex items-center gap-1.5">
-                <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                <span>
-                  {language === 'hi' 
-                    ? `${savedOpportunities.length} अवसर सुरक्षित हैं` 
-                    : `${savedOpportunities.length} Saved Opportunities`}
-                </span>
-              </div>
-              <span className="text-xs text-slate-500 hidden md:inline">
-                {language === 'hi'
-                  ? '• कार्ड पर स्टार दबाकर कभी भी सूची से हटा सकते हैं'
-                  : '• Click star icon on any card to remove from saved'}
-              </span>
-            </div>
+        {/* Saved Items Type Switch Tabs */}
+        <div className="flex items-center gap-2 p-1.5 bg-slate-200/80 rounded-2xl w-fit">
+          <button
+            onClick={() => setActiveTab('opportunities')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              activeTab === 'opportunities'
+                ? 'bg-white text-slate-900 shadow-sm font-extrabold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Star className={`w-3.5 h-3.5 ${activeTab === 'opportunities' ? 'fill-amber-500 text-amber-500' : ''}`} />
+            <span>{language === 'hi' ? 'अवसर व योजनाएं' : 'Opportunities & Schemes'}</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-700 text-[10px] font-black">
+              {savedOpportunities.length}
+            </span>
+          </button>
 
-            <div className="flex items-center gap-2">
-              {/* Search Inside Saved Items */}
-              <div className="relative flex-1 sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={language === 'hi' ? 'सुरक्षित अवसरों में खोजें...' : 'Search in saved...'}
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-slate-900 placeholder-slate-400 rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all"
-                />
-              </div>
+          <button
+            onClick={() => setActiveTab('skills')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              activeTab === 'skills'
+                ? 'bg-white text-slate-900 shadow-sm font-extrabold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <GraduationCap className={`w-3.5 h-3.5 ${activeTab === 'skills' ? 'text-emerald-600' : ''}`} />
+            <span>{language === 'hi' ? 'कौशल व वीडियो कोर्स' : 'Skills & Video Courses'}</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
+              {savedSkills.length}
+            </span>
+          </button>
+        </div>
 
-              {/* Clear All Button */}
-              <button
-                onClick={handleClearAll}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-700 text-xs font-bold border border-slate-200 hover:border-red-300 transition-all shrink-0"
-                title={language === 'hi' ? 'सभी सुरक्षित अवसर हटाएं' : 'Clear all saved'}
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{language === 'hi' ? 'सूची साफ करें' : 'Clear All'}</span>
-              </button>
-            </div>
-          </div>
+        {/* Tab 1: Saved Opportunities */}
+        {activeTab === 'opportunities' && (
+          <>
+            {/* Saved Items Control Bar (Search & Stats & Clear) */}
+            {favoriteIds.size > 0 && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <div className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-950 text-xs font-extrabold flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                    <span>
+                      {language === 'hi' 
+                        ? `${savedOpportunities.length} अवसर सुरक्षित हैं` 
+                        : `${savedOpportunities.length} Saved Opportunities`}
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-500 hidden md:inline">
+                    {language === 'hi'
+                      ? '• कार्ड पर स्टार दबाकर कभी भी सूची से हटा सकते हैं'
+                      : '• Click star icon on any card to remove from saved'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Search Inside Saved Items */}
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={language === 'hi' ? 'सुरक्षित अवसरों में खोजें...' : 'Search in saved...'}
+                      className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-slate-900 placeholder-slate-400 rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all"
+                    />
+                  </div>
+
+                  {/* Clear All Button */}
+                  <button
+                    onClick={handleClearAll}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-700 text-xs font-bold border border-slate-200 hover:border-red-300 transition-all shrink-0"
+                    title={language === 'hi' ? 'सभी सुरक्षित अवसर हटाएं' : 'Clear all saved'}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{language === 'hi' ? 'सूची साफ करें' : 'Clear All'}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Pure Saved Opportunities Grid */}
+            {savedOpportunities.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-3xl border border-amber-200/80 p-8 space-y-4 shadow-sm max-w-2xl mx-auto my-6">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-100 to-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center mx-auto shadow-inner">
+                  <Star className="w-8 h-8 fill-amber-400 text-amber-500" />
+                </div>
+                
+                <div className="space-y-1.5">
+                  <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                    {language === 'hi' ? 'कोई पसंदीदा फॉर्म या अवसर सुरक्षित नहीं है' : 'No Saved Opportunities Yet'}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                    {language === 'hi'
+                      ? 'आपने अभी तक कोई अवसर सेव नहीं किया है। मुख्य पृष्ठ पर किसी भी भर्ती, परीक्षा, इंटर्नशिप या सरकारी योजना के कार्ड पर स्टार आइकन दबाएं ताकि वह सीधे यहाँ सुरक्षित हो सके।'
+                      : 'You have not saved any opportunities yet. Click the star icon on any opportunity card on the homepage to save it here for fast access.'}
+                  </p>
+                </div>
+
+                <div className="pt-2">
+                  <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-black shadow-md shadow-emerald-700/20 transition-all"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>{language === 'hi' ? 'सभी अवसर देखें' : 'Browse All Opportunities'}</span>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                {savedOpportunities.map((opp) => (
+                  <OpportunityCard
+                    key={opp.id}
+                    opportunity={opp}
+                    onSelect={(opp) => setSelectedOpp(opp)}
+                    onShareWhatsApp={handleShareWhatsApp}
+                    citizenProfile={profile}
+                    isFavorite={true}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
-        {/* Pure Saved Opportunities Grid (NO CATEGORY BOXES, STRICTLY SAVED ONLY) */}
-        {savedOpportunities.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-amber-200/80 p-8 space-y-4 shadow-sm max-w-2xl mx-auto my-6">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-100 to-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center mx-auto shadow-inner">
-              <Star className="w-8 h-8 fill-amber-400 text-amber-500" />
-            </div>
-            
-            <div className="space-y-1.5">
-              <h2 className="text-lg sm:text-xl font-black text-slate-900">
-                {language === 'hi' ? 'कोई पसंदीदा फॉर्म या अवसर सुरक्षित नहीं है' : 'No Saved Opportunities Yet'}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                {language === 'hi'
-                  ? 'आपने अभी तक कोई अवसर सेव नहीं किया है। मुख्य पृष्ठ पर किसी भी भर्ती, परीक्षा, इंटर्नशिप या सरकारी योजना के कार्ड पर स्टार (⭐) आइकन दबाएं ताकि वह सीधे यहाँ सुरक्षित हो सके।'
-                  : 'You have not saved any opportunities yet. Click the star (⭐) icon on any opportunity card on the homepage to save it here for fast access.'}
-              </p>
-            </div>
+        {/* Tab 2: Saved Skills & Video Courses */}
+        {activeTab === 'skills' && (
+          <div className="space-y-4">
+            {savedSkills.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-3xl border border-emerald-200/80 p-8 space-y-4 shadow-sm max-w-2xl mx-auto my-6">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-100 to-teal-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-inner">
+                  <GraduationCap className="w-8 h-8" />
+                </div>
+                
+                <div className="space-y-1.5">
+                  <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                    {language === 'hi' ? 'कोई कौशल कोर्स सेव नहीं किया गया है' : 'No Saved Skills or Courses Yet'}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                    {language === 'hi'
+                      ? 'कौशल सीख केंद्र (Skills Hub) पर जाकर किसी भी कोडिंग, वीडियो एडिटिंग, सरकारी परीक्षा गणित, या वोकेशनल कोर्स को बाद में देखने के लिए सेव करें।'
+                      : 'Visit the Skills Hub and bookmark any coding, editing, speed maths, or vocational course to watch later here.'}
+                  </p>
+                </div>
 
-            <div className="pt-2">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-black shadow-md shadow-emerald-700/20 transition-all"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>{language === 'hi' ? 'सभी अवसर देखें और स्टार करें' : 'Browse All Opportunities'}</span>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {savedOpportunities.map((opp) => (
-              <OpportunityCard
-                key={opp.id}
-                opportunity={opp}
-                onSelect={(opp) => setSelectedOpp(opp)}
-                onShareWhatsApp={handleShareWhatsApp}
-                citizenProfile={profile}
-                isFavorite={true}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            ))}
+                <div className="pt-2">
+                  <Link
+                    href="/skills"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-black shadow-md shadow-emerald-700/20 transition-all cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>{language === 'hi' ? 'कौशल सीख केंद्र पर जाएं (Skills Hub)' : 'Explore Skills Hub'}</span>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {savedSkills.map((skill) => (
+                  <div
+                    key={skill.id}
+                    className="bg-white border border-slate-200 hover:border-emerald-300 rounded-3xl p-5 shadow-xs transition-all space-y-4 relative"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                            {skill.difficulty}
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-500">
+                            {skill.estTimeToLearn}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-extrabold text-slate-900">
+                          {language === 'hi' ? skill.nameHi : skill.name}
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                          {language === 'hi' ? skill.shortDescHi : skill.shortDesc}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => handleRemoveSkill(skill.id, language === 'hi' ? skill.nameHi : skill.name)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors shrink-0 cursor-pointer"
+                        title="Remove from saved"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Top 3 Videos Quick Access */}
+                    <div className="space-y-2 pt-1 border-t border-slate-100">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                        {language === 'hi' ? 'शीर्ष 3 यूट्यूब वीडियोज' : 'Top 3 YouTube Videos'}
+                      </span>
+                      <div className="space-y-2">
+                        {skill.videos.map((vid, idx) => (
+                          <div
+                            key={vid.id}
+                            className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-xs"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="w-5 h-5 rounded-md bg-slate-200 text-slate-700 font-bold text-[10px] flex items-center justify-center shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span className="font-semibold text-slate-800 truncate text-[11px]">
+                                {language === 'hi' ? vid.titleHi : vid.title}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <button
+                                onClick={() => setPlayingSkillVideo(vid)}
+                                className="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] flex items-center gap-1 cursor-pointer"
+                              >
+                                <Play className="w-3 h-3 fill-white" />
+                                <span>{language === 'hi' ? 'देखें' : 'Play'}</span>
+                              </button>
+                              <a
+                                href={`https://www.youtube.com/watch?v=${vid.youtubeId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1 rounded-lg hover:bg-slate-200 text-slate-500"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                      <span className="text-[11px] font-extrabold text-emerald-700">
+                        {skill.averageEarningMonthly}
+                      </span>
+                      <Link
+                        href="/skills"
+                        className="text-[11px] font-bold text-slate-600 hover:text-emerald-700 flex items-center gap-1"
+                      >
+                        <span>{language === 'hi' ? 'कौशल हब में खोलें' : 'Open in Skills Hub'}</span>
+                        <ArrowLeft className="w-3 h-3 rotate-180" />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>
+
+      {/* Video Player Modal for Saved Page */}
+      {playingSkillVideo && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+          <div className="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
+            <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between gap-3 text-white">
+              <div className="flex items-center gap-2 min-w-0">
+                <Play className="w-4 h-4 fill-emerald-400 text-emerald-400 shrink-0" />
+                <h4 className="text-xs sm:text-sm font-extrabold truncate">
+                  {language === 'hi' ? playingSkillVideo.titleHi : playingSkillVideo.title}
+                </h4>
+              </div>
+              <button
+                onClick={() => setPlayingSkillVideo(null)}
+                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${playingSkillVideo.youtubeId}?autoplay=1&rel=0`}
+                title={playingSkillVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3. Detail Bottom Sheet / Slide-over */}
       <DetailBottomSheet

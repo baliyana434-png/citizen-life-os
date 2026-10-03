@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LifeStageTabs } from '@/components/layout/LifeStageTabs';
@@ -30,6 +31,8 @@ import {
   Star,
   Award,
   Lock,
+  GraduationCap,
+  ArrowRight,
 } from 'lucide-react';
 
 const DEFAULT_PROFILE: CitizenProfile = {
@@ -777,6 +780,37 @@ export default function HomePage() {
             </button>
           </div>
         )}
+
+        {/* 1B. Skills & Video Learning Hub Highlight Banner */}
+        <div className="bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 text-white rounded-2xl px-4 py-3 border border-emerald-500/30 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40">
+              <GraduationCap className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-white text-xs sm:text-sm">
+                  {language === 'hi' ? 'कौशल सीख केंद्र: टॉप 3 यूट्यूब वीडियोज से सीखें' : 'Skills Learning Hub: Learn from Top 3 YouTube Masterclasses'}
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  New Hub
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                {language === 'hi' 
+                  ? 'कोडिंग, सरकारी परीक्षा गणित, वीडियो एडिटिंग, टैली GST, सोलर व EV रिपेयरिंग के 100% फ्री वीडियोज व सर्टिफिकेट'
+                  : 'Free curated tutorials & roadmaps for Coding, Govt Maths, Video Editing, Tally, Solar & EV repairs'}
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/skills"
+            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+          >
+            <span>{language === 'hi' ? 'सीखना शुरू करें' : 'Explore Skills'}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
 
         {/* 2. Official Feed Synchronization Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-slate-900/95 text-white rounded-2xl border border-slate-800 shadow-md text-xs">
