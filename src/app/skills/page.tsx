@@ -26,16 +26,18 @@ import {
   Camera,
   Layers,
   ChevronRight,
-  Filter
+  Filter,
+  Flame
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { SKILL_SECTORS, SKILL_TOPICS, SkillSector, SkillTopic, SkillVideo } from '@/data/skillsData';
 
 export default function SkillsPage() {
   const { language } = useTranslation();
-  const [selectedSector, setSelectedSector] = useState<string>('foreign_languages');
+  const [selectedSector, setSelectedSector] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [levelFilter, setLevelFilter] = useState<'all' | 'Beginner' | 'Intermediate' | 'Advanced'>('all');
+  const [onlyHighDemand, setOnlyHighDemand] = useState<boolean>(false);
   
   // Selected topic for detailed video view
   const [activeTopicId, setActiveTopicId] = useState<string>('german_language');
@@ -140,11 +142,16 @@ export default function SkillsPage() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Filter topics based on sector, search, and level
+  // Filter topics based on sector, search, level, and high demand
   const filteredTopics = useMemo(() => {
     return SKILL_TOPICS.filter((t) => {
       if (selectedSector !== 'all' && t.sectorId !== selectedSector) return false;
       
+      // If user filters by high demand only
+      if (onlyHighDemand && t.demandLevel !== 'very_high' && t.demandLevel !== 'trending') {
+        return false;
+      }
+
       // If user filters by a specific level, ensure the topic contains that level video
       if (levelFilter !== 'all') {
         const hasLevelVideo = t.videos.some((v) => v.level === levelFilter);
@@ -155,16 +162,17 @@ export default function SkillsPage() {
         const q = searchQuery.toLowerCase();
         const matchName = t.name.toLowerCase().includes(q) || t.nameHi.includes(q);
         const matchDesc = t.shortDesc.toLowerCase().includes(q) || t.shortDescHi.includes(q);
+        const matchBadge = (t.demandBadge && t.demandBadge.toLowerCase().includes(q)) || (t.demandBadgeHi && t.demandBadgeHi.includes(q));
         const matchVideos = t.videos.some((v) => 
           v.title.toLowerCase().includes(q) || 
           v.titleHi.toLowerCase().includes(q) || 
           v.channelName.toLowerCase().includes(q)
         );
-        if (!matchName && !matchDesc && !matchVideos) return false;
+        if (!matchName && !matchDesc && !matchBadge && !matchVideos) return false;
       }
       return true;
     });
-  }, [selectedSector, searchQuery, levelFilter]);
+  }, [selectedSector, searchQuery, levelFilter, onlyHighDemand]);
 
   // Active topic object
   const activeTopic = useMemo(() => {
@@ -333,6 +341,20 @@ export default function SkillsPage() {
                 </button>
               ))}
             </div>
+
+            {/* High Demand Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setOnlyHighDemand(!onlyHighDemand)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shrink-0 border ${
+                onlyHighDemand
+                  ? 'bg-rose-600 text-white border-rose-500 shadow-md ring-2 ring-rose-400/30'
+                  : 'bg-slate-950/90 text-rose-300 hover:text-white border-slate-700 hover:bg-slate-800'
+              }`}
+            >
+              <Flame className={`w-3.5 h-3.5 ${onlyHighDemand ? 'fill-white text-white' : 'fill-rose-500 text-rose-500'}`} />
+              <span>{language === 'hi' ? 'भारी मांग (High Demand)' : 'High Demand'}</span>
+            </button>
           </div>
         </div>
       </section>
@@ -444,6 +466,21 @@ export default function SkillsPage() {
                           <p className="text-[11px] text-slate-500 line-clamp-1 leading-snug">
                             {language === 'hi' ? topic.shortDescHi : topic.shortDesc}
                           </p>
+
+                          {topic.demandBadge && (
+                            <div className="pt-1 flex items-center gap-1">
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black border ${
+                                topic.demandLevel === 'very_high'
+                                  ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                  : topic.demandLevel === 'trending'
+                                    ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                              }`}>
+                                <Flame className="w-2.5 h-2.5 fill-current" />
+                                <span>{language === 'hi' ? topic.demandBadgeHi || topic.demandBadge : topic.demandBadge}</span>
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         {hasSavedVideosInTopic && (
@@ -476,16 +513,28 @@ export default function SkillsPage() {
               {/* Topic Header Card (Clean White) */}
               <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-xs space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-black border border-emerald-200">
                       {activeTopic.difficulty}
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-mono font-bold">
                       {activeTopic.estTimeToLearn}
                     </span>
+                    {activeTopic.demandBadge && (
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black border ${
+                        activeTopic.demandLevel === 'very_high'
+                          ? 'bg-rose-100 text-rose-800 border-rose-200'
+                          : activeTopic.demandLevel === 'trending'
+                            ? 'bg-amber-100 text-amber-900 border-amber-200'
+                            : 'bg-emerald-100 text-emerald-900 border-emerald-200'
+                      }`}>
+                        <Flame className="w-3 h-3 fill-current" />
+                        <span>{language === 'hi' ? activeTopic.demandBadgeHi || activeTopic.demandBadge : activeTopic.demandBadge}</span>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="text-[11px] font-extrabold text-emerald-700">
+                  <div className="text-[11px] sm:text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
                     {activeTopic.averageEarningMonthly}
                   </div>
                 </div>
@@ -497,6 +546,12 @@ export default function SkillsPage() {
                   <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
                     {language === 'hi' ? activeTopic.shortDescHi : activeTopic.shortDesc}
                   </p>
+                  {activeTopic.hiringScope && (
+                    <div className="mt-2 text-[11px] text-slate-600 font-semibold flex items-center gap-1.5 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>{language === 'hi' ? `हायरिंग व स्कोप: ${activeTopic.hiringScope}` : `Hiring & Scope: ${activeTopic.hiringScope}`}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Free Official Certificate Link */}
