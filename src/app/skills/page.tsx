@@ -43,6 +43,8 @@ export default function SkillsPage() {
   
   // Selected topic for detailed video view
   const [activeTopicId, setActiveTopicId] = useState<string>('german_language');
+  const [isMobileDetailOpen, setIsMobileDetailOpen] = useState<boolean>(false);
+  const [activeVideoLevel, setActiveVideoLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Beginner');
   
   // Active playing video modal
   const [playingVideo, setPlayingVideo] = useState<SkillVideo | null>(null);
@@ -288,27 +290,27 @@ export default function SkillsPage() {
       </header>
 
       {/* 2. Hero Section (Matching Home Page Dark Slate Card) */}
-      <section className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-7 border border-slate-800 shadow-xl relative overflow-hidden space-y-4 sm:space-y-5">
+      <section className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6">
+        <div className="bg-slate-900 text-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 border border-slate-800 shadow-xl relative overflow-hidden space-y-3 sm:space-y-5">
           <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 max-w-3xl space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-700/60 text-[11px] font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
+          <div className="relative z-10 max-w-3xl space-y-1.5 sm:space-y-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-700/60 text-[10px] sm:text-[11px] font-bold">
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>{language === 'hi' ? 'युवाओं व सभी नागरिकों हेतु उपयोगी हुनर' : 'High-Income Practical Skills for Youth & Adults'}</span>
               </span>
-              <span className="text-[11px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+              <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
                 Level-wise Verified
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug">
+            <h1 className="text-base sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug">
               {language === 'hi'
                 ? 'कौन सा हुनर सीखना है? टॉप 3 वीडियोज से आज ही शुरू करें'
                 : 'Learn Any In-Demand Skill with Top 3 Handpicked Videos'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl hidden sm:block">
               {language === 'hi'
                 ? 'विदेशी भाषाएं (जर्मन/जापानी), वीडियो एडिटिंग, फोटोग्राफी, कोडिंग, व सरकारी नौकरी गणित सीखें। हर विषय पर स्तर अनुसार (Beginner, Intermediate, Advanced) वीडियोज उपलब्ध हैं।'
                 : 'Master German, Japanese, Video Editing, Photography, Coding & Aptitude with verified YouTube masterclasses categorized accurately by difficulty level.'}
@@ -470,7 +472,11 @@ export default function SkillsPage() {
                   return (
                     <div
                       key={topic.id}
-                      onClick={() => setActiveTopicId(topic.id)}
+                      onClick={() => {
+                        setActiveTopicId(topic.id);
+                        setActiveVideoLevel('Beginner');
+                        setIsMobileDetailOpen(true);
+                      }}
                       className={`p-3 rounded-2xl border transition-all cursor-pointer relative ${
                         isActive
                           ? 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-500/20 shadow-xs'
@@ -518,8 +524,9 @@ export default function SkillsPage() {
                         <span className="text-slate-500">
                           {topic.difficulty}
                         </span>
-                        <span className="ml-auto font-bold text-emerald-700">
-                          3 Videos
+                        <span className="ml-auto font-bold text-emerald-700 flex items-center gap-0.5">
+                          <span>3 Videos</span>
+                          <ChevronRight className="w-3 h-3" />
                         </span>
                       </div>
                     </div>
@@ -528,8 +535,8 @@ export default function SkillsPage() {
               </div>
             </div>
 
-            {/* Right Column: Active Topic Details & Top 3 Verified Videos (8 Cols on Desktop) */}
-            <div className="lg:col-span-8 space-y-4">
+            {/* Right Column: Active Topic Details & Top 3 Verified Videos (Desktop Only) */}
+            <div className="hidden lg:block lg:col-span-8 space-y-4">
               
               {/* Topic Header Card (Clean White) */}
               <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-xs space-y-3">
@@ -768,6 +775,219 @@ export default function SkillsPage() {
           </div>
         )}
       </main>
+
+      {/* 4B. Dedicated Mobile Masterclass View (Instant Video in 1st View - Zero Scrolling) */}
+      {isMobileDetailOpen && activeTopic && (
+        <div className="fixed inset-0 z-50 bg-slate-50 flex flex-col lg:hidden overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-200">
+          
+          {/* Sticky Top Bar with Back Button */}
+          <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 py-2.5 flex items-center justify-between gap-2 shadow-xs">
+            <button
+              type="button"
+              onClick={() => setIsMobileDetailOpen(false)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold transition-all cursor-pointer shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4 text-slate-700" />
+              <span>{language === 'hi' ? 'वापस हुनर सूची' : 'Back to Skills'}</span>
+            </button>
+
+            <div className="min-w-0 text-center flex-1 px-1">
+              <h3 className="text-xs font-black text-slate-900 truncate">
+                {language === 'hi' ? activeTopic.nameHi : activeTopic.name}
+              </h3>
+              <span className="text-[10px] text-emerald-700 font-bold block truncate">
+                {activeTopic.averageEarningMonthly}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsMobileDetailOpen(false)}
+              className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Mobile Masterclass Content - 1ST VIEW STARTS HERE */}
+          <div className="p-3 sm:p-4 space-y-3.5 pb-16">
+            
+            {/* 1. Level Selector Pills (Beginner, Intermediate, Advanced) */}
+            <div className="bg-white p-2.5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-bold px-1">
+                <span className="text-slate-500 uppercase tracking-wider text-[10px]">
+                  {language === 'hi' ? 'सीखने का स्तर चुनें:' : 'Select Difficulty Level:'}
+                </span>
+                <span className="text-emerald-700 font-mono text-[10px]">
+                  {activeTopic.estTimeToLearn}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-1.5">
+                {(['Beginner', 'Intermediate', 'Advanced'] as const).map((lvl) => {
+                  const isLevelActive = activeVideoLevel === lvl;
+                  return (
+                    <button
+                      key={lvl}
+                      type="button"
+                      onClick={() => setActiveVideoLevel(lvl)}
+                      className={`py-2 px-1 rounded-xl text-xs font-bold transition-all cursor-pointer text-center ${
+                        isLevelActive
+                          ? 'bg-slate-900 text-white font-black shadow-xs'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      <span className="block leading-tight">{lvl}</span>
+                      <span className="text-[9px] opacity-75 font-normal">
+                        {lvl === 'Beginner' ? (language === 'hi' ? 'शुरुआती' : 'Basics') : (lvl === 'Intermediate' ? (language === 'hi' ? 'मध्यम' : 'Mid') : (language === 'hi' ? 'उन्नत' : 'Pro'))}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 2. Embedded Video Player for the Active Level (IN 1ST VIEW) */}
+            {(() => {
+              const currentVideo = activeTopic.videos.find((v) => v.level === activeVideoLevel) || activeTopic.videos[0];
+              if (!currentVideo) return null;
+              const isVideoSaved = savedVideoIds.has(currentVideo.id);
+
+              return (
+                <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm space-y-3 p-3">
+                  
+                  {/* 16:9 Video Embed */}
+                  <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-xs">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${currentVideo.youtubeId}?rel=0`}
+                      title={currentVideo.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  </div>
+
+                  {/* Video Details & Actions */}
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
+                          {currentVideo.level} Masterclass
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 mt-1 leading-snug">
+                          {language === 'hi' ? currentVideo.titleHi : currentVideo.title}
+                        </h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5">
+                          {currentVideo.channelName} • {currentVideo.duration} • {currentVideo.language}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => toggleSaveVideo(currentVideo, activeTopic)}
+                          className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                            isVideoSaved
+                              ? 'bg-amber-100 border-amber-300 text-amber-700'
+                              : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-600'
+                          }`}
+                          title="Save video"
+                        >
+                          <Star className={`w-4 h-4 ${isVideoSaved ? 'fill-amber-500 text-amber-500' : ''}`} />
+                        </button>
+                        <a
+                          href={`https://www.youtube.com/watch?v=${currentVideo.youtubeId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600"
+                          title="YouTube"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Key Takeaways */}
+                    {currentVideo.keyTakeaways && currentVideo.keyTakeaways.length > 0 && (
+                      <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100 text-[11px] text-slate-700 space-y-1">
+                        <span className="font-bold text-slate-800 block text-[10px] uppercase">
+                          {language === 'hi' ? 'इस वीडियो में क्या सीखेंगे:' : 'Key Learnings:'}
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {currentVideo.keyTakeaways.map((pt, i) => (
+                            <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px]">
+                              <span className="w-1 h-1 rounded-full bg-emerald-500" />
+                              <span>{pt}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              );
+            })()}
+
+            {/* 3. Official Certificate Link */}
+            {activeTopic.govtCertificateUrl && (
+              <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs shadow-2xs">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Award className="w-5 h-5 text-emerald-700 shrink-0" />
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase text-emerald-900 tracking-wider block">
+                      {language === 'hi' ? 'आधिकारिक फ्री सर्टिफिकेट' : 'Official Free Certificate'}
+                    </span>
+                    <p className="font-extrabold text-slate-900 truncate text-xs">
+                      {activeTopic.govtCertificateTitle}
+                    </p>
+                  </div>
+                </div>
+
+                <a
+                  href={activeTopic.govtCertificateUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center gap-1 shrink-0 shadow-xs"
+                >
+                  <span>{language === 'hi' ? 'प्राप्त करें' : 'Get Cert'}</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            )}
+
+            {/* 4. 3-Step Action Roadmap */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-2.5">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-emerald-600" />
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-tight">
+                  {language === 'hi' ? '3-चरणीय रोडमैप' : '3-Step Action Roadmap'}
+                </h4>
+              </div>
+
+              <div className="space-y-2">
+                {activeTopic.careerRoadmapSteps.map((step) => (
+                  <div key={step.stepNumber} className="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                      {step.stepNumber}
+                    </div>
+                    <div className="min-w-0">
+                      <h5 className="text-xs font-bold text-slate-900">
+                        {language === 'hi' ? step.titleHi : step.title}
+                      </h5>
+                      <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                        {language === 'hi' ? step.descHi : step.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       {/* 5. In-Built Video Player Modal (Distraction-Free) */}
       {playingVideo && (
