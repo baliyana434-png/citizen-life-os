@@ -4,9 +4,13 @@ import path from 'path';
 import crypto from 'crypto';
 import { CountryCode, CitizenSubscription } from '@/types';
 
-const CITIZENS_FILE = path.join(process.cwd(), 'src', 'data', 'citizens_store.json');
-const FAVORITES_FILE = path.join(process.cwd(), 'src', 'data', 'favorites_store.json');
-const FAMILY_FILE = path.join(process.cwd(), 'src', 'data', 'family_store.json');
+const CITIZENS_FILE = 'citizens_store.json';
+const FAVORITES_FILE = 'favorites_store.json';
+const FAMILY_FILE = 'family_store.json';
+
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const defaultDataDir = path.join(process.cwd(), 'src', 'data');
+const serverlessDataDir = '/tmp';
 
 // MongoDB Connection Caching for Serverless Next.js
 declare global {
@@ -45,24 +49,45 @@ async function getMongoDb(): Promise<Db | null> {
   }
 }
 
+function getStoragePaths(fileName: string): { readPath: string; writePath: string } {
+  if (isServerless) {
+    return {
+      readPath: path.join(serverlessDataDir, fileName),
+      writePath: path.join(serverlessDataDir, fileName),
+    };
+  }
+  const local = path.join(defaultDataDir, fileName);
+  return { readPath: local, writePath: local };
+}
+
 // Local File System Helper Fallbacks
-async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
+async function readJsonFile<T>(fileName: string, fallback: T): Promise<T> {
+  const { readPath } = getStoragePaths(fileName);
   try {
-    const raw = await fs.readFile(filePath, 'utf-8');
+    const raw = await fs.readFile(readPath, 'utf-8');
     return JSON.parse(raw);
   } catch (err) {
-    try {
-      await fs.writeFile(filePath, JSON.stringify(fallback, null, 2), 'utf-8');
-    } catch {}
+    if (isServerless) {
+      try {
+        const bundlePath = path.join(defaultDataDir, fileName);
+        const rawBundle = await fs.readFile(bundlePath, 'utf-8');
+        const parsed = JSON.parse(rawBundle);
+        try {
+          await fs.writeFile(readPath, rawBundle, 'utf-8');
+        } catch {}
+        return parsed;
+      } catch {}
+    }
     return fallback;
   }
 }
 
-async function writeJsonFile(filePath: string, data: any): Promise<void> {
+async function writeJsonFile(fileName: string, data: any): Promise<void> {
+  const { writePath } = getStoragePaths(fileName);
   try {
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    await fs.writeFile(writePath, JSON.stringify(data, null, 2), 'utf-8');
   } catch (err) {
-    console.error(`Failed to write local file ${filePath}:`, err);
+    console.warn(`Local store file write note (${writePath}):`, err);
   }
 }
 

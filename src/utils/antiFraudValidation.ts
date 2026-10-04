@@ -733,6 +733,19 @@ export function validateRealPassword(
     }
   }
 
+  // Reject password containing user full name or first name
+  if (name && name.trim().length >= 3) {
+    const firstName = name.trim().split(/\s+/)[0].toLowerCase();
+    if (firstName.length >= 3 && password.toLowerCase().includes(firstName)) {
+      return {
+        valid: false,
+        error: lang === 'hi'
+          ? 'सुरक्षा कारणों से पासवर्ड में आपका नाम नहीं होना चाहिए।'
+          : 'For security, password should not contain your name.',
+      };
+    }
+  }
+
   // Complexity rules: Uppercase, Lowercase, Number, Special symbol
   const hasUpper = /[A-Z]/.test(password);
   const hasLower = /[a-z]/.test(password);
