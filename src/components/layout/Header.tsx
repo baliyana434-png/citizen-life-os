@@ -150,13 +150,14 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Helpline Navigation Link - Hidden on mobile */}
+            {/* Helpline Navigation Link */}
             <Link
               href="/helpline"
-              className="hidden sm:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold border border-red-200 transition-all shrink-0"
+              className="h-8 w-8 sm:h-9 sm:w-auto inline-flex items-center justify-center sm:px-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-900 text-xs font-bold border border-red-200 transition-all shrink-0"
+              title={language === 'hi' ? '24x7 हेल्पलाइन' : '24x7 Helplines'}
             >
               <PhoneCall className="w-3.5 h-3.5 text-red-700 shrink-0" />
-              <span className="hidden md:inline">{language === 'hi' ? 'हेल्पलाइन' : 'Helpline'}</span>
+              <span className="hidden md:inline ml-1.5">{language === 'hi' ? 'हेल्पलाइन' : 'Helpline'}</span>
             </Link>
 
             {/* Skills & Video Learning Navigation Link */}
@@ -183,15 +184,6 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               )}
             </Link>
-
-            {/* Country Flag & Alpha-3 Code Badge */}
-            <div 
-              className="h-8 sm:h-9 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/70 border border-slate-200 text-xs font-bold text-slate-800 shadow-2xs cursor-default shrink-0"
-              title={`${countryMeta.name} (${countryMeta.alpha3 || country})`}
-            >
-              <span className="text-xs sm:text-sm shrink-0">{countryMeta.flag}</span>
-              <span className="text-[10px] sm:text-[11px] font-mono font-black text-slate-900">{countryMeta.alpha3 || country}</span>
-            </div>
 
             {/* Single Profile / Auth Button */}
             {!profile.isAadhaarVerified ? (
