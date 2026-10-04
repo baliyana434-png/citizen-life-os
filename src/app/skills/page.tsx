@@ -27,11 +27,14 @@ import {
   Layers,
   ChevronRight,
   Filter,
-  Flame
+  Flame,
+  Lock
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { SKILL_SECTORS, SKILL_TOPICS, SkillSector, SkillTopic, SkillVideo } from '@/data/skillsData';
+import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
+import { CitizenProfile, CitizenSubscription } from '@/types';
 
 export default function SkillsPage() {
   const { language } = useTranslation();
@@ -41,6 +44,11 @@ export default function SkillsPage() {
   const [levelFilter, setLevelFilter] = useState<'all' | 'Beginner' | 'Intermediate' | 'Advanced'>('all');
   const [onlyHighDemand, setOnlyHighDemand] = useState<boolean>(false);
   
+  // Citizen Profile & 1-Year Pass Subscription State
+  const [profile, setProfile] = useState<CitizenProfile | null>(null);
+  const [isSubscriptionOpen, setIsSubscriptionOpen] = useState<boolean>(false);
+  const isSubscribed = profile?.subscription?.status === 'active';
+
   // Selected topic for detailed video view
   const [activeTopicId, setActiveTopicId] = useState<string>('german_language');
   const [isMobileDetailOpen, setIsMobileDetailOpen] = useState<boolean>(false);
@@ -52,6 +60,100 @@ export default function SkillsPage() {
   const [savedVideoIds, setSavedVideoIds] = useState<Set<string>>(new Set());
   const [savedTopicIds, setSavedTopicIds] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Hydrate citizen profile from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('citizen_profile');
+      if (stored) {
+        setProfile(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.warn('Failed to load profile in skills:', e);
+    }
+  }, []);
+
+  // Listen to profile updates
+  useEffect(() => {
+    const handleProfileSync = () => {
+      try {
+        const stored = localStorage.getItem('citizen_profile');
+        if (stored) {
+          setProfile(JSON.parse(stored));
+        }
+      } catch (e) {}
+    };
+    window.addEventListener('storage', handleProfileSync);
+    return () => {
+      window.removeEventListener('storage', handleProfileSync);
+    };
+  }, []);
+
+  // Handle Video Watch Permission
+  const handleWatchVideo = (video: SkillVideo) => {
+    if (!isSubscribed) {
+      showToast(
+        language === 'hi'
+          ? 'मास्टरक्लास देखने हेतु 1-वर्षीय नागरिक पास (केवल ₹19) आवश्यक है।'
+          : '1-Year Citizen Pass (only ₹19) is required to watch masterclasses.'
+      );
+      setIsSubscriptionOpen(true);
+      return;
+    }
+    setPlayingVideo(video);
+  };
+
+  // Handle Generic Feature Subscription Requirement
+  const handleRequireSubscription = () => {
+    showToast(
+      language === 'hi'
+        ? 'इस सुविधा का उपयोग करने हेतु 1-वर्षीय नागरिक पास (केवल ₹19) आवश्यक है।'
+        : '1-Year Citizen Pass (only ₹19) is required to access this feature.'
+    );
+    setIsSubscriptionOpen(true);
+  };
+
+  // Handle Subscription Success
+  const handleSubscriptionSuccess = (sub: CitizenSubscription) => {
+    setIsSubscriptionOpen(false);
+    const fallbackProfile: CitizenProfile = {
+      id: 'cit-' + Date.now(),
+      fullName: 'Citizen',
+      phoneNumber: '',
+      age: 21,
+      gender: 'male',
+      state: 'Delhi',
+      district: 'New Delhi',
+      pincode: '110001',
+      lifePhase: 'exam_aspirant',
+      casteCategory: 'General',
+      familyIncomeAnnual: 250000,
+      educationLevel: 'graduate',
+      country: country || 'IN',
+      isAadhaarVerified: true,
+      isOnboarded: true,
+      activeGoal: 'Master High-Income Skills',
+      notificationsEnabled: {
+        webPush: false,
+        whatsApp: false,
+        urgentDeadlinesOnly: false,
+      },
+    };
+    const updatedProfile: CitizenProfile = {
+      ...(profile || fallbackProfile),
+      subscription: sub,
+    };
+    try {
+      localStorage.setItem('citizen_profile', JSON.stringify(updatedProfile));
+      window.dispatchEvent(new Event('storage'));
+    } catch (e) {}
+    setProfile(updatedProfile);
+    showToast(
+      language === 'hi'
+        ? 'बधाई हो! आपका 1-वर्षीय नागरिक पास सक्रिय हो गया है। सभी वीडियोज अनलॉक हो गए हैं!'
+        : 'Congratulations! Your 1-Year Citizen Pass is active. All masterclasses unlocked!'
+    );
+  };
 
   // Hydrate saved bookmarks from localStorage
   useEffect(() => {
@@ -421,6 +523,37 @@ export default function SkillsPage() {
         </div>
       </section>
 
+      {/* Non-Subscribed Citizen Pass Alert Banner */}
+      {!isSubscribed && (
+        <section className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-2 pb-1">
+          <div className="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-teal-500/10 border border-amber-300/80 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center shrink-0 border border-amber-300">
+                <Lock className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-black text-slate-900">
+                  {language === 'hi' ? '1-वर्षीय नागरिक पास (केवल ₹19) • सभी 138+ वीडियो अनलॉक करें' : '1-Year Citizen Pass (Only ₹19) • Unlock 138+ Masterclasses'}
+                </h3>
+                <p className="text-[11px] text-slate-600 truncate mt-0.5">
+                  {language === 'hi'
+                    ? 'जर्मन, जापानी, वीडियो एडिटिंग, कोडिंग व सरकारी परीक्षा के सभी प्रीमियम वीडियोज एवं सर्टिफिकेट्स देखने हेतु पास सक्रिय करें।'
+                    : 'Activate pass to stream all verified YouTube masterclasses and access government certificates.'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsSubscriptionOpen(true)}
+              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-all cursor-pointer shadow-md active:scale-95"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-300" />
+              <span>{language === 'hi' ? 'पास केवल ₹19 में लें' : 'Get Pass for ₹19'}</span>
+            </button>
+          </div>
+        </section>
+      )}
+
       {/* 4. Main Two-Column Workspace (Clean White / Light Slate Theme) */}
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 py-4 flex-1">
         {filteredTopics.length === 0 ? (
@@ -589,15 +722,26 @@ export default function SkillsPage() {
                         {activeTopic.govtCertificateTitle}
                       </span>
                     </div>
-                    <a
-                      href={activeTopic.govtCertificateUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center gap-1 transition-colors shrink-0"
-                    >
-                      <span>{language === 'hi' ? 'सर्टिफिकेट लिंक' : 'Open Link'}</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                    {isSubscribed ? (
+                      <a
+                        href={activeTopic.govtCertificateUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center gap-1 transition-colors shrink-0"
+                      >
+                        <span>{language === 'hi' ? 'सर्टिफिकेट लिंक' : 'Open Link'}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleRequireSubscription}
+                        className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold flex items-center gap-1 transition-colors shrink-0 cursor-pointer"
+                      >
+                        <Lock className="w-3 h-3 text-amber-600" />
+                        <span>{language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)'}</span>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -653,6 +797,12 @@ export default function SkillsPage() {
                                 <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
                                   {video.language}
                                 </span>
+                                {!isSubscribed && (
+                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-bold">
+                                    <Lock className="w-2.5 h-2.5 text-amber-600" />
+                                    <span>{language === 'hi' ? 'पास आवश्यक' : 'Pass Required'}</span>
+                                  </span>
+                                )}
                               </div>
 
                               <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug group-hover:text-emerald-700 transition-colors">
@@ -676,11 +826,23 @@ export default function SkillsPage() {
                             {/* Watch Video Button */}
                             <button
                               type="button"
-                              onClick={() => setPlayingVideo(video)}
-                              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                              onClick={() => handleWatchVideo(video)}
+                              className={`px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 ${
+                                isSubscribed
+                                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                                  : 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white border border-emerald-400/40'
+                              }`}
                             >
-                              <Play className="w-3.5 h-3.5 fill-white" />
-                              <span>{language === 'hi' ? 'यहीं देखें' : 'Watch Here'}</span>
+                              {isSubscribed ? (
+                                <Play className="w-3.5 h-3.5 fill-white" />
+                              ) : (
+                                <Lock className="w-3.5 h-3.5 text-amber-300" />
+                              )}
+                              <span>
+                                {isSubscribed
+                                  ? (language === 'hi' ? 'यहीं देखें' : 'Watch Here')
+                                  : (language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)')}
+                              </span>
                             </button>
 
                             {/* Particular Video Bookmark Button */}
@@ -698,15 +860,26 @@ export default function SkillsPage() {
                             </button>
 
                             {/* Direct YouTube Link */}
-                            <a
-                              href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
-                              title="Open on YouTube App"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </a>
+                            {isSubscribed ? (
+                              <a
+                                href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
+                                title="Open on YouTube App"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </a>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleWatchVideo(video)}
+                                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
+                                title={language === 'hi' ? 'अनलॉक करें' : 'Unlock to watch'}
+                              >
+                                <Lock className="w-3.5 h-3.5 text-amber-600" />
+                              </button>
+                            )}
                           </div>
                         </div>
 
@@ -882,6 +1055,12 @@ export default function SkillsPage() {
                               <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
                                 {video.language}
                               </span>
+                              {!isSubscribed && (
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-amber-50 border border-amber-300 text-amber-900 text-[9px] font-bold">
+                                  <Lock className="w-2.5 h-2.5 text-amber-600" />
+                                  <span>{language === 'hi' ? 'पास आवश्यक' : 'Pass Required'}</span>
+                                </span>
+                              )}
                             </div>
 
                             <h5 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
@@ -913,23 +1092,47 @@ export default function SkillsPage() {
                       <div className="flex items-center gap-2 pt-1">
                         <button
                           type="button"
-                          onClick={() => setPlayingVideo(video)}
-                          className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                          onClick={() => handleWatchVideo(video)}
+                          className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 ${
+                            isSubscribed
+                              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                              : 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white border border-emerald-400/40'
+                          }`}
                         >
-                          <Play className="w-3.5 h-3.5 fill-white" />
-                          <span>{language === 'hi' ? 'यहीं देखें' : 'Watch Here'}</span>
+                          {isSubscribed ? (
+                            <Play className="w-3.5 h-3.5 fill-white" />
+                          ) : (
+                            <Lock className="w-3.5 h-3.5 text-amber-300" />
+                          )}
+                          <span>
+                            {isSubscribed
+                              ? (language === 'hi' ? 'यहीं देखें' : 'Watch Here')
+                              : (language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)')}
+                          </span>
                         </button>
 
-                        <a
-                          href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                          title="YouTube पर खोलें"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5 text-red-600" />
-                          <span>YouTube</span>
-                        </a>
+                        {isSubscribed ? (
+                          <a
+                            href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                            title="YouTube पर खोलें"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 text-red-600" />
+                            <span>YouTube</span>
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleWatchVideo(video)}
+                            className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                            title={language === 'hi' ? 'अनलॉक करें' : 'Unlock to watch'}
+                          >
+                            <Lock className="w-3.5 h-3.5 text-amber-600" />
+                            <span>YouTube</span>
+                          </button>
+                        )}
                       </div>
 
                       {/* Key Takeaways */}
@@ -969,15 +1172,26 @@ export default function SkillsPage() {
                   </div>
                 </div>
 
-                <a
-                  href={activeTopic.govtCertificateUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center gap-1 shrink-0 shadow-xs"
-                >
-                  <span>{language === 'hi' ? 'प्राप्त करें' : 'Get Cert'}</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                {isSubscribed ? (
+                  <a
+                    href={activeTopic.govtCertificateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center gap-1 shrink-0 shadow-xs"
+                  >
+                    <span>{language === 'hi' ? 'प्राप्त करें' : 'Get Cert'}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleRequireSubscription}
+                    className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-xs flex items-center gap-1 shrink-0 shadow-xs cursor-pointer"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)'}</span>
+                  </button>
+                )}
               </div>
             )}
 
@@ -1113,6 +1327,15 @@ export default function SkillsPage() {
           </div>
         </div>
       )}
+
+      {/* 6. Subscription Modal (1-Year National Citizen Access Pass ₹19) */}
+      <SubscriptionModal
+        isOpen={isSubscriptionOpen}
+        onClose={() => setIsSubscriptionOpen(false)}
+        citizenName={profile?.fullName || (language === 'hi' ? 'नागरिक' : 'Citizen')}
+        citizenId={profile?.id || 'cit-guest'}
+        onSubscriptionSuccess={handleSubscriptionSuccess}
+      />
 
     </div>
   );

@@ -4,7 +4,7 @@ import React from 'react';
 import { Opportunity, CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
-import { ShieldCheck, Calendar, ArrowRight, Star, Clock, CheckCircle2, Banknote } from 'lucide-react';
+import { ShieldCheck, Calendar, ArrowRight, Star, Clock, CheckCircle2, Banknote, Lock } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { RotatingNewBadge } from '../common/RotatingNewBadge';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
@@ -18,6 +18,7 @@ interface OpportunityCardProps {
   citizenProfile?: CitizenProfile | null;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string) => void;
+  onRequireSubscription?: () => void;
 }
 
 export const OpportunityCard: React.FC<OpportunityCardProps> = ({
@@ -26,10 +27,12 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
   citizenProfile,
   isFavorite = false,
   onToggleFavorite,
+  onRequireSubscription,
 }) => {
   const { t, language } = useTranslation();
   const localized = getLocalizedOpportunity(opportunity, language);
   const eligibility = evaluateCitizenEligibility(opportunity, citizenProfile);
+  const isSubscribed = citizenProfile?.subscription?.status === 'active';
 
   const formattedDeadline = formatDeadlineText(
     opportunity.deadline,
@@ -92,7 +95,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           )}
         </div>
 
-        {/* 1B. Second Row: Status Badge & Citizen Eligibility Pill (Never touch authority or star) */}
+        {/* 1B. Second Row: Status Badge & Citizen Eligibility Pill & Pass Lock */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {/* Status Badge */}
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border whitespace-nowrap shrink-0 ${
@@ -116,6 +119,22 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
               <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
               <span>{t('card.eligible_100')} • {t('card.eligible_age_match')}</span>
             </span>
+          )}
+
+          {/* 1-Year Pass Badge if Not Subscribed */}
+          {!isSubscribed && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRequireSubscription?.();
+              }}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-[10px] sm:text-[11px] font-bold whitespace-nowrap shrink-0 transition-colors cursor-pointer"
+              title={language === 'hi' ? 'पास आवश्यक • अनलॉक करने हेतु क्लिक करें' : 'Pass Required • Click to Unlock'}
+            >
+              <Lock className="w-3 h-3 text-amber-600 shrink-0" />
+              <span>{language === 'hi' ? 'पास आवश्यक' : 'Pass Required'}</span>
+            </button>
           )}
         </div>
 

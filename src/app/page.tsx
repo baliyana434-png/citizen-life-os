@@ -73,7 +73,7 @@ const GUEST_PROFILE: CitizenProfile = {
   state: '',
   district: '',
   pincode: '',
-  lifePhase: 'college_student',
+  lifePhase: 'exam_aspirant',
   casteCategory: 'General',
   familyIncomeAnnual: 0,
   educationLevel: '12th_pass',
@@ -102,6 +102,7 @@ export default function HomePage() {
   const [profile, setProfile] = useState<CitizenProfile>(GUEST_PROFILE);
   const activeProfile = profile;
 
+  // Always default to 1st tab: exams (Competitive Exams / प्रतियोगी परीक्षाएं)
   const [activeTab, setActiveTab] = useState<LifeStage>('exams');
   const [activeSubFilter, setActiveSubFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -121,7 +122,7 @@ export default function HomePage() {
 
   const [paymentSuccessToast, setPaymentSuccessToast] = useState<string | null>(null);
 
-  // Auto-switch tab based on citizen role
+  // Auto-switch tab based on citizen role (used only when role is explicitly updated)
   const handleRoleAutoSwitch = (role: string) => {
     if (role === 'farmer' || role === 'homemaker') {
       setActiveTab('schemes');
@@ -159,9 +160,7 @@ export default function HomePage() {
           if (parsed.country) {
             setCountry(parsed.country);
           }
-          if (parsed.lifePhase) {
-            handleRoleAutoSwitch(parsed.lifePhase);
-          }
+          // Note: Do not auto-switch tab on mount so that activeTab strictly defaults to 1st tab (exams / Competitive Exams)
 
           // If logged-in user hasn't completed onboarding wizard, ask them for their real details now!
           if (parsed.isAadhaarVerified && !parsed.isOnboarded) {
@@ -883,6 +882,14 @@ export default function HomePage() {
                 citizenProfile={activeProfile}
                 isFavorite={favoriteIds.has(opp.id)}
                 onToggleFavorite={handleToggleFavorite}
+                onRequireSubscription={() => {
+                  setPaymentSuccessToast(
+                    language === 'hi'
+                      ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹19) सक्रिय करें।'
+                      : 'Activate 1-Year Citizen Pass (only ₹19) to apply directly on official portal.'
+                  );
+                  setIsSubscriptionOpen(true);
+                }}
               />
             ))}
           </div>
@@ -899,6 +906,15 @@ export default function HomePage() {
         citizenProfile={activeProfile}
         isFavorite={selectedOpp ? favoriteIds.has(selectedOpp.id) : false}
         onToggleFavorite={handleToggleFavorite}
+        onRequireSubscription={() => {
+          setSelectedOpp(null);
+          setPaymentSuccessToast(
+            language === 'hi'
+              ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹19) सक्रिय करें।'
+              : 'Activate 1-Year Citizen Pass (only ₹19) to apply directly on official portal.'
+          );
+          setIsSubscriptionOpen(true);
+        }}
       />
 
       {/* 4. Unified 3-Screen Auth Modal (Login, Signup, Forgot Password with Google OAuth) */}

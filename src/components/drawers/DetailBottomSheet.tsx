@@ -19,6 +19,7 @@ import {
   Target,
   Users,
   MapPin,
+  Lock,
 } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { CitizenProfile } from '@/types';
@@ -33,6 +34,7 @@ interface DetailBottomSheetProps {
   citizenProfile?: CitizenProfile | null;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string) => void;
+  onRequireSubscription?: () => void;
 }
 
 export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
@@ -41,9 +43,11 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
   citizenProfile,
   isFavorite = false,
   onToggleFavorite,
+  onRequireSubscription,
 }) => {
   const { t, language } = useTranslation();
   const [checkedDocs, setCheckedDocs] = useState<Record<string, boolean>>({});
+  const isSubscribed = citizenProfile?.subscription?.status === 'active';
 
   // Lock background scroll when modal is open
   React.useEffect(() => {
@@ -316,19 +320,68 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               </div>
             </div>
           )}
+
+          {/* Paywall Banner for Non-Subscribed Citizens */}
+          {!isSubscribed && (
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 to-emerald-50 border border-amber-200/90 flex items-center justify-between gap-3 text-xs mt-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 border border-amber-300">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <div className="truncate">
+                  <span className="font-extrabold text-slate-900 block text-xs">
+                    {language === 'hi' ? '1-वर्षीय नागरिक पास आवश्यक' : '1-Year Citizen Pass Required'}
+                  </span>
+                  <span className="text-[11px] text-slate-600 block truncate">
+                    {language === 'hi'
+                      ? 'सीधे आधिकारिक पोर्टल पर आवेदन करने हेतु केवल ₹19 में पास सक्रिय करें'
+                      : 'Activate ₹19/year pass to access official portal & all skills'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onRequireSubscription?.();
+                }}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-extrabold text-xs shrink-0 hover:bg-slate-800 transition-all cursor-pointer shadow-xs active:scale-95"
+              >
+                {language === 'hi' ? 'अनलॉक करें' : 'Unlock Pass'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 3. Bottom Sticky Action Hub (Solid Gaps, Zero Touching) */}
         <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 sm:gap-4">
-          <a
-            href={opportunity.gazette.officialPortalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.99]"
-          >
-            <span>{t('drawer.official_portal_btn')}</span>
-            <ExternalLink className="w-4 h-4" />
-          </a>
+          {isSubscribed ? (
+            <a
+              href={opportunity.gazette.officialPortalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.99]"
+            >
+              <span>{t('drawer.official_portal_btn')}</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                onRequireSubscription?.();
+              }}
+              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-[0.99] border border-emerald-400/40"
+            >
+              <Lock className="w-4 h-4 text-amber-300" />
+              <span>
+                {language === 'hi'
+                  ? 'आवेदन पोर्टल अनलॉक करें (पास केवल ₹19)'
+                  : 'Unlock Official Portal (Pass ₹19)'}
+              </span>
+            </button>
+          )}
 
           {/* 1-Click Google Calendar Deadline Reminder */}
           <button
