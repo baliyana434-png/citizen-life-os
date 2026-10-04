@@ -805,17 +805,32 @@ export default function SkillsPage() {
                                 )}
                               </div>
 
-                              <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug group-hover:text-emerald-700 transition-colors">
-                                {language === 'hi' ? video.titleHi : video.title}
-                              </h4>
+                              <div className="relative">
+                                <h4 className={`text-xs sm:text-sm font-extrabold text-slate-900 leading-snug group-hover:text-emerald-700 transition-colors ${
+                                  !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
+                                }`}>
+                                  {language === 'hi' ? video.titleHi : video.title}
+                                </h4>
 
-                              <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                                <span className="font-bold text-slate-700">{video.channelName}</span>
-                                {video.viewsApprox && (
-                                  <>
-                                    <span>•</span>
-                                    <span>{video.viewsApprox}</span>
-                                  </>
+                                <div className={`flex items-center gap-2 text-[11px] text-slate-500 ${
+                                  !isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-40' : ''
+                                }`}>
+                                  <span className="font-bold text-slate-700">{video.channelName}</span>
+                                  {video.viewsApprox && (
+                                    <>
+                                      <span>•</span>
+                                      <span>{video.viewsApprox}</span>
+                                    </>
+                                  )}
+                                </div>
+
+                                {!isSubscribed && (
+                                  <div className="pt-1">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-900/90 text-white text-[10px] font-bold shadow-xs">
+                                      <Lock className="w-2.5 h-2.5 text-amber-400" />
+                                      <span>{language === 'hi' ? 'वीडियो व चैनल नाम ब्लर है (पास केवल ₹19)' : 'Video & Channel Blurred (Pass ₹19)'}</span>
+                                    </span>
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -885,12 +900,16 @@ export default function SkillsPage() {
 
                         {/* Video Description & Key Takeaways */}
                         <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 space-y-2 text-xs">
-                          <p className="text-slate-600 leading-relaxed text-[11px] sm:text-xs">
+                          <p className={`text-slate-600 leading-relaxed text-[11px] sm:text-xs ${
+                            !isSubscribed ? 'filter blur-[4px] select-none pointer-events-none opacity-50' : ''
+                          }`}>
                             {language === 'hi' ? video.descriptionHi : video.description}
                           </p>
 
                           {video.keyTakeaways && video.keyTakeaways.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 pt-1">
+                            <div className={`flex flex-wrap gap-1.5 pt-1 ${
+                              !isSubscribed ? 'filter blur-[4px] select-none pointer-events-none opacity-50' : ''
+                            }`}>
                               {video.keyTakeaways.map((point, kIdx) => (
                                 <span
                                   key={kIdx}
@@ -1063,14 +1082,29 @@ export default function SkillsPage() {
                               )}
                             </div>
 
-                            <h5 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                              {language === 'hi' ? video.titleHi : video.title}
-                            </h5>
+                            <div className="relative">
+                              <h5 className={`text-xs sm:text-sm font-extrabold text-slate-900 leading-snug ${
+                                !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
+                              }`}>
+                                {language === 'hi' ? video.titleHi : video.title}
+                              </h5>
 
-                            <p className="text-[10px] text-slate-500">
-                              <span className="font-bold text-slate-700">{video.channelName}</span>
-                              {video.viewsApprox && ` • ${video.viewsApprox}`}
-                            </p>
+                              <p className={`text-[10px] text-slate-500 ${
+                                !isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-40' : ''
+                              }`}>
+                                <span className="font-bold text-slate-700">{video.channelName}</span>
+                                {video.viewsApprox && ` • ${video.viewsApprox}`}
+                              </p>
+
+                              {!isSubscribed && (
+                                <div className="pt-1">
+                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-900/90 text-white text-[9px] font-bold shadow-xs">
+                                    <Lock className="w-2.5 h-2.5 text-amber-400" />
+                                    <span>{language === 'hi' ? 'वीडियो व चैनल नाम ब्लर है (पास केवल ₹19)' : 'Video & Channel Blurred (Pass ₹19)'}</span>
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -1137,7 +1171,9 @@ export default function SkillsPage() {
 
                       {/* Key Takeaways */}
                       {video.keyTakeaways && video.keyTakeaways.length > 0 && (
-                        <div className="bg-slate-50 rounded-xl p-2 border border-slate-100 text-[10px] text-slate-700 space-y-1">
+                        <div className={`bg-slate-50 rounded-xl p-2 border border-slate-100 text-[10px] text-slate-700 space-y-1 ${
+                          !isSubscribed ? 'filter blur-[4px] select-none pointer-events-none opacity-50' : ''
+                        }`}>
                           <span className="font-bold text-slate-800 block text-[9px] uppercase tracking-wider">
                             {language === 'hi' ? 'मुख्य सीख (Key Learnings):' : 'Key Learnings:'}
                           </span>

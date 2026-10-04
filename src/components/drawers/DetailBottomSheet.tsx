@@ -94,11 +94,30 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 {t('official_verified')}
               </span>
-              <VoiceReader textToSpeak={`${localized.title}. ${localized.benefitHeadline}`} />
+              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 19 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 19 rupees to unlock opportunity details'}`} />
             </div>
-            <h2 className="text-base sm:text-xl font-extrabold text-slate-900 leading-snug">
-              {localized.title}
-            </h2>
+            <div className="relative">
+              <h2 className={`text-base sm:text-xl font-extrabold text-slate-900 leading-snug ${
+                !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
+              }`}>
+                {localized.title}
+              </h2>
+              {!isSubscribed && (
+                <div className="absolute inset-0 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onRequireSubscription?.();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-md cursor-pointer hover:bg-slate-800 transition-all active:scale-95"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{language === 'hi' ? 'अवसर का पूरा नाम अनलॉक करें (पास केवल ₹19)' : 'Unlock Full Name (Pass ₹19)'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
@@ -134,10 +153,10 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
             <div className="flex items-center gap-1.5 font-bold text-slate-800">
               <Building2 className="w-4 h-4 text-slate-600" />
-              <span>{localized.issuingAuthority}</span>
+              <span className={!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}>{localized.issuingAuthority}</span>
             </div>
             <div className="text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 border-t border-slate-200/80">
-              <span>{t('card.circular_no')}: <strong className="text-slate-900 font-mono">{opportunity.gazette.circularNumber}</strong></span>
+              <span>{t('card.circular_no')}: <strong className={`text-slate-900 font-mono ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>{opportunity.gazette.circularNumber}</strong></span>
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-slate-500" />
                 <span>{t('card.last_date')}: <strong className="text-slate-900">{formatDeadlineText(opportunity.deadline, opportunity.daysRemaining, language, t('card.days_left'))}</strong></span>

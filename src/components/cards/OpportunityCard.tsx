@@ -53,7 +53,13 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
 
   return (
     <div
-      onClick={() => onSelect(opportunity)}
+      onClick={() => {
+        if (!isSubscribed) {
+          onRequireSubscription?.();
+        } else {
+          onSelect(opportunity);
+        }
+      }}
       className="group relative bg-white rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer border border-slate-200/90 hover:border-emerald-500/60 shadow-xs hover:shadow-lg transition-all duration-200 h-full overflow-visible"
     >
       {/* Red Rotating Starburst Badge (100% Visible, Never Clipped) */}
@@ -70,7 +76,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           {/* Issuing Authority Badge */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-[11px] font-bold min-w-0 max-w-[70%]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-            <span className="truncate">
+            <span className={`truncate ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>
               {localized.issuingAuthority.split('(')[0].trim()}
             </span>
           </div>
@@ -139,15 +145,26 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
 
         {/* 2. Title & Speech Reader */}
-        <div className="mb-2">
+        <div className="mb-2 relative">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2 min-h-[2.6rem]">
+            <h3 className={`text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2 min-h-[2.6rem] ${
+              !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
+            }`}>
               {localized.title}
             </h3>
             <div className="shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
-              <VoiceReader textToSpeak={`${localized.title}. ${localized.benefitHeadline}`} />
+              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 19 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 19 rupees to unlock opportunity details'}`} />
             </div>
           </div>
+
+          {!isSubscribed && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900/90 text-white text-[10px] sm:text-[11px] font-bold shadow-md border border-slate-700">
+                <Lock className="w-3 h-3 text-amber-400 shrink-0" />
+                <span>{language === 'hi' ? 'शीर्षक ब्लर है (पास ₹19)' : 'Name Blurred (Pass ₹19)'}</span>
+              </span>
+            </div>
+          )}
         </div>
 
         {/* 3. Benefit Headline Box */}
@@ -158,7 +175,9 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
 
         {/* 4. Description */}
-        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">
+        <p className={`text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4 ${
+          !isSubscribed ? 'filter blur-[4px] select-none pointer-events-none opacity-50' : ''
+        }`}>
           {localized.description}
         </p>
       </div>
@@ -194,11 +213,31 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         {/* Row C: Action Buttons (Explicit Heights & Generous Gap) */}
         <div className="flex items-center gap-3 pt-1">
           <button
-            onClick={() => onSelect(opportunity)}
-            className="flex-1 h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs hover:shadow-sm cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!isSubscribed) {
+                onRequireSubscription?.();
+              } else {
+                onSelect(opportunity);
+              }
+            }}
+            className={`flex-1 h-10 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs hover:shadow-sm cursor-pointer ${
+              isSubscribed
+                ? 'bg-slate-900 hover:bg-slate-800 text-white'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white border border-emerald-400/40 font-extrabold'
+            }`}
           >
-            <span>{t('card.view_details')}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            {isSubscribed ? (
+              <>
+                <span>{t('card.view_details')}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </>
+            ) : (
+              <>
+                <Lock className="w-3.5 h-3.5 text-amber-300" />
+                <span>{language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)'}</span>
+              </>
+            )}
           </button>
 
           {/* 1-Click Google Calendar Reminder Button (Clean Separated Box) */}
