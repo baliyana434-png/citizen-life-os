@@ -176,6 +176,26 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/refund" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <FileText className="w-3 h-3 text-emerald-400" />
+                  <span>
+                    {language === 'hi'
+                      ? 'रिफंड एवं रद्दीकरण नीति'
+                      : 'Refund & Cancellation'}
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                  <PhoneCall className="w-3 h-3 text-emerald-400" />
+                  <span>
+                    {language === 'hi'
+                      ? 'संपर्क एवं सहायता'
+                      : 'Contact Us'}
+                  </span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/disclaimer" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
                   <Landmark className="w-3 h-3 text-amber-400" />
                   <span>
