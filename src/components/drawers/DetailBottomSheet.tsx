@@ -96,28 +96,11 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               </span>
               <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 19 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 19 rupees to unlock opportunity details'}`} />
             </div>
-            <div className="relative">
-              <h2 className={`text-base sm:text-xl font-extrabold text-slate-900 leading-snug ${
-                !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
-              }`}>
-                {localized.title}
-              </h2>
-              {!isSubscribed && (
-                <div className="absolute inset-0 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onClose();
-                      onRequireSubscription?.();
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-md cursor-pointer hover:bg-slate-800 transition-all active:scale-95"
-                  >
-                    <Lock className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{language === 'hi' ? 'अवसर का पूरा नाम अनलॉक करें (पास केवल ₹19)' : 'Unlock Full Name (Pass ₹19)'}</span>
-                  </button>
-                </div>
-              )}
-            </div>
+            <h2 className={`text-base sm:text-xl font-extrabold text-slate-900 leading-snug ${
+              !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
+            }`}>
+              {localized.title}
+            </h2>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">

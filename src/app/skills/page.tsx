@@ -823,15 +823,6 @@ export default function SkillsPage() {
                                     </>
                                   )}
                                 </div>
-
-                                {!isSubscribed && (
-                                  <div className="pt-1">
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-900/90 text-white text-[10px] font-bold shadow-xs">
-                                      <Lock className="w-2.5 h-2.5 text-amber-400" />
-                                      <span>{language === 'hi' ? 'वीडियो व चैनल नाम ब्लर है (पास केवल ₹19)' : 'Video & Channel Blurred (Pass ₹19)'}</span>
-                                    </span>
-                                  </div>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -1095,15 +1086,6 @@ export default function SkillsPage() {
                                 <span className="font-bold text-slate-700">{video.channelName}</span>
                                 {video.viewsApprox && ` • ${video.viewsApprox}`}
                               </p>
-
-                              {!isSubscribed && (
-                                <div className="pt-1">
-                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-900/90 text-white text-[9px] font-bold shadow-xs">
-                                    <Lock className="w-2.5 h-2.5 text-amber-400" />
-                                    <span>{language === 'hi' ? 'वीडियो व चैनल नाम ब्लर है (पास केवल ₹19)' : 'Video & Channel Blurred (Pass ₹19)'}</span>
-                                  </span>
-                                </div>
-                              )}
                             </div>
                           </div>
                         </div>

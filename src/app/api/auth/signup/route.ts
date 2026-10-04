@@ -54,22 +54,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Validate Real Date of Birth & Age
-    const dobCheck = validateRealDob(dob, lang);
-    if (!dobCheck.valid) {
-      return NextResponse.json(
-        { success: false, errorType: 'INVALID_DOB', message: dobCheck.error },
-        { status: 400 }
-      );
+    // 4. Validate Real Date of Birth & Age (Optional at basic signup)
+    let userAge = 24;
+    let userDob = dob || '2002-01-01';
+    if (dob) {
+      const dobCheck = validateRealDob(dob, lang);
+      if (!dobCheck.valid) {
+        return NextResponse.json(
+          { success: false, errorType: 'INVALID_DOB', message: dobCheck.error },
+          { status: 400 }
+        );
+      }
+      userAge = dobCheck.age;
+      userDob = dob;
     }
 
-    // 5. Validate National ID Checksum (UIDAI Verhoeff for India, SSN, SIN, CPF, etc.)
-    const idCheck = validateRealNationalId(nationalId, country, lang);
-    if (!idCheck.valid) {
-      return NextResponse.json(
-        { success: false, errorType: 'INVALID_NATIONAL_ID', message: idCheck.error },
-        { status: 400 }
-      );
+    // 5. Validate National ID Checksum (Optional at basic signup)
+    let maskedId = '';
+    if (nationalId) {
+      const idCheck = validateRealNationalId(nationalId, country, lang);
+      if (!idCheck.valid) {
+        return NextResponse.json(
+          { success: false, errorType: 'INVALID_NATIONAL_ID', message: idCheck.error },
+          { status: 400 }
+        );
+      }
+      const cleanDigits = idCheck.cleanId;
+      if (country === 'IN' && cleanDigits.length === 12) {
+        maskedId = `XXXX-XXXX-${cleanDigits.slice(-4)}`;
+      } else if (country === 'US' && cleanDigits.length === 9) {
+        maskedId = `XXX-XX-${cleanDigits.slice(-4)}`;
+      } else {
+        maskedId = `***-${cleanDigits.slice(-4)}`;
+      }
     }
 
     // 6. Check if Account Already Exists
@@ -91,17 +108,6 @@ export async function POST(req: NextRequest) {
     // 7. Secure Password Hashing
     const { hash, salt } = hashCitizenPassword(password);
 
-    // 8. Mask National ID
-    const cleanDigits = idCheck.cleanId;
-    let maskedId = '';
-    if (country === 'IN' && cleanDigits.length === 12) {
-      maskedId = `XXXX-XXXX-${cleanDigits.slice(-4)}`;
-    } else if (country === 'US' && cleanDigits.length === 9) {
-      maskedId = `XXX-XX-${cleanDigits.slice(-4)}`;
-    } else {
-      maskedId = `***-${cleanDigits.slice(-4)}`;
-    }
-
     const randomSeq = Math.floor(1000 + Math.random() * 9000);
     const citizenId = `cit-${country}-${Date.now().toString().slice(-6)}-${randomSeq}`;
 
@@ -114,12 +120,12 @@ export async function POST(req: NextRequest) {
       nationalIdName: body.nationalIdName || 'National ID',
       nationalIdMasked: maskedId,
       aadhaarNumberMasked: maskedId,
-      age: dobCheck.age,
-      dob,
+      age: userAge,
+      dob: userDob,
       gender,
-      state: division || '',
-      administrativeDivision: division || '',
-      district: division || '',
+      state: division || 'General',
+      administrativeDivision: division || 'General',
+      district: division || 'General',
       pincode: '',
       lifePhase,
       casteCategory,

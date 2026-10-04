@@ -145,7 +145,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
 
         {/* 2. Title & Speech Reader */}
-        <div className="mb-2 relative">
+        <div className="mb-2">
           <div className="flex items-start justify-between gap-2">
             <h3 className={`text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2 min-h-[2.6rem] ${
               !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
@@ -156,15 +156,6 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
               <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 19 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 19 rupees to unlock opportunity details'}`} />
             </div>
           </div>
-
-          {!isSubscribed && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900/90 text-white text-[10px] sm:text-[11px] font-bold shadow-md border border-slate-700">
-                <Lock className="w-3 h-3 text-amber-400 shrink-0" />
-                <span>{language === 'hi' ? 'शीर्षक ब्लर है (पास ₹19)' : 'Name Blurred (Pass ₹19)'}</span>
-              </span>
-            </div>
-          )}
         </div>
 
         {/* 3. Benefit Headline Box */}

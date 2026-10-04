@@ -15,6 +15,8 @@ import {
 } from '@/utils/antiFraudValidation';
 import {
   ChevronLeft,
+  ChevronDown,
+  ChevronUp,
   X,
   Mail,
   Lock,
@@ -73,6 +75,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [division, setDivision] = useState<string>(countryMeta.divisions[0] || 'General');
   const [selectedRole, setSelectedRole] = useState<CitizenProfile['lifePhase']>('college_student');
   const [gender, setGender] = useState<CitizenProfile['gender']>('male');
+  const [showOptionalProfile, setShowOptionalProfile] = useState<boolean>(false);
 
   // UI state
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -326,18 +329,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // 4. DOB & Exact Age Verification
-    const dobCheck = validateRealDob(dob, language);
-    if (!dobCheck.valid) {
-      setErrorMessage(dobCheck.error || 'Invalid date of birth');
-      return;
+    // 4. DOB & Exact Age Verification (optional - validate if provided)
+    if (dob) {
+      const dobCheck = validateRealDob(dob, language);
+      if (!dobCheck.valid) {
+        setErrorMessage(dobCheck.error || 'Invalid date of birth');
+        return;
+      }
     }
 
-    // 5. National ID Checksum (UIDAI Verhoeff for India, SSN, SIN, CPF, etc.)
-    const idCheck = validateRealNationalId(nationalIdInput, country, language);
-    if (!idCheck.valid) {
-      setErrorMessage(idCheck.error || 'Invalid National ID');
-      return;
+    // 5. National ID Checksum (optional - validate if provided)
+    if (nationalIdInput.trim()) {
+      const idCheck = validateRealNationalId(nationalIdInput.trim(), country, language);
+      if (!idCheck.valid) {
+        setErrorMessage(idCheck.error || 'Invalid National ID');
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -790,12 +797,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
             </div>
 
-            {/* --- Real Base Fields Section --- */}
-            <div className="pt-2 border-t border-slate-100 space-y-3">
-              <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-700 px-1">
-                <span>{language === 'hi' ? 'नागरिक पहचान व पात्रता सत्यापन' : 'Real Base Verification'}</span>
-                <span className="text-emerald-700">{countryMeta.flag} {countryMeta.name}</span>
-              </div>
+            {/* Optional Profile Customization Accordion */}
+            <div className="pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setShowOptionalProfile(!showOptionalProfile)}
+                className="w-full flex items-center justify-between py-2 px-1 text-xs font-bold text-slate-500 hover:text-emerald-700 transition-colors cursor-pointer"
+              >
+                <span>
+                  {language === 'hi'
+                    ? 'अतिरिक्त प्रोफ़ाइल विवरण (वैकल्पिक)'
+                    : 'Additional Profile Details (Optional)'}
+                </span>
+                {showOptionalProfile ? (
+                  <ChevronUp className="w-4 h-4 text-slate-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                )}
+              </button>
+
+              {showOptionalProfile && (
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-700 px-1">
+                    <span>{language === 'hi' ? 'नागरिक पहचान व प्राथमिकताएं' : 'Citizen Preferences'}</span>
+                    <span className="text-emerald-700">{countryMeta.flag} {countryMeta.name}</span>
+                  </div>
 
               {/* Country Picker */}
               <div className="grid grid-cols-4 gap-1.5 max-h-24 overflow-y-auto p-1 border border-slate-200 rounded-xl bg-slate-50">
@@ -818,7 +844,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {/* DOB & Auto-Calculated Age Badge */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-600 mb-1 flex items-center justify-between px-1">
-                  <span>{language === 'hi' ? 'जन्म तिथि (DOB) *' : 'Date of Birth *'}</span>
+                  <span>{language === 'hi' ? 'जन्म तिथि (DOB) (वैकल्पिक)' : 'Date of Birth (Optional)'}</span>
                   {calculatedAge >= 14 && (
                     <span className="text-emerald-700 font-bold">
                       {language === 'hi' ? `आयु: ${calculatedAge} वर्ष` : `Age: ${calculatedAge} yrs`}
@@ -831,7 +857,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                   <input
                     type="date"
-                    required
                     value={dob}
                     max={maxDob}
                     min={minDob}
@@ -844,7 +869,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {/* National ID / Aadhaar with live Checksum Badge */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-600 mb-1 flex items-center justify-between px-1">
-                  <span>{countryMeta.nationalIdName} *</span>
+                  <span>{countryMeta.nationalIdName} ({language === 'hi' ? 'वैकल्पिक' : 'Optional'})</span>
                   <span className="text-[10px] text-slate-400 font-mono uppercase">{countryMeta.alpha3 || country}</span>
                 </label>
                 <div className="relative">
@@ -853,7 +878,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                   <input
                     type="text"
-                    required
                     value={nationalIdInput}
                     onChange={(e) => setNationalIdInput(e.target.value)}
                     placeholder={countryMeta.nationalIdPlaceholder}
@@ -981,6 +1005,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </select>
               </div>
             </div>
+          )}
+        </div>
 
             {/* Emerald Green Action Button */}
             <button
