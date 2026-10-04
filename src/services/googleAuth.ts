@@ -77,12 +77,12 @@ export function getGoogleAuthErrorMessage(
 
   if (code.includes('unauthorized-domain')) {
     const messages: Record<SupportedLanguage, string> = {
-      en: 'Local network IP is not in Firebase authorized domains. Please test on http://localhost:3000 or enter your Google email below.',
-      hi: 'लोकल नेटवर्क IP Firebase में अधिकृत नहीं है। कृपया PC पर http://localhost:3000 पर खोलें या नीचे अपना Google ईमेल दर्ज करें।',
-      es: 'El dominio IP local no esta autorizado en Firebase.',
-      fr: 'Le domaine IP local n\'est pas autorise dans Firebase.',
-      de: 'Lokale IP ist in Firebase nicht autorisiert.',
-      ar: 'نطاق IP المحلي غير مصرح به في Firebase.',
+      en: 'Domain is not in Firebase authorized domains. Please add citizen-life-os.vercel.app in Firebase Console > Authentication > Settings > Authorized domains, or enter your email below.',
+      hi: 'यह डोमेन Firebase में अधिकृत (Authorized) नहीं है। कृपया Firebase Console में Authentication > Settings > Authorized domains में citizen-life-os.vercel.app जोड़ें या नीचे सीधे अपना Gmail डालकर आगे बढ़ें।',
+      es: 'El dominio no esta autorizado en Firebase Console.',
+      fr: 'Le domaine n\'est pas autorise dans Firebase Console.',
+      de: 'Domain ist in Firebase Console nicht autorisiert.',
+      ar: 'هذا النطاق غير مصرح به في Firebase Console.',
     };
     return messages[language] || messages.en;
   }
@@ -115,7 +115,6 @@ export class GoogleAuthService {
    * Official Google OAuth Sign-In via Firebase Auth.
    * Routes securely through https://lifeos-7a6f1.firebaseapp.com/__/auth/handler
    * Prevents Google Cloud origin_mismatch errors.
-   * Auto-cancels with ZERO delay if the user returns/backs out from Google window.
    */
   static async signInWithGoogle(): Promise<GoogleAuthResult> {
     if (typeof window === 'undefined') {
@@ -151,37 +150,15 @@ export class GoogleAuthService {
         }
       };
 
-      // 1. Safety Timeout: auto-cancel after 12 seconds so UI NEVER hangs
+      // 1. Safety Timeout: auto-cancel after 90 seconds so UI never hangs indefinitely
       const timeoutId = setTimeout(() => {
-        const err: any = new Error('Google sign-in window closed or timed out.');
-        err.code = 'auth/popup-closed-by-user';
+        const err: any = new Error('Google sign-in timed out. Please try again.');
+        err.code = 'auth/timeout';
         finishReject(err);
-      }, 12000);
-
-      // 2. Immediate Window Focus Return Detection:
-      // When the user hits Back in Safari or closes the Google tab/window,
-      // the parent window immediately receives focus / visibilitychange.
-      let focusCheckTimer: any = null;
-      const handleWindowFocus = () => {
-        // Wait 800ms in case the OAuth redirect or token postMessage is in flight
-        if (focusCheckTimer) clearTimeout(focusCheckTimer);
-        focusCheckTimer = setTimeout(() => {
-          if (!isSettled) {
-            const err: any = new Error('Google sign-in window closed by user.');
-            err.code = 'auth/popup-closed-by-user';
-            finishReject(err);
-          }
-        }, 800);
-      };
-
-      window.addEventListener('focus', handleWindowFocus);
-      document.addEventListener('visibilitychange', handleWindowFocus);
+      }, 90000);
 
       const cleanup = () => {
         clearTimeout(timeoutId);
-        if (focusCheckTimer) clearTimeout(focusCheckTimer);
-        window.removeEventListener('focus', handleWindowFocus);
-        document.removeEventListener('visibilitychange', handleWindowFocus);
       };
 
       // Execute Firebase signInWithPopup

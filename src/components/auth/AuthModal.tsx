@@ -627,7 +627,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md">
-      <div className="fixed inset-0" onClick={onClose} />
+      <div className="fixed inset-0" onClick={() => { setIsLoading(false); onClose(); }} />
 
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 p-5 sm:p-7 flex flex-col my-auto max-h-[94vh] overflow-y-auto z-10">
         {/* Top Navigation Bar */}
@@ -636,6 +636,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               type="button"
               onClick={() => {
+                setIsLoading(false);
                 setScreen('login');
                 setErrorMessage(null);
                 setSuccessNotice(null);
@@ -650,6 +651,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               type="button"
               onClick={() => {
+                setIsLoading(false);
                 setSignUpStep(1);
                 setErrorMessage(null);
                 setSuccessNotice(null);
@@ -664,6 +666,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               type="button"
               onClick={() => {
+                setIsLoading(false);
                 setScreen('login');
                 setErrorMessage(null);
                 setSuccessNotice(null);
@@ -680,7 +683,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              setIsLoading(false);
+              onClose();
+            }}
             className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Close"
           >
@@ -1443,7 +1449,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {!isGoogleRegistration && (
                 <button
                   type="button"
-                  onClick={() => setSignUpStep(1)}
+                  onClick={() => {
+                    setIsLoading(false);
+                    setSignUpStep(1);
+                  }}
                   className="py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4" />
