@@ -23,7 +23,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'web_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'tVzUXW6siu0',
         title: 'HTML, CSS & JavaScript Complete Web Development Course in Hindi',
         titleHi: 'वेब डेवलपमेंट सीखें बिल्कुल शुरुआत से हिन्दी में (फुल कोर्स)',
         channelName: 'CodeWithHarry',
@@ -37,7 +37,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'web_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'NkwFxeHARqc',
         title: 'React.js Full Course in Hindi (Learn Modern React with Hooks & Projects)',
         titleHi: 'रिएक्ट.जेएस सीखें बिल्कुल बेसिक से प्रोजेक्ट्स के साथ',
         channelName: 'Chai aur Code',
@@ -51,7 +51,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'web_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: '5ccq_nLHneE',
         title: 'Complete MERN Stack & Next.js Fullstack Project (Production Deployment)',
         titleHi: 'MERN स्टैक और Next.js फुलस्टैक प्रोजेक्ट (लाइव डिप्लॉयमेंट सहित)',
         channelName: 'Thapa Technical',
@@ -89,7 +89,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'py_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: '7wnove7K-ZQ',
         title: 'Python for Beginners in Hindi (Complete 100 Days of Code Roadmap)',
         titleHi: 'पायथन सीखें बिल्कुल शुरुआत से हिन्दी में (पूरी बेसिक क्लास)',
         channelName: 'CodeWithHarry',
@@ -103,7 +103,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'py_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'Ca5DLSDfPec',
         title: 'Python OOPs Concepts & Automation Projects in Hindi (Classes, Objects, Inheritance)',
         titleHi: 'पायथन में OOPs कॉन्सेप्ट्स और ऑटोमेशन प्रोजेक्ट्स',
         channelName: 'Chai aur Code',
@@ -117,7 +117,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'py_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'OZIRAavoGng',
         title: 'Python Web Scraping & Data Analysis with Pandas Complete Masterclass',
         titleHi: 'पायथन से वेब स्क्रैपिंग और पांडास डेटा एनालिसिस सीखें',
         channelName: 'WsCube Tech',
@@ -153,7 +153,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ai_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: 'kPlLv6pC3JE',
         title: 'Prompt Engineering Full Course in Hindi (Master ChatGPT & Claude from Scratch)',
         titleHi: 'प्रॉम्प्ट इंजीनियरिंग सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Ansh Mehra',
@@ -167,7 +167,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ai_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'i4L62B_AAVA',
         title: 'Automate Your Business with ChatGPT & Make.com (No-Code AI Automation in Hindi)',
         titleHi: 'बिना कोडिंग के AI से बिजनेस ऑटोमेशन कैसे करें (Make.com व ChatGPT)',
         channelName: 'Pushkar Raj Thakur',
@@ -181,7 +181,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ai_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: '_ZvnD73m40o',
         title: 'Building Custom AI Agents & OpenAI Assistants with Python (Step-by-Step)',
         titleHi: 'पायथन और OpenAI API से खुद का AI एजेंट कैसे बनाएं',
         channelName: 'FreeCodeCamp',
@@ -219,7 +219,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'sec_vid_beg',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: 'cKEf8H9cQGM',
         title: 'Ethical Hacking Full Course in Hindi (Kali Linux & Networking Basics for Beginners)',
         titleHi: 'एथिकल हैकिंग सीखें बिल्कुल शुरुआत से हिन्दी में (काली लिनक्स व नेटवर्किंग)',
         channelName: 'WsCube Tech',
@@ -233,7 +233,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'sec_vid_mid',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'WwwMkG0kFgo',
         title: 'Burp Suite & Nmap Complete Practical Tutorial in Hindi (Web Penetration Testing)',
         titleHi: 'बूर्प सुइट और एनमैप से वेबसाइट सिक्योरिटी ऑडिट कैसे करें',
         channelName: 'Technical Guftgu',
@@ -247,7 +247,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'sec_vid_adv',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: 'AMQq06WUMVk',
         title: 'Bug Bounty Hunting Methodology (Find SQLi, XSS, IDOR on Live Websites)',
         titleHi: 'लाइव वेबसाइट्स पर बग ढूंढकर बग बाउंटी में पैसे कैसे कमाएं',
         channelName: 'Nahamsec',
@@ -283,7 +283,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'flt_vid_beg',
-        youtubeId: '9G_87W0rBw8',
+        youtubeId: 've-cehDzqrY',
         title: 'Flutter Complete Course in Hindi (Learn App Development from Zero)',
         titleHi: 'फ्लटर मोबाइल ऍप डेवलपमेंट सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Thapa Technical',
@@ -297,7 +297,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'flt_vid_mid',
-        youtubeId: 'k4qW9sL70yU',
+        youtubeId: 'HyU4vkZ2NB8',
         title: 'Flutter REST API Integration & Provider State Management in Hindi',
         titleHi: 'फ्लटर में API से डेटा लाना और प्रोवाइडर स्टेट मैनेजमेंट',
         channelName: 'WsCube Tech',
@@ -311,7 +311,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'flt_vid_adv',
-        youtubeId: '0ZhOeA0MY9o',
+        youtubeId: 'ELFORM9fmss',
         title: 'Build Complete WhatsApp Clone with Flutter & Firebase (Realtime Chat & Auth)',
         titleHi: 'फ्लटर और फायरबेस से पूरा व्हाट्सऍप क्लोन बनाएं (लाइव चैट व लॉगिन)',
         channelName: 'Rivaan Ranawat',
@@ -349,7 +349,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'cld_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'NyA9PB6j8bg',
         title: 'AWS Cloud Computing Full Course for Beginners in Hindi (Learn AWS from Zero)',
         titleHi: 'AWS क्लाउड कंप्यूटिंग सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Technical Guftgu',
@@ -363,7 +363,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'cld_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'k8gIVrnE-jE',
         title: 'Docker Complete Practical Tutorial in Hindi (Learn Containerization Step by Step)',
         titleHi: 'डॉकर कंटेनराइजेशन सीखें आसान हिन्दी में (पूरा प्रैक्टिकल ट्यूटोरियल)',
         channelName: 'Chai aur Code',
@@ -377,7 +377,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'cld_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'Cpy20DnIDTI',
         title: 'Complete CI/CD Pipeline with GitHub Actions & AWS EC2 Deployment',
         titleHi: 'गिटहब एक्शन्स और AWS पर ऑटोमैटिक CI/CD पाइपलाइन बनाना',
         channelName: 'TechWorld with Nana',
@@ -415,7 +415,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'da_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'VaSjiJMrq24',
         title: 'SQL Full Course for Beginners in Hindi (Learn SQL for Data Analytics in 1 Video)',
         titleHi: 'SQL सीखें बिल्कुल शुरुआत से हिन्दी में (डेटा एनालिटिक्स फुल कोर्स)',
         channelName: 'WsCube Tech',
@@ -429,7 +429,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'da_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: '9tF1IrfLflg',
         title: 'Power BI Full Course in Hindi (Build Your First Complete Sales Dashboard)',
         titleHi: 'Power BI सीखें बिल्कुल शुरुआत से (पहला पूरा सेल्स डैशबोर्ड बनाएं)',
         channelName: 'Chandoo',
@@ -443,7 +443,7 @@ export const TECH_CODING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'da_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'g0m5sEHPU-s',
         title: 'Advanced Power BI Dashboard Project for Resume (Crack ₹8-12 LPA Interview)',
         titleHi: 'रिज्यूमे के लिए एडवांस्ड Power BI प्रोजेक्ट और डेटा एनालिस्ट इंटरव्यू क्रैक करें',
         channelName: 'Alex The Analyst',

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut, GraduationCap } from 'lucide-react';
+import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut, GraduationCap, X, ArrowLeft } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { CitizenProfile, SupportedLanguage } from '@/types';
@@ -34,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
   const { country, countryMeta } = useCountry();
   const [liveFavCount, setLiveFavCount] = useState<number>(favoriteCount);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   useEffect(() => {
     const updateCount = () => {
@@ -67,7 +68,49 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all">
+    <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all relative">
+      {/* Mobile Full-Width Search Bar Overlay (Covers Header completely for effortless typing) */}
+      {isMobileSearchOpen && (
+        <div className="absolute inset-0 bg-white px-3 flex items-center gap-2 z-50 sm:hidden animate-in fade-in duration-100">
+          <button
+            type="button"
+            onClick={() => setIsMobileSearchOpen(false)}
+            className="p-1.5 rounded-xl text-slate-600 hover:bg-slate-100 shrink-0"
+            aria-label="Back"
+          >
+            <ArrowLeft className="w-5 h-5 text-slate-700" />
+          </button>
+          <div className="flex-1 relative flex items-center">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
+            <input
+              type="text"
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => onSearchChange?.(e.target.value)}
+              placeholder={t('search_placeholder')}
+              className="w-full pl-9 pr-8 py-2 text-sm bg-slate-100 focus:bg-white text-slate-900 placeholder-slate-400 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => onSearchChange?.('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
+                aria-label="Clear search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsMobileSearchOpen(false)}
+            className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl shrink-0 transition-all"
+          >
+            {language === 'hi' ? 'ठीक है' : 'Done'}
+          </button>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-3">
           
@@ -88,18 +131,41 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* 2. Instant Search Bar */}
-          <div className="flex-1 max-w-[130px] sm:max-w-sm md:max-w-md mx-1 sm:mx-2">
+          {/* 2. Instant Search Bar (Desktop: inline full search; Mobile: comfortable tap-to-expand) */}
+          <div className="hidden sm:block flex-1 sm:max-w-xs md:max-w-md mx-2">
             <div className="relative">
-              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 placeholder={t('search_placeholder')}
-                className="w-full pl-8 sm:pl-9 pr-2.5 sm:pr-3 py-1 sm:py-2 text-[11px] sm:text-sm bg-slate-100 hover:bg-slate-100/90 focus:bg-white text-slate-900 placeholder-slate-400 rounded-full border border-slate-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                className="w-full pl-9 pr-8 py-2 text-sm bg-slate-100 hover:bg-slate-100/90 focus:bg-white text-slate-900 placeholder-slate-400 rounded-full border border-slate-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => onSearchChange?.('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
+          </div>
+
+          {/* Mobile search trigger */}
+          <div className="sm:hidden flex-1 min-w-[70px] max-w-[130px] mx-1">
+            <button
+              type="button"
+              onClick={() => setIsMobileSearchOpen(true)}
+              className="w-full h-8 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 flex items-center gap-1.5 text-left text-slate-500 transition-all cursor-pointer"
+            >
+              <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="text-[11px] truncate flex-1 text-slate-700 font-medium">
+                {searchQuery || t('search_placeholder')}
+              </span>
+            </button>
           </div>
 
           {/* 3. Action Hub (Responsive Gaps, Clean Alignment, Zero Overflow) */}

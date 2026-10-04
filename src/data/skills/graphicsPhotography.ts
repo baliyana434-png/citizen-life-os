@@ -23,7 +23,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'fig_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'bI6q16ffdgQ',
         title: 'Figma Full Course for Beginners in Hindi (Learn UI/UX Design from Scratch)',
         titleHi: 'फिग्मा UI/UX डिज़ाइन सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Ansh Mehra',
@@ -37,7 +37,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fig_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'X-_eMAaPv5I',
         title: 'Figma Auto Layout Masterclass & Real Responsive App UI Design',
         titleHi: 'फिग्मा ऑटो लेआउट और रिस्पॉन्सिव ऍप डिज़ाइन का पूरा प्रैक्टिकल',
         channelName: 'DesignCourse',
@@ -51,7 +51,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fig_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'TYhp4s-vjK4',
         title: 'Advanced Figma Smart Animate Prototyping & Building a Design System',
         titleHi: 'फिग्मा में एडवांस स्मार्ट एनिमेट प्रोटोटाइपिंग और डिज़ाइन सिस्टम',
         channelName: 'Mizko',
@@ -89,7 +89,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ps_vid_beg',
-        youtubeId: 'W1Yc10bX5vA',
+        youtubeId: 'lPRLdGWCOtg',
         title: 'Adobe Photoshop Complete Course for Beginners in Hindi (Zero to Hero)',
         titleHi: 'फोटोशॉप सीखें बिल्कुल शुरुआत से हिन्दी में (पूरी बेसिक क्लास)',
         channelName: 'GfxMentor',
@@ -103,7 +103,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ps_vid_mid',
-        youtubeId: 'b14oV2vJ96A',
+        youtubeId: '45dollqX1t4',
         title: 'Professional High-End Skin Retouching in Photoshop (Frequency Separation)',
         titleHi: 'फोटोशॉप में प्रोफेशनल फेस रिटचिंग और स्किन क्लीनिंग की सीक्रेट तकनीक',
         channelName: 'Rajeev Mehta',
@@ -117,7 +117,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ps_vid_adv',
-        youtubeId: 'lZ_2lX9q0cI',
+        youtubeId: 'ORUoAVxXxsY',
         title: 'Advanced Photo Manipulation & Movie Poster Design in Photoshop',
         titleHi: 'सिनेमैटिक फोटो मैनिपुलेशन और मूवी पोस्टर डिजाइन कैसे बनाएं',
         channelName: 'Benny Productions',
@@ -153,7 +153,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'cam_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: '-8SCZb6wViU',
         title: 'DSLR Camera Manual Mode Complete Tutorial in Hindi (ISO, Shutter Speed, Aperture)',
         titleHi: 'कैमरे का मैनुअल मोड सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Creative Pad Media',
@@ -167,7 +167,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'cam_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'fzxNvcgbAKw',
         title: 'Portrait Photography Lighting & Posing Guide for Weddings in Hindi',
         titleHi: 'शादियों व आउटडोर में पोर्ट्रेट फोटोग्राफी और लाइटिंग कैसे करें',
         channelName: 'Rajeev Mehta',
@@ -181,7 +181,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'cam_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: 'N8LOoQxSi8M',
         title: 'Commercial Studio Lighting (Godox Off-Camera Flash, Softboxes & Product Shoot)',
         titleHi: 'कमर्शियल स्टूडियो लाइटिंग और ऑफ-कैमरा फ्लैश का संपूर्ण मास्टरक्लास',
         channelName: 'Peter McKinnon',
@@ -217,7 +217,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'lr_vid_beg',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: 'Y14B2ND9dCI',
         title: 'Adobe Lightroom Complete Course in Hindi (From Basics to Pro Color Grading)',
         titleHi: 'लाइटरूम फोटो एडिटिंग सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Creative Pad Media',
@@ -231,7 +231,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'lr_vid_mid',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'DCl0RlmNEOk',
         title: 'Cinematic Moody Color Grading in Lightroom (HSL & Color Grading Wheels in Hindi)',
         titleHi: 'लाइटरूम में सिनेमैटिक मूडी कलर ग्रेडिंग कैसे करें',
         channelName: 'Rajeev Mehta',
@@ -245,7 +245,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'lr_vid_adv',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: 'SKzjmagbLSU',
         title: 'Advanced AI Masking & Batch Editing 500 Wedding Photos in 10 Minutes',
         titleHi: 'लाइटरूम AI मास्किंग और 500 फोटो एक साथ मिनटों में एडिट करने की ट्रिक',
         channelName: 'North Borders',
@@ -281,7 +281,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'mob_vid_beg',
-        youtubeId: '9G_87W0rBw8',
+        youtubeId: 'cxSPPwpRsJo',
         title: 'Smartphone Cinematography Complete Tutorial in Hindi (Shoot Cinema on Any Phone)',
         titleHi: 'मोबाइल से सिनेमाई वीडियो शूट करना सीखें बिल्कुल आसान तरीके से',
         channelName: 'Technical Yogi',
@@ -295,7 +295,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'mob_vid_mid',
-        youtubeId: 'k4qW9sL70yU',
+        youtubeId: 'Mae6Vurotzk',
         title: 'Cinematic Gimbal Moves & Handheld Shooting Techniques on Mobile',
         titleHi: 'मोबाइल गिम्बल और बिना गिम्बल के स्मूथ कैमरा मूव्स कैसे करें',
         channelName: 'Rajeev Mehta',
@@ -309,7 +309,7 @@ export const GRAPHICS_PHOTOGRAPHY_TOPICS: SkillTopic[] = [
       },
       {
         id: 'mob_vid_adv',
-        youtubeId: '0ZhOeA0MY9o',
+        youtubeId: 't8OqGcBXt70',
         title: 'Blackmagic Camera App for Mobile (Shoot 10-Bit Apple Log / Pro Video Free)',
         titleHi: 'ब्लैकमैजिक कैमरा मोबाइल ऍप से 10-बिट सिनेमाई वीडियो शूट व कलर ग्रेडिंग',
         channelName: 'Potato Jet',

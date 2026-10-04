@@ -23,7 +23,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'fre_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'ujDtm0hZyII',
         title: 'Freelancing Full Course in Hindi (Start from Zero & Earn in Dollars from Home)',
         titleHi: 'फ्रीलांसिंग शुरू करें बिल्कुल बेसिक से (घर बैठे ऑनलाइन कमाई का रोडमैप)',
         channelName: 'Hisham Sarwar',
@@ -37,7 +37,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fre_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'hd0_GZHHWeE',
         title: 'How to Write Upwork Proposals That Win Clients Every Single Time in Hindi',
         titleHi: 'अपवर्क पर क्लाइंट्स को प्रपोजल कैसे भेजें कि तुरंत रिप्लाई आए (लाइव प्रूफ)',
         channelName: 'Waqas Qazi',
@@ -51,7 +51,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fre_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'u7TN2WcPR74',
         title: 'Cold Emailing Foreign Clients & Scaling to $5,000/Month Agency Retainers',
         titleHi: 'विदेशी कंपनियों को डायरेक्ट ईमेल करके $5,000 प्रति माह कैसे कमाएं',
         channelName: 'Ishaan Arora',
@@ -89,7 +89,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'seo_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'bLUkIgY8MTE',
         title: 'SEO Complete Course for Beginners in Hindi (Learn Search Engine Optimization)',
         titleHi: 'SEO सीखें बिल्कुल शुरुआत से हिन्दी में (गूगल पर वेबसाइट रैंक कराएं)',
         channelName: 'WsCube Tech',
@@ -103,7 +103,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'seo_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'zntihGEUmKg',
         title: 'Technical SEO & Google Search Console Masterclass in Hindi',
         titleHi: 'टेक्निकल SEO और गूगल सर्च कंसोल का पूरा प्रैक्टिकल उपयोग',
         channelName: 'Amit Tiwari',
@@ -117,7 +117,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'seo_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'IkmPjeNKkBQ',
         title: 'White-Hat Link Building Strategies that Actually Rank Websites in 2026',
         titleHi: 'हाई-क्वालिटी बैकलिंक्स कैसे बनाएं जो वास्तव में वेबसाइट को टॉप पर लाएं',
         channelName: 'Brian Dean (Backlinko)',
@@ -155,7 +155,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'meta_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: 'kh5FxNFNbdI',
         title: 'Facebook Ads Full Course for Beginners in Hindi (Run Your First Ad Step by Step)',
         titleHi: 'फेसबुक व इंस्टाग्राम ऐड चलाना सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'WsCube Tech',
@@ -169,7 +169,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'meta_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'eFgzOWuciNI',
         title: 'Meta Pixel & Retargeting Masterclass in Hindi (Recover 90% Lost Customers)',
         titleHi: 'मेटा पिक्सल और रीटारगेटिंग: खोए हुए ग्राहकों को वापस लाकर सेल कैसे बढ़ाएं',
         channelName: 'Umar Tazkeer',
@@ -183,7 +183,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'meta_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: 'd67b_5zHU1w',
         title: 'Scaling Facebook Ads to ₹10 Lakhs/Month in E-commerce (CBO & Creative Testing)',
         titleHi: 'फेसबुक ऐड्स का बजट बढ़ाकर 10 लाख प्रति माह सेल्स कैसे हासिल करें',
         channelName: 'Ankur Aggarwal',
@@ -219,7 +219,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'amz_vid_beg',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: 'D1JpGRE-dYg',
         title: 'How to Sell on Amazon India for Beginners in Hindi (Complete Step by Step Guide)',
         titleHi: 'अमेज़न पर सेलर कैसे बनें बिल्कुल शुरुआत से हिन्दी में (पूरी प्रक्रिया)',
         channelName: 'Technology Gyan',
@@ -233,7 +233,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'amz_vid_mid',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'iayCHfpYh-s',
         title: 'Amazon FBA Shipment Creation & Barcode Labeling Practical Demo in Hindi',
         titleHi: 'अमेज़न FBA वेयरहाउस में माल कैसे भेजें (बारकोड व शिपमेंट बनाना)',
         channelName: 'Ecom Ka Gurukul',
@@ -247,7 +247,7 @@ export const DIGITAL_BUSINESS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'amz_vid_adv',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: 'jP8Ji7G7efM',
         title: 'Amazon Sponsored Ads (PPC) Complete Masterclass in Hindi (Lower ACoS & Max Orders)',
         titleHi: 'अमेज़न पर विज्ञापन (PPC) चलाकर सेल्स कैसे बढ़ाएं और खर्च कम करें',
         channelName: 'Lokesh Kapoor',

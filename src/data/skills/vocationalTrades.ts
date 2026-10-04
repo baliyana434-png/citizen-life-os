@@ -25,7 +25,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'sph_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'CxS5yPW91EI',
         title: 'Mobile Repairing Complete Course for Beginners in Hindi (Multimeter & Tools)',
         titleHi: 'मोबाइल रिपेयरिंग सीखें बिल्कुल शुरुआत से हिन्दी में (टूल्स व मल्टीमीटर चलाना)',
         channelName: 'AK Info Institute',
@@ -39,7 +39,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'sph_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'hoKWKEEW1m8',
         title: 'Mobile Motherboard Shorting Removal (Half Shorting & Full Shorting Solution)',
         titleHi: 'मोबाइल मदरबोर्ड की हाफ शॉर्टिंग और फुल शॉर्टिंग निकालने का सही तरीका',
         channelName: 'Repair My Mobile',
@@ -53,7 +53,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'sph_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: '1VoOhnEYkf4',
         title: 'BGA IC Reballing & Borneo Schematic Diagram Tracing Complete Masterclass',
         titleHi: 'IC रिबॉलिंग और कंप्यूटर स्कीमैटिक डायग्राम देखकर फॉल्ट ढूंढना',
         channelName: 'M-Institute Delhi',
@@ -91,7 +91,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ev_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'Dp4GmrW4Bn0',
         title: 'Electric Scooter Complete Wiring & Working Explained in Hindi (Learn EV Basics)',
         titleHi: 'इलेक्ट्रिक स्कूटर की पूरी वायरिंग और काम करने का तरीका समझें हिन्दी में',
         channelName: 'EV Gyan',
@@ -105,7 +105,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ev_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'tV2SZj_bEDw',
         title: 'EV Controller Repairing & MOSFET Replacement Complete Practical in Hindi',
         titleHi: 'इलेक्ट्रिक गाड़ी का कंट्रोलर ठीक करना और MOSFET बदलना सीखें',
         channelName: 'Technical Autotech',
@@ -119,7 +119,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ev_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'ZR18bVrFjuM',
         title: 'Lithium Ion Battery Pack Making, Cell Balancing & BMS Connection Guide',
         titleHi: 'लिथियम बैटरी पैक कैसे बनाएं: स्पॉट वेल्डिंग, सेल बैलेंसिंग व BMS कनेक्शन',
         channelName: 'DIY Battery Hub',
@@ -158,7 +158,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'sol_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: 'tb-PuFnN9zI',
         title: 'Solar System Complete Installation Guide in Hindi (Learn Sizing & Types)',
         titleHi: 'सोलर पैनल लगाना सीखें बिल्कुल शुरुआत से हिन्दी में (ऑन-ग्रिड vs ऑफ-ग्रिड)',
         channelName: 'Loom Solar',
@@ -172,7 +172,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'sol_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'M0c8Qu7PMEA',
         title: '3kW On-Grid Solar Installation Practical (GI Structure, Wiring & Earthing)',
         titleHi: '3 किलोवाट ऑन-ग्रिड सोलर सिस्टम की पूरी प्रैक्टिकल फिटिंग और वायरिंग',
         channelName: 'Solar Tech India',
@@ -186,7 +186,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'sol_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: '2HvkfhmmOkw',
         title: 'PM Surya Ghar Yojana Complete Process & Online Application for ₹78,000 Subsidy',
         titleHi: 'पीएम सूर्य घर मुफ्त बिजली योजना: ऑनलाइन आवेदन, वेंडर प्रोसेस व सब्सिडी',
         channelName: 'Ishan Monitor',
@@ -222,7 +222,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'lap_vid_beg',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: '2R2B5Hy67Ts',
         title: 'Laptop Motherboard Repairing for Beginners in Hindi (19V & 3V/5V Section)',
         titleHi: 'लैपटॉप मदरबोर्ड रिपेयरिंग सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'LCIIT Laptop Institute',
@@ -236,7 +236,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'lap_vid_mid',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'RFta96O1Fqg',
         title: 'Dead Laptop Troubleshooting with DC Machine (Solve Half Shorting in 10 Mins)',
         titleHi: 'DC मशीन से डेड लैपटॉप कैसे ठीक करें: शॉर्टिंग निकालने का आसान तरीका',
         channelName: 'Laptop Repair World',
@@ -250,7 +250,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'lap_vid_adv',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: '66Hiy6JVr1k',
         title: 'Laptop BIOS Programming with CH341A & Clear ME Region Fix for Late Display',
         titleHi: 'BIOS प्रोग्रामिंग सीखें: CH341A प्रोग्रामर चलाना और लेट डिस्प्ले ठीक करना',
         channelName: 'Master Chip Level',
@@ -286,7 +286,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ac_vid_beg',
-        youtubeId: '9G_87W0rBw8',
+        youtubeId: 'PDxpn-i6iAQ',
         title: 'Inverter AC PCB Repairing Complete Course in Hindi (SMPS & Components Basics)',
         titleHi: 'इन्वर्टर AC PCB रिपेयरिंग सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Carewell Technical Institute',
@@ -300,7 +300,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ac_vid_mid',
-        youtubeId: 'k4qW9sL70yU',
+        youtubeId: '-xUb8cgoY2M',
         title: 'Inverter AC IPM Module Testing & Replacement Practical Guide in Hindi',
         titleHi: 'इन्वर्टर AC का IPM मॉड्यूल कैसे चेक करें और नया कैसे लगाएं',
         channelName: 'Technical AC Solutions',
@@ -314,7 +314,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ac_vid_adv',
-        youtubeId: '0ZhOeA0MY9o',
+        youtubeId: '3Sw-xNvAUGc',
         title: 'Inverter AC Communication Error (E6, C5) Solving & Error Code Decoder',
         titleHi: 'इन्वर्टर AC में कम्युनिकेशन एरर कैसे ठीक करें (E6, C5 एरर कोड फॉल्ट)',
         channelName: 'HVAC Tech Hindi',
@@ -352,7 +352,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'drn_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'OZ0_03TkJpw',
         title: 'How to Build a Drone from Scratch in Hindi (Complete Beginner Assembly Guide)',
         titleHi: 'खुद का ड्रोन बनाना सीखें बिल्कुल शुरुआत से हिन्दी में (पूरी असेंबली)',
         channelName: 'Indian Drone Academy',
@@ -366,7 +366,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'drn_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'mccoOOQxNUg',
         title: 'Mission Planner & GPS Autonomous Drone Flight Setup in Hindi',
         titleHi: 'मिशन प्लानर सॉफ्टवेयर और GPS से ड्रोन को ऑटोमैटिक उड़ाना',
         channelName: 'FlyRobo Tech',
@@ -380,7 +380,7 @@ export const VOCATIONAL_TRADES_TOPICS: SkillTopic[] = [
       },
       {
         id: 'drn_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'tY6wrA2xU-M',
         title: 'DGCA Remote Pilot License (RPC) Complete Process & Agriculture Drone Business',
         titleHi: 'DGCA ड्रोन पायलट लाइसेंस कैसे पाएं और कृषि ड्रोन से कमाई कैसे करें',
         channelName: 'Kisan Drone Kendra',

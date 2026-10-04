@@ -25,7 +25,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'prem_vid_beg',
-        youtubeId: 'W1Yc10bX5vA',
+        youtubeId: 'F-_OPlcywCA',
         title: 'Adobe Premiere Pro Complete Beginner Course in Hindi (Zero to Pro in 1 Video)',
         titleHi: 'प्रीमियर प्रो वीडियो एडिटिंग सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'GfxMentor',
@@ -39,7 +39,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'prem_vid_mid',
-        youtubeId: 'b14oV2vJ96A',
+        youtubeId: 'ETHaY2wa1XI',
         title: 'Premiere Pro Advanced Sound Design & Storytelling Editing Masterclass',
         titleHi: 'प्रीमियर प्रो में साउंड डिजाइन और स्टोरीटेलिंग एडिटिंग',
         channelName: 'Rajeev Mehta',
@@ -53,7 +53,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'prem_vid_adv',
-        youtubeId: 'lZ_2lX9q0cI',
+        youtubeId: 'fa6MvJaE8-U',
         title: 'Lumetri Color Grading & Cinematic Documentary Style Editing in Premiere Pro',
         titleHi: 'सिनेमैटिक कलर ग्रेडिंग और डॉक्युमेंट्री स्टाइल एडिटिंग',
         channelName: 'Film Riot',
@@ -91,7 +91,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'dav_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'vv6mtkEwGAU',
         title: 'DaVinci Resolve 19 Complete Beginner Tutorial in Hindi (Learn in 1 Video)',
         titleHi: 'डाविंची रिजॉल्व 19 बिल्कुल शुरुआत से सीखें हिन्दी में',
         channelName: 'Creative Pad Media',
@@ -105,7 +105,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'dav_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'Lfs0XyjKTgg',
         title: 'DaVinci Resolve Color Grading for Beginners (Nodes, Wheels & Curves Explained)',
         titleHi: 'डाविंची रिजॉल्व में नोड बेस्ड कलर ग्रेडिंग का पूरा प्रैक्टिकल',
         channelName: 'Waqas Qazi',
@@ -119,7 +119,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'dav_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'g52gP_bR65E',
         title: 'Advanced Commercial Color Grading Workflow & Blackmagic Certification Prep',
         titleHi: 'कमर्शियल विज्ञापनों हेतु एडवांस्ड कलर ग्रेडिंग व सर्टिफिकेशन तैयारी',
         channelName: 'Darren Mostyn',
@@ -157,7 +157,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ae_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: 'Xv8JBXPgeI8',
         title: 'Adobe After Effects Complete Course for Beginners in Hindi (Class 1 to 5)',
         titleHi: 'आफ्टर इफेक्ट्स सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'GfxMentor',
@@ -171,7 +171,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ae_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'Pa_GaNZVLDc',
         title: 'Kinetic Typography & Modern Motion Graphics in After Effects in Hindi',
         titleHi: 'काइनेटिक टाइपोग्राफी और ट्रेंडिंग मोशन ग्राफिक्स कैसे बनाएं',
         channelName: 'Rajeev Mehta',
@@ -185,7 +185,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ae_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: '9pfmZPaC-Ho',
         title: 'Advanced 3D Camera Tracking & VFX Compositing in After Effects',
         titleHi: '3D कैमरा ट्रैकिंग और विजुअल इफेक्ट्स कम्पोजिटिंग',
         channelName: 'Film Riot',
@@ -221,7 +221,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'cap_vid_beg',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: 'DD0IGm6ztXM',
         title: 'CapCut Mobile Full Course in Hindi (Edit Viral Instagram Reels on Phone)',
         titleHi: 'कैपकट मोबाइल से वायरल रील्स बनाना सीखें बिल्कुल फ्री में',
         channelName: 'Technical Yogi',
@@ -235,7 +235,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'cap_vid_mid',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'E-KkBCnWHL8',
         title: 'Hormozi Style Animated Captions & Sound Effects in CapCut Mobile',
         titleHi: 'होरमोजी स्टाइल वायरल कैप्शंस और साउंड इफेक्ट्स लगाना सीखें',
         channelName: 'Pushkar Raj Thakur',
@@ -249,7 +249,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'cap_vid_adv',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: '1IYTSlTEy-4',
         title: 'Advanced CapCut Speed Ramping, Keyframes & Client Outreach for ₹20k/mo',
         titleHi: 'कैपकट में स्पीड रैंप, कीफ्रेमिंग और रील्स बेचकर पैसे कैसे कमाएं',
         channelName: 'Ishan Monitor',
@@ -285,7 +285,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'blen_vid_beg',
-        youtubeId: '9G_87W0rBw8',
+        youtubeId: 'lJGiCtBZVP8',
         title: 'Blender 4 Complete Beginner Tutorial in Hindi (Model Your First 3D Scene)',
         titleHi: 'ब्लेंडर 4 सीखें बिल्कुल शुरुआत से हिन्दी में (पहला 3D सीन बनाएं)',
         channelName: 'Animatz',
@@ -299,7 +299,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'blen_vid_mid',
-        youtubeId: 'k4qW9sL70yU',
+        youtubeId: 'B0J27sf9N1Y',
         title: 'Blender 3D Product Modeling & Realistic Lighting Masterclass',
         titleHi: 'ब्लेंडर में 3D प्रोडक्ट मॉडलिंग और रियलिस्टिक लाइटिंग',
         channelName: 'Blender Guru',
@@ -313,7 +313,7 @@ export const VIDEO_ANIMATION_TOPICS: SkillTopic[] = [
       },
       {
         id: 'blen_vid_adv',
-        youtubeId: '0ZhOeA0MY9o',
+        youtubeId: 'ppASl6yaguU',
         title: 'Blender 3D Character Rigging & Cinematic Animation for Commercial Ads',
         titleHi: 'ब्लेंडर में कैरेक्टर रिगिंग और सिनेमाई 3D एनीमेशन',
         channelName: 'CG Geek',

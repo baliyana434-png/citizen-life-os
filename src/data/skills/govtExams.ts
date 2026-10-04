@@ -24,7 +24,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'mat_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: '-4MyfAhh0Zs',
         title: 'Speed Maths & Calculation Tricks for All Govt Exams in Hindi (Learn in 1 Video)',
         titleHi: 'स्पीड मैथ्स व कैलकुलेशन ट्रिक्स सीखें बिल्कुल शुरुआत से (फुल क्लास)',
         channelName: 'Aditya Ranjan Talks',
@@ -38,7 +38,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'mat_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: '8DBvdQrA-dQ',
         title: 'Complete Percentage & Profit-Loss by Ratio Method (Zero Formula Masterclass)',
         titleHi: 'प्रतिशत और लाभ-हानि का पूरा चैप्टर अनुपात विधि से सीखें',
         channelName: 'Gagan Pratap Maths',
@@ -52,7 +52,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'mat_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'ZA7JsEEaWPY',
         title: 'Advance Maths Algebra & Trigonometry Value Putting Super Hacks',
         titleHi: 'एडवांस मैथ्स: बीजगणित और त्रिकोणमिति में वैल्यू पुटिंग से उत्तर निकालना',
         channelName: 'Abhinay Maths',
@@ -89,7 +89,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'rea_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'fmZTsJljhco',
         title: 'Reasoning Full Course for Beginners in Hindi (Alphabet, Coding & Direction)',
         titleHi: 'रीजनिंग सीखें बिल्कुल शुरुआत से हिन्दी में (पूरी बेसिक क्लास)',
         channelName: 'Deepak Sir Reasoning',
@@ -103,7 +103,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'rea_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'K83uBTBwb0c',
         title: 'Syllogism 100-50 Method (Solve Any Question Without Venn Diagram in 10 Seconds)',
         titleHi: 'कथन व निष्कर्ष: 100-50 नियम से बिना वेन आरेख के 10 सेकंड में सही उत्तर',
         channelName: 'Piyush Varshney Reasoning',
@@ -117,7 +117,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'rea_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'lPtmPsPBHKA',
         title: 'Seating Arrangement & High-Level Puzzles for Bank PO & SSC CGL Mains',
         titleHi: 'कठिन पजल्स और सिटिंग अरेंजमेंट सॉल्व करने की मास्टर स्ट्रैटेजी',
         channelName: 'Adda247',
@@ -154,7 +154,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'gs_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: '2_0vLMlNhHI',
         title: 'Indian Polity Complete Masterclass in Hindi (Constitution, Articles & Amendments)',
         titleHi: 'भारतीय संविधान व राजव्यवस्था का पूरा निचोड़ हिन्दी में (M. Laxmikanth)',
         channelName: 'Drishti IAS',
@@ -168,7 +168,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'gs_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'uuSs42R8jJg',
         title: 'Modern Indian History Complete Crash Course for UPSC & State PCS in Hindi',
         titleHi: 'आधुनिक भारत का इतिहास: 1857 से 1947 तक संपूर्ण घटनाक्रम',
         channelName: 'StudyIQ IAS',
@@ -182,7 +182,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'gs_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: 'KUGXdvm7Wa8',
         title: 'Indian Economy & Macroeconomics Fundamentals for Civil Services Exams',
         titleHi: 'भारतीय अर्थव्यवस्था का संपूर्ण आधार: GDP, महंगाई, बैंकिंग व बजट',
         channelName: 'Mrunal Patel',
@@ -219,7 +219,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'bnk_vid_beg',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: 'Eov-gejAEHE',
         title: 'Quadratic Equations 5 Marks in 1 Minute (Sign Method Trick for Banking Exams)',
         titleHi: 'द्विघात समीकरण: 5 नंबर मात्र 1 मिनट में पक्के करें (साइन मेथड ट्रिक)',
         channelName: 'Arun Singh Rawat Quant',
@@ -233,7 +233,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'bnk_vid_mid',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'IJbmAwYMlYo',
         title: 'Complete Data Interpretation (DI) for SBI & IBPS PO (Bar, Pie & Table Charts)',
         titleHi: 'डेटा इंटरप्रिटेशन (DI) का संपूर्ण कोर्स: बार, पाई व टेबल चार्ट्स',
         channelName: 'Adda247',
@@ -247,7 +247,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'bnk_vid_adv',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: 'alwAR2WnP0s',
         title: 'Banking Awareness & RBI Monetary Policy for Bank PO Mains & Interview',
         titleHi: 'बैंकिंग अवेयरनेस और RBI नीतियां: बैंक PO मेन्स और इंटरव्यू हेतु',
         channelName: 'AffairsCloud',
@@ -284,7 +284,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'rrb_vid_beg',
-        youtubeId: '9G_87W0rBw8',
+        youtubeId: '3DuhSUJUp8c',
         title: 'RRB NTPC & Group D General Science Full Physics & Chemistry in Hindi',
         titleHi: 'रेलवे परीक्षा सामान्य विज्ञान: भौतिकी और रसायन का पूरा रिवीजन',
         channelName: 'Exampur',
@@ -298,7 +298,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'rrb_vid_mid',
-        youtubeId: 'k4qW9sL70yU',
+        youtubeId: '1icOVoOuPuw',
         title: 'Biology Top 500 Questions Repeated in Railway Exams in Hindi',
         titleHi: 'रेलवे में बार-बार पूछे जाने वाले जीवविज्ञान के 500 सबसे महत्वपूर्ण प्रश्न',
         channelName: 'Khan GS Research Centre',
@@ -312,7 +312,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'rrb_vid_adv',
-        youtubeId: '0ZhOeA0MY9o',
+        youtubeId: '4UoqerLq7Os',
         title: 'Indian Railways GK, History & Zone Headquarters Complete Master Video',
         titleHi: 'भारतीय रेलवे का संपूर्ण सामान्य ज्ञान: 18 जोन, मुख्यालय व इतिहास',
         channelName: 'Utkarsh Classes',
@@ -349,7 +349,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'def_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'xwWmahXN4iM',
         title: 'NDA / CDS Written Exam Complete Strategy & Booklist (How to Crack in 1st Attempt)',
         titleHi: 'NDA व CDS लिखित परीक्षा पहले प्रयास में पास करने की सटीक रणनीति',
         channelName: 'Major Kalshi Classes',
@@ -363,7 +363,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'def_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'n2-CQ6Z-lnk',
         title: '5 Days SSB Interview Complete Procedure Step by Step in Hindi',
         titleHi: '5 दिन का SSB इंटरव्यू कैसे होता है: रिपोर्टिंग से कॉन्फ्रेंस तक की पूरी प्रक्रिया',
         channelName: 'Centurion Defence Academy',
@@ -377,7 +377,7 @@ export const GOVT_EXAMS_TOPICS: SkillTopic[] = [
       },
       {
         id: 'def_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'TFD8raeyq8Y',
         title: 'SSB Psychology Tests Masterclass (TAT, WAT, SRT Stories & Responses)',
         titleHi: 'SSB साइकोलॉजी टेस्ट में सेलेक्ट होने वाली कहानियां और उत्तर कैसे लिखें',
         channelName: 'SSBCrack',

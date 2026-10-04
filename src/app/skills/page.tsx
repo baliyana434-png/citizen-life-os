@@ -259,9 +259,6 @@ export default function SkillsPage() {
                 <span className="font-black text-slate-900 text-base sm:text-lg tracking-tight">
                   {language === 'hi' ? 'कौशल एवं वीडियो सीख केंद्र' : 'Skills & Video Learning Hub'}
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black uppercase tracking-wider">
-                  Verified Free
-                </span>
               </div>
               <p className="text-[11px] text-slate-500 hidden sm:block">
                 {language === 'hi'

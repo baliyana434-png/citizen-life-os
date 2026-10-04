@@ -25,7 +25,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'stk_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'Xn7KWR9EOGQ',
         title: 'Stock Market Complete Course for Beginners in Hindi (Learn in 1 Video from Scratch)',
         titleHi: 'शेयर मार्केट सीखें बिल्कुल शुरुआत से हिन्दी में (जीरो से हीरो क्लास)',
         channelName: 'CA Rachana Phadke Ranade',
@@ -39,7 +39,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'stk_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'b0_CsTFjtus',
         title: 'Candlestick Patterns & Price Action Secrets in Hindi (Master Technical Analysis)',
         titleHi: 'कैंडलस्टिक चार्ट और प्राइस एक्शन सीखें: चार्ट देखकर सही समय पर शेयर खरीदें',
         channelName: 'Pushkar Raj Thakur',
@@ -53,7 +53,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'stk_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: '3UF0ymVdYLA',
         title: 'Risk Management & Trading Psychology Masterclass (How 10% Profitable Traders Think)',
         titleHi: 'ट्रेडिंग में कभी बड़ा नुकसान न हो: रिस्क मैनेजमेंट और माइंडसेट की सीक्रेट क्लास',
         channelName: 'Pranjal Kamra',
@@ -92,7 +92,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'tly_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'HOLVBWEAxmE',
         title: 'Tally Prime Complete Course for Beginners in Hindi (Learn in 1 Video from Scratch)',
         titleHi: 'टैली प्राइम सीखें बिल्कुल शुरुआत से हिन्दी में (पूरी बेसिक क्लास)',
         channelName: 'Gyanyagya',
@@ -106,7 +106,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'tly_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'v02NSo-Bd4E',
         title: 'Tally Prime GST Invoicing & Voucher Entries Practical Demo in Hindi',
         titleHi: 'टैली प्राइम में GST बिल कैसे बनाएं: सेल, परचेज और पेमेंट वाउचर एंट्री',
         channelName: 'Self Study Gyan',
@@ -120,7 +120,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'tly_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'YgejLN-dyAU',
         title: 'Bank Reconciliation (BRS), e-Way Bill & GSTR-1/3B Report Preparation in Tally Prime',
         titleHi: 'टैली में बैंक समाधान (BRS), e-वे बिल और GST रिटर्न तैयार करने का तरीका',
         channelName: 'Tally Experts Hub',
@@ -159,7 +159,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'itr_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: 'SNpjZ_wW7lQ',
         title: 'Income Tax Return (ITR-1) Filing Step by Step in Hindi on New Portal (Form 16)',
         titleHi: 'इनकम टैक्स रिटर्न (ITR-1) खुद कैसे भरें: नए पोर्टल पर पूरी लाइव फाइलिंग',
         channelName: 'FinnovationZ',
@@ -173,7 +173,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'itr_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'q7KET1sJ-no',
         title: 'ITR-4 Sugam Filing for Small Businesses & Freelancers (Section 44AD Presumptive)',
         titleHi: 'दुकानदारों व फ्रीलांसर्स के लिए ITR-4 सुगम कैसे भरें (44AD 6%/8% प्रॉफिट स्कीम)',
         channelName: 'Labor Law Advisor',
@@ -187,7 +187,7 @@ export const FINANCE_ACCOUNTING_TOPICS: SkillTopic[] = [
       },
       {
         id: 'itr_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: '5oMBdXzbVok',
         title: 'Legal Ways to Save Tax in India (80C, 80D Health, NPS & Capital Gains Exemption)',
         titleHi: 'भारत में कानूनी रूप से टैक्स कैसे बचाएं: 80C, 80D हेल्थ इंश्योरेंस व NPS',
         channelName: 'CA Rachana Phadke Ranade',

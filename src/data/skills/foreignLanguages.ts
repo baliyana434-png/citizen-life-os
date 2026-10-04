@@ -25,7 +25,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ger_vid_beg',
-        youtubeId: 'W1Yc10bX5vA',
+        youtubeId: '61FsEQYs2CM',
         title: 'Learn German for Beginners A1 in Hindi (Full Course Class 1 to 10)',
         titleHi: 'जर्मन भाषा सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'German Gyan with Nidhi',
@@ -39,7 +39,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ger_vid_mid',
-        youtubeId: 'b14oV2vJ96A',
+        youtubeId: 'MOtqMNKs0Jw',
         title: 'German A2 Grammar Complete Course (Cases, Verbs & Daily Conversations)',
         titleHi: 'जर्मन A2 व्याकरण और बातचीत का पूरा कोर्स',
         channelName: 'Learn German with Anja',
@@ -53,7 +53,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ger_vid_adv',
-        youtubeId: 'lZ_2lX9q0cI',
+        youtubeId: 'xOT9m4erV_8',
         title: 'Goethe-Zertifikat B1 Exam Preparation (Speaking, Listening, Reading Modules)',
         titleHi: 'गेटे B1 परीक्षा पास करने की सटीक रणनीति व अभ्यास',
         channelName: 'Bharat in Germany',
@@ -91,7 +91,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'jap_vid_beg',
-        youtubeId: 'bOUqVSpf1V8',
+        youtubeId: 'D3iM2AfvB5M',
         title: 'Learn Japanese for Beginners (Hiragana, Katakana & Basic Words in Hindi)',
         titleHi: 'जापानी भाषा सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'NihonGO in Hindi',
@@ -119,7 +119,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'jap_vid_adv',
-        youtubeId: 'rG_e_Y97p80',
+        youtubeId: 'VolCyNLAV94',
         title: 'Japan SSW Visa Complete Guide & JLPT N4 Exam Passing Strategy',
         titleHi: 'जापान SSW वर्क वीजा व N4 परीक्षा पास करने की पूरी रणनीति',
         channelName: 'Japan Career Channel',
@@ -185,7 +185,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fre_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: 'u7TN2WcPR74',
         title: 'TEF Canada French B2 Exam Preparation (CLB 7 Strategy for Canada PR)',
         titleHi: 'TEF कनाडा B2 परीक्षा पास करके कनाडा PR पाने का तरीका',
         channelName: 'French Faster',
@@ -223,7 +223,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'spa_vid_beg',
-        youtubeId: 'qPk9nS2R0Xw',
+        youtubeId: 'D0DOn3Gfww0',
         title: 'Learn Spanish for Beginners A1 in Hindi (Class 1 to 5 Full Basics)',
         titleHi: 'स्पैनिश भाषा सीखें बिल्कुल शुरुआत से हिन्दी में',
         channelName: 'Spanish with Anurag',
@@ -237,7 +237,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'spa_vid_mid',
-        youtubeId: '9G_87W0rBw8',
+        youtubeId: 'ozOpwHKPtBw',
         title: 'Spanish Tenses Masterclass (Present, Past Preterite & Imperfect)',
         titleHi: 'स्पैनिश व्याकरण व सभी काल का संपूर्ण कोर्स',
         channelName: 'Butterfly Spanish',
@@ -251,7 +251,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'spa_vid_adv',
-        youtubeId: 'k4qW9sL70yU',
+        youtubeId: 'Jni1jFR3lao',
         title: 'How to Clear DELE B1/B2 & Get Hired as a Spanish Language Expert in India',
         titleHi: 'DELE परीक्षा पास करके स्पैनिश भाषा एक्सपर्ट के रूप में जॉब कैसे पाएं',
         channelName: 'Language Next',
@@ -289,7 +289,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'kor_vid_beg',
-        youtubeId: '0ZhOeA0MY9o',
+        youtubeId: 'sx0yyQqkpqo',
         title: 'Learn Korean Alphabet Hangul in Just 60 Minutes (Beginner Guide in Hindi)',
         titleHi: 'कोरियन भाषा की वर्णमाला हंगुल बिल्कुल शुरुआत से सीखें',
         channelName: 'Korean with Priya',
@@ -303,7 +303,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'kor_vid_mid',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'uNDf0V06m0w',
         title: 'TOPIK 1 Complete Grammar Masterclass (All Essential Rules Explained)',
         titleHi: 'TOPIK 1 का पूरा व्याकरण व वाक्य रचना कोर्स',
         channelName: 'Talk To Me In Korean',
@@ -317,7 +317,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'kor_vid_adv',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'Xss347VHwCU',
         title: 'South Korea EPS-TOPIK Exam Complete Strategy & Model Paper Solving',
         titleHi: 'साउथ कोरिया EPS-TOPIK परीक्षा पास करने की संपूर्ण गाइड व पेपर सॉल्विंग',
         channelName: 'EPS Korean Mission',
@@ -355,7 +355,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ara_vid_beg',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'DzXB3mGOnRo',
         title: 'Learn Spoken Arabic in Hindi for Dubai & Saudi Arabia (Lesson 1 to 10)',
         titleHi: 'दुबई व सऊदी अरब के लिए अरबी बोलना सीखें हिन्दी में',
         channelName: 'Gulf Arabic Learning',
@@ -369,7 +369,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ara_vid_mid',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'RdHgF36LE30',
         title: 'Gulf Arabic Conversation for Office, Driver, Nurse & Sales Workers',
         titleHi: 'ऑफिस, ड्राइविंग व सेल्स हेतु बोलचाल की अरबी',
         channelName: 'Arabian Talks',
@@ -383,7 +383,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ara_vid_adv',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'iNQOKVRWSgg',
         title: 'Advanced Gulf Arabic Fluency & How to Negotiate High Salary in Dubai',
         titleHi: 'एडवांस्ड अरबी बोलचाल व खाड़ी देशों में ज्यादा सैलरी पाने का तरीका',
         channelName: 'Gulf Career Guide',
@@ -421,7 +421,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'eng_vid_beg',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: '8qPHVxQSX50',
         title: '60 Days Spoken English Course Day 1 to 10 (Zero Level to Fluent in Hindi)',
         titleHi: 'शुरुआत से फर्राटेदार अंग्रेजी बोलना सीखें बिल्कुल आसान तरीके से',
         channelName: 'Sartaz Classes',
@@ -435,7 +435,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'eng_vid_mid',
-        youtubeId: '23_87W0rBw8',
+        youtubeId: 'zc3rWo1nfAU',
         title: 'Corporate English & Interview Communication Masterclass',
         titleHi: 'जॉब इंटरव्यू व कॉर्पोरेट ऑफिस हेतु प्रोफेशनल इंग्लिश',
         channelName: 'Learnex English Lessons',
@@ -449,7 +449,7 @@ export const FOREIGN_LANGUAGE_TOPICS: SkillTopic[] = [
       },
       {
         id: 'eng_vid_adv',
-        youtubeId: '34_yN9qL0kw',
+        youtubeId: 'k_-2bH4ZFU0',
         title: 'IELTS Speaking Band 9 Full Interview & Tips to Score 7+ Guaranteed',
         titleHi: 'IELTS स्पीकिंग में 7 से 9 बैंड स्कोर करने की सीक्रेट तकनीक',
         channelName: 'IELTS Advantage',

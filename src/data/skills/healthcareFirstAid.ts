@@ -25,7 +25,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'fa_vid_beg',
-        youtubeId: 'bA4yN9qL0kw',
+        youtubeId: 'hTS6gtaTHcI',
         title: 'Complete CPR & First Aid Training in Hindi (Learn How to Save a Life in Emergency)',
         titleHi: 'CPR देना सीखें बिल्कुल सही तरीके से हिन्दी में (आपातकाल में किसी की जान बचाएं)',
         channelName: 'Doctor ER Hindi',
@@ -39,7 +39,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fa_vid_mid',
-        youtubeId: 'k3_9wL70ZxE',
+        youtubeId: 'vin4Orr1r1U',
         title: 'Choking First Aid (Heimlich Maneuver for Adults, Children & Infants in Hindi)',
         titleHi: 'गले में खाना या सिक्का अटकने पर तुरंत क्या करें: हेमलिच पैंतरा सीखें',
         channelName: 'Medanta Hospital',
@@ -53,7 +53,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
       },
       {
         id: 'fa_vid_adv',
-        youtubeId: 'r9_87W0rBw8',
+        youtubeId: 'jL_TDmFu1io',
         title: 'Road Accident First Aid (Bleeding Control, Fractures & Spine Protection)',
         titleHi: 'सड़क दुर्घटना में फर्स्ट एड: खून रोकना, हड्डी टूटने पर सहारा व रीढ़ की हड्डी सुरक्षा',
         channelName: 'Apollo Hospitals',
@@ -91,7 +91,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'nur_vid_beg',
-        youtubeId: '8p_yN9qL0kw',
+        youtubeId: 'aLmjv63MWlc',
         title: 'General Duty Assistant (GDA) Nursing Course in Hindi (Vitals & Patient Care Basics)',
         titleHi: 'नर्सिंग असिस्टेंट कोर्स सीखें हिन्दी में (BP, शुगर व ऑक्सीजन नापने का सही तरीका)',
         channelName: 'Nursing Academy Hindi',
@@ -105,7 +105,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
       },
       {
         id: 'nur_vid_mid',
-        youtubeId: 'm4_qW9sL70y',
+        youtubeId: 'W8IysAILTlo',
         title: 'Bedridden Patient Care & Preventing Bed Sores (Complete Practical Demonstration)',
         titleHi: 'बिस्तर पर लेटे मरीज की देखभाल कैसे करें: बेड सोर और घाव से बचाने का तरीका',
         channelName: 'Apollo Home Healthcare',
@@ -119,7 +119,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
       },
       {
         id: 'nur_vid_adv',
-        youtubeId: '12p_9wL70ZxE',
+        youtubeId: 'ZmxbFpkZs6o',
         title: 'Catheter Care, Ryles Tube Feeding & Infection Control in Hospitals',
         titleHi: 'यूरिन कैथेटर और राइल्स ट्यूब से मरीज को खाना कैसे दें (इन्फेक्शन से बचाव)',
         channelName: 'Medanta Nursing Education',
@@ -158,7 +158,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
     videos: [
       {
         id: 'ja_vid_beg',
-        youtubeId: 'ujDtm0hZyII',
+        youtubeId: 'uHa_bi8uE9I',
         title: 'Generic Medicine vs Branded Medicine Explained in Hindi (Doctor Truth)',
         titleHi: 'जेनेरिक दवा और ब्रांडेड दवा में क्या अंतर है: डॉक्टर से जानिए पूरी सच्चाई',
         channelName: 'Doctor ER Hindi',
@@ -172,7 +172,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ja_vid_mid',
-        youtubeId: 'hd0_GZHHWeE',
+        youtubeId: 'V9AEceAVOEs',
         title: 'How to Read Medicine Salt Name & Save 90% on Medical Bills in Hindi',
         titleHi: 'दवाइयों का सॉल्ट पढ़ना सीखें और हर महीने मेडिकल बिल में 90% पैसे बचाएं',
         channelName: 'Labor Law Advisor',
@@ -186,7 +186,7 @@ export const HEALTHCARE_FIRSTAID_TOPICS: SkillTopic[] = [
       },
       {
         id: 'ja_vid_adv',
-        youtubeId: 'W3_4G95Lw7A',
+        youtubeId: 'Jc1JjxHvRDM',
         title: 'How to Open Pradhan Mantri Jan Aushadhi Kendra (Complete Online Application & Subsidy)',
         titleHi: 'प्रधानमंत्री जन औषधि केंद्र कैसे खोलें: ऑनलाइन आवेदन, लागत, मुनाफा व सरकारी मदद',
         channelName: 'Ishan Monitor',
