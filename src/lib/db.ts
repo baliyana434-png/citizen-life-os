@@ -125,10 +125,11 @@ export const DatabaseService = {
   /**
    * Find a registered citizen by email, phone, or ID
    */
-  async findCitizen(filter: { email?: string; phone?: string; id?: string }): Promise<CitizenRecord | null> {
+  async findCitizen(filter: { email?: string; phone?: string; id?: string; transactionId?: string }): Promise<CitizenRecord | null> {
     const email = filter.email?.trim().toLowerCase();
     const phone = filter.phone?.replace(/\D/g, '').slice(-10);
     const id = filter.id?.trim();
+    const transactionId = filter.transactionId?.trim();
 
     // 1. Try Cloud MongoDB Atlas
     const db = await getMongoDb();
@@ -138,6 +139,7 @@ export const DatabaseService = {
         const conditions: any[] = [];
         if (email) conditions.push({ email: email });
         if (phone) conditions.push({ phoneNumber: phone });
+        if (transactionId) conditions.push({ 'subscription.transactionId': transactionId });
         if (id) {
           conditions.push({ id: id });
           conditions.push({ nationalIdMasked: id });
@@ -160,6 +162,7 @@ export const DatabaseService = {
       citizens.find((c) => {
         if (email && c.email?.toLowerCase() === email) return true;
         if (phone && c.phoneNumber === phone) return true;
+        if (transactionId && c.subscription?.transactionId === transactionId) return true;
         if (id && (c.id === id || c.nationalIdMasked === id || c.aadhaarNumberMasked === id)) return true;
         return false;
       }) || null

@@ -44,6 +44,7 @@ interface AuthModalProps {
   initialScreen?: AuthScreen;
   onLoginSuccess: (profile: Partial<CitizenProfile>) => void;
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
+  onOpenGoogleChooser?: () => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -52,6 +53,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   initialScreen = 'login',
   onLoginSuccess,
   onGoogleSuccess,
+  onOpenGoogleChooser,
 }) => {
   const { t, language } = useTranslation();
   const { country, setCountry, countryMeta } = useCountry();
@@ -183,6 +185,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   // Google OAuth Sign In (Single Official Google Provider)
   const handleGoogleSignIn = async () => {
+    // If onOpenGoogleChooser is provided, directly open the authentic Google Account Chooser
+    if (onOpenGoogleChooser) {
+      onClose();
+      onOpenGoogleChooser();
+      return;
+    }
+
     setIsLoading(true);
     setErrorMessage(null);
     try {

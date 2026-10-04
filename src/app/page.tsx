@@ -503,9 +503,10 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [country, fetchLiveSync]);
 
-  // Filtered and Scored Opportunities
+  // Filtered and Scored Opportunities (Sector-Agnostic Global Search)
   const filteredOpportunities = useMemo(() => {
     const seen = new Set<string>();
+    const isSearching = Boolean(searchQuery.trim());
 
     return opportunities.filter((opp) => {
       // 0. Deduplicate identical opportunities
@@ -513,8 +514,10 @@ export default function HomePage() {
       if (seen.has(key)) return false;
       seen.add(key);
 
-      // 1. Life Stage Tab Match
-      if (opp.lifeStage !== activeTab) return false;
+      // 1. Life Stage Tab Match:
+      // When user searches in search bar, search globally across ALL sectors/categories!
+      // Only restrict to activeTab when user is browsing without active search query.
+      if (!isSearching && opp.lifeStage !== activeTab) return false;
 
       // 1B. Strict Country Matching (Show opportunities for the user's registered country, with exception for study abroad & global tools)
       const isStudyAbroad = opp.lifeStage === 'abroad_jobs' || opp.category === 'study_abroad';
@@ -746,8 +749,9 @@ export default function HomePage() {
                   <Award className="w-3.5 h-3.5" />
                 </div>
                 <div className="truncate text-[11px]">
-                  <span className="font-bold text-white">1-Year Pass • ₹19</span>
-                  <span className="text-slate-400 ml-1.5">{countryMeta.currencySymbol}{totalBenefitSum.toLocaleString()}</span>
+                  <span className="font-bold text-white">
+                    {language === 'hi' ? '1-वर्षीय नागरिक पास • ₹19' : '1-Year Citizen Pass • ₹19'}
+                  </span>
                 </div>
               </div>
               <button
@@ -854,6 +858,27 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Global Search Results Alert Bar */}
+        {searchQuery.trim() && (
+          <div className="flex items-center justify-between px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-950 font-bold shadow-xs">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>
+                {language === 'hi'
+                  ? `सभी श्रेणियों में खोज परिणाम: "${searchQuery}" (${filteredOpportunities.length} अवसर उपलब्ध)`
+                  : `Global search across all sectors: "${searchQuery}" (${filteredOpportunities.length} opportunities found)`}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="px-2.5 py-1 rounded-xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-100 text-[11px] font-extrabold transition-all cursor-pointer"
+            >
+              {language === 'hi' ? 'खोज हटाएं' : 'Clear search'}
+            </button>
+          </div>
+        )}
+
         {/* Life Stage Tabs and Sub-filters */}
         <LifeStageTabs
           activeTab={activeTab}
@@ -924,6 +949,7 @@ export default function HomePage() {
         initialScreen={authModalScreen}
         onLoginSuccess={handleVerificationComplete}
         onGoogleSuccess={handleGoogleAuthSuccess}
+        onOpenGoogleChooser={() => setIsGoogleChooserOpen(true)}
       />
 
       {/* 5. User Profile & Settings Drawer */}
@@ -959,6 +985,7 @@ export default function HomePage() {
         onOpenSubscription={() => setIsSubscriptionOpen(true)}
         onLoginSuccess={handleVerificationComplete}
         onGoogleSuccess={handleGoogleAuthSuccess}
+        onOpenGoogleChooser={() => setIsGoogleChooserOpen(true)}
       />
 
       {/* 6. Google Account Chooser Modal */}

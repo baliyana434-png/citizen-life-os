@@ -45,6 +45,7 @@ interface UserProfileDrawerProps {
   onOpenSubscription?: () => void;
   onLoginSuccess?: (updated: Partial<CitizenProfile>) => void;
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
+  onOpenGoogleChooser?: () => void;
   onAddFamilyMember?: (member: FamilyMember) => void;
   onDeleteFamilyMember?: (id: string) => void;
   totalBenefitsUnlocked?: number;
@@ -61,6 +62,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   onOpenSubscription,
   onLoginSuccess,
   onGoogleSuccess,
+  onOpenGoogleChooser,
   totalBenefitsUnlocked,
 }) => {
   const { t, language } = useTranslation();
@@ -93,6 +95,12 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   };
 
   const handleSignInGoogle = async () => {
+    if (onOpenGoogleChooser) {
+      onClose();
+      onOpenGoogleChooser();
+      return;
+    }
+
     setIsGoogleLoggingIn(true);
     setGoogleLoginError(null);
     try {

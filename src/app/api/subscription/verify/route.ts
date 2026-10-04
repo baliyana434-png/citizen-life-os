@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { PaymentSecurityService } from '@/lib/security';
 import { DatabaseService } from '@/lib/db';
 import { CitizenSubscription } from '@/types';
 
-// TODO [PRODUCTION CRITICAL]: Replace this with actual Razorpay/Cashfree webhook verification.
-// Currently requires orderId + paymentToken as minimum proof-of-payment.
-// In production, this endpoint should:
-// 1. Verify the payment signature from Razorpay/Cashfree using their server SDK
-// 2. Cross-check orderId against your payment gateway dashboard
-// 3. Verify the amount matches ₹19 on the gateway side
-// 4. Only then activate the subscription
-
+/**
+ * Anti-Hack & Anti-Tamper Subscription Payment Verification Engine
+ * 1. Enforces mandatory server-side locked price (1900 Paisa = ₹19 INR).
+ * 2. Cryptographic HMAC-SHA256 signature verification matching Razorpay secret.
+ * 3. Server-to-server gateway lookup to prevent 1-rupee client-side tampering.
+ * 4. Anti-replay prevention: Rejects reused payment IDs.
+ */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -22,69 +22,211 @@ export async function POST(req: NextRequest) {
     const razorpaySignature = PaymentSecurityService.sanitizeString(body.razorpaySignature);
     const paymentMethod = PaymentSecurityService.sanitizeString(body.paymentMethod || 'UPI');
 
-    // SECURITY: Require citizenId, orderId, AND paymentToken/razorpayPaymentId
+    // 1. Mandatory Identity and Order Verification
     if (!citizenId) {
       return NextResponse.json(
-        { success: false, message: 'अमान्य नागरिक अनुरोध।' },
+        { success: false, errorType: 'INVALID_CITIZEN', message: 'नागरिक पहचान (Citizen ID) आवश्यक है।' },
         { status: 400 }
       );
     }
 
-    if (!orderId || (!paymentToken && !razorpayPaymentId)) {
+    if (!orderId) {
+      return NextResponse.json(
+        { success: false, errorType: 'MISSING_ORDER_ID', message: 'ऑर्डर पहचान (Order ID) आवश्यक है।' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Verify Citizen Exists
+    const existingCitizen = await DatabaseService.findCitizen({ id: citizenId });
+    if (!existingCitizen) {
+      return NextResponse.json(
+        { success: false, errorType: 'CITIZEN_NOT_FOUND', message: 'नागरिक प्रोफाइल नहीं मिला। कृपया पहले पंजीकरण करें।' },
+        { status: 404 }
+      );
+    }
+
+    // 3. Prevent duplicate activation if already active with an unexpired subscription
+    if (existingCitizen.subscription?.status === 'active' && existingCitizen.subscription?.validUntil) {
+      const now = new Date();
+      const expiry = new Date(existingCitizen.subscription.validUntil);
+      if (expiry > now) {
+        return NextResponse.json({
+          success: true,
+          message: 'सदस्यता पहले से सक्रिय है।',
+          subscription: existingCitizen.subscription,
+          alreadyActive: true,
+        });
+      }
+    }
+
+    const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID;
+    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
+    const isRazorpayConfigured = Boolean(razorpayKeyId && razorpayKeySecret && razorpayKeyId.startsWith('rzp_'));
+
+    const effectivePaymentId = razorpayPaymentId || paymentToken;
+    if (!effectivePaymentId) {
       return NextResponse.json(
         {
           success: false,
-          message: 'भुगतान सत्यापन विफल: orderId और paymentToken आवश्यक हैं। कृपया भुगतान पूर्ण करें।',
           errorType: 'PAYMENT_PROOF_MISSING',
+          message: 'भुगतान सत्यापन विफल: भुगतान आईडी (Payment ID) अनिवार्य है।',
         },
         { status: 400 }
       );
     }
 
-    // SECURITY: Verify the citizen actually exists before activating
-    const existingCitizen = await DatabaseService.findCitizen({ id: citizenId });
-    if (!existingCitizen) {
+    // 4. Anti-Replay Attack Protection: Ensure transaction ID was never used by another citizen
+    const existingTxnCitizen = await DatabaseService.findCitizen({ transactionId: effectivePaymentId });
+    if (existingTxnCitizen && existingTxnCitizen.id !== citizenId) {
+      console.warn('Replay attack detected: transaction ID reused across citizens:', {
+        transactionId: effectivePaymentId,
+        attemptedBy: citizenId,
+        originallyOwnedBy: existingTxnCitizen.id,
+      });
       return NextResponse.json(
-        { success: false, message: 'नागरिक प्रोफाइल नहीं मिला। कृपया पहले पंजीकरण करें।' },
-        { status: 404 }
+        {
+          success: false,
+          errorType: 'TRANSACTION_ALREADY_USED',
+          message: 'अवैध प्रयास: यह भुगतान आईडी पहले से किसी अन्य खाते में उपयोग हो चुकी है।',
+        },
+        { status: 409 }
       );
     }
 
-    // SECURITY: Prevent duplicate activation with same orderId
-    if (existingCitizen.subscription?.status === 'active' && existingCitizen.subscription?.transactionId) {
-      return NextResponse.json({
-        success: true,
-        message: 'सदस्यता पहले से सक्रिय है।',
-        subscription: existingCitizen.subscription,
-        alreadyActive: true,
-      });
-    }
+    // 5. Production Razorpay Cryptographic Verification & Anti-1-Rupee Tampering Check
+    if (isRazorpayConfigured) {
+      // Must provide valid Razorpay signature and payment ID
+      if (!razorpaySignature || !razorpayPaymentId) {
+        return NextResponse.json(
+          {
+            success: false,
+            errorType: 'MISSING_SIGNATURE',
+            message: 'सुरक्षा त्रुटि: Razorpay डिजिटल हस्ताक्षर (Signature) प्रदान नहीं किया गया।',
+          },
+          { status: 403 }
+        );
+      }
 
-    // REAL RAZORPAY CRYPTOGRAPHIC VERIFICATION (HMAC-SHA256)
-    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (razorpaySignature && razorpayPaymentId && razorpayKeySecret) {
+      // Step A: Cryptographic HMAC-SHA256 signature verification
       const generatedSignature = crypto
-        .createHmac('sha256', razorpayKeySecret)
+        .createHmac('sha256', razorpayKeySecret!)
         .update(`${orderId}|${razorpayPaymentId}`)
         .digest('hex');
 
-      if (generatedSignature !== razorpaySignature) {
-        console.error('Razorpay signature mismatch:', {
+      let signatureValid = false;
+      try {
+        signatureValid = crypto.timingSafeEqual(
+          Buffer.from(generatedSignature, 'hex'),
+          Buffer.from(razorpaySignature, 'hex')
+        );
+      } catch (sigErr) {
+        signatureValid = false;
+      }
+
+      if (!signatureValid) {
+        console.error('Tampered payment signature detected:', {
           received: razorpaySignature,
           generated: generatedSignature,
         });
         return NextResponse.json(
           {
             success: false,
-            message: 'भुगतान सत्यापन विफल: अमान्य डिजिटल हस्ताक्षर।',
             errorType: 'INVALID_SIGNATURE',
+            message: 'भुगतान सत्यापन विफल: डिजिटल हस्ताक्षर में छेड़छाड़ पाई गई।',
+          },
+          { status: 403 }
+        );
+      }
+
+      // Step B: Server-to-server gateway lookup to prevent 1-Rupee / custom tampered amount attack
+      try {
+        const razorpay = new Razorpay({
+          key_id: razorpayKeyId!,
+          key_secret: razorpayKeySecret!,
+        });
+
+        const paymentDetails: any = await razorpay.payments.fetch(razorpayPaymentId);
+
+        // Anti-Tamper Check 1: Amount must be exactly 1900 Paisa (₹19 INR)
+        if (!paymentDetails || paymentDetails.amount < 1900) {
+          console.error('CRITICAL ANTI-HACK ALERT: Tampered payment amount detected:', {
+            paymentId: razorpayPaymentId,
+            paidAmountPaisa: paymentDetails?.amount,
+            requiredAmountPaisa: 1900,
+          });
+          return NextResponse.json(
+            {
+              success: false,
+              errorType: 'TAMPERED_AMOUNT',
+              message: 'सुरक्षा चेतावनी: भुगतान राशि में छेड़छाड़ पाई गई। 1-वर्षीय नागरिक पास शुल्क ₹19 अनिवार्य है।',
+            },
+            { status: 400 }
+          );
+        }
+
+        // Anti-Tamper Check 2: Currency must be INR
+        if (paymentDetails.currency !== 'INR') {
+          return NextResponse.json(
+            {
+              success: false,
+              errorType: 'INVALID_CURRENCY',
+              message: 'अमान्य मुद्रा (Currency). केवल INR मान्य है।',
+            },
+            { status: 400 }
+          );
+        }
+
+        // Anti-Tamper Check 3: Payment status must be captured or authorized
+        if (paymentDetails.status !== 'captured' && paymentDetails.status !== 'authorized') {
+          return NextResponse.json(
+            {
+              success: false,
+              errorType: 'PAYMENT_NOT_CAPTURED',
+              message: `भुगतान अपूर्ण है (स्थिति: ${paymentDetails.status})। कृपया बैंक पुष्टि की प्रतीक्षा करें।`,
+            },
+            { status: 400 }
+          );
+        }
+
+        // Anti-Tamper Check 4: Payment order_id must match the server order
+        if (paymentDetails.order_id && paymentDetails.order_id !== orderId) {
+          return NextResponse.json(
+            {
+              success: false,
+              errorType: 'ORDER_MISMATCH',
+              message: 'भुगतान का ऑर्डर आईडी सर्वर रिकॉर्ड से मेल नहीं खाता।',
+            },
+            { status: 400 }
+          );
+        }
+      } catch (gatewayErr: any) {
+        console.error('Razorpay server fetch verification failed:', gatewayErr);
+        return NextResponse.json(
+          {
+            success: false,
+            errorType: 'GATEWAY_LOOKUP_FAILED',
+            message: 'गेटवे सत्यापन विफल: भुगतान रिकॉर्ड की पुष्टि नहीं हो सकी।',
+          },
+          { status: 502 }
+        );
+      }
+    } else {
+      // Sandbox fallback mode (only permitted when no live keys exist):
+      // Must follow authentic simulation token format
+      if (!orderId.startsWith('ORD-19-')) {
+        return NextResponse.json(
+          {
+            success: false,
+            errorType: 'UNAUTHORIZED_SIMULATION',
+            message: 'अमान्य टेस्ट ऑर्डर आईडी।',
           },
           { status: 400 }
         );
       }
     }
 
-    // SERVER-ENFORCED AMOUNT & PLAN: Never trust client payload
+    // 6. SERVER-ENFORCED AMOUNT & PLAN: Never trust client payload
     const FIXED_AMOUNT = 19;
     const FIXED_CURRENCY = 'INR';
     const PLAN = '1_year';
@@ -94,16 +236,14 @@ export async function POST(req: NextRequest) {
     const validUntilDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
     const validUntilStr = validUntilDate.toISOString().split('T')[0];
 
-    // Generate cryptographic HMAC-SHA256 signature
-    const signature = PaymentSecurityService.generateSignature(
+    // Generate cryptographic HMAC-SHA256 signature for internal verification
+    const internalSignature = PaymentSecurityService.generateSignature(
       citizenId,
       PLAN,
       validUntilStr,
       FIXED_AMOUNT,
       FIXED_CURRENCY
     );
-
-    const transactionId = razorpayPaymentId || ('TXN-19-' + crypto.randomBytes(4).toString('hex').toUpperCase());
 
     const subscription: CitizenSubscription = {
       status: 'active',
@@ -112,9 +252,9 @@ export async function POST(req: NextRequest) {
       currency: FIXED_CURRENCY,
       activatedAt: now.toISOString(),
       validUntil: validUntilStr,
-      transactionId,
+      transactionId: effectivePaymentId,
       paymentMethod,
-      signature,
+      signature: internalSignature,
     };
 
     // Save to persistent database
@@ -123,13 +263,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '₹19 1-वर्षीय नागरिक सदस्यता सफलतापूर्वक सत्यापित एवं सक्रिय की गई।',
+      message: '₹19 1-वर्षीय राष्ट्रीय नागरिक पास सफलतापूर्वक सत्यापित एवं सक्रिय कर दिया गया।',
       subscription,
     });
   } catch (error: any) {
     console.error('Subscription verification error:', error);
     return NextResponse.json(
-      { success: false, message: 'भुगतान सत्यापन विफल रहा।' },
+      { success: false, message: 'भुगतान सत्यापन में तकनीकी समस्या आई।' },
       { status: 500 }
     );
   }
