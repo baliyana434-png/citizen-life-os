@@ -762,13 +762,7 @@ export default function HomePage() {
             </div>
             <button
               type="button"
-              onClick={() => {
-                if (!profile.isOnboarded) {
-                  setIsGoogleChooserOpen(true);
-                } else {
-                  setIsSubscriptionOpen(true);
-                }
-              }}
+              onClick={() => setIsSubscriptionOpen(true)}
               className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
