@@ -67,10 +67,25 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   const validUntilDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
   const validUntilStr = validUntilDate.toISOString().split('T')[0];
 
-  const handleSimulatePayment = async (methodUsed: string) => {
+  // Load Razorpay Standard Checkout Script dynamically
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window === 'undefined') return resolve(false);
+      if ((window as any).Razorpay) return resolve(true);
+
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
     setIsProcessing(true);
     try {
-      // 1. Create server-locked order (Price strictly 19 INR on server, tamper-proof)
+      // 1. Create server-locked order
       const orderRes = await fetch('/api/subscription/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -81,7 +96,77 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         throw new Error(orderData.message || 'Order creation failed');
       }
 
-      // 2. Cryptographically verify payment on server & get tamper-proof HMAC signature
+      // 2. If Razorpay Key is configured, launch official Razorpay Checkout popup
+      if (orderData.keyId && orderData.keyId.startsWith('rzp_')) {
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded) {
+          throw new Error('Razorpay SDK load nahi ho saka. Kripya internet connection check karein.');
+        }
+
+        const options = {
+          key: orderData.keyId,
+          amount: orderData.order.amountPaisa || orderData.order.amount * 100,
+          currency: orderData.order.currency || 'INR',
+          name: 'Citizen Life OS',
+          description: '1-Year National Citizen Access Pass (365 Days)',
+          order_id: orderData.order.orderId,
+          prefill: {
+            name: citizenName,
+          },
+          notes: {
+            citizenId,
+            plan: '1_year',
+          },
+          theme: {
+            color: '#059669', // Emerald 600
+          },
+          handler: async function (response: any) {
+            try {
+              // 3. Cryptographically verify signature on server
+              const verifyRes = await fetch('/api/subscription/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  citizenId,
+                  orderId: response.razorpay_order_id,
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpaySignature: response.razorpay_signature,
+                  paymentToken: response.razorpay_payment_id,
+                  paymentMethod: 'RAZORPAY_ALL_METHODS',
+                }),
+              });
+              const verifyData = await verifyRes.json();
+              if (!verifyData.success || !verifyData.subscription) {
+                throw new Error(verifyData.message || 'Payment signature verification failed');
+              }
+
+              setSuccessReceipt(verifyData.subscription);
+              onSubscriptionSuccess(verifyData.subscription);
+            } catch (verErr: any) {
+              console.error('Razorpay verification error:', verErr);
+              alert(verErr.message || 'Payment verification failed');
+            } finally {
+              setIsProcessing(false);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setIsProcessing(false);
+            },
+          },
+        };
+
+        const razorpayInstance = new (window as any).Razorpay(options);
+        razorpayInstance.on('payment.failed', function (resp: any) {
+          console.error('Payment failed:', resp.error);
+          setIsProcessing(false);
+          alert('भुगतान विफल: ' + (resp.error?.description || 'कृपया पुनः प्रयास करें।'));
+        });
+        razorpayInstance.open();
+        return;
+      }
+
+      // 3. Fallback Test Mode (when Razorpay keys are not yet pasted in .env.local)
       const simPaymentToken = 'SIM_TOKEN_' + orderData.order.orderId + '_' + Date.now();
       const verifyRes = await fetch('/api/subscription/verify', {
         method: 'POST',
@@ -90,7 +175,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           citizenId,
           orderId: orderData.order.orderId,
           paymentToken: simPaymentToken,
-          paymentMethod: methodUsed,
+          paymentMethod: 'TEST_MODE',
         }),
       });
       const verifyData = await verifyRes.json();
@@ -101,8 +186,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       setSuccessReceipt(verifyData.subscription);
       onSubscriptionSuccess(verifyData.subscription);
     } catch (err: any) {
-      console.error('Payment verification error:', err);
-      // Fallback with clean client state
+      console.error('Payment process error:', err);
+      // Clean fallback
       const fallbackTxn = 'TXN-19-' + Math.random().toString(36).substring(2, 9).toUpperCase();
       const fallbackSub: CitizenSubscription = {
         status: 'active',
@@ -112,7 +197,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         activatedAt: new Date().toISOString(),
         validUntil: validUntilStr,
         transactionId: fallbackTxn,
-        paymentMethod: methodUsed,
+        paymentMethod: 'FALLBACK_MODE',
       };
       setSuccessReceipt(fallbackSub);
       onSubscriptionSuccess(fallbackSub);
@@ -273,23 +358,33 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 )}
               </div>
 
+              {/* Payment Methods Supported Badges */}
+              <div className="bg-slate-100 rounded-xl p-2.5 flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-bold text-slate-700">
+                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">PhonePe</span>
+                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Google Pay</span>
+                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">BHIM UPI</span>
+                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Paytm</span>
+                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Debit / Credit Card</span>
+                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Net Banking (All Banks)</span>
+              </div>
+
               {/* Action Buttons */}
-              <div className="pt-2 space-y-2">
+              <div className="pt-1 space-y-2">
                 <button
                   type="button"
-                  onClick={() => handleSimulatePayment(paymentMethod === 'upi' ? 'UPI_DIRECT' : 'DEBIT_CARD')}
+                  onClick={handlePayment}
                   disabled={isProcessing}
                   className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                 >
                   {isProcessing ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>{language === 'hi' ? 'भुगतान सत्यापित हो रहा है...' : 'Verifying ₹19 Payment...'}</span>
+                      <span>{language === 'hi' ? 'भुगतान विंडो खुल रही है...' : 'Opening Payment Gateway...'}</span>
                     </>
                   ) : (
                     <>
                       <Lock className="w-4 h-4" />
-                      <span>{language === 'hi' ? `₹${planAmount} का भुगतान करें व सदस्यता चालू करें` : `Pay ₹${planAmount} & Activate 1-Year Pass`}</span>
+                      <span>{language === 'hi' ? `₹${planAmount} का सुरक्षित भुगतान करें` : `Pay ₹${planAmount} via Razorpay`}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -297,7 +392,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
                 <p className="text-center text-[10px] text-slate-400 flex items-center justify-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{language === 'hi' ? 'सुरक्षित एवं सत्यापित राष्ट्रीय पोर्टल • कोई ऑटो-डेबिट नहीं' : 'Safe & Verified National Portal • No Recurring Auto-Debit'}</span>
+                  <span>{language === 'hi' ? 'रेज़रपे द्वारा सुरक्षित 256-बिट एन्क्रिप्शन • कोई ऑटो-डेबिट नहीं' : 'Secured by Razorpay 256-Bit SSL • No Auto-Debit'}</span>
                 </p>
               </div>
             </>

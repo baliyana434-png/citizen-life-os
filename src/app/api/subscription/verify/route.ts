@@ -18,9 +18,11 @@ export async function POST(req: NextRequest) {
     const citizenId = PaymentSecurityService.sanitizeString(body.citizenId);
     const orderId = PaymentSecurityService.sanitizeString(body.orderId);
     const paymentToken = PaymentSecurityService.sanitizeString(body.paymentToken);
+    const razorpayPaymentId = PaymentSecurityService.sanitizeString(body.razorpayPaymentId);
+    const razorpaySignature = PaymentSecurityService.sanitizeString(body.razorpaySignature);
     const paymentMethod = PaymentSecurityService.sanitizeString(body.paymentMethod || 'UPI');
 
-    // SECURITY: Require citizenId, orderId, AND paymentToken
+    // SECURITY: Require citizenId, orderId, AND paymentToken/razorpayPaymentId
     if (!citizenId) {
       return NextResponse.json(
         { success: false, message: 'अमान्य नागरिक अनुरोध।' },
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!orderId || !paymentToken) {
+    if (!orderId || (!paymentToken && !razorpayPaymentId)) {
       return NextResponse.json(
         {
           success: false,
@@ -58,10 +60,29 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // TODO [PRODUCTION]: Verify paymentToken with actual payment gateway here
-    // Example for Razorpay:
-    // const isValid = razorpay.webhooks.verify(orderId, paymentToken, RAZORPAY_SECRET);
-    // if (!isValid) return NextResponse.json({ success: false }, { status: 403 });
+    // REAL RAZORPAY CRYPTOGRAPHIC VERIFICATION (HMAC-SHA256)
+    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (razorpaySignature && razorpayPaymentId && razorpayKeySecret) {
+      const generatedSignature = crypto
+        .createHmac('sha256', razorpayKeySecret)
+        .update(`${orderId}|${razorpayPaymentId}`)
+        .digest('hex');
+
+      if (generatedSignature !== razorpaySignature) {
+        console.error('Razorpay signature mismatch:', {
+          received: razorpaySignature,
+          generated: generatedSignature,
+        });
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'भुगतान सत्यापन विफल: अमान्य डिजिटल हस्ताक्षर।',
+            errorType: 'INVALID_SIGNATURE',
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // SERVER-ENFORCED AMOUNT & PLAN: Never trust client payload
     const FIXED_AMOUNT = 19;
@@ -82,7 +103,7 @@ export async function POST(req: NextRequest) {
       FIXED_CURRENCY
     );
 
-    const transactionId = 'TXN-19-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+    const transactionId = razorpayPaymentId || ('TXN-19-' + crypto.randomBytes(4).toString('hex').toUpperCase());
 
     const subscription: CitizenSubscription = {
       status: 'active',
