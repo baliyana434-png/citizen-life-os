@@ -162,7 +162,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           console.error('Payment failed:', resp.error);
           setIsProcessing(false);
           onClose();
-          alert('भुगतान विफल: ' + (resp.error?.description || 'कृपया पुनः प्रयास करें।'));
+          alert(
+            (language === 'hi' ? 'भुगतान विफल: ' : 'Payment Failed: ') +
+              (resp.error?.description || (language === 'hi' ? 'कृपया पुनः प्रयास करें।' : 'Please try again.'))
+          );
         });
         razorpayInstance.open();
         return;
@@ -190,7 +193,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     } catch (err: any) {
       console.error('Payment process error:', err);
       onClose();
-      alert('भुगतान प्रक्रिया में त्रुटि: ' + (err.message || 'कृपया पुनः प्रयास करें।'));
+      alert(
+        (language === 'hi' ? 'भुगतान प्रक्रिया में त्रुटि: ' : 'Payment Error: ') +
+          (err.message || (language === 'hi' ? 'कृपया पुनः प्रयास करें।' : 'Please try again.'))
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -271,15 +277,19 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-7 max-w-xs w-full text-center space-y-4 border border-emerald-500/30 shadow-2xl">
         <div className="w-10 h-10 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin mx-auto" />
         <div className="space-y-1">
-          <h3 className="font-extrabold text-sm text-white">Razorpay Secure Checkout</h3>
-          <p className="text-[11px] text-slate-400">Opening payment window (₹19)...</p>
+          <h3 className="font-extrabold text-sm text-white">
+            {language === 'hi' ? 'रेज़रपे सुरक्षित चेकआउट' : 'Razorpay Secure Checkout'}
+          </h3>
+          <p className="text-[11px] text-slate-400">
+            {language === 'hi' ? 'भुगतान विंडो खुल रही है (₹19)...' : 'Opening payment window (₹19)...'}
+          </p>
         </div>
         <p className="text-[10px] text-slate-500">Google Pay • PhonePe • Cards • Net Banking</p>
         <button
           onClick={onClose}
           className="text-[11px] text-slate-400 hover:text-white underline pt-1 cursor-pointer"
         >
-          रद्द करें (Cancel)
+          {language === 'hi' ? 'रद्द करें' : 'Cancel'}
         </button>
       </div>
     </div>
