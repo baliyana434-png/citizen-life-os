@@ -39,13 +39,12 @@ interface UserProfileDrawerProps {
   activeMemberId?: string;
   onSwitchMember?: (id: string) => void;
   onLogout?: () => void;
-  onOpenAuth?: () => void;
+  onOpenAuth?: (screen?: 'login' | 'signup', prefill?: { name: string; email: string; photoURL?: string; isGoogle?: boolean }) => void;
   onOpenLogin?: () => void;
   onOpenOnboarding?: () => void;
   onOpenSubscription?: () => void;
   onLoginSuccess?: (updated: Partial<CitizenProfile>) => void;
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
-  onOpenGoogleChooser?: () => void;
   onAddFamilyMember?: (member: FamilyMember) => void;
   onDeleteFamilyMember?: (id: string) => void;
   totalBenefitsUnlocked?: number;
@@ -62,7 +61,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   onOpenSubscription,
   onLoginSuccess,
   onGoogleSuccess,
-  onOpenGoogleChooser,
   totalBenefitsUnlocked,
 }) => {
   const { t, language } = useTranslation();
@@ -95,12 +93,6 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
   };
 
   const handleSignInGoogle = async () => {
-    if (onOpenGoogleChooser) {
-      onClose();
-      onOpenGoogleChooser();
-      return;
-    }
-
     setIsGoogleLoggingIn(true);
     setGoogleLoginError(null);
     try {
@@ -124,19 +116,20 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
         }
 
         // If no registered profile found, route to Sign Up with verified Google account
-        if (onGoogleSuccess) {
-          onClose();
+        onClose();
+        if (onOpenAuth) {
+          onOpenAuth('signup', {
+            name: result.name,
+            email: result.email,
+            photoURL: result.photoURL,
+            isGoogle: true,
+          });
+        } else if (onGoogleSuccess) {
           onGoogleSuccess({
             name: result.name,
             email: result.email,
             photoURL: result.photoURL,
           });
-        } else {
-          setGoogleLoginError(
-            language === 'hi'
-              ? 'इस गूगल खाते से पंजीकृत नागरिक प्रोफाइल नहीं मिला। कृपया नीचे "साइन अप" द्वारा पंजीकरण करें।'
-              : 'No registered citizen profile found for this Google account. Please use Sign Up below to register.'
-          );
         }
       } else {
         setGoogleLoginError(getGoogleAuthErrorMessage('auth/failed', language));

@@ -44,14 +44,22 @@ export async function POST(req: NextRequest) {
       );
     }
     const cleanEmail = emailCheck.cleanEmail;
+    const isGoogleLinked = Boolean(body.isGoogleLinked);
+    let hash = '';
+    let salt = '';
 
-    // 3. Validate Real Password (Anti-Dummy, High Complexity)
-    const passwordCheck = validateRealPassword(password, fullName, cleanEmail, lang);
-    if (!passwordCheck.valid) {
-      return NextResponse.json(
-        { success: false, errorType: 'INVALID_PASSWORD', message: passwordCheck.error },
-        { status: 400 }
-      );
+    // 3. Validate Real Password (for standard manual registration)
+    if (!isGoogleLinked) {
+      const passwordCheck = validateRealPassword(password, fullName, cleanEmail, lang);
+      if (!passwordCheck.valid) {
+        return NextResponse.json(
+          { success: false, errorType: 'INVALID_PASSWORD', message: passwordCheck.error },
+          { status: 400 }
+        );
+      }
+      const hashed = hashCitizenPassword(password);
+      hash = hashed.hash;
+      salt = hashed.salt;
     }
 
     // 4. Validate Real Date of Birth & Age (Optional at basic signup)
@@ -105,9 +113,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 7. Secure Password Hashing
-    const { hash, salt } = hashCitizenPassword(password);
-
     const randomSeq = Math.floor(1000 + Math.random() * 9000);
     const citizenId = `cit-${country}-${Date.now().toString().slice(-6)}-${randomSeq}`;
 
@@ -116,6 +121,7 @@ export async function POST(req: NextRequest) {
       fullName,
       email: cleanEmail,
       phoneNumber: '',
+      photoURL: String(body.photoURL || ''),
       country,
       nationalIdName: body.nationalIdName || 'National ID',
       nationalIdMasked: maskedId,

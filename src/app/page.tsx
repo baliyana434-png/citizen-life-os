@@ -7,10 +7,9 @@ import { Footer } from '@/components/layout/Footer';
 import { LifeStageTabs } from '@/components/layout/LifeStageTabs';
 import { OpportunityCard } from '@/components/cards/OpportunityCard';
 import { DetailBottomSheet } from '@/components/drawers/DetailBottomSheet';
-import { AuthModal, AuthScreen } from '@/components/auth/AuthModal';
+import { AuthModal, AuthScreen, AuthPrefillData } from '@/components/auth/AuthModal';
 import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
-import { GoogleAccountChooserModal } from '@/components/auth/GoogleAccountChooserModal';
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { PushNotificationBanner } from '@/components/notifications/PushNotificationBanner';
 import { GoogleAuthService } from '@/services/googleAuth';
@@ -110,9 +109,9 @@ export default function HomePage() {
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
   const [authModalScreen, setAuthModalScreen] = useState<AuthScreen>('login');
+  const [authPrefillData, setAuthPrefillData] = useState<AuthPrefillData | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
-  const [isGoogleChooserOpen, setIsGoogleChooserOpen] = useState<boolean>(false);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState<boolean>(false);
   const [pendingGoogleUser, setPendingGoogleUser] = useState<{
     name: string;
@@ -338,7 +337,6 @@ export default function HomePage() {
 
   // Direct Google Sign-In Success: Check onboarding state or launch Wizard
   const handleGoogleAuthSuccess = async (googleUser: { name: string; email: string; photoURL?: string }) => {
-    setIsGoogleChooserOpen(false);
     try {
       // Check if this user already registered & completed onboarding previously on server
       const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleUser.email)}`);
@@ -945,11 +943,14 @@ export default function HomePage() {
       {/* 4. Unified 3-Screen Auth Modal (Login, Signup, Forgot Password with Google OAuth) */}
       <AuthModal
         isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
+        onClose={() => {
+          setIsAuthOpen(false);
+          setAuthPrefillData(null);
+        }}
         initialScreen={authModalScreen}
+        prefillData={authPrefillData}
         onLoginSuccess={handleVerificationComplete}
         onGoogleSuccess={handleGoogleAuthSuccess}
-        onOpenGoogleChooser={() => setIsGoogleChooserOpen(true)}
       />
 
       {/* 5. User Profile & Settings Drawer */}
@@ -973,9 +974,10 @@ export default function HomePage() {
           }
         }}
         onLogout={handleLogout}
-        onOpenAuth={() => {
+        onOpenAuth={(scr, prefill) => {
           setIsProfileOpen(false);
-          setAuthModalScreen('login');
+          setAuthModalScreen(scr || 'login');
+          setAuthPrefillData(prefill || null);
           setIsAuthOpen(true);
         }}
         onOpenOnboarding={() => {
@@ -985,14 +987,6 @@ export default function HomePage() {
         onOpenSubscription={() => setIsSubscriptionOpen(true)}
         onLoginSuccess={handleVerificationComplete}
         onGoogleSuccess={handleGoogleAuthSuccess}
-        onOpenGoogleChooser={() => setIsGoogleChooserOpen(true)}
-      />
-
-      {/* 6. Google Account Chooser Modal */}
-      <GoogleAccountChooserModal
-        isOpen={isGoogleChooserOpen}
-        onClose={() => setIsGoogleChooserOpen(false)}
-        onSelectAccount={handleGoogleAuthSuccess}
       />
 
       {/* 7. Registration Onboarding & Role Selection Modal */}

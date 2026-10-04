@@ -10,9 +10,12 @@ export interface GoogleAuthResult {
   uid: string;
 }
 
+const GOOGLE_CLIENT_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+  '316506287911-es4lbv5m949kmidvr84b1fkjj4hmlqh1.apps.googleusercontent.com';
+
 /**
  * Returns fully localized Google Authentication error messages.
- * Prevents any language leakage across English, Hindi, and international languages.
  */
 export function getGoogleAuthErrorMessage(
   errorCodeOrMessage: string | undefined,
@@ -23,7 +26,8 @@ export function getGoogleAuthErrorMessage(
   if (
     code.includes('popup-closed-by-user') ||
     code.includes('विंडो बंद') ||
-    code.includes('window was closed')
+    code.includes('window was closed') ||
+    code.includes('access_denied')
   ) {
     const messages: Record<SupportedLanguage, string> = {
       en: 'Google sign-in window was closed. Please try again.',
@@ -36,7 +40,7 @@ export function getGoogleAuthErrorMessage(
     return messages[language] || messages.en;
   }
 
-  if (code.includes('cancelled-popup-request')) {
+  if (code.includes('cancelled-popup-request') || code.includes('cancelled')) {
     const messages: Record<SupportedLanguage, string> = {
       en: 'Google sign-in request was cancelled. Please try again.',
       hi: 'गूगल साइन-इन अनुरोध रद्द कर दिया गया। कृपया पुनः प्रयास करें।',
@@ -60,42 +64,6 @@ export function getGoogleAuthErrorMessage(
     return messages[language] || messages.en;
   }
 
-  if (code.includes('FIREBASE_GOOGLE_DISABLED') || code.includes('operation-not-allowed')) {
-    const messages: Record<SupportedLanguage, string> = {
-      en: 'Firebase Google sign-in is not enabled in Firebase Console.',
-      hi: 'Firebase Console में गूगल साइन-इन सक्षम नहीं है।',
-      es: 'El inicio de sesión de Google no está habilitado en Firebase Console.',
-      fr: 'La connexion Google n\'est pas activée dans Firebase Console.',
-      de: 'Google-Anmeldung ist in der Firebase-Konsole nicht aktiviert.',
-      ar: 'تسجيل الدخول عبر Google غير مفعّل في Firebase Console.',
-    };
-    return messages[language] || messages.en;
-  }
-
-  if (code.includes('unauthorized-domain')) {
-    const messages: Record<SupportedLanguage, string> = {
-      en: 'Domain is not authorized in Firebase Console > Authentication > Settings.',
-      hi: 'Firebase Console में डोमेन अधिकृत नहीं है।',
-      es: 'El dominio actual no está autorizado en Firebase Console.',
-      fr: 'Le domaine actuel n\'est pas autorisé dans Firebase Console.',
-      de: 'Die aktuelle Domain ist in der Firebase-Konsole nicht autorisiert.',
-      ar: 'هذا النطاق غير مصرح به في Firebase Console.',
-    };
-    return messages[language] || messages.en;
-  }
-
-  if (code.includes('not configured') || code.includes('configuration active nahi')) {
-    const messages: Record<SupportedLanguage, string> = {
-      en: 'Firebase Auth is not configured. Please check environment variables.',
-      hi: 'Firebase Auth कॉन्फ़िगर नहीं है। कृपया व्यवस्थापक से संपर्क करें।',
-      es: 'Firebase Auth no está configurado.',
-      fr: 'Firebase Auth n\'est pas configuré.',
-      de: 'Firebase Auth ist nicht konfiguriert.',
-      ar: 'Firebase Auth غير مهيأ.',
-    };
-    return messages[language] || messages.en;
-  }
-
   const fallbacks: Record<SupportedLanguage, string> = {
     en: 'Google sign-in failed. Please try again.',
     hi: 'गूगल साइन-इन विफल रहा। कृपया पुनः प्रयास करें।',
@@ -109,47 +77,122 @@ export function getGoogleAuthErrorMessage(
 
 export class GoogleAuthService {
   /**
-   * Triggers official Google OAuth sign-in popup via Firebase Auth (100% Free)
-   * Strictly authenticates real existing Google accounts with prompt: 'select_account'.
-   * Never uses any dummy or fake accounts.
+   * Dynamically loads official Google Identity Services (GIS) client script.
+   */
+  static loadGoogleIdentityScript(): Promise<boolean> {
+    if (typeof window === 'undefined') return Promise.resolve(false);
+    if ((window as any).google?.accounts?.oauth2) return Promise.resolve(true);
+
+    return new Promise((resolve) => {
+      const existing = document.getElementById('google-gsi-client');
+      if (existing) {
+        return resolve(true);
+      }
+      const script = document.createElement('script');
+      script.id = 'google-gsi-client';
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
+
+  /**
+   * Triggers official Google OAuth sign-in popup.
+   * Method 1: Google Identity Services (GIS Token Client) - displays real Gmail accounts list.
+   * Method 2: Firebase GoogleAuthProvider fallback.
    */
   static async signInWithGoogle(): Promise<GoogleAuthResult> {
-    const auth = getFirebaseAuth();
-
-    if (!auth || !isFirebaseConfigured()) {
-      const err: any = new Error('Firebase Auth is not configured.');
-      err.code = 'auth/not-configured';
-      throw err;
+    if (typeof window === 'undefined') {
+      throw new Error('Google sign-in is only available in browser.');
     }
 
-    const provider = new GoogleAuthProvider();
-    // Forces Google to show account selection dialog so user chooses their real existing Google account
-    provider.setCustomParameters({ prompt: 'select_account' });
-
+    // Try Method 1: Google Identity Services (Native Google Account Chooser Popup)
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user: User = result.user;
+      const loaded = await this.loadGoogleIdentityScript();
+      if (loaded && (window as any).google?.accounts?.oauth2) {
+        const result = await new Promise<GoogleAuthResult>((resolve, reject) => {
+          try {
+            const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
+              client_id: GOOGLE_CLIENT_ID,
+              scope: 'email profile openid',
+              prompt: 'select_account',
+              callback: async (tokenResponse: any) => {
+                if (tokenResponse.error) {
+                  return reject(new Error(tokenResponse.error_description || tokenResponse.error));
+                }
 
-      if (!user.email) {
-        const err: any = new Error('Verified email not returned by Google account.');
-        err.code = 'auth/no-email';
+                try {
+                  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                  });
+
+                  if (!res.ok) {
+                    throw new Error('Failed to retrieve user profile from Google.');
+                  }
+
+                  const userInfo = await res.json();
+                  if (!userInfo.email) {
+                    throw new Error('Verified email not returned by Google.');
+                  }
+
+                  resolve({
+                    success: true,
+                    name: userInfo.name || userInfo.email.split('@')[0],
+                    email: userInfo.email.toLowerCase().trim(),
+                    photoURL: userInfo.picture,
+                    uid: userInfo.sub || `g-${Date.now()}`,
+                  });
+                } catch (fetchErr) {
+                  reject(fetchErr);
+                }
+              },
+            });
+
+            tokenClient.requestAccessToken({ prompt: 'select_account' });
+          } catch (initErr) {
+            reject(initErr);
+          }
+        });
+
+        return result;
+      }
+    } catch (gisError: any) {
+      console.warn('Google Identity Services attempt note:', gisError?.message || gisError);
+    }
+
+    // Method 2: Fallback to Firebase Google Provider popup
+    const auth = getFirebaseAuth();
+    if (auth && isFirebaseConfigured()) {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user: User = result.user;
+
+        if (!user.email) {
+          throw new Error('Verified email not returned by Google.');
+        }
+
+        return {
+          success: true,
+          name: user.displayName || user.email.split('@')[0],
+          email: user.email.toLowerCase().trim(),
+          photoURL: user.photoURL || undefined,
+          uid: user.uid,
+        };
+      } catch (fbErr: any) {
+        console.error('Firebase Google Auth error:', fbErr);
+        const err: any = new Error(fbErr.message || fbErr.code || 'Google sign-in failed');
+        err.code = fbErr.code || 'auth/failed';
         throw err;
       }
-
-      return {
-        success: true,
-        name: user.displayName || user.email.split('@')[0],
-        email: user.email,
-        photoURL: user.photoURL || undefined,
-        uid: user.uid,
-      };
-    } catch (error: any) {
-      console.error('Firebase Google Auth error:', error);
-      // Preserve code so localized helper can translate accurately
-      const err: any = new Error(error.message || error.code || 'Google sign-in failed');
-      err.code = error.code || 'auth/failed';
-      throw err;
     }
+
+    throw new Error('Google sign-in is currently unavailable. Please use email and password.');
   }
 
   /**
