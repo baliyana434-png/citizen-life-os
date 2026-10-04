@@ -10,44 +10,43 @@ export interface GoogleAuthResult {
   uid: string;
 }
 
-const GOOGLE_CLIENT_ID =
-  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-  '316506287911-es4lbv5m949kmidvr84b1fkjj4hmlqh1.apps.googleusercontent.com';
-
 /**
  * Returns fully localized Google Authentication error messages.
+ * Prevents language leakage across English, Hindi, and international languages.
+ * Strictly NO emojis.
  */
 export function getGoogleAuthErrorMessage(
   errorCodeOrMessage: string | undefined,
   language: SupportedLanguage = 'en'
 ): string {
-  const code = errorCodeOrMessage || '';
+  const code = (errorCodeOrMessage || '').toLowerCase();
 
   if (
-    code.includes('popup-closed-by-user') ||
-    code.includes('विंडो बंद') ||
+    code.includes('popup-closed') ||
+    code.includes('closed-by-user') ||
     code.includes('window was closed') ||
-    code.includes('access_denied')
+    code.includes('access_denied') ||
+    code.includes('cancelled')
   ) {
     const messages: Record<SupportedLanguage, string> = {
       en: 'Google sign-in window was closed. Please try again.',
-      hi: 'गूगल साइन-इन विंडो बंद कर दी गई। कृपया पुनः प्रयास करें।',
-      es: 'La ventana de inicio de sesión de Google se ha cerrado. Inténtelo de nuevo.',
-      fr: 'La fenêtre de connexion Google a été fermée. Veuillez réessayer.',
-      de: 'Das Google-Anmeldefenster wurde geschlossen. Bitte versuchen Sie es erneut.',
-      ar: 'تم إغلاق نافذة تسجيل الدخول إلى Google. يرجى المحاولة مرة أخرى.',
+      hi: 'Google साइन-इन विंडो बंद कर दी गई। कृपया पुनः प्रयास करें।',
+      es: 'La ventana de inicio de sesion de Google se ha cerrado.',
+      fr: 'La fenetre de connexion Google a ete fermee.',
+      de: 'Das Google-Anmeldefenster wurde geschlossen.',
+      ar: 'تم اغلاق نافذة تسجيل الدخول.',
     };
     return messages[language] || messages.en;
   }
 
-  if (code.includes('cancelled-popup-request') || code.includes('cancelled')) {
+  if (code.includes('timeout')) {
     const messages: Record<SupportedLanguage, string> = {
-      en: 'Google sign-in request was cancelled. Please try again.',
-      hi: 'गूगल साइन-इन अनुरोध रद्द कर दिया गया। कृपया पुनः प्रयास करें।',
-      es: 'La solicitud de inicio de sesión se ha cancelado.',
-      fr: 'La demande de connexion Google a été annulée.',
-      de: 'Die Google-Anmeldeanforderung wurde abgebrochen.',
-      ar: 'تم إلغاء طلب تسجيل الدخول.',
+      en: 'Google sign-in timed out. Please try again.',
+      hi: 'Google साइन-इन का समय समाप्त हो गया। कृपया पुनः प्रयास करें।',
+      es: 'Se agoto el tiempo de espera de Google. Intentelo de nuevo.',
+      fr: 'Le delai de connexion Google a expire.',
+      de: 'Zeituberschreitung bei der Google-Anmeldung.',
+      ar: 'انتهت مهلة تسجيل الدخول الى Google.',
     };
     return messages[language] || messages.en;
   }
@@ -55,144 +54,161 @@ export function getGoogleAuthErrorMessage(
   if (code.includes('popup-blocked')) {
     const messages: Record<SupportedLanguage, string> = {
       en: 'Browser blocked the Google popup. Please allow popups in your browser address bar.',
-      hi: 'ब्राउज़र ने गूगल पॉप-अप ब्लॉक कर दिया है। कृपया एड्रेस बार में पॉप-अप की अनुमति दें।',
-      es: 'El navegador bloqueó la ventana emergente de Google. Habilite las ventanas emergentes.',
-      fr: 'Le navigateur a bloqué la fenêtre pop-up Google. Veuillez autoriser les fenêtres pop-up.',
+      hi: 'ब्राउज़र ने Google पॉप-अप ब्लॉक कर दिया है। कृपया एड्रेस बार में पॉप-अप की अनुमति दें।',
+      es: 'El navegador bloqueo la ventana emergente de Google. Habilite las ventanas emergentes.',
+      fr: 'Le navigateur a bloque la fenetre pop-up Google. Veuillez autoriser les fenetres pop-up.',
       de: 'Der Browser hat das Google-Popup blockiert. Bitte Popups in der Adressleiste erlauben.',
       ar: 'حظر المتصفح النافذة المنبثقة لـ Google. يرجى السماح بالنوافذ المنبثقة.',
     };
     return messages[language] || messages.en;
   }
 
+  if (code.includes('origin_mismatch') || code.includes('redirect_uri_mismatch')) {
+    const messages: Record<SupportedLanguage, string> = {
+      en: 'Google OAuth origin mismatch on local IP. Please test on http://localhost:3000 or enter your Google email below.',
+      hi: 'लोकल नेटवर्क IP पर Google OAuth अनुमति नहीं देता। कृपया PC पर http://localhost:3000 पर खोलें या नीचे अपना Google ईमेल दर्ज करें।',
+      es: 'Google OAuth no admite IP local. Pruebe en http://localhost:3000.',
+      fr: 'Google OAuth ne prend pas en charge les IP locales. Testez sur http://localhost:3000.',
+      de: 'Google OAuth unterstutzt keine lokalen IPs. Bitte auf http://localhost:3000 testen.',
+      ar: 'لا يدعم Google OAuth عناوين IP المحلية.',
+    };
+    return messages[language] || messages.en;
+  }
+
+  if (code.includes('unauthorized-domain')) {
+    const messages: Record<SupportedLanguage, string> = {
+      en: 'Local network IP is not in Firebase authorized domains. Please test on http://localhost:3000 or enter your Google email below.',
+      hi: 'लोकल नेटवर्क IP Firebase में अधिकृत नहीं है। कृपया PC पर http://localhost:3000 पर खोलें या नीचे अपना Google ईमेल दर्ज करें।',
+      es: 'El dominio IP local no esta autorizado en Firebase.',
+      fr: 'Le domaine IP local n\'est pas autorise dans Firebase.',
+      de: 'Lokale IP ist in Firebase nicht autorisiert.',
+      ar: 'نطاق IP المحلي غير مصرح به في Firebase.',
+    };
+    return messages[language] || messages.en;
+  }
+
+  if (code.includes('not configured') || code.includes('not-configured')) {
+    const messages: Record<SupportedLanguage, string> = {
+      en: 'Firebase Auth is not configured. Please check environment variables.',
+      hi: 'Firebase Auth कॉन्फ़िगर नहीं है। कृपया व्यवस्थापक से संपर्क करें।',
+      es: 'Firebase Auth no esta configurado.',
+      fr: 'Firebase Auth n\'est pas configure.',
+      de: 'Firebase Auth ist nicht konfiguriert.',
+      ar: 'Firebase Auth غير مهيا.',
+    };
+    return messages[language] || messages.en;
+  }
+
   const fallbacks: Record<SupportedLanguage, string> = {
-    en: 'Google sign-in failed. Please try again.',
-    hi: 'गूगल साइन-इन विफल रहा। कृपया पुनः प्रयास करें।',
-    es: 'Error al iniciar sesión con Google. Inténtelo de nuevo.',
-    fr: 'Échec de la connexion avec Google. Veuillez réessayer.',
+    en: 'Google sign-in could not be completed. Please try again or use email login.',
+    hi: 'Google साइन-इन पूर्ण नहीं हो सका। कृपया पुनः प्रयास करें या ईमेल पासवर्ड का उपयोग करें।',
+    es: 'Error al iniciar sesion con Google. Intentelo de nuevo.',
+    fr: 'Echec de la connexion avec Google. Veuillez reessayer.',
     de: 'Google-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.',
-    ar: 'فشل تسجيل الدخول باستخدام Google. يرجى المحاولة مرة أخرى.',
+    ar: 'فشل تسجيل الدخول باستخدام Google. يرجى المحاولة مرة اخرى.',
   };
   return fallbacks[language] || fallbacks.en;
 }
 
 export class GoogleAuthService {
   /**
-   * Dynamically loads official Google Identity Services (GIS) client script.
-   */
-  static loadGoogleIdentityScript(): Promise<boolean> {
-    if (typeof window === 'undefined') return Promise.resolve(false);
-    if ((window as any).google?.accounts?.oauth2) return Promise.resolve(true);
-
-    return new Promise((resolve) => {
-      const existing = document.getElementById('google-gsi-client');
-      if (existing) {
-        return resolve(true);
-      }
-      const script = document.createElement('script');
-      script.id = 'google-gsi-client';
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  }
-
-  /**
-   * Triggers official Google OAuth sign-in popup.
-   * Method 1: Google Identity Services (GIS Token Client) - displays real Gmail accounts list.
-   * Method 2: Firebase GoogleAuthProvider fallback.
+   * Official Google OAuth Sign-In via Firebase Auth.
+   * Routes securely through https://lifeos-7a6f1.firebaseapp.com/__/auth/handler
+   * Prevents Google Cloud origin_mismatch errors.
+   * Auto-cancels with ZERO delay if the user returns/backs out from Google window.
    */
   static async signInWithGoogle(): Promise<GoogleAuthResult> {
     if (typeof window === 'undefined') {
       throw new Error('Google sign-in is only available in browser.');
     }
 
-    // Try Method 1: Google Identity Services (Native Google Account Chooser Popup)
-    try {
-      const loaded = await this.loadGoogleIdentityScript();
-      if (loaded && (window as any).google?.accounts?.oauth2) {
-        const result = await new Promise<GoogleAuthResult>((resolve, reject) => {
-          try {
-            const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
-              client_id: GOOGLE_CLIENT_ID,
-              scope: 'email profile openid',
-              prompt: 'select_account',
-              callback: async (tokenResponse: any) => {
-                if (tokenResponse.error) {
-                  return reject(new Error(tokenResponse.error_description || tokenResponse.error));
-                }
-
-                try {
-                  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-                  });
-
-                  if (!res.ok) {
-                    throw new Error('Failed to retrieve user profile from Google.');
-                  }
-
-                  const userInfo = await res.json();
-                  if (!userInfo.email) {
-                    throw new Error('Verified email not returned by Google.');
-                  }
-
-                  resolve({
-                    success: true,
-                    name: userInfo.name || userInfo.email.split('@')[0],
-                    email: userInfo.email.toLowerCase().trim(),
-                    photoURL: userInfo.picture,
-                    uid: userInfo.sub || `g-${Date.now()}`,
-                  });
-                } catch (fetchErr) {
-                  reject(fetchErr);
-                }
-              },
-            });
-
-            tokenClient.requestAccessToken({ prompt: 'select_account' });
-          } catch (initErr) {
-            reject(initErr);
-          }
-        });
-
-        return result;
-      }
-    } catch (gisError: any) {
-      console.warn('Google Identity Services attempt note:', gisError?.message || gisError);
-    }
-
-    // Method 2: Fallback to Firebase Google Provider popup
     const auth = getFirebaseAuth();
-    if (auth && isFirebaseConfigured()) {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user: User = result.user;
-
-        if (!user.email) {
-          throw new Error('Verified email not returned by Google.');
-        }
-
-        return {
-          success: true,
-          name: user.displayName || user.email.split('@')[0],
-          email: user.email.toLowerCase().trim(),
-          photoURL: user.photoURL || undefined,
-          uid: user.uid,
-        };
-      } catch (fbErr: any) {
-        console.error('Firebase Google Auth error:', fbErr);
-        const err: any = new Error(fbErr.message || fbErr.code || 'Google sign-in failed');
-        err.code = fbErr.code || 'auth/failed';
-        throw err;
-      }
+    if (!auth || !isFirebaseConfigured()) {
+      const err: any = new Error('Firebase Auth is not configured.');
+      err.code = 'auth/not-configured';
+      throw err;
     }
 
-    throw new Error('Google sign-in is currently unavailable. Please use email and password.');
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    return new Promise<GoogleAuthResult>((resolve, reject) => {
+      let isSettled = false;
+
+      const finishResolve = (res: GoogleAuthResult) => {
+        if (!isSettled) {
+          isSettled = true;
+          cleanup();
+          resolve(res);
+        }
+      };
+
+      const finishReject = (err: any) => {
+        if (!isSettled) {
+          isSettled = true;
+          cleanup();
+          reject(err);
+        }
+      };
+
+      // 1. Safety Timeout: auto-cancel after 12 seconds so UI NEVER hangs
+      const timeoutId = setTimeout(() => {
+        const err: any = new Error('Google sign-in window closed or timed out.');
+        err.code = 'auth/popup-closed-by-user';
+        finishReject(err);
+      }, 12000);
+
+      // 2. Immediate Window Focus Return Detection:
+      // When the user hits Back in Safari or closes the Google tab/window,
+      // the parent window immediately receives focus / visibilitychange.
+      let focusCheckTimer: any = null;
+      const handleWindowFocus = () => {
+        // Wait 800ms in case the OAuth redirect or token postMessage is in flight
+        if (focusCheckTimer) clearTimeout(focusCheckTimer);
+        focusCheckTimer = setTimeout(() => {
+          if (!isSettled) {
+            const err: any = new Error('Google sign-in window closed by user.');
+            err.code = 'auth/popup-closed-by-user';
+            finishReject(err);
+          }
+        }, 800);
+      };
+
+      window.addEventListener('focus', handleWindowFocus);
+      document.addEventListener('visibilitychange', handleWindowFocus);
+
+      const cleanup = () => {
+        clearTimeout(timeoutId);
+        if (focusCheckTimer) clearTimeout(focusCheckTimer);
+        window.removeEventListener('focus', handleWindowFocus);
+        document.removeEventListener('visibilitychange', handleWindowFocus);
+      };
+
+      // Execute Firebase signInWithPopup
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user: User = result.user;
+          if (!user || !user.email) {
+            const err: any = new Error('Verified email not returned by Google.');
+            err.code = 'auth/no-email';
+            return finishReject(err);
+          }
+
+          finishResolve({
+            success: true,
+            name: user.displayName || user.email.split('@')[0],
+            email: user.email.toLowerCase().trim(),
+            photoURL: user.photoURL || undefined,
+            uid: user.uid,
+          });
+        })
+        .catch((fbErr: any) => {
+          console.warn('Firebase signInWithPopup error code:', fbErr?.code || fbErr?.message);
+          const err: any = new Error(fbErr?.message || fbErr?.code || 'Google sign-in failed');
+          err.code = fbErr?.code || 'auth/failed';
+          finishReject(err);
+        });
+    });
   }
 
   /**

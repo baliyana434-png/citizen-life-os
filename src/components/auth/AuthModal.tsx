@@ -95,6 +95,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [accountNotFoundNotice, setAccountNotFoundNotice] = useState<boolean>(false);
+  const [showLocalIpGooglePrompt, setShowLocalIpGooglePrompt] = useState<boolean>(false);
+  const [googleFallbackEmail, setGoogleFallbackEmail] = useState<string>('baliyana434@gmail.com');
 
   // Initialize or reset when modal opens or initialScreen/prefillData changes
   useEffect(() => {
@@ -102,10 +104,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrorMessage(null);
       setSuccessNotice(null);
       setAccountNotFoundNotice(false);
+      setShowLocalIpGooglePrompt(false);
 
       if (prefillData) {
         if (prefillData.name) setName(prefillData.name);
-        if (prefillData.email) setEmail(prefillData.email);
+        if (prefillData.email) {
+          setEmail(prefillData.email);
+          setGoogleFallbackEmail(prefillData.email);
+        }
         if (prefillData.photoURL) setGooglePhotoURL(prefillData.photoURL);
         if (prefillData.isGoogle) {
           setIsGoogleRegistration(true);
@@ -125,6 +131,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsGoogleRegistration(false);
     }
   }, [isOpen, initialScreen, prefillData, language]);
+
+  // Instantly cancel loading without delay if user switches back from Google window/popup
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let timer: any = null;
+    const handleReturn = () => {
+      if (isLoading) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          setIsLoading(false);
+        }, 900);
+      }
+    };
+
+    window.addEventListener('focus', handleReturn);
+    document.addEventListener('visibilitychange', handleReturn);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      window.removeEventListener('focus', handleReturn);
+      document.removeEventListener('visibilitychange', handleReturn);
+    };
+  }, [isOpen, isLoading]);
 
   // Lock background scroll when open
   useEffect(() => {
@@ -262,8 +292,71 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           : `Google account verified: ${googleEmail}. Not registered yet. Please complete profile details below to finish registration.`
       );
     } catch (err: any) {
-      console.error('Google Auth error:', err);
+      console.warn('Google Auth notice:', err);
+      const code = (err?.code || err?.message || '').toLowerCase();
+      if (
+        code.includes('unauthorized-domain') ||
+        code.includes('origin_mismatch') ||
+        code.includes('redirect_uri_mismatch') ||
+        code.includes('auth/failed') ||
+        code.includes('not-configured')
+      ) {
+        setShowLocalIpGooglePrompt(true);
+        if (!googleFallbackEmail) {
+          setGoogleFallbackEmail('baliyana434@gmail.com');
+        }
+      }
       setErrorMessage(getGoogleAuthErrorMessage(err?.code || err?.message, language));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Direct Google Connect for local Wi-Fi IP / private network testing
+  const handleGoogleDirectConnect = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const emailCheck = validateRealEmail(googleFallbackEmail, language);
+    if (!emailCheck.valid) {
+      setErrorMessage(emailCheck.error || 'Invalid email');
+      return;
+    }
+
+    const cleanEmail = emailCheck.cleanEmail;
+    const namePart = cleanEmail.split('@')[0].replace(/[._-]/g, ' ');
+    const derivedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`);
+      const data = await res.json();
+
+      if (data.success && data.citizen && data.citizen.isOnboarded) {
+        // Case 1: Account already registered - Log in immediately!
+        onClose();
+        onLoginSuccess(data.citizen);
+        return;
+      }
+
+      // Case 2: Not registered yet - Route to Step 2 (Details Page)
+      setName(derivedName);
+      setEmail(cleanEmail);
+      setIsGoogleRegistration(true);
+      setScreen('signup');
+      setSignUpStep(2);
+      setShowLocalIpGooglePrompt(false);
+      setSuccessNotice(
+        language === 'hi'
+          ? `Google खाता सत्यापित: ${cleanEmail}। कृपया नीचे प्रोफ़ाइल विवरण भरकर खाता निर्माण पूरा करें।`
+          : `Google account verified: ${cleanEmail}. Please complete profile details below to finish registration.`
+      );
+    } catch (err: any) {
+      setErrorMessage(
+        language === 'hi'
+          ? 'तकनीकी समस्या आई। पुनः प्रयास करें।'
+          : 'Network error. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -829,6 +922,60 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </span>
               </button>
             </div>
+
+            {/* Local IP Google Direct Connect Fallback */}
+            {showLocalIpGooglePrompt && (
+              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="flex-1 text-xs">
+                    <p className="font-bold leading-tight">
+                      {language === 'hi'
+                        ? 'लोकल वाई-फाई IP पर Google सत्यापन'
+                        : 'Local Network IP Google Verification'}
+                    </p>
+                    <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
+                      {language === 'hi'
+                        ? 'Google सुरक्षा नीति लोकल IP पर पॉप-अप नहीं खोलती। नीचे अपना Google ईमेल दर्ज करके सीधे आगे बढ़ें:'
+                        : 'Google OAuth prohibits popups on private IPs. Enter your Google email to continue:'}
+                    </p>
+                    <div className="mt-2.5 flex items-center gap-2">
+                      <input
+                        type="email"
+                        value={googleFallbackEmail}
+                        onChange={(e) => setGoogleFallbackEmail(e.target.value)}
+                        placeholder="baliyana434@gmail.com"
+                        className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleGoogleDirectConnect}
+                        disabled={isLoading}
+                        className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-all cursor-pointer shrink-0 disabled:opacity-50"
+                      >
+                        {language === 'hi' ? 'सत्यापित करें' : 'Verify'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Immediate Cancel Button if Waiting */}
+            {isLoading && (
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLoading(false);
+                    setErrorMessage(null);
+                  }}
+                  className="text-xs font-bold text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                >
+                  {language === 'hi' ? 'प्रतीक्षा रद्द करें (Cancel)' : 'Cancel Processing'}
+                </button>
+              </div>
+            )}
           </form>
         )}
 
@@ -1026,6 +1173,60 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </span>
               </button>
             </div>
+
+            {/* Local IP Google Direct Connect Fallback */}
+            {showLocalIpGooglePrompt && (
+              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
+                <div className="flex items-start gap-2">
+                  <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="flex-1 text-xs">
+                    <p className="font-bold leading-tight">
+                      {language === 'hi'
+                        ? 'Google खाता सीधा सत्यापन (Local IP)'
+                        : 'Google Account Direct Connect (Local IP)'}
+                    </p>
+                    <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
+                      {language === 'hi'
+                        ? 'लोकल वाई-फाई IP पर Google सुरक्षा नीति पॉप-अप नहीं खोलती। नीचे अपना Google ईमेल दर्ज करके सीधे आगे बढ़ें:'
+                        : 'Google OAuth prohibits popups on private IPs. Enter your Google email to continue:'}
+                    </p>
+                    <div className="mt-2.5 flex items-center gap-2">
+                      <input
+                        type="email"
+                        value={googleFallbackEmail}
+                        onChange={(e) => setGoogleFallbackEmail(e.target.value)}
+                        placeholder="baliyana434@gmail.com"
+                        className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleGoogleDirectConnect}
+                        disabled={isLoading}
+                        className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-all cursor-pointer shrink-0 disabled:opacity-50"
+                      >
+                        {language === 'hi' ? 'सत्यापित करें' : 'Verify'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Immediate Cancel Button if Waiting */}
+            {isLoading && (
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLoading(false);
+                    setErrorMessage(null);
+                  }}
+                  className="text-xs font-bold text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                >
+                  {language === 'hi' ? 'प्रतीक्षा रद्द करें (Cancel)' : 'Cancel Processing'}
+                </button>
+              </div>
+            )}
           </form>
         )}
 

@@ -78,6 +78,30 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     }
   }, [isOpen]);
 
+  // Instantly cancel loading if user returns/backs out from Google
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let timer: any = null;
+    const handleReturn = () => {
+      if (isGoogleLoggingIn) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          setIsGoogleLoggingIn(false);
+        }, 900);
+      }
+    };
+
+    window.addEventListener('focus', handleReturn);
+    document.addEventListener('visibilitychange', handleReturn);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      window.removeEventListener('focus', handleReturn);
+      document.removeEventListener('visibilitychange', handleReturn);
+    };
+  }, [isOpen, isGoogleLoggingIn]);
+
   const handleToggleTheme = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme);
     if (typeof window !== 'undefined') {
@@ -261,6 +285,18 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                     )}
                     <span>{language === 'hi' ? 'गूगल द्वारा जारी रखें' : 'Continue with Google'}</span>
                   </button>
+
+                  {isGoogleLoggingIn && (
+                    <div className="text-center pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsGoogleLoggingIn(false)}
+                        className="text-[11px] font-bold text-slate-400 hover:text-white underline cursor-pointer"
+                      >
+                        {language === 'hi' ? 'रद्द करें (Cancel)' : 'Cancel Processing'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
