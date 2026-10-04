@@ -82,7 +82,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     });
   };
 
-  const handlePayment = async () => {
+  const handlePayment = async (preferredMethod?: 'upi' | 'card' | 'netbanking') => {
     setIsProcessing(true);
     try {
       // 1. Create server-locked order
@@ -103,7 +103,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           throw new Error('Razorpay SDK load nahi ho saka. Kripya internet connection check karein.');
         }
 
-        const options = {
+        const options: any = {
           key: orderData.keyId,
           amount: orderData.order.amountPaisa || orderData.order.amount * 100,
           currency: orderData.order.currency || 'INR',
@@ -119,6 +119,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           },
           theme: {
             color: '#059669', // Emerald 600
+            backdrop_color: 'rgba(15, 23, 42, 0.85)',
           },
           handler: async function (response: any) {
             try {
@@ -132,7 +133,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                   razorpayPaymentId: response.razorpay_payment_id,
                   razorpaySignature: response.razorpay_signature,
                   paymentToken: response.razorpay_payment_id,
-                  paymentMethod: 'RAZORPAY_ALL_METHODS',
+                  paymentMethod: preferredMethod ? `RAZORPAY_${preferredMethod.toUpperCase()}` : 'RAZORPAY_ALL_METHODS',
                 }),
               });
               const verifyData = await verifyRes.json();
@@ -155,6 +156,47 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             },
           },
         };
+
+        if (preferredMethod === 'upi') {
+          options.config = {
+            display: {
+              blocks: {
+                upi: {
+                  name: 'Pay using UPI / QR',
+                  instruments: [{ method: 'upi' }],
+                },
+              },
+              sequence: ['block.upi'],
+              preferences: { show_default_blocks: true },
+            },
+          };
+        } else if (preferredMethod === 'card') {
+          options.config = {
+            display: {
+              blocks: {
+                card: {
+                  name: 'Debit / Credit Cards',
+                  instruments: [{ method: 'card' }],
+                },
+              },
+              sequence: ['block.card'],
+              preferences: { show_default_blocks: true },
+            },
+          };
+        } else if (preferredMethod === 'netbanking') {
+          options.config = {
+            display: {
+              blocks: {
+                netbanking: {
+                  name: 'Net Banking (All Indian Banks)',
+                  instruments: [{ method: 'netbanking' }],
+                },
+              },
+              sequence: ['block.netbanking'],
+              preferences: { show_default_blocks: true },
+            },
+          };
+        }
 
         const razorpayInstance = new (window as any).Razorpay(options);
         razorpayInstance.on('payment.failed', function (resp: any) {
@@ -265,134 +307,128 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         <div className="p-5 sm:p-6 space-y-5">
           {!successReceipt ? (
             <>
-              {/* Feature Highlights Grid */}
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2.5 text-xs text-slate-700">
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>{language === 'hi' ? 'आयु एवं क्षेत्र अनुसार मिलान:' : 'Age, Area & Nation Precision Filter:'}</strong>{' '}
-                    {language === 'hi' ? 'आपकी आयु, राज्य और देश के अनुसार केवल वास्तविक अवसर।' : 'Tailored government & private opportunities matching your profile.'}
-                  </span>
+              {/* Clean Order & Billing Summary */}
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3 text-xs">
+                <div className="flex items-center justify-between font-bold text-slate-800 border-b border-slate-200/80 pb-2">
+                  <span>{language === 'hi' ? 'सदस्यता विवरण' : 'Plan Summary'}</span>
+                  <span className="text-emerald-700 font-extrabold">{language === 'hi' ? '365 दिन असीमित' : '365 Days Unlimited'}</span>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>{language === 'hi' ? '100% आधिकारिक सरकारी राजपत्र पोर्टल:' : '100% Verified Official Circulars:'}</strong>{' '}
-                    {language === 'hi' ? 'सीधा सरकारी फॉर्म लिंक, बिना किसी बिचौलिए या एजेंट के।' : 'Direct official portals without commercial intermediary scams.'}
-                  </span>
+
+                <div className="space-y-1.5 text-slate-600">
+                  <div className="flex justify-between">
+                    <span>1-Year National Citizen Pass</span>
+                    <span className="font-mono font-bold text-slate-900">₹19.00</span>
+                  </div>
+                  <div className="flex justify-between text-slate-500">
+                    <span>{language === 'hi' ? 'सरकारी गजट व छात्रवृत्ति अलर्ट' : 'Govt Circulars & Exam Alerts'}</span>
+                    <span className="text-emerald-600 font-bold">{language === 'hi' ? 'निःशुल्क' : 'Free'}</span>
+                  </div>
+                  <div className="flex justify-between text-slate-500">
+                    <span>{language === 'hi' ? 'सुविधा शुल्क (Convenience Fee)' : 'Convenience / Platform Fee'}</span>
+                    <span className="text-emerald-600 font-bold">₹0.00</span>
+                  </div>
                 </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>{language === 'hi' ? 'विदेश अध्ययन एवं वैश्विक अवसर:' : 'Study Abroad & Global Work:'}</strong>{' '}
-                    {language === 'hi' ? 'इरास्मस, डाड, फुलब्राइट आदि प्रतिष्ठित अंतरराष्ट्रीय छात्रवृत्तियां।' : 'Full access to Erasmus, DAAD, Fulbright and global fellowships.'}
-                  </span>
+
+                <div className="flex justify-between items-center border-t border-slate-200 pt-2 font-extrabold text-sm text-slate-900">
+                  <span>{language === 'hi' ? 'कुल देय राशि (Total Payable)' : 'Total Amount to Pay'}</span>
+                  <span className="text-emerald-600 text-lg font-black font-mono">₹19.00</span>
                 </div>
               </div>
 
-              {/* Payment Method Selector */}
-              <div className="space-y-3">
+              {/* Direct Payment Mode Selectors */}
+              <div className="space-y-2.5">
                 <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  {language === 'hi' ? 'भुगतान विधि चुनें' : 'Choose Payment Method'}
+                  {language === 'hi' ? 'भुगतान विधि चुनें एवं भुगतान करें' : 'Select Payment Mode & Pay'}
                 </label>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('upi')}
-                    className={`p-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                      paymentMethod === 'upi'
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-xs'
-                        : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4 text-emerald-600" />
-                    <span>UPI (GPay / PhonePe)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('card')}
-                    className={`p-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                      paymentMethod === 'card'
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-xs'
-                        : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <CreditCard className="w-4 h-4 text-emerald-600" />
-                    <span>Card / Netbanking</span>
-                  </button>
-                </div>
-
-                {paymentMethod === 'upi' ? (
-                  <div className="bg-slate-900 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4">
-                    {/* Simulated Dynamic UPI QR */}
-                    <div className="bg-white p-2.5 rounded-xl shrink-0 shadow-sm">
-                      <div className="w-24 h-24 bg-slate-950 flex flex-col items-center justify-center rounded-lg relative overflow-hidden">
-                        <QrCode className="w-16 h-16 text-emerald-400" />
-                        <span className="text-[8px] font-mono text-emerald-300 mt-1">₹19.00</span>
-                      </div>
-                    </div>
-                    <div className="space-y-1.5 text-center sm:text-left text-xs">
-                      <div className="font-bold text-emerald-400 flex items-center justify-center sm:justify-start gap-1">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>{language === 'hi' ? 'त्वरित यूपीआई क्यूआर कोड' : 'Instant UPI Scan & Pay'}</span>
-                      </div>
-                      <p className="text-[11px] text-slate-300">
-                        {language === 'hi' ? 'Google Pay, PhonePe, Paytm अथवा किसी भी BHIM UPI ऐप से स्कैन करें।' : 'Scan with Google Pay, PhonePe, Paytm, or any BHIM UPI app.'}
-                      </p>
-                      <div className="text-[10px] font-mono text-slate-400 pt-0.5">
-                        UPI ID: citizenlifeos@icici
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-                    <div className="flex items-center gap-2 font-bold text-slate-800">
-                      <CreditCard className="w-4 h-4 text-emerald-600" />
-                      <span>{language === 'hi' ? 'सुरक्षित 128-बिट एन्क्रिप्टेड भुगतान' : 'Secure 128-Bit Payment'}</span>
-                    </div>
-                    <p className="text-[11px] text-slate-500">
-                      {language === 'hi' ? 'सभी प्रमुख डेबिट कार्ड, क्रेडिट कार्ड एवं अंतर्राष्ट्रीय कार्ड स्वीकार्य हैं।' : 'All major Visa, Mastercard, RuPay, and international cards accepted.'}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Payment Methods Supported Badges */}
-              <div className="bg-slate-100 rounded-xl p-2.5 flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-bold text-slate-700">
-                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">PhonePe</span>
-                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Google Pay</span>
-                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">BHIM UPI</span>
-                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Paytm</span>
-                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Debit / Credit Card</span>
-                <span className="px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">Net Banking (All Banks)</span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-1 space-y-2">
+                {/* Option 1: UPI Instant (Most Popular) */}
                 <button
                   type="button"
-                  onClick={handlePayment}
+                  onClick={() => handlePayment('upi')}
                   disabled={isProcessing}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  className="w-full p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 hover:bg-emerald-100/60 transition-all text-left flex items-center justify-between group cursor-pointer shadow-xs"
                 >
-                  {isProcessing ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>{language === 'hi' ? 'भुगतान विंडो खुल रही है...' : 'Opening Payment Gateway...'}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="w-4 h-4" />
-                      <span>{language === 'hi' ? `₹${planAmount} का सुरक्षित भुगतान करें` : `Pay ₹${planAmount} via Razorpay`}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                      <Smartphone className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-extrabold text-sm text-slate-900">UPI Instant Pay</span>
+                        <span className="text-[10px] font-bold bg-emerald-600 text-white px-2 py-0.2 rounded-full uppercase tracking-wider">
+                          Fastest
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Google Pay, PhonePe, Paytm, BHIM & QR Scan
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 font-bold text-xs text-emerald-800 shrink-0">
+                    <span>₹19</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </button>
 
-                <p className="text-center text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{language === 'hi' ? 'रेज़रपे द्वारा सुरक्षित 256-बिट एन्क्रिप्शन • कोई ऑटो-डेबिट नहीं' : 'Secured by Razorpay 256-Bit SSL • No Auto-Debit'}</span>
+                {/* Option 2: Debit / Credit Card */}
+                <button
+                  type="button"
+                  onClick={() => handlePayment('card')}
+                  disabled={isProcessing}
+                  className="w-full p-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all text-left flex items-center justify-between group cursor-pointer shadow-2xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs shrink-0">
+                      <CreditCard className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="font-extrabold text-sm text-slate-900 block">Debit / Credit Card</span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Visa, Mastercard, RuPay & International Cards
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 font-bold text-xs text-slate-700 shrink-0">
+                    <span>₹19</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-slate-400" />
+                  </div>
+                </button>
+
+                {/* Option 3: Net Banking */}
+                <button
+                  type="button"
+                  onClick={() => handlePayment('netbanking')}
+                  disabled={isProcessing}
+                  className="w-full p-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all text-left flex items-center justify-between group cursor-pointer shadow-2xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center border border-slate-200 shrink-0">
+                      <Lock className="w-5 h-5 text-slate-600" />
+                    </div>
+                    <div>
+                      <span className="font-extrabold text-sm text-slate-900 block">Net Banking</span>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        SBI, HDFC, ICICI, Axis, PNB & 50+ Banks
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 font-bold text-xs text-slate-700 shrink-0">
+                    <span>₹19</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-slate-400" />
+                  </div>
+                </button>
+              </div>
+
+              {/* Trust & Compliance Footer */}
+              <div className="pt-2 text-center space-y-1">
+                <p className="text-[11px] text-slate-500 flex items-center justify-center gap-1.5 font-medium">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>256-Bit SSL Encrypted • 100% RBI Compliant • No Recurring Auto-Debit</span>
+                </p>
+                <p className="text-[10px] text-slate-400">
+                  {language === 'hi'
+                    ? 'भुगतान पूर्ण होते ही सभी सरकारी व निजी अवसर तत्काल सक्रिय हो जाएंगे।'
+                    : 'Instant activation upon successful payment verification.'}
                 </p>
               </div>
             </>
