@@ -606,16 +606,16 @@ export default function FormsPage() {
                     {/* Meta info: Fee & Target Ages & Gender */}
                     <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600">
                       <span>
-                        💰 {language === 'hi' ? 'सरकारी शुल्क:' : 'Official Fee:'} <strong className="text-emerald-800">{opp.gazette.officialGovtFee}</strong>
+                        {language === 'hi' ? 'सरकारी शुल्क:' : 'Official Fee:'} <strong className="text-emerald-800">{opp.gazette.officialGovtFee}</strong>
                       </span>
                       {opp.targetAges && (
                         <span>
-                          🎯 {language === 'hi' ? 'आयु:' : 'Age:'} <strong className="text-slate-800">{opp.targetAges[0]}-{opp.targetAges[1]} yr</strong>
+                          {language === 'hi' ? 'आयु:' : 'Age:'} <strong className="text-slate-800">{opp.targetAges[0]}-{opp.targetAges[1]} yr</strong>
                         </span>
                       )}
                       {opp.genderEligibility === 'female' && (
                         <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 font-bold border border-rose-200">
-                          👩 {language === 'hi' ? 'केवल महिलाएं' : 'Women Only'}
+                          {language === 'hi' ? 'केवल महिलाएं' : 'Women Only'}
                         </span>
                       )}
                       {opp.deadline && opp.deadline !== 'OPEN_ROUND' && (
@@ -630,7 +630,7 @@ export default function FormsPage() {
                     {opp.documents && opp.documents.length > 0 && (
                       <div className="mt-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                         <span className="text-[11px] font-bold text-slate-700 block mb-1">
-                          📎 {language === 'hi' ? 'आवेदन हेतु आवश्यक प्रपत्र:' : 'Mandatory Documents Checklist:'}
+                          {language === 'hi' ? 'आवेदन हेतु आवश्यक प्रपत्र:' : 'Mandatory Documents Checklist:'}
                         </span>
                         <div className="flex flex-wrap gap-1.5">
                           {opp.documents.map((doc) => (

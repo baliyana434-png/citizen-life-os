@@ -384,7 +384,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 👥 REAL REGISTERED CITIZENS DIRECTORY TABLE (100% PROPER DETAILS FOR ADMIN) */}
+        {/* REAL REGISTERED CITIZENS DIRECTORY TABLE (100% PROPER DETAILS FOR ADMIN) */}
         <div className="bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-xl space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
             <div>

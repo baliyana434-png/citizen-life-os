@@ -144,7 +144,6 @@ export async function downloadOpportunityPdf(
     <!-- Anti-Fraud / Zero Broker Advisory Box -->
     <div style="background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px;">
       <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: #92400e;">
-        <span>⚠️</span>
         <span>धोखाधड़ी और दलालों से सुरक्षा चेतावनी (Anti-Fraud & Scam Advisory)</span>
       </div>
       <div style="font-size: 11px; color: #78350f; margin-top: 3px; line-height: 1.4;">

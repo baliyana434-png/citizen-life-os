@@ -3,7 +3,9 @@ import fs from 'fs/promises';
 import path from 'path';
 import { DatabaseService } from '@/lib/db';
 
-const TOKENS_FILE = path.join(process.cwd(), 'src', 'data', 'push_tokens.json');
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const defaultTokensFile = path.join(process.cwd(), 'src', 'data', 'push_tokens.json');
+const serverlessTokensFile = '/tmp/push_tokens.json';
 
 interface StoredPushToken {
   token: string;
@@ -17,19 +19,29 @@ interface StoredPushToken {
 }
 
 async function readTokens(): Promise<StoredPushToken[]> {
+  const filePath = isServerless ? serverlessTokensFile : defaultTokensFile;
   try {
-    const raw = await fs.readFile(TOKENS_FILE, 'utf-8');
+    const raw = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(raw);
   } catch (err) {
+    if (isServerless) {
+      try {
+        const bundle = await fs.readFile(defaultTokensFile, 'utf-8');
+        const parsed = JSON.parse(bundle);
+        try { await fs.writeFile(serverlessTokensFile, bundle, 'utf-8'); } catch {}
+        return parsed;
+      } catch {}
+    }
     return [];
   }
 }
 
 async function writeTokens(tokens: StoredPushToken[]): Promise<void> {
+  const filePath = isServerless ? serverlessTokensFile : defaultTokensFile;
   try {
-    await fs.writeFile(TOKENS_FILE, JSON.stringify(tokens, null, 2), 'utf-8');
+    await fs.writeFile(filePath, JSON.stringify(tokens, null, 2), 'utf-8');
   } catch (err) {
-    console.error('Failed to write push tokens file:', err);
+    console.warn(`Local store file write note (${filePath}):`, err);
   }
 }
 

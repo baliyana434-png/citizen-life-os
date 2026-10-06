@@ -175,8 +175,8 @@ class PushNotificationService {
     }
 
     const title = language === 'hi' 
-      ? '🔔 Citizen Life OS — टेस्ट अलर्ट' 
-      : '🔔 Citizen Life OS — Test Alert';
+      ? 'Citizen Life OS — टेस्ट अलर्ट' 
+      : 'Citizen Life OS — Test Alert';
     const body = language === 'hi'
       ? 'बधाई! आपके फोन की लॉक स्क्रीन व होम स्क्रीन पर सूचनाएं सफलतापूर्वक सक्रिय हो गई हैं।'
       : 'Success! Push notifications are now active on your lock screen and home screen.';

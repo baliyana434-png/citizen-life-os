@@ -55,6 +55,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const isAdmin = verifyAdminAuth(req);
+  if (!isAdmin) {
+    return NextResponse.json(
+      { success: false, message: 'Unauthorized. Admin API key required in x-admin-key header.' },
+      { status: 401 }
+    );
+  }
 
   try {
     const body = await req.json();

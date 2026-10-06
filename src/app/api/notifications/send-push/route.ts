@@ -2,14 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-const TOKENS_FILE = path.join(process.cwd(), 'src', 'data', 'push_tokens.json');
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const defaultTokensFile = path.join(process.cwd(), 'src', 'data', 'push_tokens.json');
+const serverlessTokensFile = '/tmp/push_tokens.json';
 
 async function readTokens(): Promise<string[]> {
+  const filePath = isServerless ? serverlessTokensFile : defaultTokensFile;
   try {
-    const raw = await fs.readFile(TOKENS_FILE, 'utf-8');
+    const raw = await fs.readFile(filePath, 'utf-8');
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.map((item: any) => item.token) : [];
   } catch (err) {
+    if (isServerless) {
+      try {
+        const bundle = await fs.readFile(defaultTokensFile, 'utf-8');
+        const parsed = JSON.parse(bundle);
+        return Array.isArray(parsed) ? parsed.map((item: any) => item.token) : [];
+      } catch {}
+    }
     return [];
   }
 }
