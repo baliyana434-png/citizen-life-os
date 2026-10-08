@@ -170,7 +170,7 @@ export default function HelplinePage() {
           ];
 
           return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {topCards.map((item, idx) => {
                 const grad = gradients[idx % gradients.length];
                 const displayName = language === 'hi' ? (item.nameHi || item.name) : item.name;
@@ -179,26 +179,26 @@ export default function HelplinePage() {
                 return (
                   <div
                     key={item.id}
-                    className={`bg-gradient-to-br ${grad} rounded-2xl p-4 text-white shadow-md flex flex-col justify-between border`}
+                    className={`bg-gradient-to-br ${grad} rounded-2xl p-3.5 sm:p-4 text-white shadow-md flex flex-col justify-between border`}
                   >
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-1.5">
                         <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider">
                           {badgeText}
                         </span>
-                        <LifeBuoy className="w-4 h-4 text-white/80" />
+                        <LifeBuoy className="w-4 h-4 text-white/80 shrink-0" />
                       </div>
-                      <h3 className="text-xl font-black font-mono">{item.number}</h3>
+                      <h3 className="text-xl sm:text-2xl font-black font-mono tracking-tight">{item.number}</h3>
                       <p className="text-xs font-bold text-white/90 mt-0.5 line-clamp-1">
                         {displayName}
                       </p>
                     </div>
                     <a
                       href={`tel:${item.number.replace(/[^0-9+]/g, '')}`}
-                      className="mt-3 w-full py-2 px-3 bg-white hover:bg-white/90 text-slate-900 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all"
+                      className="mt-3 w-full py-2 px-3 bg-white hover:bg-white/90 text-slate-900 font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all text-center"
                     >
-                      <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>{language === 'hi' ? `कॉल करें (${item.number})` : `Call ${item.number}`}</span>
+                      <PhoneCall className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span className="truncate">{language === 'hi' ? `कॉल करें (${item.number})` : `Call ${item.number}`}</span>
                     </a>
                   </div>
                 );
@@ -226,7 +226,7 @@ export default function HelplinePage() {
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar pr-4">
             {categories.map((cat) => (
               <button
                 key={cat.id}
@@ -267,7 +267,7 @@ export default function HelplinePage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
               {filteredHelplines.map((h) => {
                 const name = language === 'hi' ? h.nameHi : h.name;
                 const authority = language === 'hi' ? h.authorityHi : h.authority;
@@ -278,17 +278,17 @@ export default function HelplinePage() {
                 return (
                   <div
                     key={h.id}
-                    className="bg-white rounded-2xl p-5 border border-slate-200 shadow-card hover:border-emerald-500/40 transition-all flex flex-col justify-between space-y-4"
+                    className="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200 shadow-card hover:border-emerald-500/40 transition-all flex flex-col justify-between space-y-2.5 sm:space-y-3.5"
                   >
-                    <div>
+                    <div className="space-y-2">
                       {/* Authority & Status Strip */}
-                      <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center justify-between gap-2">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-300 text-slate-800 text-[11px] font-bold">
-                          <Building2 className="w-3 h-3 text-slate-600" />
-                          <span className="truncate max-w-[200px]">{authority}</span>
+                          <Building2 className="w-3 h-3 text-slate-600 shrink-0" />
+                          <span className="truncate max-w-[170px] sm:max-w-xs">{authority}</span>
                         </span>
 
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 shrink-0">
                           {h.is24x7 && (
                             <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-extrabold">
                               24x7
@@ -302,73 +302,84 @@ export default function HelplinePage() {
                         </div>
                       </div>
 
-                      {/* Helpline Number & Name */}
-                      <div className="flex items-start justify-between gap-3 mt-1">
-                        <div>
-                          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                      {/* Helpline Number & Name - Responsive Mobile-Friendly Arrangement */}
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 pt-0.5">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug">
                             {name}
                           </h3>
-                          <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                          <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
                             {purpose}
                           </p>
                         </div>
-                        <div className="text-right shrink-0">
-                          <span className="block text-2xl font-black font-mono text-emerald-800">
+                        <div className="flex items-center justify-between sm:flex-col sm:items-end gap-1 bg-emerald-50/80 px-2.5 py-1.5 sm:p-0 rounded-xl sm:bg-transparent shrink-0 border border-emerald-100 sm:border-0">
+                          <span className="text-lg sm:text-2xl font-black font-mono text-emerald-800 tracking-tight">
                             {h.number}
                           </span>
-                          <span className="text-[10px] text-slate-500 flex items-center justify-end gap-1 mt-0.5">
-                            <Clock className="w-3 h-3" />
-                            {hours}
+                          <span className="text-[10px] text-slate-500 flex items-center gap-1 font-medium">
+                            <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span>{hours}</span>
                           </span>
                         </div>
                       </div>
 
-                      {/* Pre-Call Checklist / Guidance Box */}
-                      <div className="mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                        <div className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                          <Lock className="w-3 h-3 text-slate-500" />
-                          <span>{language === 'hi' ? 'कॉल करने से पूर्व तैयारी:' : 'Before you call (Checklist):'}</span>
-                        </div>
-                        <ul className="space-y-1 text-xs text-slate-600 pl-4 list-disc marker:text-emerald-600">
-                          {guidanceList.map((g, idx) => (
-                            <li key={idx}>{g}</li>
-                          ))}
-                        </ul>
-                      </div>
+                      {/* Collapsible Pre-Call Checklist / Guidance (Saves 60%+ Vertical Screen Height) */}
+                      {guidanceList && guidanceList.length > 0 && (
+                        <details className="group rounded-xl bg-slate-50 border border-slate-200/90 text-xs transition-all">
+                          <summary className="p-2 sm:p-2.5 font-bold text-slate-700 flex items-center justify-between cursor-pointer select-none list-none">
+                            <span className="flex items-center gap-1.5 text-[11px]">
+                              <Lock className="w-3 h-3 text-slate-500 shrink-0" />
+                              <span>{language === 'hi' ? 'कॉल पूर्व जरूरी तैयारी (चेकलिस्ट)' : 'Before you call (Checklist)'}</span>
+                              <span className="text-[10px] text-slate-400 font-mono">({guidanceList.length})</span>
+                            </span>
+                            <span className="text-[10px] text-emerald-700 font-bold group-open:rotate-180 transition-transform">
+                              ▼
+                            </span>
+                          </summary>
+                          <div className="px-3 pb-2.5 pt-1 border-t border-slate-200/60">
+                            <ul className="space-y-1 text-[11px] text-slate-600 pl-4 list-disc marker:text-emerald-600">
+                              {guidanceList.map((g, idx) => (
+                                <li key={idx} className="leading-snug">{g}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </details>
+                      )}
                     </div>
 
-                    {/* Bottom Action Triggers */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
+                    {/* Bottom Action Triggers (Responsive Grid: Zero Overflow, Accessible Full-Width Call Button on Mobile) */}
+                    <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 w-full sm:w-auto">
                         {h.portalUrl && (
                           <a
                             href={h.portalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 px-3 py-2 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
                           >
                             <span>{language === 'hi' ? 'वेब पोर्टल' : 'Official Portal'}</span>
-                            <ExternalLink className="w-3 h-3 text-slate-500" />
+                            <ExternalLink className="w-3 h-3 text-slate-500 shrink-0" />
                           </a>
                         )}
                         <button
+                          type="button"
                           onClick={() => handleCopyNumber(h.number)}
-                          className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
+                          className="flex-1 sm:flex-initial px-3 py-2 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all text-center"
                         >
                           {copiedNumber === h.number ? (
                             <span className="text-emerald-700 font-bold">✓ Copied</span>
                           ) : (
-                            language === 'hi' ? 'नंबर कॉपी करें' : 'Copy'
+                            language === 'hi' ? 'कॉपी करें' : 'Copy'
                           )}
                         </button>
                       </div>
 
                       <a
                         href={`tel:${h.number.replace(/-/g, '')}`}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
                       >
-                        <PhoneCall className="w-3.5 h-3.5" />
-                        <span>{language === 'hi' ? `कॉल करें (${h.number})` : `Call ${h.number}`}</span>
+                        <PhoneCall className="w-3.5 h-3.5 shrink-0" />
+                        <span>{language === 'hi' ? `तुरंत कॉल करें (${h.number})` : `Call Now (${h.number})`}</span>
                       </a>
                     </div>
                   </div>

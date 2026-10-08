@@ -15,6 +15,7 @@ import { PushNotificationBanner } from '@/components/notifications/PushNotificat
 import { GoogleAuthService } from '@/services/googleAuth';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
+import { calculateExactAge } from '@/utils/antiFraudValidation';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode, CitizenSubscription } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -100,7 +101,19 @@ export default function HomePage() {
   // Master Citizen Account Profile (Individual citizen)
   const [profile, setProfile] = useState<CitizenProfile | null>(null);
   const [isHydratingAuth, setIsHydratingAuth] = useState<boolean>(true);
-  const activeProfile = profile || GUEST_PROFILE;
+
+  // Internal dynamic age calculation based on Date of Birth (Auto-increments by 1 on every birthday)
+  const activeProfile = useMemo(() => {
+    const base = profile || GUEST_PROFILE;
+    if (base.dob) {
+      const dynamicAge = calculateExactAge(base.dob);
+      if (dynamicAge > 0 && dynamicAge !== base.age) {
+        return { ...base, age: dynamicAge };
+      }
+    }
+    return base;
+  }, [profile]);
+
   const isAuthenticated = Boolean(
     profile &&
     profile.id &&
@@ -166,6 +179,15 @@ export default function HomePage() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.id && parsed.id !== 'cit-guest' && parsed.id !== 'cit-default' && (parsed.isAadhaarVerified || parsed.isOnboarded)) {
+          if (parsed.dob) {
+            const dynamicAge = calculateExactAge(parsed.dob);
+            if (dynamicAge > 0 && dynamicAge !== parsed.age) {
+              parsed.age = dynamicAge;
+              try {
+                localStorage.setItem('citizen_profile', JSON.stringify(parsed));
+              } catch (e) {}
+            }
+          }
           setProfile(parsed);
           if (parsed.country) {
             setCountry(parsed.country);
@@ -309,10 +331,11 @@ export default function HomePage() {
   // Handle Verification & Login Complete
   const handleVerificationComplete = (updated: Partial<CitizenProfile>) => {
     let calculatedAge = updated.age || profile?.age || 21;
-    if (updated.dob && !updated.age) {
-      const birthYear = new Date(updated.dob).getFullYear();
-      if (!isNaN(birthYear)) {
-        calculatedAge = Math.max(1, new Date().getFullYear() - birthYear);
+    const dobCandidate = updated.dob || profile?.dob;
+    if (dobCandidate) {
+      const dyn = calculateExactAge(dobCandidate);
+      if (dyn > 0) {
+        calculatedAge = dyn;
       }
     }
 
@@ -402,6 +425,14 @@ export default function HomePage() {
     const randomSeq = Math.floor(1000 + Math.random() * 9000);
     const citizenIdGenerated = completed.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-2026-${randomSeq}`;
 
+    let effectiveAge = completed.age;
+    if (completed.dob) {
+      const dyn = calculateExactAge(completed.dob);
+      if (dyn > 0) {
+        effectiveAge = dyn;
+      }
+    }
+
     const fullProfile: CitizenProfile = {
       ...DEFAULT_PROFILE,
       ...(profile || {}),
@@ -411,7 +442,7 @@ export default function HomePage() {
       phoneNumber: profile?.phoneNumber || '',
       photoURL: completed.photoURL,
       lifePhase: completed.lifePhase,
-      age: completed.age,
+      age: effectiveAge,
       dob: completed.dob,
       casteCategory: completed.casteCategory,
       state: completed.state,
@@ -1024,6 +1055,12 @@ export default function HomePage() {
           setProfile((prev) => {
             const base = prev || GUEST_PROFILE;
             const next = { ...base, ...updated };
+            if (next.dob) {
+              const dynAge = calculateExactAge(next.dob);
+              if (dynAge > 0) {
+                next.age = dynAge;
+              }
+            }
             try {
               localStorage.setItem('citizen_profile', JSON.stringify(next));
             } catch (e) {}

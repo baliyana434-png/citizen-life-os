@@ -447,7 +447,7 @@ export default function SkillsPage() {
             </div>
 
             {/* Level Filter: Beginner / Intermediate / Advanced */}
-            <div className="flex items-center gap-1 p-1 bg-slate-950/90 rounded-xl border border-slate-700 shrink-0 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1 p-1 bg-slate-950/90 rounded-xl border border-slate-700 shrink-0 overflow-x-auto no-scrollbar max-w-full">
               <span className="text-[10px] uppercase font-bold text-slate-400 px-2 flex items-center gap-1 shrink-0">
                 <Filter className="w-3 h-3 text-emerald-400" />
                 <span>Level:</span>
@@ -456,19 +456,19 @@ export default function SkillsPage() {
                 <button
                   key={lvl}
                   onClick={() => setLevelFilter(lvl)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     levelFilter === lvl
                       ? 'bg-emerald-500 text-slate-950 font-black shadow-xs'
                       : 'text-slate-300 hover:text-white hover:bg-slate-800'
                   }`}
                 >
                   {lvl === 'all'
-                    ? (language === 'hi' ? 'सभी स्तर' : 'All Levels')
+                    ? (language === 'hi' ? 'सभी' : 'All')
                     : (lvl === 'Beginner'
-                        ? (language === 'hi' ? 'शुरुआती (Beginner)' : 'Beginner')
+                        ? (language === 'hi' ? 'शुरुआती' : 'Beginner')
                         : lvl === 'Intermediate'
-                          ? (language === 'hi' ? 'मध्यम (Intermediate)' : 'Intermediate')
-                          : (language === 'hi' ? 'उन्नत (Advanced)' : 'Advanced'))}
+                          ? (language === 'hi' ? 'मध्यम' : 'Intermediate')
+                          : (language === 'hi' ? 'उन्नत' : 'Advanced'))}
                 </button>
               ))}
             </div>
@@ -492,7 +492,7 @@ export default function SkillsPage() {
 
       {/* 3. Sectors Pill Carousel (Mobile-Friendly Smooth Scroll) */}
       <section className="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-4 pb-2">
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pr-4">
           <button
             onClick={() => setSelectedSector('all')}
             className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
@@ -973,10 +973,10 @@ export default function SkillsPage() {
             <button
               type="button"
               onClick={() => setIsMobileDetailOpen(false)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold transition-all cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold transition-all cursor-pointer shrink-0"
             >
               <ArrowLeft className="w-4 h-4 text-slate-700" />
-              <span>{language === 'hi' ? 'वापस हुनर सूची' : 'Back to Skills'}</span>
+              <span>{language === 'hi' ? 'वापस' : 'Back'}</span>
             </button>
 
             <div className="min-w-0 text-center flex-1 px-1">
@@ -1187,7 +1187,7 @@ export default function SkillsPage() {
 
             {/* 3. Official Certificate Link */}
             {activeTopic.govtCertificateUrl && (
-              <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs shadow-2xs">
+              <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-2xs">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Award className="w-5 h-5 text-emerald-700 shrink-0" />
                   <div className="min-w-0">
@@ -1205,16 +1205,16 @@ export default function SkillsPage() {
                     href={activeTopic.govtCertificateUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center gap-1 shrink-0 shadow-xs"
+                    className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 shadow-xs"
                   >
-                    <span>{language === 'hi' ? 'प्राप्त करें' : 'Get Cert'}</span>
+                    <span>{language === 'hi' ? 'सर्टिफिकेट लिंक' : 'Get Cert'}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 ) : (
                   <button
                     type="button"
                     onClick={handleRequireSubscription}
-                    className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-xs flex items-center gap-1 shrink-0 shadow-xs cursor-pointer"
+                    className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-extrabold text-xs flex items-center justify-center gap-1 shrink-0 shadow-xs cursor-pointer"
                   >
                     <Lock className="w-3.5 h-3.5 text-amber-600" />
                     <span>{language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)'}</span>

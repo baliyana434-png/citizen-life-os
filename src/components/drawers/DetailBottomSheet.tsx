@@ -356,16 +356,16 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
         </div>
 
         {/* 3. Bottom Sticky Action Hub (Solid Gaps, Zero Touching) */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 sm:gap-4">
+        <div className="p-3 sm:p-4 border-t border-slate-200 bg-slate-50 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
           {isSubscribed ? (
             <a
               href={opportunity.gazette.officialPortalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.99]"
+              className="flex-1 min-w-[130px] py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.99]"
             >
-              <span>{t('drawer.official_portal_btn')}</span>
-              <ExternalLink className="w-4 h-4" />
+              <span className="truncate">{t('drawer.official_portal_btn')}</span>
+              <ExternalLink className="w-4 h-4 shrink-0" />
             </a>
           ) : (
             <button
@@ -374,12 +374,12 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 onClose();
                 onRequireSubscription?.();
               }}
-              className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-[0.99] border border-emerald-400/40"
+              className="flex-1 min-w-[130px] py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-[0.99] border border-emerald-400/40"
             >
-              <Lock className="w-4 h-4 text-amber-300" />
-              <span>
+              <Lock className="w-4 h-4 text-amber-300 shrink-0" />
+              <span className="truncate">
                 {language === 'hi'
-                  ? 'आवेदन पोर्टल अनलॉक करें (पास केवल ₹19)'
+                  ? 'पोर्टल अनलॉक करें (पास ₹19)'
                   : 'Unlock Official Portal (Pass ₹19)'}
               </span>
             </button>
@@ -388,17 +388,18 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
           {/* 1-Click Google Calendar Deadline Reminder */}
           <button
             onClick={handleOpenGoogleCalendar}
-            className="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer shrink-0"
+            className="py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
             title={t('drawer.add_google_calendar')}
+            aria-label="Add Deadline to Google Calendar"
           >
             <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="hidden sm:inline">{t('drawer.add_google_calendar')}</span>
-            <span className="sm:hidden">Calendar</span>
+            <span className="sm:hidden text-xs">Calendar</span>
           </button>
 
           <button
             onClick={onClose}
-            className="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
+            className="py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
           >
             {t('drawer.close')}
           </button>
