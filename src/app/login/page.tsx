@@ -54,11 +54,11 @@ function LoginContent() {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white selection:bg-emerald-500 selection:text-white">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/20 animate-pulse">
-          <ShieldCheck className="w-8 h-8 text-slate-950" />
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-900 selection:bg-emerald-500 selection:text-white">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-emerald-600/20 animate-pulse">
+          <ShieldCheck className="w-8 h-8 text-white" />
         </div>
-        <p className="mt-4 text-xs font-mono font-bold text-emerald-400 tracking-wider uppercase">
+        <p className="mt-4 text-xs font-mono font-bold text-emerald-700 tracking-wider uppercase">
           CITIZEN LIFE OS
         </p>
       </div>
@@ -81,9 +81,9 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/20 animate-pulse">
-            <ShieldCheck className="w-8 h-8 text-slate-950" />
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-900">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-emerald-600/20 animate-pulse">
+            <ShieldCheck className="w-8 h-8 text-white" />
           </div>
         </div>
       }

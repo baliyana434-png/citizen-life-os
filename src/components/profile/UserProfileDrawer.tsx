@@ -174,7 +174,13 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  const isVerified = profile.isAadhaarVerified;
+  const isVerified = Boolean(
+    profile &&
+    profile.id &&
+    profile.id !== 'cit-guest' &&
+    profile.id !== 'cit-default' &&
+    (profile.isAadhaarVerified || profile.isOnboarded || (profile.fullName && profile.fullName.trim() !== ''))
+  );
   const roleName = profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student');
 
   return (
@@ -190,10 +196,10 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
             </div>
             <div>
               <h3 className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">
-                {t('profile.title')}
+                {isVerified ? (profile.fullName || t('profile.title')) : t('profile.title')}
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                {isVerified ? profile.fullName : t('profile.guest_title')}
+                {isVerified ? (profile.email || `${countryMeta.name} Citizen`) : t('profile.guest_title')}
               </p>
             </div>
           </div>

@@ -273,21 +273,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white shrink-0" title="1-Year Active Citizen Pass" />
               )}
             </button>
-
-            {/* Quick 1-Click Logout Button */}
-            {onLogout && (
-              <button
-                type="button"
-                onClick={onLogout}
-                className="h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl bg-slate-100 hover:bg-red-50 hover:text-red-700 text-slate-600 border border-slate-200 hover:border-red-200 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shrink-0"
-                title={language === 'hi' ? 'लॉग आउट करें' : 'Log Out'}
-              >
-                <LogOut className="w-3.5 h-3.5 text-red-600" />
-                <span className="hidden md:inline text-[11px] font-extrabold text-red-700">
-                  {language === 'hi' ? 'लॉग आउट' : 'Logout'}
-                </span>
-              </button>
-            )}
           </div>
         </div>
       </div>
