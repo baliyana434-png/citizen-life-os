@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Star, 
   ArrowLeft, 
@@ -31,6 +32,7 @@ import { DetailBottomSheet } from '@/components/drawers/DetailBottomSheet';
 import { SKILL_TOPICS, SkillTopic, SkillVideo } from '@/data/skillsData';
 
 export default function SavedPage() {
+  const router = useRouter();
   const { language, setLanguage, t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
@@ -53,12 +55,25 @@ export default function SavedPage() {
     return list;
   }, []);
 
-  // Read saved IDs & profile from localStorage with safe client mount hydration
+  // Read saved IDs & profile from localStorage with safe client mount hydration & auth gate
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set<string>());
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     try {
+      const isLoggedOut = localStorage.getItem('citizen_logged_out');
+      const savedProf = localStorage.getItem('citizen_profile');
+      if (isLoggedOut === 'true' || !savedProf) {
+        router.replace('/login');
+        return;
+      }
+      const parsed = JSON.parse(savedProf);
+      if (!parsed || parsed.id === 'cit-guest' || (!parsed.isAadhaarVerified && !parsed.isOnboarded)) {
+        router.replace('/login');
+        return;
+      }
+      setProfile(parsed);
+
       const saved = localStorage.getItem('citizen_favorites');
       if (saved) {
         setFavoriteIds(new Set(JSON.parse(saved)));
@@ -71,14 +86,10 @@ export default function SavedPage() {
       if (savedVideosStore) {
         try { setSavedVideosList(JSON.parse(savedVideosStore)); } catch (e) { setSavedVideosList([]); }
       }
-      const savedProf = localStorage.getItem('citizen_profile');
-      if (savedProf) {
-        setProfile(JSON.parse(savedProf));
-      }
     } catch (e) {
-      console.warn('Storage hydration notice in Saved page:', e);
+      router.replace('/login');
     }
-  }, []);
+  }, [router]);
 
   // Listen to storage and custom favorites_updated / skills_updated / videos_updated events
   useEffect(() => {

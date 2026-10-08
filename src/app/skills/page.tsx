@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   Search,
@@ -37,6 +38,7 @@ import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { CitizenProfile, CitizenSubscription } from '@/types';
 
 export default function SkillsPage() {
+  const router = useRouter();
   const { language } = useTranslation();
   const { country, countryMeta } = useCountry();
   const [selectedSector, setSelectedSector] = useState<string>('all');
@@ -61,17 +63,25 @@ export default function SkillsPage() {
   const [savedTopicIds, setSavedTopicIds] = useState<Set<string>>(new Set());
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Hydrate citizen profile from localStorage
+  // Hydrate citizen profile from localStorage & enforce auth gate
   useEffect(() => {
     try {
+      const isLoggedOut = localStorage.getItem('citizen_logged_out');
       const stored = localStorage.getItem('citizen_profile');
-      if (stored) {
-        setProfile(JSON.parse(stored));
+      if (isLoggedOut === 'true' || !stored) {
+        router.replace('/login');
+        return;
       }
+      const parsed = JSON.parse(stored);
+      if (!parsed || parsed.id === 'cit-guest' || (!parsed.isAadhaarVerified && !parsed.isOnboarded)) {
+        router.replace('/login');
+        return;
+      }
+      setProfile(parsed);
     } catch (e) {
-      console.warn('Failed to load profile in skills:', e);
+      router.replace('/login');
     }
-  }, []);
+  }, [router]);
 
   // Listen to profile updates
   useEffect(() => {

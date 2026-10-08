@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   FileText, 
   ArrowLeft, 
@@ -56,6 +57,7 @@ const GUEST_PROFILE: CitizenProfile = {
 };
 
 export default function FormsPage() {
+  const router = useRouter();
   const { language, setLanguage } = useTranslation();
   const { country, countryMeta } = useCountry();
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -81,18 +83,27 @@ export default function FormsPage() {
 
   useEffect(() => {
     try {
+      const isLoggedOut = localStorage.getItem('citizen_logged_out');
       const savedProfile = localStorage.getItem('citizen_profile');
-      if (savedProfile) {
-        setProfile(JSON.parse(savedProfile));
+      if (isLoggedOut === 'true' || !savedProfile) {
+        router.replace('/login');
+        return;
       }
+      const parsed = JSON.parse(savedProfile);
+      if (!parsed || parsed.id === 'cit-guest' || (!parsed.isAadhaarVerified && !parsed.isOnboarded)) {
+        router.replace('/login');
+        return;
+      }
+      setProfile(parsed);
+
       const savedFavorites = localStorage.getItem('citizen_favorites');
       if (savedFavorites) {
         setFavoriteIds(new Set(JSON.parse(savedFavorites)));
       }
     } catch (e) {
-      console.warn('Storage hydration notice in Forms page:', e);
+      router.replace('/login');
     }
-  }, []);
+  }, [router]);
 
   // Listen to storage and custom favorites_updated events
   useEffect(() => {

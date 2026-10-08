@@ -98,8 +98,16 @@ export default function HomePage() {
   const { country, setCountry, countryMeta } = useCountry();
 
   // Master Citizen Account Profile (Individual citizen)
-  const [profile, setProfile] = useState<CitizenProfile>(GUEST_PROFILE);
-  const activeProfile = profile;
+  const [profile, setProfile] = useState<CitizenProfile | null>(null);
+  const [isHydratingAuth, setIsHydratingAuth] = useState<boolean>(true);
+  const activeProfile = profile || GUEST_PROFILE;
+  const isAuthenticated = Boolean(
+    profile &&
+    profile.id &&
+    profile.id !== 'cit-guest' &&
+    profile.id !== 'cit-default' &&
+    (profile.isAadhaarVerified || profile.isOnboarded)
+  );
 
   // Always default to 1st tab: exams (Competitive Exams / प्रतियोगी परीक्षाएं)
   const [activeTab, setActiveTab] = useState<LifeStage>('exams');
@@ -150,18 +158,18 @@ export default function HomePage() {
     try {
       const isLoggedOut = localStorage.getItem('citizen_logged_out');
       if (isLoggedOut === 'true') {
-        setProfile(GUEST_PROFILE);
-      } else {
-        const saved = localStorage.getItem('citizen_profile');
-        if (saved) {
-          const parsed = JSON.parse(saved);
+        setProfile(null);
+        window.location.replace('/login?from=logout');
+        return;
+      }
+      const saved = localStorage.getItem('citizen_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.id && parsed.id !== 'cit-guest' && parsed.id !== 'cit-default' && (parsed.isAadhaarVerified || parsed.isOnboarded)) {
           setProfile(parsed);
           if (parsed.country) {
             setCountry(parsed.country);
           }
-          // Note: Do not auto-switch tab on mount so that activeTab strictly defaults to 1st tab (exams / Competitive Exams)
-
-          // If logged-in user hasn't completed onboarding wizard, ask them for their real details now!
           if (parsed.isAadhaarVerified && !parsed.isOnboarded) {
             setPendingGoogleUser({
               name: parsed.fullName || 'Citizen',
@@ -171,8 +179,14 @@ export default function HomePage() {
             setIsOnboardingOpen(true);
           }
         } else {
-          setProfile(GUEST_PROFILE);
+          setProfile(null);
+          window.location.replace('/login');
+          return;
         }
+      } else {
+        setProfile(null);
+        window.location.replace('/login');
+        return;
       }
 
       const savedFavs = localStorage.getItem('citizen_favorites');
@@ -181,6 +195,10 @@ export default function HomePage() {
       }
     } catch (e) {
       console.warn('Storage hydration notice:', e);
+      setProfile(null);
+      window.location.replace('/login');
+    } finally {
+      setIsHydratingAuth(false);
     }
   }, []);
 
@@ -256,20 +274,18 @@ export default function HomePage() {
       window.dispatchEvent(new Event('favorites_updated'));
     } catch (e) {}
     setPendingGoogleUser(null);
-    setProfile(GUEST_PROFILE);
+    setProfile(null);
     setFavoriteIds(new Set());
     setIsProfileOpen(false);
     setIsOnboardingOpen(false);
-    setPaymentSuccessToast(
-      language === 'hi'
-        ? 'सफलतापूर्वक लॉग आउट हो गया। आप अतिथि मोड में हैं।'
-        : 'Logged out successfully. You are now in guest mode.'
-    );
-    setTimeout(() => setPaymentSuccessToast(null), 4000);
+
+    // Immediately navigate to dedicated login page like Claude & ChatGPT
+    window.location.href = '/login?from=logout';
   };
 
   // Sync profile and favorites from Server Database
   useEffect(() => {
+    if (!profile) return;
     const phone = profile.phoneNumber;
     const email = profile.email;
     if (!profile.isAadhaarVerified || (!phone && !email)) return;
@@ -288,11 +304,11 @@ export default function HomePage() {
         }
       })
       .catch((err) => console.warn('Server profile sync warning:', err));
-  }, [profile.phoneNumber, profile.email, profile.isAadhaarVerified]);
+  }, [profile?.phoneNumber, profile?.email, profile?.isAadhaarVerified]);
 
   // Handle Verification & Login Complete
   const handleVerificationComplete = (updated: Partial<CitizenProfile>) => {
-    let calculatedAge = updated.age || profile.age;
+    let calculatedAge = updated.age || profile?.age || 21;
     if (updated.dob && !updated.age) {
       const birthYear = new Date(updated.dob).getFullYear();
       if (!isNaN(birthYear)) {
@@ -302,7 +318,7 @@ export default function HomePage() {
 
     const newProfile: CitizenProfile = {
       ...DEFAULT_PROFILE,
-      ...profile,
+      ...(profile || {}),
       ...updated,
       age: calculatedAge,
       isAadhaarVerified: true,
@@ -387,10 +403,12 @@ export default function HomePage() {
     const citizenIdGenerated = completed.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-2026-${randomSeq}`;
 
     const fullProfile: CitizenProfile = {
-      ...profile,
-      id: profile.id && profile.id !== 'cit-guest' ? profile.id : 'cit-' + Date.now(),
+      ...DEFAULT_PROFILE,
+      ...(profile || {}),
+      id: profile?.id && profile.id !== 'cit-guest' ? profile.id : 'cit-' + Date.now(),
       fullName: completed.fullName,
       email: completed.email,
+      phoneNumber: profile?.phoneNumber || '',
       photoURL: completed.photoURL,
       lifePhase: completed.lifePhase,
       age: completed.age,
@@ -439,8 +457,9 @@ export default function HomePage() {
   // Handle ₹19 1-Year Subscription Success
   const handleSubscriptionSuccess = (sub: CitizenSubscription) => {
     setIsSubscriptionOpen(false);
+    const baseProfile = profile || DEFAULT_PROFILE;
     const updatedProfile: CitizenProfile = {
-      ...profile,
+      ...baseProfile,
       subscription: sub,
     };
 
@@ -465,7 +484,7 @@ export default function HomePage() {
 
   // Seamless pass activation launcher (prompts guest to register/login first so pass is permanently attached to their real account)
   const handleOpenSubscription = (customNotice?: string) => {
-    const isGuest = !profile.email || profile.id === 'cit-guest' || !profile.isOnboarded;
+    const isGuest = !profile || !profile.email || profile.id === 'cit-guest' || !profile.isOnboarded;
     if (isGuest) {
       setAuthModalScreen('signup');
       setIsAuthOpen(true);
@@ -648,11 +667,38 @@ export default function HomePage() {
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
+  if (isHydratingAuth) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white selection:bg-emerald-500 selection:text-white">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/20 animate-pulse">
+          <ShieldCheck className="w-8 h-8 text-slate-950" />
+        </div>
+        <p className="mt-4 text-xs font-mono font-bold text-emerald-400 tracking-wider uppercase">
+          CITIZEN LIFE OS
+        </p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <AuthModal
+        isOpen={true}
+        isFullPageGate={true}
+        onClose={() => {}}
+        initialScreen={authModalScreen}
+        prefillData={authPrefillData}
+        onLoginSuccess={(updated) => handleVerificationComplete(updated)}
+        onGoogleSuccess={(googleUser) => handleGoogleAuthSuccess(googleUser)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
       {/* 1. Header */}
       <Header
-        profile={profile}
+        profile={activeProfile}
         onOpenAuth={() => {
           setAuthModalScreen('login');
           setIsAuthOpen(true);
@@ -721,15 +767,15 @@ export default function HomePage() {
             {/* Individual Profile Summary Badge - Hidden on mobile to keep 1st view ultra clean */}
             <div className="hidden md:flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 shrink-0 shadow-lg">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 font-black text-sm shadow-md">
-                {activeProfile.isOnboarded && profile.fullName ? profile.fullName.charAt(0).toUpperCase() : countryMeta.flag}
+                {activeProfile.isOnboarded && profile?.fullName ? profile.fullName.charAt(0).toUpperCase() : countryMeta.flag}
               </div>
               <div className="text-left">
                 <span className="block text-xs sm:text-sm font-extrabold text-white leading-tight">
-                  {activeProfile.isOnboarded ? profile.fullName : t('profile.guest_title')}
+                  {activeProfile.isOnboarded ? (profile?.fullName || t('profile.guest_title')) : t('profile.guest_title')}
                 </span>
                 <span className="text-[11px] text-emerald-300 font-medium">
                   {activeProfile.isOnboarded
-                    ? `${profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • ${profile.casteCategory || 'General'}`
+                    ? `${profile?.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • ${profile?.casteCategory || 'General'}`
                     : `${countryMeta.name} • ${t('hero.unverified_status')}`}
                 </span>
               </div>
@@ -738,7 +784,7 @@ export default function HomePage() {
         </div>
 
         {/* 1-Year Citizen Access Pass Status Strip */}
-        {profile.subscription?.status === 'active' ? (
+        {profile?.subscription?.status === 'active' ? (
           <div className="bg-emerald-950 text-white rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 border border-emerald-700/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span className="text-sm sm:text-base">{countryMeta.flag}</span>
@@ -747,12 +793,12 @@ export default function HomePage() {
               </span>
               <span className="font-semibold text-emerald-100">
                 {language === 'hi'
-                  ? `1-वर्षीय सक्रिय पास (वैध: ${profile.subscription.validUntil})`
-                  : `1-Year Pass Active (Valid: ${profile.subscription.validUntil})`}
+                  ? `1-वर्षीय सक्रिय पास (वैध: ${profile.subscription?.validUntil})`
+                  : `1-Year Pass Active (Valid: ${profile.subscription?.validUntil})`}
               </span>
             </div>
             <span className="text-[10px] font-mono text-emerald-400 bg-black/20 px-2 py-0.5 rounded-md hidden sm:inline">
-              {profile.subscription.transactionId}
+              {profile.subscription?.transactionId}
             </span>
           </div>
         ) : (
@@ -796,7 +842,7 @@ export default function HomePage() {
                   </div>
                   <span className="text-[11px] text-slate-400">
                     {language === 'hi' 
-                      ? `${countryMeta.name} में अपनी आयु (${profile.age || '18+'}), क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
+                      ? `${countryMeta.name} में अपनी आयु (${activeProfile.age || '18+'}), क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
                       : `Unlock all genuine opportunities in ${countryMeta.name} matched to your exact age & area for 365 days`}
                   </span>
                 </div>
@@ -972,11 +1018,12 @@ export default function HomePage() {
       <UserProfileDrawer
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        profile={profile}
+        profile={activeProfile}
         totalBenefitsUnlocked={totalBenefitSum}
         onUpdateProfile={(updated) => {
           setProfile((prev) => {
-            const next = { ...prev, ...updated };
+            const base = prev || GUEST_PROFILE;
+            const next = { ...base, ...updated };
             try {
               localStorage.setItem('citizen_profile', JSON.stringify(next));
             } catch (e) {}
@@ -1009,7 +1056,7 @@ export default function HomePage() {
         isOpen={isOnboardingOpen}
         onClose={() => setIsOnboardingOpen(false)}
         googleUser={pendingGoogleUser}
-        initialRole={profile.lifePhase}
+        initialRole={activeProfile.lifePhase}
         onComplete={handleOnboardingComplete}
         onSwitchToSignIn={() => {
           setIsOnboardingOpen(false);
@@ -1021,8 +1068,8 @@ export default function HomePage() {
       <SubscriptionModal
         isOpen={isSubscriptionOpen}
         onClose={() => setIsSubscriptionOpen(false)}
-        citizenName={profile.fullName || 'Citizen'}
-        citizenId={profile.id && profile.id !== 'cit-guest' && profile.id !== 'cit-default' ? profile.id : (profile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`)}
+        citizenName={activeProfile.fullName || 'Citizen'}
+        citizenId={activeProfile.id && activeProfile.id !== 'cit-guest' && activeProfile.id !== 'cit-default' ? activeProfile.id : (activeProfile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`)}
         onSubscriptionSuccess={handleSubscriptionSuccess}
       />
 

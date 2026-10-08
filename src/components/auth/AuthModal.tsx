@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { CitizenProfile, CountryCode } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry, COUNTRIES } from '@/context/CountryContext';
@@ -48,22 +49,29 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialScreen?: AuthScreen;
+  initialNotice?: string;
   prefillData?: AuthPrefillData | null;
   onLoginSuccess: (profile: Partial<CitizenProfile>) => void;
   onGoogleSuccess?: (googleUser: { name: string; email: string; photoURL?: string }) => void;
   onOpenGoogleChooser?: () => void;
+  isFullPageGate?: boolean;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   initialScreen = 'login',
+  initialNotice,
   prefillData = null,
   onLoginSuccess,
   onGoogleSuccess,
+  isFullPageGate = false,
 }) => {
-  const { t, language } = useTranslation();
+  const { t, language, setLanguage } = useTranslation();
   const { country, setCountry, countryMeta } = useCountry();
+
+  const [isCountryMenuOpen, setIsCountryMenuOpen] = useState<boolean>(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState<boolean>(false);
 
   const [screen, setScreen] = useState<AuthScreen>(initialScreen);
   const [signUpStep, setSignUpStep] = useState<1 | 2>(1);
@@ -102,7 +110,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setErrorMessage(null);
-      setSuccessNotice(null);
+      setSuccessNotice(initialNotice || null);
       setAccountNotFoundNotice(false);
       setShowLocalIpGooglePrompt(false);
 
@@ -156,16 +164,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     };
   }, [isOpen, isLoading]);
 
-  // Lock background scroll when open
+  // Lock background scroll when open as modal dialog
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isFullPageGate) {
       const orig = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
         document.body.style.overflow = orig;
       };
     }
-  }, [isOpen]);
+  }, [isOpen, isFullPageGate]);
 
   // Dynamic age calculation from DOB
   useEffect(() => {
@@ -625,62 +633,63 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md">
-      <div className="fixed inset-0" onClick={() => { setIsLoading(false); onClose(); }} />
+  const renderAuthCard = () => {
+    return (
+      <div className={`w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 p-5 sm:p-7 flex flex-col z-10 text-slate-900 ${
+      isFullPageGate ? 'relative' : 'relative my-auto max-h-[94vh] overflow-y-auto'
+    }`}>
+      {/* Top Navigation Bar */}
+      <div className="flex items-center justify-between pb-1">
+        {screen === 'forgot_password' ? (
+          <button
+            type="button"
+            onClick={() => {
+              setIsLoading(false);
+              setScreen('login');
+              setErrorMessage(null);
+              setSuccessNotice(null);
+              setAccountNotFoundNotice(false);
+            }}
+            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-5 h-5 text-slate-700" />
+          </button>
+        ) : screen === 'signup' && signUpStep === 2 ? (
+          <button
+            type="button"
+            onClick={() => {
+              setIsLoading(false);
+              setSignUpStep(1);
+              setErrorMessage(null);
+              setSuccessNotice(null);
+            }}
+            className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 text-xs font-bold transition-colors cursor-pointer"
+            aria-label="Back to Step 1"
+          >
+            <ChevronLeft className="w-4 h-4 text-slate-700" />
+            <span>{language === 'hi' ? 'कदम 1 (क्रेडेंशियल)' : 'Step 1 (Credentials)'}</span>
+          </button>
+        ) : screen === 'signup' && signUpStep === 1 ? (
+          <button
+            type="button"
+            onClick={() => {
+              setIsLoading(false);
+              setScreen('login');
+              setErrorMessage(null);
+              setSuccessNotice(null);
+              setAccountNotFoundNotice(false);
+            }}
+            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Back to Login"
+          >
+            <ChevronLeft className="w-5 h-5 text-slate-700" />
+          </button>
+        ) : (
+          <div className="w-9 h-9" />
+        )}
 
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 p-5 sm:p-7 flex flex-col my-auto max-h-[94vh] overflow-y-auto z-10">
-        {/* Top Navigation Bar */}
-        <div className="flex items-center justify-between pb-1">
-          {screen === 'forgot_password' ? (
-            <button
-              type="button"
-              onClick={() => {
-                setIsLoading(false);
-                setScreen('login');
-                setErrorMessage(null);
-                setSuccessNotice(null);
-                setAccountNotFoundNotice(false);
-              }}
-              className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="Back"
-            >
-              <ChevronLeft className="w-5 h-5 text-slate-700" />
-            </button>
-          ) : screen === 'signup' && signUpStep === 2 ? (
-            <button
-              type="button"
-              onClick={() => {
-                setIsLoading(false);
-                setSignUpStep(1);
-                setErrorMessage(null);
-                setSuccessNotice(null);
-              }}
-              className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 text-xs font-bold transition-colors cursor-pointer"
-              aria-label="Back to Step 1"
-            >
-              <ChevronLeft className="w-4 h-4 text-slate-700" />
-              <span>{language === 'hi' ? 'कदम 1 (क्रेडेंशियल)' : 'Step 1 (Credentials)'}</span>
-            </button>
-          ) : screen === 'signup' && signUpStep === 1 ? (
-            <button
-              type="button"
-              onClick={() => {
-                setIsLoading(false);
-                setScreen('login');
-                setErrorMessage(null);
-                setSuccessNotice(null);
-                setAccountNotFoundNotice(false);
-              }}
-              className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="Back to Login"
-            >
-              <ChevronLeft className="w-5 h-5 text-slate-700" />
-            </button>
-          ) : (
-            <div className="w-9 h-9" />
-          )}
-
+        {!isFullPageGate ? (
           <button
             type="button"
             onClick={() => {
@@ -692,7 +701,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           >
             <X className="w-4 h-4" />
           </button>
-        </div>
+        ) : (
+          <div className="w-9 h-9" />
+        )}
+      </div>
 
         {/* Header Title & Subtitle */}
         <div className="text-center mt-1">
@@ -1526,6 +1538,224 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </form>
         )}
       </div>
+    );
+  };
+
+  if (isFullPageGate) {
+    return (
+      <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+        {/* Subtle Ambient Glows */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black pointer-events-none" />
+
+        {/* Top Sovereign Bar */}
+        <header className="w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between relative z-20">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20">
+              <ShieldCheck className="w-5 h-5 text-slate-950" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-black text-sm sm:text-base tracking-tight text-white">CITIZEN LIFE OS</span>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold">
+                  SOVEREIGN CIVIC OS
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 hidden sm:block">
+                {language === 'hi' ? 'सत्यापित राष्ट्रीय व वैश्विक अवसर पोर्टल' : 'Verified Civic & Opportunity Platform'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Country Selector Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsCountryMenuOpen(!isCountryMenuOpen)}
+                className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <span className="text-sm">{countryMeta.flag}</span>
+                <span className="hidden sm:inline text-xs font-semibold">{countryMeta.name}</span>
+              </button>
+              {isCountryMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsCountryMenuOpen(false)} />
+                  <div className="absolute right-0 mt-1.5 w-52 max-h-72 overflow-y-auto bg-slate-900 rounded-2xl shadow-2xl border border-white/15 p-1.5 z-50">
+                    {Object.entries(COUNTRIES).map(([code, meta]) => (
+                      <button
+                        key={code}
+                        type="button"
+                        onClick={() => {
+                          setCountry(code as CountryCode);
+                          setIsCountryMenuOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left text-xs font-bold rounded-xl flex items-center justify-between transition-colors ${
+                          country === code ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-white/5'
+                        }`}
+                      >
+                        <span>{meta.flag} {meta.name}</span>
+                        <span className="font-mono text-[10px] opacity-70">{meta.currencyCode}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Language Switcher */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="h-8 sm:h-9 px-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <Globe className="w-3.5 h-3.5 text-slate-400" />
+                <span className="uppercase">{language}</span>
+              </button>
+              {isLangMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsLangMenuOpen(false)} />
+                  <div className="absolute right-0 mt-1.5 w-36 bg-slate-900 rounded-2xl shadow-2xl border border-white/15 p-1.5 z-50">
+                    {[
+                      { code: 'hi', label: 'हिन्दी' },
+                      { code: 'en', label: 'English' },
+                    ].map((l) => (
+                      <button
+                        key={l.code}
+                        type="button"
+                        onClick={() => {
+                          setLanguage(l.code as any);
+                          setIsLangMenuOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left text-xs font-bold rounded-xl flex items-center justify-between ${
+                          language === l.code ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-white/5'
+                        }`}
+                      >
+                        <span>{l.label}</span>
+                        <span className="font-mono text-[10px] uppercase opacity-70">{l.code}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Main Split Section */}
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 relative z-10 my-auto">
+          {/* Left Column: Platform Branding & Highlights */}
+          <div className="w-full lg:w-1/2 space-y-6 text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>SOVEREIGN CIVIC INTELLIGENCE 2026</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              {language === 'hi' ? (
+                <>
+                  सभी राष्ट्रीय व वैश्विक अवसरों हेतु{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+                    एक सुरक्षित नागरिक खाता
+                  </span>
+                </>
+              ) : (
+                <>
+                  One Secure Citizen Account for{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+                    All National & Global Opportunities
+                  </span>
+                </>
+              )}
+            </h1>
+
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
+              {language === 'hi'
+                ? 'बिना किसी फर्जीवाड़े के 250+ सत्यापित सरकारी योजनाएं, प्रतियोगी परीक्षाएं, छात्रवृत्तियां, इंटर्नशिप और रोजगार अवसर सीधे आधिकारिक सरकारी पोर्टलों से।'
+                : 'Zero-scam civic discovery platform. Access 250+ verified government schemes, competitive exams, national scholarships, and career roadmaps directly from official sources.'}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-white">
+                    {language === 'hi' ? '100% सत्यापित पोर्टल' : '100% Verified Portals'}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'hi' ? 'केवल आधिकारिक डायरेक्ट लिंक्स' : 'Direct official application URLs'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-white">
+                    {language === 'hi' ? 'आयु व पात्रता ऑटो-मैच' : 'Instant Eligibility Match'}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'hi' ? 'राज्य व श्रेणी अनुसार फिल्टर' : 'Auto-filtered by state and role'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-white">
+                    {language === 'hi' ? '1-वर्षीय नागरिक पास' : '1-Year Citizen Pass'}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'hi' ? 'केवल ₹19 में असीमित पहुंच' : 'Full access for just ₹19/year'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-white">
+                    {language === 'hi' ? '24x7 नागरिक हेल्पलाइन' : '24x7 Citizen Helplines'}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'hi' ? 'आपातकालीन सहायता नंबर' : 'National emergency & youth lines'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: The Auth Card */}
+          <div className="w-full lg:w-1/2 flex justify-center">
+            {renderAuthCard()}
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="w-full border-t border-white/10 bg-slate-950/80 px-4 py-4 text-center text-xs text-slate-400 relative z-10">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px]">
+            <p>Citizen Life OS • Sovereign Civic Platform</p>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-slate-400">
+              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link href="/refund" className="hover:text-white transition-colors">Refund Policy</Link>
+              <Link href="/helpline" className="hover:text-white transition-colors">Helpline</Link>
+              <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+              <Link href="/disclaimer" className="hover:text-white transition-colors">Disclaimer</Link>
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md">
+      <div className="fixed inset-0" onClick={() => { setIsLoading(false); onClose(); }} />
+      {renderAuthCard()}
     </div>
   );
 };
