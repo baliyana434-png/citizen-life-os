@@ -428,7 +428,7 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="citizen@example.com"
+                  placeholder="citizen@gmail.com"
                   className="w-full py-2.5 px-3 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">

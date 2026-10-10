@@ -104,7 +104,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [accountNotFoundNotice, setAccountNotFoundNotice] = useState<boolean>(false);
   const [showLocalIpGooglePrompt, setShowLocalIpGooglePrompt] = useState<boolean>(false);
-  const [googleFallbackEmail, setGoogleFallbackEmail] = useState<string>('baliyana434@gmail.com');
+  const [googleFallbackEmail, setGoogleFallbackEmail] = useState<string>('');
 
   // Initialize or reset when modal opens or initialScreen/prefillData changes
   useEffect(() => {
@@ -310,9 +310,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         code.includes('not-configured')
       ) {
         setShowLocalIpGooglePrompt(true);
-        if (!googleFallbackEmail) {
-          setGoogleFallbackEmail('baliyana434@gmail.com');
-        }
       }
       setErrorMessage(getGoogleAuthErrorMessage(err?.code || err?.message, language));
     } finally {
@@ -962,7 +959,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         type="email"
                         value={googleFallbackEmail}
                         onChange={(e) => setGoogleFallbackEmail(e.target.value)}
-                        placeholder="baliyana434@gmail.com"
+                        placeholder="name@gmail.com"
                         className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
                       />
                       <button
@@ -1213,7 +1210,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         type="email"
                         value={googleFallbackEmail}
                         onChange={(e) => setGoogleFallbackEmail(e.target.value)}
-                        placeholder="baliyana434@gmail.com"
+                        placeholder="name@gmail.com"
                         className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
                       />
                       <button

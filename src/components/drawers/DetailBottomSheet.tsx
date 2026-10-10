@@ -139,12 +139,12 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               <span className={!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}>{localized.issuingAuthority}</span>
             </div>
             <div className="text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 border-t border-slate-200/80">
-              <span>{t('card.circular_no')}: <strong className={`text-slate-900 font-mono ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>{opportunity.gazette.circularNumber}</strong></span>
+              <span>{t('card.circular_no')}: <strong className={`text-slate-900 font-mono ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>{opportunity.gazette?.circularNumber || 'Official Notice'}</strong></span>
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-slate-500" />
                 <span>{t('card.last_date')}: <strong className="text-slate-900">{formatDeadlineText(opportunity.deadline, opportunity.daysRemaining, language, t('card.days_left'))}</strong></span>
               </span>
-              <span>{opportunity.gazette.lastVerifiedAt}</span>
+              <span>{opportunity.gazette?.lastVerifiedAt || 'Recently Verified'}</span>
               <span>{t('card.official_fee')}: <strong className="text-emerald-800">{localized.officialFee}</strong></span>
               {opportunity.targetAges && (
                 <span className="flex items-center gap-1">
@@ -359,7 +359,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
         <div className="p-3 sm:p-4 border-t border-slate-200 bg-slate-50 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-3">
           {isSubscribed ? (
             <a
-              href={opportunity.gazette.officialPortalUrl}
+              href={opportunity.gazette?.officialPortalUrl || '#'}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 min-w-[130px] py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-[0.99]"

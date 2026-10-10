@@ -77,7 +77,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-[11px] font-bold min-w-0 max-w-[70%]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span className={`truncate ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>
-              {localized.issuingAuthority.split('(')[0].trim()}
+              {(localized.issuingAuthority || 'Official Authority').split('(')[0].trim()}
             </span>
           </div>
 
