@@ -1060,7 +1060,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={language === 'hi' ? 'पासवर्ड (8+ वर्ण, A-Z, a-z, 0-9, @#$)' : 'Password (8+ chars, A-Z, a-z, 0-9, @#$)'}
+                  placeholder={language === 'hi' ? 'पासवर्ड (कम से कम 6 वर्ण)' : 'Password (at least 6 characters)'}
                   className={`w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
                     passwordValidation && !passwordValidation.valid
                       ? 'border-red-400 focus:border-red-500'
@@ -1083,7 +1083,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 password && (
                   <p className="text-[10px] font-semibold text-emerald-600 mt-1 pl-2 flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                    <span>{language === 'hi' ? 'पासवर्ड सुरक्षित है' : 'Strong & secure password'}</span>
+                    <span>{language === 'hi' ? 'पासवर्ड मान्य है' : 'Valid password'}</span>
                   </p>
                 )
               )}

@@ -655,17 +655,18 @@ export function validateRealEmail(
 }
 
 // =========================================================
-// 9. Real Password Complexity & Anti-Dummy Entropy Engine
+// 9. Real Password Validation Engine (Simplified & User-Friendly)
 // =========================================================
 
 /**
- * Validates real password security & complexity
- * Rejects weak/common dummy passwords and enforces industry-standard entropy.
+ * Validates password length and sanity.
+ * Allows user to create any password format they prefer (letters, numbers, symbols, names),
+ * while enforcing a minimum length of 6 characters for account security.
  */
 export function validateRealPassword(
   password: string,
-  name?: string,
-  email?: string,
+  _name?: string,
+  _email?: string,
   lang: SupportedLanguage = 'en'
 ): { valid: boolean; error?: string } {
   if (!password) {
@@ -675,12 +676,12 @@ export function validateRealPassword(
     };
   }
 
-  if (password.length < 8) {
+  if (password.length < 6) {
     return {
       valid: false,
       error: lang === 'hi'
-        ? 'पासवर्ड न्यूनतम 8 वर्णों (Characters) का होना चाहिए।'
-        : 'Password must be at least 8 characters long.',
+        ? 'पासवर्ड कम से कम 6 वर्णों (Characters) का होना चाहिए।'
+        : 'Password must be at least 6 characters long.',
     };
   }
 
@@ -693,80 +694,7 @@ export function validateRealPassword(
     };
   }
 
-  // Reject common/trivial dummy passwords
-  const commonPasswords = new Set([
-    '12345678', '123456789', '1234567890', 'password', 'password1', 'password123',
-    'pass1234', 'admin123', 'qwertyuiop', 'qwerty123', 'welcome1', 'welcome123',
-    'abcdefgh', 'iloveyou', '11111111', '00000000', 'letmein123', 'testing123',
-    'asdfghjk', 'india123', 'pass@123', 'password@1', 'admin@123'
-  ]);
-
-  if (commonPasswords.has(password.toLowerCase())) {
-    return {
-      valid: false,
-      error: lang === 'hi'
-        ? 'यह पासवर्ड बहुत सामान्य व असुरक्षित है! कृपया एक मजबूत और वास्तविक पासवर्ड चुनें।'
-        : 'This password is too common and easily guessed. Please choose a strong, unique password.',
-    };
-  }
-
-  // Reject 4+ repeated consecutive characters (e.g. 'aaaa', '1111')
-  if (/(.)\1{3,}/.test(password)) {
-    return {
-      valid: false,
-      error: lang === 'hi'
-        ? 'पासवर्ड में लगातार 4 समान वर्ण नहीं होने चाहिए।'
-        : 'Password cannot contain 4 consecutive identical characters.',
-    };
-  }
-
-  // Reject password matching username from email
-  if (email && email.includes('@')) {
-    const emailPrefix = email.split('@')[0].toLowerCase();
-    if (emailPrefix.length >= 3 && password.toLowerCase().includes(emailPrefix)) {
-      return {
-        valid: false,
-        error: lang === 'hi'
-          ? 'सुरक्षा कारणों से पासवर्ड में आपका ईमेल नाम नहीं होना चाहिए।'
-          : 'For security, password should not contain your email username.',
-      };
-    }
-  }
-
-  // Reject password containing user full name or first name
-  if (name && name.trim().length >= 3) {
-    const firstName = name.trim().split(/\s+/)[0].toLowerCase();
-    if (firstName.length >= 3 && password.toLowerCase().includes(firstName)) {
-      return {
-        valid: false,
-        error: lang === 'hi'
-          ? 'सुरक्षा कारणों से पासवर्ड में आपका नाम नहीं होना चाहिए।'
-          : 'For security, password should not contain your name.',
-      };
-    }
-  }
-
-  // Complexity rules: Uppercase, Lowercase, Number, Special symbol
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
-
-  if (!hasUpper || !hasLower || !hasNumber || !hasSpecial) {
-    const missing: string[] = [];
-    if (!hasUpper) missing.push(lang === 'hi' ? 'कम से कम 1 बड़ा अक्षर (A-Z)' : '1 uppercase letter (A-Z)');
-    if (!hasLower) missing.push(lang === 'hi' ? 'कम से कम 1 छोटा अक्षर (a-z)' : '1 lowercase letter (a-z)');
-    if (!hasNumber) missing.push(lang === 'hi' ? 'कम से कम 1 अंक (0-9)' : '1 number (0-9)');
-    if (!hasSpecial) missing.push(lang === 'hi' ? 'कम से कम 1 विशेष चिह्न (@, #, $, आदि)' : '1 special symbol (@, #, $, etc.)');
-
-    return {
-      valid: false,
-      error: lang === 'hi'
-        ? `कमजोर पासवर्ड! आवश्यक है: ${missing.join(', ')}।`
-        : `Weak password! Required: ${missing.join(', ')}.`,
-    };
-  }
-
   return { valid: true };
 }
+
 
