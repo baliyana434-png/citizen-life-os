@@ -4,11 +4,10 @@ import React from 'react';
 import { Opportunity, CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
-import { ShieldCheck, Calendar, ArrowRight, Star, Clock, CheckCircle2, Banknote, Lock } from 'lucide-react';
+import { ShieldCheck, Calendar, ArrowRight, Star, Clock, Banknote, Lock } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { RotatingNewBadge } from '../common/RotatingNewBadge';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
-import { evaluateCitizenEligibility } from '@/lib/eligibility';
 import { formatDeadlineText } from '@/lib/dateUtils';
 
 interface OpportunityCardProps {
@@ -31,7 +30,6 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
 }) => {
   const { t, language } = useTranslation();
   const localized = getLocalizedOpportunity(opportunity, language);
-  const eligibility = evaluateCitizenEligibility(opportunity, citizenProfile);
   const isSubscribed = citizenProfile?.subscription?.status === 'active';
 
   const formattedDeadline = formatDeadlineText(
@@ -101,7 +99,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           )}
         </div>
 
-        {/* 1B. Second Row: Status Badge & Citizen Eligibility Pill & Pass Lock */}
+        {/* 1B. Second Row: Status Badge & Pass Lock */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {/* Status Badge */}
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border whitespace-nowrap shrink-0 ${
@@ -118,14 +116,6 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
             )}
             <span>{localized.applicationStatusText}</span>
           </span>
-
-          {/* Citizen Eligibility Match Indicator */}
-          {citizenProfile?.isOnboarded && eligibility.isEligible && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-950 text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap shrink-0">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-              <span>{t('card.eligible_100')} • {t('card.eligible_age_match')}</span>
-            </span>
-          )}
 
           {/* 1-Year Pass Badge if Not Subscribed */}
           {!isSubscribed && (
