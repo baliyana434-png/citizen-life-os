@@ -306,7 +306,7 @@ export class LiveFeedCrawler {
     if (cached && now - cached.timestamp < CACHE_TTL_MS) {
       return {
         ...cached.data,
-        lastSyncedAt: formattedTime + ' (Cached Live)',
+        lastSyncedAt: formattedTime,
       };
     }
 

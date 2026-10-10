@@ -533,7 +533,24 @@ export default function HomePage() {
   // Live Internet Sync State
   const [opportunities, setOpportunities] = useState<Opportunity[]>(INITIAL_OPPORTUNITIES);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [lastSyncedTime, setLastSyncedTime] = useState<string>('Live (Auto-Sync)');
+  const [lastSyncDate, setLastSyncDate] = useState<Date | null>(null);
+
+  // Initialize with current local device time on client mount
+  useEffect(() => {
+    setLastSyncDate(new Date());
+  }, []);
+
+  const formattedSyncTime = useMemo(() => {
+    if (!lastSyncDate) {
+      return language === 'hi' ? 'लाइव सिंक' : 'Live Sync';
+    }
+    return lastSyncDate.toLocaleTimeString(language === 'hi' ? 'hi-IN' : 'en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    });
+  }, [lastSyncDate, language]);
 
   // Live Internet Background Crawler & Sync
   const fetchLiveSync = useCallback(async (targetCountry?: string) => {
@@ -551,11 +568,12 @@ export default function HomePage() {
           return [...toAdd, ...prev];
         });
       }
-      if (data.lastSyncedAt) {
-        setLastSyncedTime(data.lastSyncedAt);
-      }
+      // Record exact client sync timestamp in user's device timezone
+      setLastSyncDate(new Date());
     } catch (err) {
       console.warn('Live Internet Auto-Sync notice:', err);
+      // Keep local clock current
+      setLastSyncDate(new Date());
     } finally {
       setIsSyncing(false);
     }
@@ -921,12 +939,16 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 2. Official Feed Synchronization Bar - Hidden on mobile */}
+        {/* 2. Official Feed Synchronization Bar - Clean, Precise, Local Laptop Time */}
         <div className="hidden sm:flex items-center justify-between gap-3 px-4 py-2.5 bg-slate-900/95 text-white rounded-2xl border border-slate-800 shadow-md text-xs">
-          <div className="flex items-center gap-2 text-slate-300">
-            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span>
-              {language === 'hi' ? `नवीनतम अपडेट: ${lastSyncedTime}` : `Last feed update: ${lastSyncedTime}`}
+          <div className="flex items-center gap-2.5 text-slate-300">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span className="font-medium text-slate-300">
+              {language === 'hi' ? 'नवीनतम पोर्टल सिंक:' : 'Last Feed Sync:'}
+            </span>
+            <span className="font-mono font-bold text-emerald-400 bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">
+              {formattedSyncTime}
             </span>
           </div>
 
