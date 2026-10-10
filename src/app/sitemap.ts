@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: (route === '' || route === '/helpline' || route === '/skills' ? 'daily' : 'monthly') as 'daily' | 'monthly',
-    priority: route === '' ? 1.0 : route === '/helpline' || route === '/skills' ? 0.9 : 0.7,
+    changeFrequency: (route === '' || route === '/helpline' || route === '/skills' || route === '/forms' ? 'daily' : 'monthly') as 'daily' | 'monthly',
+    priority: route === '' ? 1.0 : (route === '/helpline' || route === '/skills' || route === '/forms') ? 0.9 : 0.7,
   }));
 }
