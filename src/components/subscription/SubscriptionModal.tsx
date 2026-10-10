@@ -271,25 +271,41 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     );
   }
 
-  // While Razorpay is opening, show only a minimal elegant spinner
+  // While Razorpay is opening, show an elegant spinner with clear, prominent Cancel and Close controls
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-7 max-w-xs w-full text-center space-y-4 border border-emerald-500/30 shadow-2xl">
-        <div className="w-10 h-10 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin mx-auto" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+      {/* Click outside to cancel */}
+      <div className="fixed inset-0" onClick={onClose} />
+      
+      <div className="relative bg-slate-900 text-white rounded-3xl p-6 sm:p-7 max-w-xs w-full text-center space-y-4 border border-emerald-500/30 shadow-2xl z-10">
+        {/* Top-right close X */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+          aria-label={language === 'hi' ? 'बंद करें' : 'Close'}
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="w-10 h-10 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin mx-auto mt-1" />
         <div className="space-y-1">
           <h3 className="font-extrabold text-sm text-white">
             {language === 'hi' ? 'रेज़रपे सुरक्षित चेकआउट' : 'Razorpay Secure Checkout'}
           </h3>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-300">
             {language === 'hi' ? 'भुगतान विंडो खुल रही है (₹19)...' : 'Opening payment window (₹19)...'}
           </p>
         </div>
-        <p className="text-[10px] text-slate-500">Google Pay • PhonePe • Cards • Net Banking</p>
+        <p className="text-[10px] text-slate-400">Google Pay • PhonePe • Cards • Net Banking</p>
+        
+        {/* Prominent High-Contrast Cancel Button */}
         <button
+          type="button"
           onClick={onClose}
-          className="text-[11px] text-slate-400 hover:text-white underline pt-1 cursor-pointer"
+          className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 hover:text-white text-xs font-bold transition-all cursor-pointer border border-slate-700"
         >
-          {language === 'hi' ? 'रद्द करें' : 'Cancel'}
+          {language === 'hi' ? 'रद्द करें / वापस जाएं' : 'Cancel & Go Back'}
         </button>
       </div>
     </div>

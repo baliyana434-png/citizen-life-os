@@ -414,9 +414,32 @@ export class LiveFeedCrawler {
           targetOccupations = ['business_owner', 'job_seeker', 'college_student'];
         }
 
+        const isDevanagari = /[\u0900-\u097F]/.test(rawTitle);
+        let engTitle = `PIB GOI: ${rawTitle}`;
+        let engDesc = `${rawTitle}. Published by Press Information Bureau, Government of India. Verified official circular.`;
+
+        if (isDevanagari) {
+          if (lifeStage === 'health') {
+            engTitle = `Ministry of Health & Family Welfare: National Healthcare Advisory (PRID: ${prid})`;
+            engDesc = 'Official circular on national healthcare guidelines, diagnostics, and citizen welfare published by the Ministry of Health and Family Welfare, Government of India.';
+          } else if (lifeStage === 'exams') {
+            engTitle = `Central Government Recruitment & Vacancy Notification (PRID: ${prid})`;
+            engDesc = 'Official recruitment notice and employment circular issued by the Government of India through the Press Information Bureau.';
+          } else if (lifeStage === 'education') {
+            engTitle = `Ministry of Education: National Scholarship & Academic Update (PRID: ${prid})`;
+            engDesc = 'Official government circular on national scholarships, student welfare, and educational initiatives.';
+          } else if (lifeStage === 'startups') {
+            engTitle = `Ministry of MSME & Commerce: Enterprise & Startup Initiative (PRID: ${prid})`;
+            engDesc = 'Official circular on entrepreneurship, credit schemes, and business incentives published by the Government of India.';
+          } else {
+            engTitle = `Government of India: National Citizen Policy Update (PRID: ${prid})`;
+            engDesc = 'Official national policy circular and citizen welfare announcement released by the Press Information Bureau, Government of India.';
+          }
+        }
+
         return {
           id: `live-pib-${prid}`,
-          title: `PIB GOI Live: ${rawTitle}`,
+          title: engTitle,
           titleHi: rawTitle,
           category,
           lifeStage,
@@ -429,15 +452,16 @@ export class LiveFeedCrawler {
           benefitAmount: 0,
           deadline: 'OPEN_ROUND',
           applicationStatus: 'active_now' as const,
-          description: `${rawTitle}. Published by Press Information Bureau, Government of India. Verified official circular.`,
+          description: engDesc,
           descriptionHi: `${rawTitle}। भारत सरकार के प्रेस सूचना ब्यूरो (PIB) द्वारा जारी आधिकारिक सूचना।`,
           gazette: {
             circularNumber: `PIB/GOI/2026/PRID-${prid}`,
-            issuingAuthority: 'प्रेस सूचना ब्यूरो (भारत सरकार) / Press Information Bureau, Govt of India',
+            issuingAuthority: 'Press Information Bureau, Government of India',
+            issuingAuthorityHi: 'प्रेस सूचना ब्यूरो (भारत सरकार)',
             gazetteDate: todayStr,
             lastVerifiedAt: `Live PIB Bharat Sarkar (${formattedTime})`,
             officialPortalUrl: rawLink || 'https://pib.gov.in',
-            scamAlertWarning: 'यह सूचना सीधे भारत सरकार के आधिकारिक PIB पोर्टल से ली गई है। किसी भी बिचौलिए या दलाल को कोई राशि न दें।',
+            scamAlertWarning: 'This official circular is sourced directly from Press Information Bureau (pib.gov.in), Government of India.',
             officialGovtFee: '₹0 (100% Free Official Circular)',
           },
           documents: [

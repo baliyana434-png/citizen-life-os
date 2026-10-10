@@ -22,7 +22,6 @@ import {
   FileText
 } from 'lucide-react';
 import { useTranslation } from '@/i18n/useTranslation';
-import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useCountry } from '@/context/CountryContext';
 import { VERIFIED_HELPLINES } from '@/data/helplines';
 import { HelplineCategory, HelplineFacility } from '@/types';
@@ -147,9 +146,6 @@ export default function HelplinePage() {
                 <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-600" />
                 <span>{language === 'hi' ? 'पसंदीदा' : 'Saved'}</span>
               </Link>
-
-              {/* 6-Language Switcher */}
-              <LanguageSwitcher />
             </div>
           </div>
         </div>
@@ -323,39 +319,31 @@ export default function HelplinePage() {
                         </div>
                       </div>
 
-                      {/* Collapsible Pre-Call Checklist / Guidance (Saves 60%+ Vertical Screen Height) */}
+                      {/* Clean Pre-Call Checklist / Guidance (Directly visible without collapsing) */}
                       {guidanceList && guidanceList.length > 0 && (
-                        <details className="group rounded-xl bg-slate-50 border border-slate-200/90 text-xs transition-all">
-                          <summary className="p-2 sm:p-2.5 font-bold text-slate-700 flex items-center justify-between cursor-pointer select-none list-none">
-                            <span className="flex items-center gap-1.5 text-[11px]">
-                              <Lock className="w-3 h-3 text-slate-500 shrink-0" />
-                              <span>{language === 'hi' ? 'कॉल पूर्व जरूरी तैयारी (चेकलिस्ट)' : 'Before you call (Checklist)'}</span>
-                              <span className="text-[10px] text-slate-400 font-mono">({guidanceList.length})</span>
-                            </span>
-                            <span className="text-[10px] text-emerald-700 font-bold group-open:rotate-180 transition-transform">
-                              ▼
-                            </span>
-                          </summary>
-                          <div className="px-3 pb-2.5 pt-1 border-t border-slate-200/60">
-                            <ul className="space-y-1 text-[11px] text-slate-600 pl-4 list-disc marker:text-emerald-600">
-                              {guidanceList.map((g, idx) => (
-                                <li key={idx} className="leading-snug">{g}</li>
-                              ))}
-                            </ul>
+                        <div className="rounded-xl bg-slate-50 border border-slate-200/90 text-xs p-2.5">
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700 mb-1.5">
+                            <Lock className="w-3 h-3 text-slate-500 shrink-0" />
+                            <span>{language === 'hi' ? 'कॉल पूर्व जरूरी तैयारी (चेकलिस्ट)' : 'Before you call (Checklist)'}</span>
                           </div>
-                        </details>
+                          <ul className="space-y-1 text-[11px] text-slate-600 pl-4 list-disc marker:text-emerald-600">
+                            {guidanceList.map((g, idx) => (
+                              <li key={idx} className="leading-snug">{g}</li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </div>
 
-                    {/* Bottom Action Triggers (Responsive Grid: Zero Overflow, Accessible Full-Width Call Button on Mobile) */}
+                    {/* Bottom Action Triggers (Responsive Grid: Zero Colliding/Overlapping, Full Accessibility on Mobile) */}
                     <div className="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 w-full sm:w-auto">
+                      <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:items-center">
                         {h.portalUrl && (
                           <a
                             href={h.portalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 px-3 py-2 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
+                            className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
                           >
                             <span>{language === 'hi' ? 'वेब पोर्टल' : 'Official Portal'}</span>
                             <ExternalLink className="w-3 h-3 text-slate-500 shrink-0" />
@@ -364,7 +352,7 @@ export default function HelplinePage() {
                         <button
                           type="button"
                           onClick={() => handleCopyNumber(h.number)}
-                          className="flex-1 sm:flex-initial px-3 py-2 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all text-center"
+                          className={`px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all text-center ${!h.portalUrl ? 'col-span-2 sm:col-auto' : ''}`}
                         >
                           {copiedNumber === h.number ? (
                             <span className="text-emerald-700 font-bold">✓ Copied</span>
@@ -376,7 +364,7 @@ export default function HelplinePage() {
 
                       <a
                         href={`tel:${h.number.replace(/-/g, '')}`}
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
                       >
                         <PhoneCall className="w-3.5 h-3.5 shrink-0" />
                         <span>{language === 'hi' ? `तुरंत कॉल करें (${h.number})` : `Call Now (${h.number})`}</span>

@@ -74,7 +74,7 @@ export const HEALTH_OPPORTUNITIES: Opportunity[] = [
   },
   {
     id: 'opp-senior-eye-01',
-    title: 'National Cataract Blindness Control (Free Motiyabind Eye Surgery & Lens)',
+    title: 'National Cataract Blindness Control (Free Cataract Surgery & Intraocular Lens)',
     titleHi: 'राष्ट्रीय अंधता नियंत्रण कार्यक्रम: वरिष्ठ नागरिकों हेतु 100% निःशुल्क मोतियाबिंद ऑपरेशन एवं लेंस',
     category: 'healthcare_free',
     lifeStage: 'health',

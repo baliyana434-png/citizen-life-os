@@ -602,8 +602,8 @@ export default function SkillsPage() {
                 </span>
               </div>
 
-              {/* Mobile-Friendly Compact Topic List with Max Height */}
-              <div className="space-y-2 max-h-[460px] sm:max-h-[calc(100vh-230px)] overflow-y-auto pr-1">
+              {/* Natural Document Flow on Mobile (No Scroll Trapping), Independent Scroll on Desktop */}
+              <div className="space-y-2 lg:max-h-[calc(100vh-230px)] lg:overflow-y-auto pr-1">
                 {filteredTopics.map((topic) => {
                   const isActive = topic.id === activeTopic.id;
                   const hasSavedVideosInTopic = topic.videos.some((v) => savedVideoIds.has(v.id));
