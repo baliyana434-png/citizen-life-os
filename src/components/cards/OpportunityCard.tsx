@@ -4,7 +4,25 @@ import React from 'react';
 import { Opportunity, CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
-import { ShieldCheck, Calendar, ArrowRight, Star, Clock, Banknote, Lock } from 'lucide-react';
+import {
+  ShieldCheck,
+  Calendar,
+  ArrowRight,
+  Star,
+  Clock,
+  Banknote,
+  Lock,
+  Award,
+  Building2,
+  GraduationCap,
+  BookOpen,
+  Globe,
+  Wrench,
+  Rocket,
+  Landmark,
+  Gift,
+  HeartPulse,
+} from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { RotatingNewBadge } from '../common/RotatingNewBadge';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
@@ -47,6 +65,33 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
       localized.issuingAuthority
     );
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const getLifeStageIcon = (stage: Opportunity['lifeStage']) => {
+    switch (stage) {
+      case 'exams':
+        return <Award className="w-3 h-3 text-amber-600 shrink-0" />;
+      case 'private_jobs':
+        return <Building2 className="w-3 h-3 text-blue-600 shrink-0" />;
+      case 'internships':
+        return <GraduationCap className="w-3 h-3 text-purple-600 shrink-0" />;
+      case 'education':
+        return <BookOpen className="w-3 h-3 text-indigo-600 shrink-0" />;
+      case 'abroad_jobs':
+        return <Globe className="w-3 h-3 text-cyan-600 shrink-0" />;
+      case 'career':
+        return <Wrench className="w-3 h-3 text-orange-600 shrink-0" />;
+      case 'startups':
+        return <Rocket className="w-3 h-3 text-rose-600 shrink-0" />;
+      case 'schemes':
+        return <Landmark className="w-3 h-3 text-emerald-600 shrink-0" />;
+      case 'freebies':
+        return <Gift className="w-3 h-3 text-teal-600 shrink-0" />;
+      case 'health':
+        return <HeartPulse className="w-3 h-3 text-red-600 shrink-0" />;
+      default:
+        return <ShieldCheck className="w-3 h-3 text-slate-600 shrink-0" />;
+    }
   };
 
   return (
@@ -99,8 +144,14 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           )}
         </div>
 
-        {/* 1B. Second Row: Status Badge & Pass Lock */}
+        {/* 1B. Second Row: Section Badge, Status Badge & Pass Lock */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
+          {/* Section / Category Badge */}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 text-[10px] sm:text-[11px] font-bold whitespace-nowrap shrink-0">
+            {getLifeStageIcon(opportunity.lifeStage)}
+            <span>{t(`tabs.${opportunity.lifeStage}`)}</span>
+          </span>
+
           {/* Status Badge */}
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border whitespace-nowrap shrink-0 ${
             opportunity.applicationStatus === 'active_now'

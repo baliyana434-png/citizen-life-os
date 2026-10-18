@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -586,10 +586,95 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [country, fetchLiveSync]);
 
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const lastQueryRef = useRef<string>('');
+
+  // Live Search Matching Counts per LifeStage section
+  const tabMatchCounts = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const query = searchQuery.trim().toLowerCase();
+    const counts: Partial<Record<LifeStage, number>> = {};
+    const seen = new Set<string>();
+
+    opportunities.forEach((opp) => {
+      if (seen.has(opp.id)) return;
+      seen.add(opp.id);
+
+      const isStudyAbroad = opp.lifeStage === 'abroad_jobs' || opp.category === 'study_abroad';
+      const isGlobalFreebie = opp.lifeStage === 'freebies' && (opp.stateEligibility.includes('ALL') || !opp.country);
+      if (!isStudyAbroad && !isGlobalFreebie && opp.country !== country) return;
+
+      if (activeProfile.isOnboarded && opp.targetAges) {
+        const [minAge, maxAge] = opp.targetAges;
+        if (activeProfile.age < minAge || activeProfile.age > maxAge) return;
+      }
+      if (activeProfile.isOnboarded && opp.genderEligibility && opp.genderEligibility !== 'all') {
+        if (!activeProfile.gender || opp.genderEligibility !== activeProfile.gender) return;
+      }
+      if (activeProfile.isOnboarded && opp.stateEligibility && !opp.stateEligibility.includes('ALL')) {
+        const userDivision = activeProfile.administrativeDivision || activeProfile.state;
+        if (userDivision && !opp.stateEligibility.includes(userDivision)) return;
+      }
+
+      const matchTitle = opp.title.toLowerCase().includes(query) || opp.titleHi.includes(query);
+      const matchDesc = opp.description.toLowerCase().includes(query) || opp.descriptionHi.includes(query);
+      const matchTags = opp.tags.some((t) => t.toLowerCase().includes(query));
+      const matchAuthority = opp.gazette?.issuingAuthority?.toLowerCase().includes(query);
+      const matchBenefit = opp.benefitHeadline?.toLowerCase().includes(query) || opp.benefitHeadlineHi?.includes(query);
+
+      if (matchTitle || matchDesc || matchTags || matchAuthority || matchBenefit) {
+        counts[opp.lifeStage] = (counts[opp.lifeStage] || 0) + 1;
+      }
+    });
+
+    return counts;
+  }, [searchQuery, opportunities, country, activeProfile]);
+
+  // Auto-switch activeTab to match the search query's best-matching section (e.g. Health when user searches healthcare)
+  useEffect(() => {
+    const trimmed = searchQuery.trim().toLowerCase();
+    if (!trimmed) {
+      lastQueryRef.current = '';
+      return;
+    }
+    if (trimmed === lastQueryRef.current) return;
+    lastQueryRef.current = trimmed;
+
+    if (!tabMatchCounts) return;
+
+    // Check if the current tab has any matches
+    const currentTabCount = tabMatchCounts[activeTab] || 0;
+    if (currentTabCount === 0) {
+      // Find the category with the highest match count
+      let bestStage: LifeStage | null = null;
+      let maxCount = 0;
+      for (const [stg, cnt] of Object.entries(tabMatchCounts)) {
+        if (cnt && cnt > maxCount) {
+          maxCount = cnt;
+          bestStage = stg as LifeStage;
+        }
+      }
+      if (bestStage) {
+        setActiveTab(bestStage);
+      }
+    }
+  }, [searchQuery, tabMatchCounts, activeTab]);
+
+  // Smoothly auto-scroll to opportunity results when user types a search query
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const timer = setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [searchQuery]);
+
   // Filtered and Scored Opportunities (Sector-Agnostic Global Search)
   const filteredOpportunities = useMemo(() => {
     const seen = new Set<string>();
-    const isSearching = Boolean(searchQuery.trim());
 
     return opportunities.filter((opp) => {
       // 0. Deduplicate identical opportunities
@@ -598,9 +683,9 @@ export default function HomePage() {
       seen.add(key);
 
       // 1. Life Stage Tab Match:
-      // When user searches in search bar, search globally across ALL sectors/categories!
-      // Only restrict to activeTab when user is browsing without active search query.
-      if (!isSearching && opp.lifeStage !== activeTab) return false;
+      // Opportunities match activeTab (which auto-switches to the best-matching section).
+      // If user wants to browse other matching sections, they tap the tab showing the match badge.
+      if (opp.lifeStage !== activeTab) return false;
 
       // 1B. Strict Country Matching (Show opportunities for the user's registered country, with exception for study abroad & global tools)
       const isStudyAbroad = opp.lifeStage === 'abroad_jobs' || opp.category === 'study_abroad';
@@ -705,6 +790,14 @@ export default function HomePage() {
     return portalOpportunities.reduce((acc, curr) => acc + (curr.benefitAmount || 0), 0);
   }, [portalOpportunities]);
 
+  // Other matching sections during active search (for one-tap section switching)
+  const otherMatchingTabs = useMemo(() => {
+    if (!tabMatchCounts) return [];
+    return Object.entries(tabMatchCounts).filter(
+      ([stage, count]) => stage !== activeTab && count && count > 0
+    ) as [LifeStage, number][];
+  }, [tabMatchCounts, activeTab]);
+
   // WhatsApp Share (100% localized, zero-leakage, zero fake emojis)
   const handleShareWhatsApp = (opp: Opportunity) => {
     const localized = getLocalizedOpportunity(opp, language);
@@ -781,8 +874,8 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Hero Personalized Insight Bar (3D Cyber-Gov Terminal) */}
-        <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 rounded-3xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/30">
+        {/* Hero Personalized Insight Bar (3D Cyber-Gov Terminal) - Hidden on mobile during search to show opportunities directly */}
+        <div className={`${searchQuery.trim() ? 'hidden sm:block' : ''} bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 rounded-3xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/30`}>
           {/* Subtle Cyber Grid Texture */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_50%)] pointer-events-none" />
 
@@ -832,81 +925,83 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 1-Year Citizen Access Pass Status Strip */}
-        {profile?.subscription?.status === 'active' ? (
-          <div className="bg-emerald-950 text-white rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 border border-emerald-700/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="text-sm sm:text-base">{countryMeta.flag}</span>
-              <span className="font-mono font-bold text-emerald-300 uppercase px-1.5 py-0.5 rounded bg-emerald-900/60 border border-emerald-700 text-[10px]">
-                {countryMeta.alpha3 || country} CITIZEN PASS
-              </span>
-              <span className="font-semibold text-emerald-100">
-                {language === 'hi'
-                  ? `1-वर्षीय सक्रिय पास (वैध: ${profile.subscription?.validUntil})`
-                  : `1-Year Pass Active (Valid: ${profile.subscription?.validUntil})`}
-              </span>
-            </div>
-            <span className="text-[10px] font-mono text-emerald-400 bg-black/20 px-2 py-0.5 rounded-md hidden sm:inline">
-              {profile.subscription?.transactionId}
-            </span>
-          </div>
-        ) : (
-          <>
-            {/* Mobile View: Slim 1-Line Banner */}
-            <div className="sm:hidden bg-slate-900 text-white rounded-xl px-3 py-2 border border-slate-800 shadow-sm flex items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
-                  <Award className="w-3.5 h-3.5" />
-                </div>
-                <div className="truncate text-[11px]">
-                  <span className="font-bold text-white">
-                    {language === 'hi' ? '1-वर्षीय नागरिक पास • ₹1' : '1-Year Citizen Pass • ₹1'}
-                  </span>
-                </div>
+        {/* 1-Year Citizen Access Pass Status Strip - Hidden on mobile during search */}
+        <div className={searchQuery.trim() ? 'hidden sm:block' : ''}>
+          {profile?.subscription?.status === 'active' ? (
+            <div className="bg-emerald-950 text-white rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 border border-emerald-700/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="text-sm sm:text-base">{countryMeta.flag}</span>
+                <span className="font-mono font-bold text-emerald-300 uppercase px-1.5 py-0.5 rounded bg-emerald-900/60 border border-emerald-700 text-[10px]">
+                  {countryMeta.alpha3 || country} CITIZEN PASS
+                </span>
+                <span className="font-semibold text-emerald-100">
+                  {language === 'hi'
+                    ? `1-वर्षीय सक्रिय पास (वैध: ${profile.subscription?.validUntil})`
+                    : `1-Year Pass Active (Valid: ${profile.subscription?.validUntil})`}
+                </span>
               </div>
-              <button
-                type="button"
-                onClick={() => handleOpenSubscription()}
-                className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[11px] shrink-0 transition-all cursor-pointer flex items-center gap-1"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>{language === 'hi' ? 'सक्रिय ₹1' : 'Activate ₹1'}</span>
-              </button>
+              <span className="text-[10px] font-mono text-emerald-400 bg-black/20 px-2 py-0.5 rounded-md hidden sm:inline">
+                {profile.subscription?.transactionId}
+              </span>
             </div>
-
-            {/* Tablet / Desktop View: Full Card */}
-            <div className="hidden sm:flex bg-slate-900 text-white rounded-2xl px-4 py-3 border border-slate-800 shadow-md items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
-                  <Award className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="font-bold text-white block">
-                      {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹1 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹1 / 1 Year'}
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-600/50 shrink-0">
-                      {language === 'hi' ? `₹${totalBenefitSum.toLocaleString('en-IN')} के लाभ अनलॉक करें` : `Unlock ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()} Benefits`}
+          ) : (
+            <>
+              {/* Mobile View: Slim 1-Line Banner */}
+              <div className="sm:hidden bg-slate-900 text-white rounded-xl px-3 py-2 border border-slate-800 shadow-sm flex items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+                    <Award className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="truncate text-[11px]">
+                    <span className="font-bold text-white">
+                      {language === 'hi' ? '1-वर्षीय नागरिक पास • ₹1' : '1-Year Citizen Pass • ₹1'}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400">
-                    {language === 'hi' 
-                      ? `${countryMeta.name} में अपनी आयु (${activeProfile.age || '18+'}), क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
-                      : `Unlock all genuine opportunities in ${countryMeta.name} matched to your exact age & area for 365 days`}
-                  </span>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => handleOpenSubscription()}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[11px] shrink-0 transition-all cursor-pointer flex items-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>{language === 'hi' ? 'सक्रिय ₹1' : 'Activate ₹1'}</span>
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => handleOpenSubscription()}
-                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{language === 'hi' ? 'पास सक्रिय करें (₹1)' : 'Activate Pass (₹1)'}</span>
-              </button>
-            </div>
-          </>
-        )}
+
+              {/* Tablet / Desktop View: Full Card */}
+              <div className="hidden sm:flex bg-slate-900 text-white rounded-2xl px-4 py-3 border border-slate-800 shadow-md items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="font-bold text-white block">
+                        {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹1 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹1 / 1 Year'}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-600/50 shrink-0">
+                        {language === 'hi' ? `₹${totalBenefitSum.toLocaleString('en-IN')} के लाभ अनलॉक करें` : `Unlock ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()} Benefits`}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-slate-400">
+                      {language === 'hi' 
+                        ? `${countryMeta.name} में अपनी आयु (${activeProfile.age || '18+'}), क्षेत्र एवं श्रेणी अनुसार सभी वास्तविक अवसर 365 दिनों हेतु अनलॉक करें`
+                        : `Unlock all genuine opportunities in ${countryMeta.name} matched to your exact age & area for 365 days`}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleOpenSubscription()}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{language === 'hi' ? 'पास सक्रिय करें (₹1)' : 'Activate Pass (₹1)'}</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
 
         {/* 1B. Skills & Video Learning Hub Highlight Banner - Hidden on mobile, already in header */}
         <div className="hidden md:flex bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 text-white rounded-2xl px-4 py-3 border border-emerald-500/30 shadow-md items-center justify-between gap-3 text-xs">
@@ -972,66 +1067,90 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Global Search Results Alert Bar */}
-        {searchQuery.trim() && (
-          <div className="flex items-center justify-between px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-950 font-bold shadow-xs">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>
-                {language === 'hi'
-                  ? `सभी श्रेणियों में खोज परिणाम: "${searchQuery}" (${filteredOpportunities.length} अवसर उपलब्ध)`
-                  : `Global search across all sectors: "${searchQuery}" (${filteredOpportunities.length} opportunities found)`}
-              </span>
+        {/* 3. Opportunities & Search Viewport Container */}
+        <div ref={resultsRef} id="opportunity-results" className="scroll-mt-20 space-y-4">
+          {/* Search Results Alert Bar with Section Indicator & Quick Jump Pills */}
+          {searchQuery.trim() && (
+            <div className="flex flex-col gap-2 p-3.5 sm:p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-950 font-bold shadow-xs">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>
+                    {language === 'hi'
+                      ? `खोज: "${searchQuery}" • अनुभाग: ${t(`tabs.${activeTab}`)} (${filteredOpportunities.length} उपलब्ध)`
+                      : `Search: "${searchQuery}" • Section: ${t(`tabs.${activeTab}`)} (${filteredOpportunities.length} found)`}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="px-2.5 py-1 rounded-xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-100 text-[11px] font-extrabold transition-all cursor-pointer shrink-0"
+                >
+                  {language === 'hi' ? 'खोज हटाएं' : 'Clear search'}
+                </button>
+              </div>
+
+              {otherMatchingTabs.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-emerald-200/60 mt-0.5 text-[11px]">
+                  <span className="font-semibold text-emerald-800">
+                    {language === 'hi' ? 'अन्य अनुभागों में भी मिले:' : 'Also in other sections:'}
+                  </span>
+                  {otherMatchingTabs.map(([stage, count]) => (
+                    <button
+                      key={stage}
+                      type="button"
+                      onClick={() => setActiveTab(stage as LifeStage)}
+                      className="px-2 py-0.5 rounded-lg bg-white hover:bg-emerald-100 border border-emerald-300 text-emerald-900 font-bold transition-all cursor-pointer shadow-2xs"
+                    >
+                      {t(`tabs.${stage}`)} ({count})
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="px-2.5 py-1 rounded-xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-100 text-[11px] font-extrabold transition-all cursor-pointer"
-            >
-              {language === 'hi' ? 'खोज हटाएं' : 'Clear search'}
-            </button>
-          </div>
-        )}
+          )}
 
-        {/* Life Stage Tabs and Sub-filters */}
-        <LifeStageTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          activeSubFilter={activeSubFilter}
-          onSubFilterChange={setActiveSubFilter}
-          totalCount={filteredOpportunities.length}
-        />
+          {/* Life Stage Tabs and Sub-filters */}
+          <LifeStageTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            activeSubFilter={activeSubFilter}
+            onSubFilterChange={setActiveSubFilter}
+            totalCount={filteredOpportunities.length}
+            tabMatchCounts={tabMatchCounts}
+          />
 
-        {/* Opportunity Card Grid */}
-        {filteredOpportunities.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-3xl border border-slate-200 p-8 space-y-2">
-            <AlertCircle className="w-10 h-10 text-slate-400 mx-auto" />
-            <h3 className="text-base font-bold text-slate-800">{t('empty.title')}</h3>
-            <p className="text-xs text-slate-500">
-              {t('empty.desc')}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
-            {filteredOpportunities.map((opp) => (
-              <OpportunityCard
-                key={opp.id}
-                opportunity={opp}
-                onSelect={(opp) => setSelectedOpp(opp)}
-                citizenProfile={activeProfile}
-                isFavorite={favoriteIds.has(opp.id)}
-                onToggleFavorite={handleToggleFavorite}
-                onRequireSubscription={() => {
-                  handleOpenSubscription(
-                    language === 'hi'
-                      ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹1) सक्रिय करें।'
-                      : 'Activate 1-Year Citizen Pass (only ₹1) to apply directly on official portal.'
-                  );
-                }}
-              />
-            ))}
-          </div>
-        )}
+          {/* Opportunity Card Grid */}
+          {filteredOpportunities.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-3xl border border-slate-200 p-8 space-y-2">
+              <AlertCircle className="w-10 h-10 text-slate-400 mx-auto" />
+              <h3 className="text-base font-bold text-slate-800">{t('empty.title')}</h3>
+              <p className="text-xs text-slate-500">
+                {t('empty.desc')}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
+              {filteredOpportunities.map((opp) => (
+                <OpportunityCard
+                  key={opp.id}
+                  opportunity={opp}
+                  onSelect={(opp) => setSelectedOpp(opp)}
+                  citizenProfile={activeProfile}
+                  isFavorite={favoriteIds.has(opp.id)}
+                  onToggleFavorite={handleToggleFavorite}
+                  onRequireSubscription={() => {
+                    handleOpenSubscription(
+                      language === 'hi'
+                        ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹1) सक्रिय करें।'
+                        : 'Activate 1-Year Citizen Pass (only ₹1) to apply directly on official portal.'
+                    );
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Portal Footer */}

@@ -11,6 +11,7 @@ interface LifeStageTabsProps {
   activeSubFilter: string;
   onSubFilterChange: (filter: string) => void;
   totalCount: number;
+  tabMatchCounts?: Partial<Record<LifeStage, number>> | null;
 }
 
 export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
@@ -19,6 +20,7 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
   activeSubFilter,
   onSubFilterChange,
   totalCount,
+  tabMatchCounts,
 }) => {
   const { t } = useTranslation();
 
@@ -45,15 +47,33 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
     { id: 'high_value', labelKey: 'subfilters.high_value' },
   ];
 
+  const buttonRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
+
+  // Auto-scroll the active tab into view horizontally so user instantly sees the selected section
+  React.useEffect(() => {
+    const activeBtn = buttonRefs.current[activeTab];
+    if (activeBtn) {
+      activeBtn.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  }, [activeTab]);
+
   return (
     <div className="w-full space-y-3">
       {/* 1. Main Life Stage Switch (Clean Solid Buttons, Generous Gap, Zero Touching) */}
       <div className="flex p-1 sm:p-1.5 bg-slate-100 rounded-2xl border border-slate-200 shadow-xs overflow-x-auto no-scrollbar gap-1.5 sm:gap-2 touch-pan-x scroll-smooth">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
+          const matchCount = tabMatchCounts ? tabMatchCounts[tab.id] : undefined;
           return (
             <button
               key={tab.id}
+              ref={(el) => {
+                buttonRefs.current[tab.id] = el;
+              }}
               onClick={() => onTabChange(tab.id)}
               className={`shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
                 isActive
@@ -65,6 +85,17 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
                 {tab.icon}
               </span>
               <span className="whitespace-nowrap">{t(tab.labelKey)}</span>
+              {matchCount !== undefined && matchCount > 0 && (
+                <span
+                  className={`ml-1 px-1.5 py-0.2 text-[10px] font-mono font-bold rounded-full ${
+                    isActive
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-emerald-100 text-emerald-800'
+                  }`}
+                >
+                  {matchCount}
+                </span>
+              )}
             </button>
           );
         })}

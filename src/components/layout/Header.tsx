@@ -68,6 +68,16 @@ export const Header: React.FC<HeaderProps> = ({
     { code: 'ar', label: 'العربية' },
   ];
 
+  const handleCloseMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+    setTimeout(() => {
+      const el = document.getElementById('opportunity-results');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 120);
+  };
+
   return (
     <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all relative">
       {/* Mobile Full-Width Search Bar Overlay (Covers Header completely for effortless typing) */}
@@ -88,6 +98,11 @@ export const Header: React.FC<HeaderProps> = ({
               autoFocus
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleCloseMobileSearch();
+                }
+              }}
               placeholder={t('search_placeholder')}
               className="w-full pl-9 pr-8 py-2 text-sm bg-slate-100 focus:bg-white text-slate-900 placeholder-slate-400 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
             />
@@ -104,8 +119,8 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <button
             type="button"
-            onClick={() => setIsMobileSearchOpen(false)}
-            className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl shrink-0 transition-all"
+            onClick={handleCloseMobileSearch}
+            className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl shrink-0 transition-all cursor-pointer"
           >
             {language === 'hi' ? 'ठीक है' : 'Done'}
           </button>

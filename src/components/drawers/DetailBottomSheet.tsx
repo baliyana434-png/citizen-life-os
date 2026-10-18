@@ -20,6 +20,15 @@ import {
   Users,
   MapPin,
   Lock,
+  Award,
+  GraduationCap,
+  BookOpen,
+  Globe,
+  Wrench,
+  Rocket,
+  Landmark,
+  Gift,
+  HeartPulse,
 } from 'lucide-react';
 import { VoiceReader } from '../voice/VoiceReader';
 import { CitizenProfile } from '@/types';
@@ -78,6 +87,33 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const getLifeStageIcon = (stage: Opportunity['lifeStage']) => {
+    switch (stage) {
+      case 'exams':
+        return <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />;
+      case 'private_jobs':
+        return <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />;
+      case 'internships':
+        return <GraduationCap className="w-3.5 h-3.5 text-purple-600 shrink-0" />;
+      case 'education':
+        return <BookOpen className="w-3.5 h-3.5 text-indigo-600 shrink-0" />;
+      case 'abroad_jobs':
+        return <Globe className="w-3.5 h-3.5 text-cyan-600 shrink-0" />;
+      case 'career':
+        return <Wrench className="w-3.5 h-3.5 text-orange-600 shrink-0" />;
+      case 'startups':
+        return <Rocket className="w-3.5 h-3.5 text-rose-600 shrink-0" />;
+      case 'schemes':
+        return <Landmark className="w-3.5 h-3.5 text-emerald-600 shrink-0" />;
+      case 'freebies':
+        return <Gift className="w-3.5 h-3.5 text-teal-600 shrink-0" />;
+      case 'health':
+        return <HeartPulse className="w-3.5 h-3.5 text-red-600 shrink-0" />;
+      default:
+        return <ShieldCheck className="w-3.5 h-3.5 text-slate-600 shrink-0" />;
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-md animate-fade-in">
       {/* Backdrop tap to close */}
@@ -89,7 +125,11 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
         {/* 1. Header with Close Button */}
         <div className="p-4 sm:p-5 border-b border-slate-200 flex items-start justify-between gap-3 bg-slate-50 rounded-t-3xl">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 text-slate-800 text-xs font-bold border border-slate-300">
+                {getLifeStageIcon(opportunity.lifeStage)}
+                <span>{t(`tabs.${opportunity.lifeStage}`)}</span>
+              </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 {t('official_verified')}
