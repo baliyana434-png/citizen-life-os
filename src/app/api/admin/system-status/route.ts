@@ -53,7 +53,10 @@ export async function GET(req: NextRequest) {
     const onboardedCitizens = citizens.filter((c) => c.isOnboarded).length;
     const aadhaarVerifiedCitizens = citizens.filter((c) => c.isAadhaarVerified || c.isCardVerified).length;
     
-    // Calculate authentic active 1-year pass subscribers
+    // Calculate authentic active 1-year pass subscribers & revenue
+    const now = new Date();
+    const todayIst = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(now);
+
     const activeSubscribers = citizens.filter((c) => {
       if (!c.subscription || c.subscription.status !== 'active') return false;
       if (!c.subscription.validUntil) return false;
@@ -61,7 +64,23 @@ export async function GET(req: NextRequest) {
     });
 
     const activePassCount = activeSubscribers.length;
-    const totalGrossRevenueInr = activeSubscribers.reduce((sum, c) => sum + (c.subscription?.amount || 1), 0);
+    let totalGrossRevenueInr = 0;
+    let todayRevenueInr = 0;
+
+    activeSubscribers.forEach((c) => {
+      const amt = c.subscription?.amount || 1;
+      totalGrossRevenueInr += amt;
+
+      const actTime = c.subscription?.activatedAt || c.registeredAt;
+      if (actTime) {
+        try {
+          const actDateIst = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date(actTime));
+          if (actDateIst === todayIst) {
+            todayRevenueInr += amt;
+          }
+        } catch {}
+      }
+    });
 
     // 2. Real Payment Gateway Configuration Status
     const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID;
@@ -121,9 +140,20 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      timestamp: new Date().toISOString(),
+      timestamp: now.toISOString(),
       system: {
-        serverTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        serverTime: now.toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        }),
+        serverTimeIso: now.toISOString(),
+        timezone: 'Asia/Kolkata (IST, UTC+5:30)',
         nodeVersion: process.version,
         platform: process.platform,
         uptimeSeconds: Math.floor(process.uptime()),
@@ -140,6 +170,7 @@ export async function GET(req: NextRequest) {
         aadhaarVerified: aadhaarVerifiedCitizens,
         activePassSubscribers: activePassCount,
         totalRevenueInr: totalGrossRevenueInr,
+        todayRevenueInr: todayRevenueInr,
       },
       gateways: {
         razorpay: {

@@ -43,14 +43,23 @@ import {
   GraduationCap,
   Globe,
   HeartPulse,
+  Sun,
+  Moon,
+  ShieldAlert,
+  AlertOctagon,
+  Link2Off,
+  Sparkles,
 } from 'lucide-react';
 import { RegisteredCitizen } from '@/app/api/admin/citizens/route';
 import { CitizenAadhaarModal } from '@/components/admin/CitizenAadhaarModal';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
 
 interface SystemStatusData {
   timestamp: string;
   system: {
     serverTime: string;
+    serverTimeIso?: string;
+    timezone?: string;
     nodeVersion: string;
     platform: string;
     uptimeSeconds: number;
@@ -67,6 +76,7 @@ interface SystemStatusData {
     aadhaarVerified: number;
     activePassSubscribers: number;
     totalRevenueInr: number;
+    todayRevenueInr?: number;
   };
   gateways: {
     razorpay: {
@@ -115,6 +125,13 @@ interface AdminOpportunity {
   officialPortalUrl: string;
   country: string;
   lastVerifiedAt: string;
+  fetchedDate?: string;
+  fetchedLabel?: string;
+  isToday?: boolean;
+  isYesterday?: boolean;
+  isRecent2Days?: boolean;
+  healthStatus?: 'healthy' | 'link_issue' | 'scam_alert' | 'expired_warning';
+  healthIssue?: string | null;
 }
 
 interface CrawlerLog {
@@ -130,6 +147,12 @@ export default function AdminPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [lockoutTimer, setLockoutTimer] = useState<number>(0);
+
+  // Executive UI Theme: 'dark' (Default Slate 950) | 'light' (Crisp Executive White)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  // Real-time ticking Indian Standard Time (IST) clock
+  const [liveClock, setLiveClock] = useState<string>('');
 
   // Active Console View Tab
   const [activeTab, setActiveTab] = useState<'citizens' | 'opportunities' | 'crawler' | 'diagnostics'>('citizens');
@@ -151,7 +174,18 @@ export default function AdminPage() {
   const [isLoadingOpps, setIsLoadingOpps] = useState(false);
   const [searchOpp, setSearchOpp] = useState('');
   const [filterOppSection, setFilterOppSection] = useState('all');
-  const [filterOppStatus, setFilterOppStatus] = useState<'all' | 'active' | 'expired'>('all');
+  const [filterOppStatus, setFilterOppStatus] = useState<'all' | 'active' | 'expired' | 'issues_only'>('all');
+
+  // Date Range Filter: Default to '2days' (Today & Yesterday only)
+  const [filterDateRange, setFilterDateRange] = useState<'2days' | 'today' | 'yesterday' | 'all'>('2days');
+  const [filterIssuesOnly, setFilterIssuesOnly] = useState<boolean>(false);
+  const [oppMetrics, setOppMetrics] = useState({
+    total: 0,
+    recent2Days: 0,
+    today: 0,
+    yesterday: 0,
+    issues: 0,
+  });
 
   // Real System Diagnostics & Metrics State
   const [systemStatus, setSystemStatus] = useState<SystemStatusData | null>(null);
@@ -160,6 +194,44 @@ export default function AdminPage() {
   // Real Crawler Execution State & Logs
   const [isCrawling, setIsCrawling] = useState(false);
   const [crawlerLogs, setCrawlerLogs] = useState<CrawlerLog[]>([]);
+
+  // Toggle Theme between Dark and Light
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('admin_portal_theme', next);
+    } catch {}
+  };
+
+  // Initialize theme from storage and start live ticking IST clock
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('admin_portal_theme') as 'dark' | 'light' | null;
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        setTheme(savedTheme);
+      }
+    } catch {}
+
+    const updateClock = () => {
+      const now = new Date();
+      const formatted = now.toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      });
+      setLiveClock(`${formatted} IST`);
+    };
+
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Check saved session token on mount
   useEffect(() => {
@@ -246,7 +318,7 @@ export default function AdminPage() {
       const token = tokenOverride || sessionStorage.getItem('admin_token');
       if (!token) return;
 
-      const res = await fetch('/api/admin/opportunities', {
+      const res = await fetch('/api/admin/opportunities?dateRange=all', {
         headers: {
           'x-admin-token': token,
         },
@@ -259,6 +331,13 @@ export default function AdminPage() {
         if (data.sectionStats) {
           setOppSectionStats(data.sectionStats);
         }
+        setOppMetrics({
+          total: data.totalCount || 0,
+          recent2Days: data.recent2DaysCount || 0,
+          today: data.todayCount || 0,
+          yesterday: data.yesterdayCount || 0,
+          issues: data.issuesCount || 0,
+        });
       }
     } catch (e) {
       console.error('Failed to fetch opportunities:', e);
@@ -417,37 +496,57 @@ export default function AdminPage() {
     health: { label: 'Healthcare & Aid', labelHi: 'स्वास्थ्य व चिकित्सा', badgeColor: 'bg-red-950 text-red-300 border-red-800' },
   };
 
-  // Filtered opportunities list based on search, section, and status
+  // Filtered opportunities list based on search, section, status, 2-day date range, and issue alerts
   const filteredOpportunities = useMemo(() => {
     return opportunities.filter((opp) => {
-      // 1. Section Filter
+      // 1. Date Range Filter (Default: '2days' -> Only Today & Yesterday!)
+      if (filterDateRange === '2days' && !opp.isRecent2Days) {
+        return false;
+      }
+      if (filterDateRange === 'today' && !opp.isToday) {
+        return false;
+      }
+      if (filterDateRange === 'yesterday' && !opp.isYesterday) {
+        return false;
+      }
+
+      // 2. Health & Fraud Alerts Filter
+      if (filterIssuesOnly && opp.healthStatus === 'healthy') {
+        return false;
+      }
+
+      // 3. Section Filter
       if (filterOppSection !== 'all' && opp.lifeStage !== filterOppSection) {
         return false;
       }
 
-      // 2. Status Filter
+      // 4. Status Filter
       if (filterOppStatus === 'active' && opp.isExpired) {
         return false;
       }
       if (filterOppStatus === 'expired' && !opp.isExpired) {
         return false;
       }
+      if (filterOppStatus === 'issues_only' && opp.healthStatus === 'healthy') {
+        return false;
+      }
 
-      // 3. Search Query
+      // 5. Search Query
       if (searchOpp.trim()) {
         const q = searchOpp.toLowerCase().trim();
         const matchTitle = (opp.title || '').toLowerCase().includes(q) || (opp.titleHi || '').toLowerCase().includes(q);
         const matchAuthority = (opp.issuingAuthority || '').toLowerCase().includes(q);
         const matchSection = (opp.lifeStage || '').toLowerCase().includes(q);
         const matchCat = (opp.category || '').toLowerCase().includes(q);
-        if (!matchTitle && !matchAuthority && !matchSection && !matchCat) {
+        const matchIssue = (opp.healthIssue || '').toLowerCase().includes(q);
+        if (!matchTitle && !matchAuthority && !matchSection && !matchCat && !matchIssue) {
           return false;
         }
       }
 
       return true;
     });
-  }, [opportunities, filterOppSection, filterOppStatus, searchOpp]);
+  }, [opportunities, filterDateRange, filterIssuesOnly, filterOppSection, filterOppStatus, searchOpp]);
 
   // Copy Citizen Aadhaar Handler with UI Feedback
   const handleCopyCitizenAadhaar = (e: React.MouseEvent, citizen: RegisteredCitizen) => {
@@ -524,30 +623,62 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-900/60 border border-emerald-600/40 text-emerald-400 flex items-center justify-center font-bold text-sm">
-                OS
-              </div>
+      <div className={`min-h-screen flex items-center justify-center p-4 transition-colors duration-200 ${
+        theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
+      }`}>
+        <div className={`w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 border transition-all ${
+          theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+        }`}>
+          <div className={`flex items-center justify-between border-b pb-4 ${
+            theme === 'dark' ? 'border-slate-800' : 'border-slate-100'
+          }`}>
+            <div className="flex items-center gap-3">
+              <BrandIconSvg sizePx={44} className="shadow-xs shrink-0" />
               <div>
-                <h1 className="text-sm font-extrabold text-white tracking-tight">Citizen Life OS</h1>
-                <span className="text-[11px] text-slate-400 block">Master Administration Console</span>
+                <h1 className={`text-base font-black tracking-tight leading-none ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  Citizen Life <span className="text-emerald-500">OS</span>
+                </h1>
+                <span className={`text-[11px] block mt-1 font-medium ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                }`}>
+                  Master Administration Console
+                </span>
               </div>
             </div>
-            <Link
-              href="/"
-              className="text-xs text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Portal</span>
-            </Link>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-slate-800 hover:bg-slate-700 text-amber-400 border-slate-700'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                }`}
+                title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+              >
+                {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+              </button>
+
+              <Link
+                href="/"
+                className={`text-xs transition-colors flex items-center gap-1 ${
+                  theme === 'dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Portal</span>
+              </Link>
+            </div>
           </div>
 
           <div>
-            <h2 className="text-base font-bold text-white">Security Clearance Verification</h2>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+            <h2 className={`text-base font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+              Security Clearance Verification
+            </h2>
+            <p className={`text-xs mt-1 leading-relaxed ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
               Restricted management area. Enter the 6-digit Master Security PIN to authenticate this session.
             </p>
           </div>
@@ -568,7 +699,9 @@ export default function AdminPage() {
 
           <form onSubmit={handlePinSubmit} className="space-y-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className={`block text-[11px] font-bold uppercase tracking-wider mb-1.5 ${
+                theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+              }`}>
                 Master Security PIN
               </label>
               <div className="relative">
@@ -585,7 +718,11 @@ export default function AdminPage() {
                   placeholder="Enter 6-digit PIN"
                   autoComplete="off"
                   inputMode="numeric"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-center font-mono text-lg tracking-[0.3em] placeholder:tracking-normal placeholder:text-xs placeholder:text-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all disabled:opacity-50"
+                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-center font-mono text-lg tracking-[0.3em] placeholder:tracking-normal placeholder:text-xs outline-none transition-all disabled:opacity-50 ${
+                    theme === 'dark'
+                      ? 'bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-emerald-500'
+                      : 'bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:bg-white'
+                  }`}
                   autoFocus
                 />
               </div>
@@ -607,9 +744,11 @@ export default function AdminPage() {
             </button>
           </form>
 
-          <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+          <div className={`pt-3 border-t flex items-center justify-between text-[11px] font-mono ${
+            theme === 'dark' ? 'border-slate-800/80 text-slate-500' : 'border-slate-100 text-slate-400'
+          }`}>
             <span>Server: localhost:3000</span>
-            <span>PIN Configured: Master Active</span>
+            <span>Master PIN Protection</span>
           </div>
         </div>
       </div>
@@ -619,34 +758,63 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   // SCREEN 2: AUTHENTICATED EXECUTIVE DASHBOARD
   // -------------------------------------------------------------
+  // -------------------------------------------------------------
+  // SCREEN 2: AUTHENTICATED EXECUTIVE DASHBOARD
+  // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-12">
+    <div className={`min-h-screen font-sans pb-12 transition-colors duration-200 ${
+      theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
+    }`}>
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-30 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 lg:px-8 py-3">
+      <header className={`sticky top-0 z-30 backdrop-blur-md border-b px-4 sm:px-6 lg:px-8 py-3 transition-colors ${
+        theme === 'dark' ? 'bg-slate-950/95 border-slate-800' : 'bg-white/95 border-slate-200 shadow-xs'
+      }`}>
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-800 text-white flex items-center justify-center font-bold text-xs">
-              OS
-            </div>
+            <BrandIconSvg sizePx={38} className="shadow-xs shrink-0" />
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-sm text-white tracking-tight">Citizen Life OS</span>
+                <span className={`font-extrabold text-sm tracking-tight ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  Citizen Life OS
+                </span>
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-700/60">
                   ADMIN
                 </span>
               </div>
-              <span className="text-[11px] text-slate-400 block">Sovereign Registry & Operations Oversight</span>
+              <span className={`text-[11px] block ${
+                theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+              }`}>
+                Sovereign Registry & Operations Oversight
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
-            {systemStatus && (
-              <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-400">
-                <Clock className="w-3.5 h-3.5 text-slate-500" />
-                <span>Server Time: {systemStatus.system.serverTime}</span>
-              </div>
-            )}
+            {/* Live Ticking Indian Standard Time Clock */}
+            <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border font-mono text-xs shadow-2xs ${
+              theme === 'dark' ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+            }`}>
+              <Clock className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>{liveClock || systemStatus?.system.serverTime || 'Synchronizing IST...'}</span>
+            </div>
 
+            {/* Light / Dark Theme Switcher Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                theme === 'dark'
+                  ? 'bg-slate-900 hover:bg-slate-850 text-amber-400 border-slate-700'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300 shadow-xs'
+              }`}
+              title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            {/* Refresh Button */}
             <button
               onClick={() => {
                 fetchCitizens();
@@ -654,7 +822,11 @@ export default function AdminPage() {
                 fetchSystemStatus();
               }}
               disabled={isLoadingCitizens || isLoadingStatus || isLoadingOpps}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+              className={`p-2 rounded-lg border transition-colors cursor-pointer ${
+                theme === 'dark'
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300 shadow-xs'
+              }`}
               title="Refresh all metrics"
             >
               <RefreshCw className={`w-4 h-4 ${isLoadingCitizens || isLoadingStatus || isLoadingOpps ? 'animate-spin' : ''}`} />
@@ -662,7 +834,11 @@ export default function AdminPage() {
 
             <Link
               href="/"
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 border ${
+                theme === 'dark'
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300 shadow-xs'
+              }`}
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Public Portal</span>
@@ -684,16 +860,22 @@ export default function AdminPage() {
         {/* Real KPI Statistics Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Total Citizens */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 shadow-sm space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs">
+          <div className={`p-4 rounded-xl border shadow-sm space-y-1 ${
+            theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between text-xs text-slate-400">
               <span className="font-medium">Total Registered Citizens</span>
               <Users className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="text-2xl font-extrabold text-white font-mono">
+            <div className={`text-2xl font-extrabold font-mono ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>
               {citizens.length}
             </div>
-            <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-1 border-t border-slate-900">
-              <span className="text-emerald-400 font-semibold font-mono">
+            <div className={`text-[11px] flex items-center gap-1 pt-1 border-t ${
+              theme === 'dark' ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+            }`}>
+              <span className="text-emerald-500 font-semibold font-mono">
                 {citizens.filter((c) => c.isOnboarded).length}
               </span>
               <span>Fully Onboarded</span>
@@ -701,62 +883,79 @@ export default function AdminPage() {
           </div>
 
           {/* Card 2: Verified Aadhaar Records */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 shadow-sm space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs">
+          <div className={`p-4 rounded-xl border shadow-sm space-y-1 ${
+            theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between text-xs text-slate-400">
               <span className="font-medium">Aadhaar Verified</span>
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
             </div>
-            <div className="text-2xl font-extrabold text-emerald-400 font-mono">
+            <div className="text-2xl font-extrabold text-emerald-500 font-mono">
               {citizens.filter((c) => c.isAadhaarVerified || c.isCardVerified).length}
             </div>
-            <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-1 border-t border-slate-900">
-              <span className="text-slate-300 font-semibold">Verhoeff UIDAI Checksum</span>
+            <div className={`text-[11px] flex items-center gap-1 pt-1 border-t ${
+              theme === 'dark' ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+            }`}>
+              <span className="font-semibold">Verhoeff UIDAI Checksum</span>
             </div>
           </div>
 
-          {/* Card 3: Paid 1-Year Pass Subscribers & Revenue */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 shadow-sm space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs">
-              <span className="font-medium">Active Rs 1 Pass Holders</span>
-              <IndianRupee className="w-4 h-4 text-amber-400" />
+          {/* Card 3: Total Revenue & Today's Collection */}
+          <div className={`p-4 rounded-xl border shadow-sm space-y-1 ${
+            theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between text-xs text-slate-400">
+              <span className="font-medium">Citizen Pass Revenue</span>
+              <IndianRupee className="w-4 h-4 text-amber-500" />
             </div>
-            <div className="text-2xl font-extrabold text-white font-mono flex items-baseline gap-2">
-              <span>{citizens.filter((c) => c.subscription?.status === 'active').length}</span>
-              <span className="text-xs font-normal text-slate-400">
-                (Rs {citizens.filter((c) => c.subscription?.status === 'active').reduce((acc, c) => acc + (c.subscription?.amount || 1), 0)} Revenue)
+            <div className={`text-2xl font-extrabold font-mono flex items-baseline gap-2 ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>
+              <span>Rs {systemStatus?.citizens.totalRevenueInr ?? citizens.filter((c) => c.subscription?.status === 'active').reduce((acc, c) => acc + (c.subscription?.amount || 1), 0)}</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
+                +Rs {systemStatus?.citizens.todayRevenueInr ?? 0} Today
               </span>
             </div>
-            <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-1 border-t border-slate-900">
-              <span className="text-amber-400 font-semibold">100% Locked 1-Year Pass</span>
+            <div className={`text-[11px] flex items-center justify-between pt-1 border-t font-mono ${
+              theme === 'dark' ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+            }`}>
+              <span>Today's Collection:</span>
+              <span className="text-emerald-500 font-bold">Rs {systemStatus?.citizens.todayRevenueInr ?? 0}</span>
             </div>
           </div>
 
           {/* Card 4: Database & System Health */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 shadow-sm space-y-1">
-            <div className="flex items-center justify-between text-slate-400 text-xs">
+          <div className={`p-4 rounded-xl border shadow-sm space-y-1 ${
+            theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between text-xs text-slate-400">
               <span className="font-medium">System Health</span>
               <Activity className="w-4 h-4 text-emerald-400" />
             </div>
-            <div className="text-2xl font-extrabold font-mono text-emerald-400 flex items-center gap-2">
+            <div className="text-2xl font-extrabold font-mono text-emerald-500 flex items-center gap-2">
               <span>Operational</span>
             </div>
-            <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-1 border-t border-slate-900 font-mono">
+            <div className={`text-[11px] flex items-center gap-1 pt-1 border-t font-mono ${
+              theme === 'dark' ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+            }`}>
               <span>Latency:</span>
-              <span className="text-emerald-400 font-bold">{systemStatus?.database.latencyMs || 0}ms</span>
-              <span className="text-slate-500">• {systemStatus?.database.type || 'Storage Ready'}</span>
+              <span className="text-emerald-500 font-bold">{systemStatus?.database.latencyMs || 0}ms</span>
+              <span className="text-slate-400">• {systemStatus?.database.type || 'Storage Ready'}</span>
             </div>
           </div>
         </div>
 
         {/* Tab Navigation Controls */}
-        <div className="flex items-center justify-between border-b border-slate-800 gap-2 overflow-x-auto pb-px">
+        <div className={`flex items-center justify-between border-b gap-2 overflow-x-auto pb-px ${
+          theme === 'dark' ? 'border-slate-800' : 'border-slate-200'
+        }`}>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('citizens')}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'citizens'
-                  ? 'border-emerald-500 text-white bg-slate-950'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-950/40'
+                  ? 'border-emerald-500 ' + (theme === 'dark' ? 'text-white bg-slate-900' : 'text-slate-900 bg-white shadow-xs')
+                  : (theme === 'dark' ? 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100')
               }`}
             >
               <Users className="w-4 h-4" />
@@ -767,20 +966,25 @@ export default function AdminPage() {
               onClick={() => setActiveTab('opportunities')}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'opportunities'
-                  ? 'border-emerald-500 text-white bg-slate-950'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-950/40'
+                  ? 'border-emerald-500 ' + (theme === 'dark' ? 'text-white bg-slate-900' : 'text-slate-900 bg-white shadow-xs')
+                  : (theme === 'dark' ? 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100')
               }`}
             >
               <Layers className="w-4 h-4" />
               <span>Opportunities Registry ({filteredOpportunities.length})</span>
+              {oppMetrics.issues > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[10px] font-black">
+                  {oppMetrics.issues} Issues
+                </span>
+              )}
             </button>
 
             <button
               onClick={() => setActiveTab('crawler')}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'crawler'
-                  ? 'border-emerald-500 text-white bg-slate-950'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-950/40'
+                  ? 'border-emerald-500 ' + (theme === 'dark' ? 'text-white bg-slate-900' : 'text-slate-900 bg-white shadow-xs')
+                  : (theme === 'dark' ? 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100')
               }`}
             >
               <Radio className="w-4 h-4" />
@@ -791,8 +995,8 @@ export default function AdminPage() {
               onClick={() => setActiveTab('diagnostics')}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'diagnostics'
-                  ? 'border-emerald-500 text-white bg-slate-950'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-950/40'
+                  ? 'border-emerald-500 ' + (theme === 'dark' ? 'text-white bg-slate-900' : 'text-slate-900 bg-white shadow-xs')
+                  : (theme === 'dark' ? 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100')
               }`}
             >
               <Cpu className="w-4 h-4" />
@@ -812,7 +1016,9 @@ export default function AdminPage() {
         {activeTab === 'citizens' && (
           <div className="space-y-4">
             {/* Filter & Search Bar */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className={`p-4 rounded-xl border flex flex-wrap items-center justify-between gap-3 text-xs ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+            }`}>
               <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
                 {/* Search Input */}
                 <div className="relative flex-1 min-w-[200px]">
@@ -822,7 +1028,11 @@ export default function AdminPage() {
                     value={searchCitizen}
                     onChange={(e) => setSearchCitizen(e.target.value)}
                     placeholder="Search by Name, Phone, Aadhaar, State..."
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:border-emerald-500 outline-none"
+                    className={`w-full pl-9 pr-3 py-2 rounded-lg border text-xs outline-none transition-colors ${
+                      theme === 'dark'
+                        ? 'bg-slate-950 border-slate-700 text-white placeholder-slate-500 focus:border-emerald-500'
+                        : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-emerald-600'
+                    }`}
                   />
                   {searchCitizen && (
                     <button
@@ -838,7 +1048,11 @@ export default function AdminPage() {
                 <select
                   value={filterState}
                   onChange={(e) => setFilterState(e.target.value)}
-                  className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:border-emerald-500 outline-none cursor-pointer"
+                  className={`px-3 py-2 rounded-lg border text-xs outline-none cursor-pointer transition-colors ${
+                    theme === 'dark'
+                      ? 'bg-slate-950 border-slate-700 text-slate-200 focus:border-emerald-500'
+                      : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-emerald-600'
+                  }`}
                 >
                   <option value="all">All States</option>
                   {availableStates.map((st) => (
@@ -850,7 +1064,11 @@ export default function AdminPage() {
                 <select
                   value={filterPass}
                   onChange={(e) => setFilterPass(e.target.value as any)}
-                  className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:border-emerald-500 outline-none cursor-pointer"
+                  className={`px-3 py-2 rounded-lg border text-xs outline-none cursor-pointer transition-colors ${
+                    theme === 'dark'
+                      ? 'bg-slate-950 border-slate-700 text-slate-200 focus:border-emerald-500'
+                      : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-emerald-600'
+                  }`}
                 >
                   <option value="all">All Pass Status</option>
                   <option value="paid">Paid Rs 1 Pass Only</option>
@@ -862,19 +1080,27 @@ export default function AdminPage() {
               <button
                 onClick={handleExportCSV}
                 disabled={citizens.length === 0}
-                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className={`px-3 py-2 rounded-lg disabled:opacity-50 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border ${
+                  theme === 'dark'
+                    ? 'bg-slate-800 hover:bg-slate-750 text-slate-200 border-slate-700'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300 shadow-xs'
+                }`}
               >
-                <Download className="w-4 h-4 text-emerald-400" />
+                <Download className="w-4 h-4 text-emerald-500" />
                 <span>Export CSV ({filteredCitizens.length})</span>
               </button>
             </div>
 
             {/* Citizens Data Table */}
-            <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-sm">
+            <div className={`rounded-xl border overflow-hidden shadow-sm ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+            }`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-900/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <tr className={`border-b text-[11px] font-bold uppercase tracking-wider ${
+                      theme === 'dark' ? 'bg-slate-950/80 border-slate-800 text-slate-400' : 'bg-slate-100/90 border-slate-200 text-slate-600'
+                    }`}>
                       <th className="py-3 px-4">Citizen Identity</th>
                       <th className="py-3 px-4">Aadhaar Card / Dossier</th>
                       <th className="py-3 px-4">Contact Info</th>
@@ -884,13 +1110,13 @@ export default function AdminPage() {
                       <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-850">
+                  <tbody className={`divide-y ${theme === 'dark' ? 'divide-slate-800/80' : 'divide-slate-150'}`}>
                     {filteredCitizens.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="py-12 text-center text-slate-500">
                           {isLoadingCitizens ? (
                             <div className="flex items-center justify-center gap-2">
-                              <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+                              <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
                               <span>Loading citizen directory from database...</span>
                             </div>
                           ) : (
@@ -911,13 +1137,17 @@ export default function AdminPage() {
                         return (
                           <tr
                             key={c.id}
-                            className="hover:bg-slate-900/60 transition-colors group cursor-pointer"
+                            className={`transition-colors group cursor-pointer ${
+                              theme === 'dark' ? 'hover:bg-slate-850/60' : 'hover:bg-slate-50'
+                            }`}
                             onClick={() => setSelectedCitizen(c)}
                           >
                             {/* Citizen Identity */}
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden border ${
+                                  theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-slate-100 border-slate-300 text-slate-700'
+                                }`}>
                                   {c.photoURL ? (
                                     <img src={c.photoURL} alt={c.fullName} className="w-full h-full object-cover" />
                                   ) : (
@@ -925,7 +1155,9 @@ export default function AdminPage() {
                                   )}
                                 </div>
                                 <div>
-                                  <span className="font-bold text-white block group-hover:text-emerald-400 transition-colors">
+                                  <span className={`font-bold block transition-colors group-hover:text-emerald-500 ${
+                                    theme === 'dark' ? 'text-white' : 'text-slate-900'
+                                  }`}>
                                     {c.fullName || 'Citizen'}
                                   </span>
                                   <span className="text-[10px] text-slate-400 font-mono">
@@ -940,7 +1172,11 @@ export default function AdminPage() {
                               <div className="flex items-center gap-1.5">
                                 <div
                                   onClick={() => setSelectedCitizen(c)}
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-700 text-emerald-300 font-mono text-[11px] font-bold transition-all shadow-2xs cursor-pointer"
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-mono text-[11px] font-bold transition-all shadow-2xs cursor-pointer ${
+                                    theme === 'dark'
+                                      ? 'bg-slate-950 hover:bg-slate-850 border-slate-700 text-emerald-300'
+                                      : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
+                                  }`}
                                   title="Click to open official UIDAI Dossier"
                                 >
                                   <QrCode className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
@@ -950,7 +1186,9 @@ export default function AdminPage() {
                                       REAL
                                     </span>
                                   ) : (
-                                    <span className="text-[9px] text-slate-400 bg-slate-800 px-1 py-0.2 rounded border border-slate-700 font-sans">
+                                    <span className={`text-[9px] px-1 py-0.2 rounded border font-sans ${
+                                      theme === 'dark' ? 'text-slate-400 bg-slate-800 border-slate-700' : 'text-slate-600 bg-slate-200 border-slate-300'
+                                    }`}>
                                       UIDAI
                                     </span>
                                   )}
@@ -959,11 +1197,15 @@ export default function AdminPage() {
                                 <button
                                   type="button"
                                   onClick={(e) => handleCopyCitizenAadhaar(e, c)}
-                                  className="p-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                  className={`p-1 rounded-md border transition-colors cursor-pointer ${
+                                    theme === 'dark'
+                                      ? 'bg-slate-950 hover:bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
+                                      : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-600 hover:text-slate-900'
+                                  }`}
                                   title="Copy Aadhaar Number"
                                 >
                                   {copiedAadhaarId === c.id ? (
-                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                    <Check className="w-3.5 h-3.5 text-emerald-500" />
                                   ) : (
                                     <Copy className="w-3.5 h-3.5" />
                                   )}
@@ -974,23 +1216,23 @@ export default function AdminPage() {
                             {/* Contact Info */}
                             <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
                               <div className="space-y-1">
-                                <span className="text-slate-300 font-mono text-[11px] block">
+                                <span className={`font-mono text-[11px] block ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                                   {c.phoneNumber ? `+91 ${c.phoneNumber.slice(-10)}` : 'No phone'}
                                 </span>
                                 {c.phoneNumber && (
                                   <div className="flex items-center gap-1.5">
                                     <a
                                       href={`tel:${c.phoneNumber}`}
-                                      className="text-[10px] text-blue-400 hover:underline flex items-center gap-0.5"
+                                      className="text-[10px] text-blue-500 hover:underline flex items-center gap-0.5 font-medium"
                                     >
                                       <Phone className="w-3 h-3" /> Call
                                     </a>
-                                    <span className="text-slate-600">•</span>
+                                    <span className="text-slate-400">•</span>
                                     <a
                                       href={`https://wa.me/91${c.phoneNumber.replace(/\D/g, '').slice(-10)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-[10px] text-emerald-400 hover:underline flex items-center gap-0.5"
+                                      className="text-[10px] text-emerald-500 hover:underline flex items-center gap-0.5 font-medium"
                                     >
                                       <MessageCircle className="w-3 h-3" /> WhatsApp
                                     </a>
@@ -1001,7 +1243,7 @@ export default function AdminPage() {
 
                             {/* State & District */}
                             <td className="py-3 px-4">
-                              <span className="text-slate-200 font-medium block">
+                              <span className={`font-medium block ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
                                 {c.state || 'General'}
                               </span>
                               <span className="text-[10px] text-slate-400 block">
@@ -1011,7 +1253,7 @@ export default function AdminPage() {
 
                             {/* Age & Category */}
                             <td className="py-3 px-4">
-                              <span className="text-slate-200 font-semibold block">
+                              <span className={`font-semibold block ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
                                 {c.age || 0} Yrs ({c.gender || 'M'})
                               </span>
                               <span className="text-[10px] text-slate-400 block">
@@ -1026,7 +1268,9 @@ export default function AdminPage() {
                                   <Check className="w-3 h-3" /> Active (365D)
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 text-[10px] font-medium">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-medium ${
+                                  theme === 'dark' ? 'bg-slate-950 text-slate-400 border-slate-800' : 'bg-slate-100 text-slate-600 border-slate-200'
+                                }`}>
                                   Unpaid Pass
                                 </span>
                               )}
@@ -1039,7 +1283,11 @@ export default function AdminPage() {
                                   e.stopPropagation();
                                   setSelectedCitizen(c);
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-semibold transition-colors cursor-pointer"
+                                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer border ${
+                                  theme === 'dark'
+                                    ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700'
+                                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300 shadow-xs'
+                                }`}
                               >
                                 View Dossier
                               </button>
@@ -1060,7 +1308,156 @@ export default function AdminPage() {
         {/* ------------------------------------------------------------- */}
         {activeTab === 'opportunities' && (
           <div className="space-y-4">
-            {/* Opportunities Section Metrics Grid */}
+            {/* 1. Date Window Scope Strip: Default to Today & Yesterday (48 Hours) */}
+            <div className={`p-4 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+            }`}>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-emerald-500" />
+                  <span className={`text-xs font-bold uppercase tracking-wider ${
+                    theme === 'dark' ? 'text-white' : 'text-slate-900'
+                  }`}>
+                    Circular Fetch Window (Default: 2-Day Realtime Window)
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+                    {filterDateRange === '2days' ? 'ACTIVE: 48H WINDOW' : filterDateRange.toUpperCase()}
+                  </span>
+                </div>
+                <p className={`text-[11px] mt-0.5 ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                }`}>
+                  Displaying circulars fetched Today and Yesterday by default. Switch filter to view specific day or all historical records.
+                </p>
+              </div>
+
+              {/* Date Range Selector Buttons */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => { setFilterDateRange('2days'); setFilterIssuesOnly(false); }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                    filterDateRange === '2days' && !filterIssuesOnly
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-xs'
+                      : theme === 'dark'
+                      ? 'bg-slate-950 hover:bg-slate-850 text-slate-300 border-slate-800'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Today & Yesterday (Last 48h)</span>
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/25 font-mono">
+                    {oppMetrics.recent2Days}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setFilterDateRange('today'); setFilterIssuesOnly(false); }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                    filterDateRange === 'today' && !filterIssuesOnly
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-xs'
+                      : theme === 'dark'
+                      ? 'bg-slate-950 hover:bg-slate-850 text-slate-300 border-slate-800'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <span>Today's Fetched</span>
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/25 font-mono">
+                    {oppMetrics.today}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setFilterDateRange('yesterday'); setFilterIssuesOnly(false); }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                    filterDateRange === 'yesterday' && !filterIssuesOnly
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-xs'
+                      : theme === 'dark'
+                      ? 'bg-slate-950 hover:bg-slate-850 text-slate-300 border-slate-800'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <span>Yesterday</span>
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/25 font-mono">
+                    {oppMetrics.yesterday}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setFilterDateRange('all'); setFilterIssuesOnly(false); }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                    filterDateRange === 'all' && !filterIssuesOnly
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-xs'
+                      : theme === 'dark'
+                      ? 'bg-slate-950 hover:bg-slate-850 text-slate-300 border-slate-800'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <span>All Database</span>
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/25 font-mono">
+                    {oppMetrics.total}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Integrity & Broken Links / Fraud Monitoring Alert Banner */}
+            {oppMetrics.issues > 0 ? (
+              <div className={`p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+                theme === 'dark' ? 'bg-amber-950/40 border-amber-800/80' : 'bg-amber-50 border-amber-300 shadow-xs'
+              }`}>
+                <div className="flex items-start sm:items-center gap-3">
+                  <div className="p-2 rounded-lg bg-amber-500/20 text-amber-500 shrink-0">
+                    <ShieldAlert className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold ${
+                        theme === 'dark' ? 'text-amber-200' : 'text-amber-900'
+                      }`}>
+                        Opportunity Health Advisory: {oppMetrics.issues} Circulars Require Verification
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-black">
+                        INTEGRITY ALERT
+                      </span>
+                    </div>
+                    <p className={`text-[11px] mt-0.5 ${
+                      theme === 'dark' ? 'text-amber-300/80' : 'text-amber-800'
+                    }`}>
+                      Broken official links or advisory notices detected. You can filter and inspect flagged circulars directly.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setFilterIssuesOnly((prev) => !prev)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 border ${
+                    filterIssuesOnly
+                      ? 'bg-amber-500 text-black border-amber-400 font-extrabold shadow-xs'
+                      : 'bg-amber-900/60 hover:bg-amber-900 text-amber-200 border-amber-700'
+                  }`}
+                >
+                  <AlertOctagon className="w-3.5 h-3.5" />
+                  <span>{filterIssuesOnly ? 'Show All Filtered' : `Inspect ${oppMetrics.issues} Flagged Issues`}</span>
+                </button>
+              </div>
+            ) : (
+              <div className={`px-4 py-2.5 rounded-xl border flex items-center justify-between text-xs font-mono ${
+                theme === 'dark' ? 'bg-emerald-950/20 border-emerald-900/60 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              }`}>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Automated Portal Link Health: All verified official circular links are valid and active.</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 font-bold">100% HEALTHY</span>
+              </div>
+            )}
+
+            {/* 3. Opportunities Section Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {Object.entries(sectionMetaMap).map(([stageKey, meta]) => {
                 const stat = oppSectionStats[stageKey] || { count: 0, active: 0, expired: 0 };
@@ -1072,8 +1469,8 @@ export default function AdminPage() {
                     onClick={() => setFilterOppSection(isSelected ? 'all' : stageKey)}
                     className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-slate-900 border-emerald-500 shadow-sm ring-1 ring-emerald-500/50'
-                        : 'bg-slate-950 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
+                        ? (theme === 'dark' ? 'bg-slate-900 border-emerald-500 shadow-sm ring-1 ring-emerald-500/50' : 'bg-emerald-50 border-emerald-500 shadow-xs ring-1 ring-emerald-500')
+                        : (theme === 'dark' ? 'bg-slate-900/90 border-slate-800 hover:border-slate-700 hover:bg-slate-850' : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-xs')
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -1084,13 +1481,13 @@ export default function AdminPage() {
                         {meta.labelHi}
                       </span>
                     </div>
-                    <div className="text-xl font-extrabold text-white font-mono mt-1">
+                    <div className={`text-xl font-extrabold font-mono mt-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                       {stat.count}
                     </div>
                     <div className="flex items-center gap-1.5 text-[10px] mt-0.5 font-mono">
-                      <span className="text-emerald-400 font-semibold">{stat.active} Active</span>
+                      <span className="text-emerald-500 font-semibold">{stat.active} Active</span>
                       {stat.expired > 0 && (
-                        <span className="text-rose-400 font-semibold">• {stat.expired} Closed</span>
+                        <span className="text-rose-500 font-semibold">• {stat.expired} Closed</span>
                       )}
                     </div>
                   </button>
@@ -1098,8 +1495,10 @@ export default function AdminPage() {
               })}
             </div>
 
-            {/* Filter & Search Bar */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+            {/* 4. Filter & Search Bar */}
+            <div className={`p-4 rounded-xl border flex flex-wrap items-center justify-between gap-3 text-xs ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+            }`}>
               <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
                 {/* Search Input */}
                 <div className="relative flex-1 min-w-[220px]">
@@ -1108,8 +1507,12 @@ export default function AdminPage() {
                     type="text"
                     value={searchOpp}
                     onChange={(e) => setSearchOpp(e.target.value)}
-                    placeholder="Search by Opportunity Name, Authority, Category..."
-                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:border-emerald-500 outline-none"
+                    placeholder="Search by Opportunity Name, Authority, Category, Issue..."
+                    className={`w-full pl-9 pr-3 py-2 rounded-lg border text-xs outline-none transition-colors ${
+                      theme === 'dark'
+                        ? 'bg-slate-950 border-slate-700 text-white placeholder-slate-500 focus:border-emerald-500'
+                        : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-emerald-600'
+                    }`}
                   />
                   {searchOpp && (
                     <button
@@ -1125,7 +1528,11 @@ export default function AdminPage() {
                 <select
                   value={filterOppSection}
                   onChange={(e) => setFilterOppSection(e.target.value)}
-                  className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:border-emerald-500 outline-none cursor-pointer"
+                  className={`px-3 py-2 rounded-lg border text-xs outline-none cursor-pointer transition-colors ${
+                    theme === 'dark'
+                      ? 'bg-slate-950 border-slate-700 text-slate-200 focus:border-emerald-500'
+                      : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-emerald-600'
+                  }`}
                 >
                   <option value="all">All Sections ({opportunities.length})</option>
                   {Object.entries(sectionMetaMap).map(([stageKey, meta]) => (
@@ -1139,48 +1546,71 @@ export default function AdminPage() {
                 <select
                   value={filterOppStatus}
                   onChange={(e) => setFilterOppStatus(e.target.value as any)}
-                  className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:border-emerald-500 outline-none cursor-pointer"
+                  className={`px-3 py-2 rounded-lg border text-xs outline-none cursor-pointer transition-colors ${
+                    theme === 'dark'
+                      ? 'bg-slate-950 border-slate-700 text-slate-200 focus:border-emerald-500'
+                      : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-emerald-600'
+                  }`}
                 >
                   <option value="all">All Application Status</option>
                   <option value="active">Active Applications Ongoing</option>
                   <option value="expired">Closed / Expired</option>
+                  <option value="issues_only">Flagged Link Issues / Warnings Only</option>
                 </select>
               </div>
 
               {/* Counter Pill */}
               <div className="text-slate-400 font-mono text-[11px] flex items-center gap-2">
                 <span>Showing:</span>
-                <span className="font-bold text-white bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
+                <span className={`font-bold px-2.5 py-1 rounded-md border ${
+                  theme === 'dark' ? 'text-white bg-slate-950 border-slate-800' : 'text-slate-900 bg-slate-100 border-slate-200'
+                }`}>
                   {filteredOpportunities.length} of {opportunities.length} Total
                 </span>
               </div>
             </div>
 
-            {/* Opportunities Data Table */}
-            <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-sm">
+            {/* 5. Opportunities Data Table */}
+            <div className={`rounded-xl border overflow-hidden shadow-sm ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+            }`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-900/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <tr className={`border-b text-[11px] font-bold uppercase tracking-wider ${
+                      theme === 'dark' ? 'bg-slate-950/80 border-slate-800 text-slate-400' : 'bg-slate-100/90 border-slate-200 text-slate-600'
+                    }`}>
                       <th className="py-3 px-4">Opportunity Name (Title)</th>
                       <th className="py-3 px-4">Section / Stage</th>
                       <th className="py-3 px-4">Category & Benefit</th>
                       <th className="py-3 px-4">Issuing Authority / Ministry</th>
+                      <th className="py-3 px-4">Integrity & Link Health</th>
                       <th className="py-3 px-4">Deadline & Status</th>
                       <th className="py-3 px-4 text-right">Official Link</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-850">
+                  <tbody className={`divide-y ${theme === 'dark' ? 'divide-slate-800/80' : 'divide-slate-150'}`}>
                     {filteredOpportunities.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="py-12 text-center text-slate-500">
+                        <td colSpan={7} className="py-12 text-center text-slate-500">
                           {isLoadingOpps ? (
                             <div className="flex items-center justify-center gap-2">
-                              <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+                              <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
                               <span>Loading opportunities registry...</span>
                             </div>
                           ) : (
-                            <span>No opportunities match your current search query or section filter.</span>
+                            <div className="space-y-2">
+                              <p>No opportunities match your current search query or filter.</p>
+                              {filterDateRange !== 'all' && (
+                                <button
+                                  type="button"
+                                  onClick={() => setFilterDateRange('all')}
+                                  className="text-xs text-emerald-500 hover:underline font-semibold"
+                                >
+                                  View all historical opportunities ({opportunities.length} available)
+                                </button>
+                              )}
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -1193,14 +1623,31 @@ export default function AdminPage() {
                         };
 
                         return (
-                          <tr key={opp.id} className="hover:bg-slate-900/60 transition-colors group">
+                          <tr
+                            key={opp.id}
+                            className={`transition-colors group ${
+                              theme === 'dark' ? 'hover:bg-slate-850/60' : 'hover:bg-slate-50'
+                            }`}
+                          >
                             {/* Opportunity Name & Title */}
                             <td className="py-3 px-4 max-w-sm">
                               <div className="space-y-1">
                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="font-bold text-white group-hover:text-emerald-400 transition-colors block">
+                                  <span className={`font-bold transition-colors group-hover:text-emerald-500 block ${
+                                    theme === 'dark' ? 'text-white' : 'text-slate-900'
+                                  }`}>
                                     {opp.title}
                                   </span>
+                                  {opp.isToday && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/80 tracking-wide uppercase">
+                                      TODAY
+                                    </span>
+                                  )}
+                                  {opp.isYesterday && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-950 text-blue-300 border border-blue-700/80 tracking-wide uppercase">
+                                      YESTERDAY
+                                    </span>
+                                  )}
                                   {opp.isNew && (
                                     <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-700/80 tracking-wide uppercase">
                                       NEW
@@ -1217,9 +1664,11 @@ export default function AdminPage() {
                                     {opp.titleHi}
                                   </span>
                                 )}
-                                <span className="text-[10px] text-slate-500 font-mono block">
-                                  ID: {opp.id}
-                                </span>
+                                <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
+                                  <span>ID: {opp.id}</span>
+                                  <span>•</span>
+                                  <span className="text-emerald-500">Fetched: {opp.fetchedLabel || 'Active'}</span>
+                                </div>
                               </div>
                             </td>
 
@@ -1237,17 +1686,17 @@ export default function AdminPage() {
 
                             {/* Category & Benefit */}
                             <td className="py-3 px-4">
-                              <span className="text-slate-200 font-semibold block capitalize">
+                              <span className={`font-semibold block capitalize ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
                                 {opp.category.replace(/_/g, ' ')}
                               </span>
-                              <span className="text-[11px] text-emerald-400 font-medium block truncate max-w-xs">
+                              <span className="text-[11px] text-emerald-500 font-medium block truncate max-w-xs">
                                 {opp.benefitHeadline || `Benefit: Rs ${(opp.benefitAmount || 0).toLocaleString('en-IN')}`}
                               </span>
                             </td>
 
                             {/* Issuing Authority / Ministry */}
                             <td className="py-3 px-4">
-                              <span className="text-slate-200 font-medium block">
+                              <span className={`font-medium block ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
                                 {opp.issuingAuthority}
                               </span>
                               <span className="text-[10px] text-slate-500 font-mono block">
@@ -1255,10 +1704,51 @@ export default function AdminPage() {
                               </span>
                             </td>
 
+                            {/* Integrity & Link Health Status */}
+                            <td className="py-3 px-4">
+                              {opp.healthStatus === 'link_issue' ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 text-[10px] font-bold">
+                                    <Link2Off className="w-3 h-3 text-rose-400" />
+                                    <span>Broken Link Error</span>
+                                  </span>
+                                  {opp.healthIssue && (
+                                    <span className="text-[10px] text-rose-400 block font-mono">
+                                      {opp.healthIssue}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : opp.healthStatus === 'scam_alert' ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-bold">
+                                    <ShieldAlert className="w-3 h-3 text-amber-400" />
+                                    <span>Scam Advisory</span>
+                                  </span>
+                                  {opp.healthIssue && (
+                                    <span className="text-[10px] text-amber-400 block font-mono">
+                                      {opp.healthIssue}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : opp.healthStatus === 'expired_warning' ? (
+                                <div className="space-y-1">
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-bold">
+                                    <AlertCircle className="w-3 h-3 text-slate-400" />
+                                    <span>Expired Portal</span>
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 text-[10px] font-bold font-mono">
+                                  <Check className="w-3 h-3 text-emerald-400" />
+                                  <span>Verified Active Link</span>
+                                </span>
+                              )}
+                            </td>
+
                             {/* Deadline & Live Status */}
                             <td className="py-3 px-4">
                               <div className="space-y-1">
-                                <span className="text-slate-300 font-mono text-[11px] block">
+                                <span className={`font-mono text-[11px] block ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                                   {opp.deadline ? opp.deadline : 'Open / Rolling'}
                                 </span>
                                 {opp.isExpired ? (
@@ -1280,7 +1770,11 @@ export default function AdminPage() {
                                   href={opp.officialPortalUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-slate-700 text-[11px] font-semibold transition-all shadow-xs"
+                                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all shadow-xs cursor-pointer ${
+                                    theme === 'dark'
+                                      ? 'bg-slate-950 hover:bg-slate-850 text-emerald-400 hover:text-emerald-300 border-slate-700'
+                                      : 'bg-slate-100 hover:bg-slate-200 text-emerald-700 hover:text-emerald-800 border-slate-300'
+                                  }`}
                                 >
                                   <span>Official Portal</span>
                                   <ExternalLink className="w-3 h-3" />
@@ -1306,13 +1800,19 @@ export default function AdminPage() {
         {activeTab === 'crawler' && (
           <div className="space-y-6">
             {/* Header Control Strip */}
-            <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className={`p-5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+            }`}>
               <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Radio className="w-4 h-4 text-emerald-400" />
+                <h3 className={`text-sm font-bold flex items-center gap-2 ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  <Radio className="w-4 h-4 text-emerald-500" />
                   <span>Real-Time National Feeds Synchronization</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
+                <p className={`text-xs mt-1 max-w-xl leading-relaxed ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                }`}>
                   Automated ingest engine scanning verified portals (Join Indian Army, Navy, NTA NEET/JEE, AICTE Internship Portal, NCS National Career Service, AIIMS/NHM Healthcare).
                 </p>
               </div>
@@ -1340,24 +1840,34 @@ export default function AdminPage() {
             {systemStatus && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {Object.entries(systemStatus.opportunities.categories).map(([stage, count]) => (
-                  <div key={stage} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                  <div key={stage} className={`p-3.5 rounded-xl border text-xs ${
+                    theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+                  }`}>
                     <span className="text-[10px] uppercase font-bold text-slate-400 block truncate">
                       {stage.replace('_', ' ')}
                     </span>
-                    <span className="text-xl font-extrabold text-white font-mono mt-1 block">
+                    <span className={`text-xl font-extrabold font-mono mt-1 block ${
+                      theme === 'dark' ? 'text-white' : 'text-slate-900'
+                    }`}>
                       {count}
                     </span>
-                    <span className="text-[10px] text-emerald-400 block mt-0.5">Verified Circulars</span>
+                    <span className="text-[10px] text-emerald-500 block mt-0.5 font-medium">Verified Circulars</span>
                   </div>
                 ))}
               </div>
             )}
 
             {/* Live Crawler Audit Trail */}
-            <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-emerald-400" />
+            <div className={`p-5 rounded-xl border space-y-3 ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+            }`}>
+              <div className={`flex items-center justify-between border-b pb-3 ${
+                theme === 'dark' ? 'border-slate-800' : 'border-slate-200'
+              }`}>
+                <span className={`text-xs font-bold flex items-center gap-2 ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  <Activity className="w-4 h-4 text-emerald-500" />
                   <span>Crawler Execution Logs</span>
                 </span>
                 <span className="text-[10px] text-slate-400 font-mono">
@@ -1374,10 +1884,12 @@ export default function AdminPage() {
                   {crawlerLogs.map((log, i) => (
                     <div
                       key={i}
-                      className="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-start justify-between gap-3 text-xs"
+                      className={`p-3 rounded-lg border flex items-start justify-between gap-3 text-xs ${
+                        theme === 'dark' ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                      }`}
                     >
                       <div className="space-y-0.5">
-                        <span className="text-slate-300 block">{log.message}</span>
+                        <span className={`block ${theme === 'dark' ? 'text-slate-300' : 'text-slate-800'}`}>{log.message}</span>
                         <span className="text-[10px] text-slate-500 font-mono">{log.timestamp}</span>
                       </div>
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
@@ -1396,18 +1908,22 @@ export default function AdminPage() {
         )}
 
         {/* ------------------------------------------------------------- */}
-        {/* TAB 3: SYSTEM HEALTH & MAIN WEBSITE DIAGNOSTICS */}
+        {/* TAB 4: SYSTEM HEALTH & MAIN WEBSITE DIAGNOSTICS */}
         {/* ------------------------------------------------------------- */}
         {activeTab === 'diagnostics' && systemStatus && (
           <div className="space-y-6">
             {/* System Diagnostic Alerts */}
-            <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
-              <div className="border-b border-slate-800 pb-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-amber-400" />
+            <div className={`p-5 rounded-xl border space-y-4 ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+            }`}>
+              <div className={`border-b pb-3 ${theme === 'dark' ? 'border-slate-800' : 'border-slate-200'}`}>
+                <h3 className={`text-sm font-bold flex items-center gap-2 ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  <AlertCircle className="w-4 h-4 text-amber-500" />
                   <span>Main Website Telemetry & Configuration Status</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                   Real-time status of critical backend microservices, database clusters, and third-party APIs.
                 </p>
               </div>
@@ -1418,15 +1934,15 @@ export default function AdminPage() {
                     key={i}
                     className={`p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs ${
                       diag.level === 'warning'
-                        ? 'bg-amber-950/20 border-amber-800/60 text-amber-200'
+                        ? (theme === 'dark' ? 'bg-amber-950/20 border-amber-800/60 text-amber-200' : 'bg-amber-50 border-amber-300 text-amber-900')
                         : diag.level === 'error'
-                        ? 'bg-rose-950/30 border-rose-800/60 text-rose-200'
-                        : 'bg-slate-900 border-slate-800 text-slate-300'
+                        ? (theme === 'dark' ? 'bg-rose-950/30 border-rose-800/60 text-rose-200' : 'bg-rose-50 border-rose-300 text-rose-900')
+                        : (theme === 'dark' ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700')
                     }`}
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-white">{diag.component}</span>
+                        <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{diag.component}</span>
                         <span className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
                           diag.level === 'warning'
                             ? 'bg-amber-500 text-slate-950'
@@ -1441,7 +1957,9 @@ export default function AdminPage() {
                     </div>
 
                     {diag.action && (
-                      <span className="text-[10px] font-mono text-slate-400 bg-black/30 px-2.5 py-1 rounded-lg border border-white/10 shrink-0">
+                      <span className={`text-[10px] font-mono px-2.5 py-1 rounded-lg border shrink-0 ${
+                        theme === 'dark' ? 'text-slate-400 bg-black/30 border-white/10' : 'text-slate-600 bg-slate-200 border-slate-300'
+                      }`}>
                         {diag.action}
                       </span>
                     )}
@@ -1453,10 +1971,14 @@ export default function AdminPage() {
             {/* Gateway Configuration Audit Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Card A: Database Storage */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-2">
+              <div className={`p-4 rounded-xl border text-xs space-y-2 ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-white flex items-center gap-1.5">
-                    <Database className="w-4 h-4 text-emerald-400" />
+                  <span className={`font-bold flex items-center gap-1.5 ${
+                    theme === 'dark' ? 'text-white' : 'text-slate-900'
+                  }`}>
+                    <Database className="w-4 h-4 text-emerald-500" />
                     <span>Database Engine</span>
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-700/60">
@@ -1466,24 +1988,28 @@ export default function AdminPage() {
                 <div className="text-slate-400 space-y-1 text-[11px]">
                   <div className="flex justify-between">
                     <span>Engine Type:</span>
-                    <span className="text-white font-medium">{systemStatus.database.type}</span>
+                    <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{systemStatus.database.type}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Query Latency:</span>
-                    <span className="text-emerald-400 font-mono font-bold">{systemStatus.database.latencyMs} ms</span>
+                    <span className="text-emerald-500 font-mono font-bold">{systemStatus.database.latencyMs} ms</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Status:</span>
-                    <span className="text-slate-200 capitalize">{systemStatus.database.status}</span>
+                    <span className={`capitalize ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>{systemStatus.database.status}</span>
                   </div>
                 </div>
               </div>
 
               {/* Card B: Payment Gateway */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-2">
+              <div className={`p-4 rounded-xl border text-xs space-y-2 ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-white flex items-center gap-1.5">
-                    <CreditCard className="w-4 h-4 text-amber-400" />
+                  <span className={`font-bold flex items-center gap-1.5 ${
+                    theme === 'dark' ? 'text-white' : 'text-slate-900'
+                  }`}>
+                    <CreditCard className="w-4 h-4 text-amber-500" />
                     <span>Razorpay Payments</span>
                   </span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -1497,24 +2023,28 @@ export default function AdminPage() {
                 <div className="text-slate-400 space-y-1 text-[11px]">
                   <div className="flex justify-between">
                     <span>Operating Mode:</span>
-                    <span className="text-white font-medium">{systemStatus.gateways.razorpay.mode}</span>
+                    <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{systemStatus.gateways.razorpay.mode}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Key Prefix:</span>
-                    <span className="text-slate-200 font-mono">{systemStatus.gateways.razorpay.keyPreview}</span>
+                    <span className={`font-mono ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>{systemStatus.gateways.razorpay.keyPreview}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Pass Fee:</span>
-                    <span className="text-emerald-400 font-bold">Rs 1.00 INR (Server-Locked)</span>
+                    <span className="text-emerald-500 font-bold">Rs 1.00 INR (Server-Locked)</span>
                   </div>
                 </div>
               </div>
 
               {/* Card C: SMS OTP Gateway */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-2">
+              <div className={`p-4 rounded-xl border text-xs space-y-2 ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-white flex items-center gap-1.5">
-                    <Phone className="w-4 h-4 text-blue-400" />
+                  <span className={`font-bold flex items-center gap-1.5 ${
+                    theme === 'dark' ? 'text-white' : 'text-slate-900'
+                  }`}>
+                    <Phone className="w-4 h-4 text-blue-500" />
                     <span>SMS OTP Gateway</span>
                   </span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -1528,26 +2058,28 @@ export default function AdminPage() {
                 <div className="text-slate-400 space-y-1 text-[11px]">
                   <div className="flex justify-between">
                     <span>Active Provider:</span>
-                    <span className="text-white font-medium">{systemStatus.gateways.sms.provider}</span>
+                    <span className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{systemStatus.gateways.sms.provider}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Anti-Flood Limiter:</span>
-                    <span className="text-emerald-400 font-bold">5 Attempts / 5 Min</span>
+                    <span className="text-emerald-500 font-bold">5 Attempts / 5 Min</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Fallback:</span>
-                    <span className="text-slate-200">Terminal Log Relay</span>
+                    <span className={`${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>Terminal Log Relay</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Server Process Environment */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono flex flex-wrap items-center justify-between gap-4 text-slate-400">
-              <div>Node.js Runtime: <strong className="text-white">{systemStatus.system.nodeVersion}</strong></div>
-              <div>Platform: <strong className="text-white">{systemStatus.system.platform}</strong></div>
-              <div>Memory Heap: <strong className="text-emerald-400">{systemStatus.system.memoryUsageMb} MB</strong></div>
-              <div>Process Uptime: <strong className="text-white">{Math.floor(systemStatus.system.uptimeSeconds / 60)} minutes</strong></div>
+            <div className={`p-4 rounded-xl border text-xs font-mono flex flex-wrap items-center justify-between gap-4 ${
+              theme === 'dark' ? 'bg-slate-900/90 border-slate-800 text-slate-400' : 'bg-white border-slate-200 text-slate-600 shadow-xs'
+            }`}>
+              <div>Node.js Runtime: <strong className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>{systemStatus.system.nodeVersion}</strong></div>
+              <div>Platform: <strong className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>{systemStatus.system.platform}</strong></div>
+              <div>Memory Heap: <strong className="text-emerald-500">{systemStatus.system.memoryUsageMb} MB</strong></div>
+              <div>Process Uptime: <strong className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>{Math.floor(systemStatus.system.uptimeSeconds / 60)} minutes</strong></div>
             </div>
           </div>
         )}
