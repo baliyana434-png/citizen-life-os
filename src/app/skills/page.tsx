@@ -37,6 +37,7 @@ import { SKILL_SECTORS, SKILL_TOPICS, SkillSector, SkillTopic, SkillVideo } from
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { CitizenProfile, CitizenSubscription } from '@/types';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { isCitizenSubscribed, verifySubscriptionWithServer } from '@/lib/subscriptionValidator';
 
 export default function SkillsPage() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function SkillsPage() {
   // Citizen Profile & 1-Year Pass Subscription State
   const [profile, setProfile] = useState<CitizenProfile | null>(null);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState<boolean>(false);
-  const isSubscribed = profile?.subscription?.status === 'active';
+  const isSubscribed = isCitizenSubscribed(profile);
 
   // Selected topic for detailed video view
   const [activeTopicId, setActiveTopicId] = useState<string>('german_language');
@@ -79,6 +80,11 @@ export default function SkillsPage() {
         return;
       }
       setProfile(parsed);
+      if (parsed.subscription && parsed.subscription.status === 'active') {
+        verifySubscriptionWithServer(parsed, () => {
+          setProfile((prev) => (prev ? { ...prev, subscription: undefined } : null));
+        });
+      }
     } catch (e) {
       router.replace('/login');
     }

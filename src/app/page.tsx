@@ -18,6 +18,8 @@ import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslat
 import { calculateExactAge } from '@/utils/antiFraudValidation';
 import { BrandSplashScreen } from '@/components/common/BrandSplashScreen';
 import { isOpportunityNewActive, recordOpportunitiesSeen } from '@/lib/newBadgeTracker';
+import { isOpportunityDeadlinePassed } from '@/lib/dateUtils';
+import { isCitizenSubscribed, verifySubscriptionWithServer } from '@/lib/subscriptionValidator';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode, CitizenSubscription } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -191,6 +193,11 @@ export default function HomePage() {
             }
           }
           setProfile(parsed);
+          if (parsed.subscription && parsed.subscription.status === 'active') {
+            verifySubscriptionWithServer(parsed, () => {
+              setProfile((prev) => (prev ? { ...prev, subscription: undefined } : null));
+            });
+          }
           if (parsed.country) {
             setCountry(parsed.country);
           }
@@ -364,7 +371,7 @@ export default function HomePage() {
     setProfile(newProfile);
 
     // Prompt 1-Year Subscription if newly registered and not active
-    if (!newProfile.subscription || newProfile.subscription.status !== 'active') {
+    if (!isCitizenSubscribed(newProfile)) {
       setIsSubscriptionOpen(true);
     }
 
@@ -475,7 +482,7 @@ export default function HomePage() {
     handleRoleAutoSwitch(completed.lifePhase);
 
     // Prompt 1-Year Subscription Modal immediately after ID generation if not yet active
-    if (!fullProfile.subscription || fullProfile.subscription.status !== 'active') {
+    if (!isCitizenSubscribed(fullProfile)) {
       setIsSubscriptionOpen(true);
     } else {
       setPaymentSuccessToast(
@@ -712,6 +719,11 @@ export default function HomePage() {
       const key = opp.id;
       if (seen.has(key)) return false;
       seen.add(key);
+
+      // 0B. Automatic Deadline Expiration (Opportunity disappears once deadline closing date passes)
+      if (isOpportunityDeadlinePassed(opp.deadline)) {
+        return false;
+      }
 
       // 1. Life Stage Tab Match:
       // Opportunities match activeTab (which auto-switches to the best-matching section).
@@ -951,7 +963,7 @@ export default function HomePage() {
 
         {/* 1-Year Citizen Access Pass Status Strip - Hidden on mobile during search */}
         <div className={searchQuery.trim() ? 'hidden sm:block' : ''}>
-          {profile?.subscription?.status === 'active' ? (
+          {isCitizenSubscribed(profile) && profile ? (
             <div className="bg-emerald-950 text-white rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 border border-emerald-700/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span className="text-sm sm:text-base">{countryMeta.flag}</span>

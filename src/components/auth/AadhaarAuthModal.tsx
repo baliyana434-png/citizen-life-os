@@ -234,13 +234,12 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
         verificationMethod: 'DIGITAL_KYC_VERHOEFF',
       };
 
-      // Push real citizen record to server-side Admin Directory
+      // Push real citizen record to server-side Citizen Registry
       try {
-        const response = await fetch('/api/admin/citizens', {
+        const response = await fetch('/api/citizens/profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || 'citizen-admin-secret-2026',
           },
           body: JSON.stringify(payload),
         });
@@ -248,11 +247,11 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
         if (!response.ok || !resData.success) {
           throw new Error(resData.message || 'डेटा सत्यापन में विफलता।');
         }
-      } catch (adminErr: any) {
-        if (adminErr.message) {
-          throw adminErr;
+      } catch (syncErr: any) {
+        if (syncErr.message) {
+          throw syncErr;
         }
-        console.warn('Admin sync notice:', adminErr);
+        console.warn('Citizen sync notice:', syncErr);
       }
 
       // Complete client verification

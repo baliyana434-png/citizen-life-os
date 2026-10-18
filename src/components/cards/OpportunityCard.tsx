@@ -28,6 +28,7 @@ import { RotatingNewBadge } from '../common/RotatingNewBadge';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
 import { formatDeadlineText } from '@/lib/dateUtils';
 import { isOpportunityNewActive } from '@/lib/newBadgeTracker';
+import { isCitizenSubscribed } from '@/lib/subscriptionValidator';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -49,7 +50,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
 }) => {
   const { t, language } = useTranslation();
   const localized = getLocalizedOpportunity(opportunity, language);
-  const isSubscribed = citizenProfile?.subscription?.status === 'active';
+  const isSubscribed = isCitizenSubscribed(citizenProfile);
 
   const formattedDeadline = formatDeadlineText(
     opportunity.deadline,
@@ -195,7 +196,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
               {localized.title}
             </h3>
             <div className="shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
-              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 19 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 19 rupees to unlock opportunity details'}`} />
+              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 1 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 1 rupee to unlock opportunity details'}`} />
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, verifyCitizenPassword } from '@/lib/db';
 import { SessionSecurityService } from '@/lib/security';
 import { validateRealEmail } from '@/utils/antiFraudValidation';
+import { rateLimiter } from '@/lib/rateLimiter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +36,26 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanEmail = emailValidation.cleanEmail;
+
+    // Rate Limiting: Max 5 failed attempts per 5 minutes per IP + email
+    const forwarded = req.headers.get('x-forwarded-for');
+    const ip = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
+    const rateKey = `login:${ip}:${cleanEmail}`;
+    const limit = rateLimiter.consume(rateKey, 5, 5 * 60 * 1000, 15 * 60 * 1000);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          errorType: 'TOO_MANY_ATTEMPTS',
+          message:
+            lang === 'hi'
+              ? `बहुत अधिक असफल प्रयास। सुरक्षा कारणों से यह खाता ${limit.resetInSeconds} सेकंड के लिए अवरोधित है।`
+              : `Too many failed attempts. Login locked for ${limit.resetInSeconds} seconds.`,
+          retryAfter: limit.resetInSeconds,
+        },
+        { status: 429 }
+      );
+    }
 
     // 2. Query Database for Existing Citizen
     const citizen = await DatabaseService.findCitizen({ email: cleanEmail });
@@ -88,6 +109,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Password is valid and account exists
+    rateLimiter.reset(rateKey);
+
     // Don't leak hash/salt back to client
     const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = citizen;
 

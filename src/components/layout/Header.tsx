@@ -7,6 +7,7 @@ import { BrandIconSvg } from '@/components/common/BrandLogo';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { CitizenProfile, SupportedLanguage } from '@/types';
+import { isCitizenSubscribed } from '@/lib/subscriptionValidator';
 
 interface HeaderProps {
   profile: CitizenProfile;
@@ -280,7 +281,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden sm:inline text-xs font-bold max-w-[80px] truncate">
                 {profile.fullName.split(' ')[0]}
               </span>
-              {profile.subscription?.status === 'active' && (
+              {isCitizenSubscribed(profile) && (
                 <span className="absolute top-1 right-1 sm:static w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white shrink-0" title="1-Year Active Citizen Pass" />
               )}
             </button>

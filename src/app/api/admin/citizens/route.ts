@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, CitizenRecord } from '@/lib/db';
+import { AdminSecurityService } from '@/lib/security';
 
 export type RegisteredCitizen = CitizenRecord;
 import {
@@ -12,20 +13,28 @@ import {
   validateRealIncome,
 } from '@/utils/antiFraudValidation';
 
-// SECURITY: Admin API key authentication
+// SECURITY: Sovereign Admin Authorization (Signed token or server-only key)
 function verifyAdminAuth(req: NextRequest): boolean {
-  const adminKey = req.headers.get('x-admin-key');
-  const serverAdminKey = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_KEY || 'citizen-admin-secret-2026';
-  if (!adminKey || adminKey !== serverAdminKey) {
-    return false;
+  // 1. Check signed cryptographic admin session token
+  const adminToken = req.headers.get('x-admin-token');
+  if (adminToken && AdminSecurityService.verifyAdminToken(adminToken)) {
+    return true;
   }
-  return true;
+
+  // 2. Server-to-server API key (Only if ADMIN_API_KEY is configured in env)
+  const adminKey = req.headers.get('x-admin-key');
+  const serverAdminKey = process.env.ADMIN_API_KEY;
+  if (serverAdminKey && adminKey && adminKey === serverAdminKey) {
+    return true;
+  }
+
+  return false;
 }
 
 export async function GET(req: NextRequest) {
   if (!verifyAdminAuth(req)) {
     return NextResponse.json(
-      { success: false, message: 'Unauthorized. Admin API key required in x-admin-key header.' },
+      { success: false, message: 'Unauthorized. Admin authorization required.' },
       { status: 401 }
     );
   }
@@ -57,7 +66,7 @@ export async function POST(req: NextRequest) {
   const isAdmin = verifyAdminAuth(req);
   if (!isAdmin) {
     return NextResponse.json(
-      { success: false, message: 'Unauthorized. Admin API key required in x-admin-key header.' },
+      { success: false, message: 'Unauthorized. Admin authorization required.' },
       { status: 401 }
     );
   }

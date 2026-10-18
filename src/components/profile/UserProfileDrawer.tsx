@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { CitizenProfile, FamilyMember } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
+import { isCitizenSubscribed } from '@/lib/subscriptionValidator';
 import { GoogleAuthService, getGoogleAuthErrorMessage } from '@/services/googleAuth';
 import {
   X,
@@ -401,13 +402,13 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                         {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास' : '1-Year Citizen Access Pass'}
                       </span>
                       <span className="text-[10px] text-slate-400">
-                        {profile.subscription?.status === 'active' 
+                        {isCitizenSubscribed(profile) && profile.subscription
                           ? (language === 'hi' ? `सक्रिय • वैधता: ${profile.subscription.validUntil}` : `Active • Valid until ${profile.subscription.validUntil}`)
                           : (language === 'hi' ? 'निष्क्रिय • केवल ₹1 / 1 वर्ष' : 'Inactive • Only ₹1 / 1 Year')}
                       </span>
                     </div>
                   </div>
-                  {profile.subscription?.status === 'active' ? (
+                  {isCitizenSubscribed(profile) ? (
                     <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
                       <Check className="w-3 h-3 text-emerald-400" />
                       <span>{language === 'hi' ? 'सक्रिय' : 'Active'}</span>
@@ -427,7 +428,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                   )}
                 </div>
 
-                {profile.subscription?.status === 'active' && profile.subscription.transactionId && (
+                {isCitizenSubscribed(profile) && profile.subscription?.transactionId && (
                   <div className="pt-2 border-t border-white/10 text-[10px] font-mono text-slate-400 flex items-center justify-between">
                     <span>Txn: {profile.subscription.transactionId}</span>
                     <span className="text-emerald-400">365 Days Unlocked</span>

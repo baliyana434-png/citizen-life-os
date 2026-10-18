@@ -79,3 +79,44 @@ export class SessionSecurityService {
     }
   }
 }
+
+const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY || process.env.SESSION_SECRET_KEY || 'citizen_admin_hmac_secret_master_998124a87b';
+
+export class AdminSecurityService {
+  /**
+   * Generates a signed admin session token: base64(payload).signature
+   * Valid for 4 hours from login.
+   */
+  static generateAdminToken(): string {
+    const payload = JSON.stringify({
+      role: 'SUPER_ADMIN',
+      exp: Date.now() + 4 * 60 * 60 * 1000,
+      nonce: crypto.randomBytes(16).toString('hex'),
+    });
+    const encodedPayload = Buffer.from(payload).toString('base64url');
+    const signature = crypto.createHmac('sha256', ADMIN_SECRET).update(encodedPayload).digest('base64url');
+    return `${encodedPayload}.${signature}`;
+  }
+
+  /**
+   * Cryptographically verifies admin session token authenticity and expiry.
+   */
+  static verifyAdminToken(token: string): boolean {
+    if (!token || !token.includes('.')) return false;
+    const [encodedPayload, signature] = token.split('.');
+    if (!encodedPayload || !signature) return false;
+
+    try {
+      const expectedSignature = crypto.createHmac('sha256', ADMIN_SECRET).update(encodedPayload).digest('base64url');
+      if (signature !== expectedSignature) return false;
+
+      const jsonStr = Buffer.from(encodedPayload, 'base64url').toString('utf-8');
+      const payload = JSON.parse(jsonStr);
+      if (Date.now() > payload.exp) return false;
+
+      return payload.role === 'SUPER_ADMIN';
+    } catch {
+      return false;
+    }
+  }
+}

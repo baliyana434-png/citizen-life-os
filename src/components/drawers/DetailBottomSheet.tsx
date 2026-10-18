@@ -35,6 +35,7 @@ import { CitizenProfile } from '@/types';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
 import { evaluateCitizenEligibility } from '@/lib/eligibility';
 import { formatDeadlineText } from '@/lib/dateUtils';
+import { isCitizenSubscribed } from '@/lib/subscriptionValidator';
 
 interface DetailBottomSheetProps {
   opportunity: Opportunity | null;
@@ -56,7 +57,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
 }) => {
   const { t, language } = useTranslation();
   const [checkedDocs, setCheckedDocs] = useState<Record<string, boolean>>({});
-  const isSubscribed = citizenProfile?.subscription?.status === 'active';
+  const isSubscribed = isCitizenSubscribed(citizenProfile);
 
   // Lock background scroll when modal is open
   React.useEffect(() => {
@@ -263,11 +264,6 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                   </span>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-2 text-[11px] font-semibold text-emerald-800 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>{t('drawer.eligibility_zero_scam')}</span>
             </div>
           </div>
 

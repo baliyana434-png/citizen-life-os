@@ -43,3 +43,28 @@ export function formatDeadlineText(
 
   return deadline;
 }
+
+/**
+ * Checks whether an opportunity's application closing deadline has already elapsed in the past.
+ * Returns true only for expired ISO dates (YYYY-MM-DD), allowing a grace period until end of the deadline day.
+ * Perpetual opportunities (OPEN_ROUND, UPCOMING_ANNUAL_CYCLE, ONGOING) never expire automatically.
+ */
+export function isOpportunityDeadlinePassed(deadline?: string): boolean {
+  if (!deadline) return false;
+  if (
+    deadline === 'OPEN_ROUND' ||
+    deadline === 'UPCOMING_ANNUAL_CYCLE' ||
+    deadline === 'ONGOING'
+  ) {
+    return false;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
+    const [year, month, day] = deadline.split('-').map(Number);
+    // End of the deadline day (23:59:59.999 local time)
+    const deadlineEnd = new Date(year, month - 1, day, 23, 59, 59, 999);
+    return Date.now() > deadlineEnd.getTime();
+  }
+
+  return false;
+}
