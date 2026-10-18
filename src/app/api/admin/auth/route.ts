@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const expectedPin = process.env.ADMIN_PIN || '998877';
+    const expectedPin = process.env.ADMIN_PIN || '242022';
 
     // Timing-safe constant-time comparison against side-channel timing attacks
     const pinBuffer = Buffer.from(pin);
