@@ -37,6 +37,12 @@ import {
   Cpu,
   Layers,
   Check,
+  Copy,
+  Award,
+  Building2,
+  GraduationCap,
+  Globe,
+  HeartPulse,
 } from 'lucide-react';
 import { RegisteredCitizen } from '@/app/api/admin/citizens/route';
 import { CitizenAadhaarModal } from '@/components/admin/CitizenAadhaarModal';
@@ -91,6 +97,26 @@ interface SystemStatusData {
   }>;
 }
 
+interface AdminOpportunity {
+  id: string;
+  title: string;
+  titleHi: string;
+  lifeStage: string;
+  category: string;
+  issuingAuthority: string;
+  circularNumber: string;
+  deadline: string;
+  isExpired: boolean;
+  applicationStatus: string;
+  isNew: boolean;
+  is100PercentFree: boolean;
+  benefitHeadline: string;
+  benefitAmount: number;
+  officialPortalUrl: string;
+  country: string;
+  lastVerifiedAt: string;
+}
+
 interface CrawlerLog {
   timestamp: string;
   message: string;
@@ -106,7 +132,7 @@ export default function AdminPage() {
   const [lockoutTimer, setLockoutTimer] = useState<number>(0);
 
   // Active Console View Tab
-  const [activeTab, setActiveTab] = useState<'citizens' | 'crawler' | 'diagnostics'>('citizens');
+  const [activeTab, setActiveTab] = useState<'citizens' | 'opportunities' | 'crawler' | 'diagnostics'>('citizens');
 
   // Real Registered Citizens State
   const [citizens, setCitizens] = useState<RegisteredCitizen[]>([]);
@@ -114,9 +140,18 @@ export default function AdminPage() {
   const [filterState, setFilterState] = useState<string>('all');
   const [filterPass, setFilterPass] = useState<'all' | 'paid' | 'unpaid'>('all');
   const [isLoadingCitizens, setIsLoadingCitizens] = useState(false);
+  const [copiedAadhaarId, setCopiedAadhaarId] = useState<string | null>(null);
 
   // Selected Citizen for Full Aadhaar Dossier Modal
   const [selectedCitizen, setSelectedCitizen] = useState<RegisteredCitizen | null>(null);
+
+  // Real Tracked Opportunities State
+  const [opportunities, setOpportunities] = useState<AdminOpportunity[]>([]);
+  const [oppSectionStats, setOppSectionStats] = useState<Record<string, { count: number; active: number; expired: number }>>({});
+  const [isLoadingOpps, setIsLoadingOpps] = useState(false);
+  const [searchOpp, setSearchOpp] = useState('');
+  const [filterOppSection, setFilterOppSection] = useState('all');
+  const [filterOppStatus, setFilterOppStatus] = useState<'all' | 'active' | 'expired'>('all');
 
   // Real System Diagnostics & Metrics State
   const [systemStatus, setSystemStatus] = useState<SystemStatusData | null>(null);
@@ -204,9 +239,38 @@ export default function AdminPage() {
     }
   };
 
+  // Fetch real opportunities and circulars from backend registry
+  const fetchOpportunities = async (tokenOverride?: string) => {
+    try {
+      setIsLoadingOpps(true);
+      const token = tokenOverride || sessionStorage.getItem('admin_token');
+      if (!token) return;
+
+      const res = await fetch('/api/admin/opportunities', {
+        headers: {
+          'x-admin-token': token,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.opportunities) {
+          setOpportunities(data.opportunities);
+        }
+        if (data.sectionStats) {
+          setOppSectionStats(data.sectionStats);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to fetch opportunities:', e);
+    } finally {
+      setIsLoadingOpps(false);
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchCitizens();
+      fetchOpportunities();
       fetchSystemStatus();
     }
   }, [isAuthenticated]);
@@ -241,6 +305,7 @@ export default function AdminPage() {
       setIsAuthenticated(true);
       setPinInput('');
       fetchCitizens(data.token);
+      fetchOpportunities(data.token);
       fetchSystemStatus(data.token);
     } catch (err: any) {
       setErrorMessage('सर्वर से संपर्क करने में असमर्थ। कृपया नेटवर्क की जांच करें।');
@@ -312,7 +377,7 @@ export default function AdminPage() {
         const matchName = (c.fullName || '').toLowerCase().includes(q);
         const matchPhone = (c.phoneNumber || '').includes(q);
         const matchEmail = (c.email || '').toLowerCase().includes(q);
-        const matchAadhaar = (c.aadhaarNumberMasked || c.nationalIdMasked || '').toLowerCase().includes(q);
+        const matchAadhaar = (c.aadhaarNumber || c.aadhaarNumberMasked || c.nationalIdMasked || '').toLowerCase().includes(q);
         const matchState = (c.state || '').toLowerCase().includes(q);
         const matchDist = (c.district || '').toLowerCase().includes(q);
         if (!matchName && !matchPhone && !matchEmail && !matchAadhaar && !matchState && !matchDist) {
@@ -337,6 +402,65 @@ export default function AdminPage() {
       return true;
     });
   }, [citizens, searchCitizen, filterState, filterPass]);
+
+  // Section Metadata dictionary for display
+  const sectionMetaMap: Record<string, { label: string; labelHi: string; badgeColor: string }> = {
+    exams: { label: 'Competitive Exams', labelHi: 'प्रतियोगी परीक्षाएं', badgeColor: 'bg-amber-950 text-amber-300 border-amber-800' },
+    private_jobs: { label: 'Private Jobs', labelHi: 'प्राइवेट नौकरियां', badgeColor: 'bg-blue-950 text-blue-300 border-blue-800' },
+    internships: { label: 'Internships', labelHi: 'सशुल्क इंटर्नशिप', badgeColor: 'bg-purple-950 text-purple-300 border-purple-800' },
+    education: { label: 'Education & Grants', labelHi: 'शिक्षा व छात्रवृत्ति', badgeColor: 'bg-emerald-950 text-emerald-300 border-emerald-800' },
+    abroad_jobs: { label: 'Abroad Opportunities', labelHi: 'विदेश में अवसर', badgeColor: 'bg-cyan-950 text-cyan-300 border-cyan-800' },
+    career: { label: 'Govt Jobs & Career', labelHi: 'सरकारी नौकरी व करियर', badgeColor: 'bg-indigo-950 text-indigo-300 border-indigo-800' },
+    startups: { label: 'Startups & Grants', labelHi: 'स्टार्टअप व अनुदान', badgeColor: 'bg-rose-950 text-rose-300 border-rose-800' },
+    schemes: { label: 'Welfare Schemes', labelHi: 'जनकल्याण योजनाएं', badgeColor: 'bg-teal-950 text-teal-300 border-teal-800' },
+    freebies: { label: 'Free Tools & Perks', labelHi: 'फ्री टूल्स व सुविधाएं', badgeColor: 'bg-pink-950 text-pink-300 border-pink-800' },
+    health: { label: 'Healthcare & Aid', labelHi: 'स्वास्थ्य व चिकित्सा', badgeColor: 'bg-red-950 text-red-300 border-red-800' },
+  };
+
+  // Filtered opportunities list based on search, section, and status
+  const filteredOpportunities = useMemo(() => {
+    return opportunities.filter((opp) => {
+      // 1. Section Filter
+      if (filterOppSection !== 'all' && opp.lifeStage !== filterOppSection) {
+        return false;
+      }
+
+      // 2. Status Filter
+      if (filterOppStatus === 'active' && opp.isExpired) {
+        return false;
+      }
+      if (filterOppStatus === 'expired' && !opp.isExpired) {
+        return false;
+      }
+
+      // 3. Search Query
+      if (searchOpp.trim()) {
+        const q = searchOpp.toLowerCase().trim();
+        const matchTitle = (opp.title || '').toLowerCase().includes(q) || (opp.titleHi || '').toLowerCase().includes(q);
+        const matchAuthority = (opp.issuingAuthority || '').toLowerCase().includes(q);
+        const matchSection = (opp.lifeStage || '').toLowerCase().includes(q);
+        const matchCat = (opp.category || '').toLowerCase().includes(q);
+        if (!matchTitle && !matchAuthority && !matchSection && !matchCat) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [opportunities, filterOppSection, filterOppStatus, searchOpp]);
+
+  // Copy Citizen Aadhaar Handler with UI Feedback
+  const handleCopyCitizenAadhaar = (e: React.MouseEvent, citizen: RegisteredCitizen) => {
+    e.stopPropagation();
+    const raw = citizen.aadhaarNumber || citizen.aadhaarNumberMasked || citizen.nationalIdMasked || '';
+    const clean = raw.replace(/\D/g, '');
+    const toCopy = clean.length === 12 ? clean : raw;
+    if (toCopy) {
+      navigator.clipboard.writeText(toCopy);
+      setCopiedAadhaarId(citizen.id);
+      setTimeout(() => setCopiedAadhaarId(null), 2000);
+    }
+  };
 
   // Export Registered Citizens to CSV
   const handleExportCSV = () => {
@@ -368,7 +492,7 @@ export default function AdminPage() {
       `"${c.fullName || ''}"`,
       `"${c.phoneNumber || ''}"`,
       `"${c.email || ''}"`,
-      `"${c.aadhaarNumberMasked || c.nationalIdMasked || 'N/A'}"`,
+      `"${c.aadhaarNumber || c.aadhaarNumberMasked || c.nationalIdMasked || 'N/A'}"`,
       c.age || 0,
       `"${c.dob || ''}"`,
       `"${c.gender || ''}"`,
@@ -526,13 +650,14 @@ export default function AdminPage() {
             <button
               onClick={() => {
                 fetchCitizens();
+                fetchOpportunities();
                 fetchSystemStatus();
               }}
-              disabled={isLoadingCitizens || isLoadingStatus}
+              disabled={isLoadingCitizens || isLoadingStatus || isLoadingOpps}
               className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
               title="Refresh all metrics"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoadingCitizens || isLoadingStatus ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${isLoadingCitizens || isLoadingStatus || isLoadingOpps ? 'animate-spin' : ''}`} />
             </button>
 
             <Link
@@ -639,6 +764,18 @@ export default function AdminPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab('opportunities')}
+              className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+                activeTab === 'opportunities'
+                  ? 'border-emerald-500 text-white bg-slate-950'
+                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-950/40'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>Opportunities Registry ({filteredOpportunities.length})</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('crawler')}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
                 activeTab === 'crawler'
@@ -647,7 +784,7 @@ export default function AdminPage() {
               }`}
             >
               <Radio className="w-4 h-4" />
-              <span>Live Feed Crawler & Registry</span>
+              <span>Live Feed Crawler</span>
             </button>
 
             <button
@@ -764,7 +901,12 @@ export default function AdminPage() {
                     ) : (
                       filteredCitizens.map((c) => {
                         const isPaid = c.subscription?.status === 'active';
-                        const aadhaarDisplay = c.aadhaarNumberMasked || c.nationalIdMasked || 'XXXX-XXXX-XXXX';
+                        const rawAadhaar = c.aadhaarNumber || c.aadhaarNumberMasked || c.nationalIdMasked || '';
+                        const cleanDigits = rawAadhaar.replace(/\D/g, '');
+                        const isFullAadhaar = cleanDigits.length === 12;
+                        const aadhaarDisplay = isFullAadhaar
+                          ? cleanDigits.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3')
+                          : rawAadhaar || 'XXXX-XXXX-XXXX';
 
                         return (
                           <tr
@@ -794,13 +936,38 @@ export default function AdminPage() {
                             </td>
 
                             {/* Aadhaar Card / Dossier Badge */}
-                            <td className="py-3 px-4" onClick={(e) => { e.stopPropagation(); setSelectedCitizen(c); }}>
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-700 text-emerald-300 font-mono text-[11px] font-bold transition-all shadow-2xs">
-                                <QrCode className="w-3.5 h-3.5 text-emerald-500" />
-                                <span>{aadhaarDisplay}</span>
-                                <span className="text-[9px] text-emerald-400 bg-emerald-950 px-1 py-0.2 rounded border border-emerald-700/60 font-sans">
-                                  UIDAI
-                                </span>
+                            <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center gap-1.5">
+                                <div
+                                  onClick={() => setSelectedCitizen(c)}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-700 text-emerald-300 font-mono text-[11px] font-bold transition-all shadow-2xs cursor-pointer"
+                                  title="Click to open official UIDAI Dossier"
+                                >
+                                  <QrCode className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                                  <span className="tracking-wide select-all">{aadhaarDisplay}</span>
+                                  {isFullAadhaar ? (
+                                    <span className="text-[9px] text-emerald-300 bg-emerald-950 px-1 py-0.2 rounded border border-emerald-700/80 font-sans font-extrabold">
+                                      REAL
+                                    </span>
+                                  ) : (
+                                    <span className="text-[9px] text-slate-400 bg-slate-800 px-1 py-0.2 rounded border border-slate-700 font-sans">
+                                      UIDAI
+                                    </span>
+                                  )}
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleCopyCitizenAadhaar(e, c)}
+                                  className="p-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                  title="Copy Aadhaar Number"
+                                >
+                                  {copiedAadhaarId === c.id ? (
+                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
                               </div>
                             </td>
 
@@ -889,7 +1056,252 @@ export default function AdminPage() {
         )}
 
         {/* ------------------------------------------------------------- */}
-        {/* TAB 2: LIVE FEED CRAWLER & SECTOR REGISTRY */}
+        {/* TAB 2: OPPORTUNITIES & CIRCULARS REGISTRY */}
+        {/* ------------------------------------------------------------- */}
+        {activeTab === 'opportunities' && (
+          <div className="space-y-4">
+            {/* Opportunities Section Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {Object.entries(sectionMetaMap).map(([stageKey, meta]) => {
+                const stat = oppSectionStats[stageKey] || { count: 0, active: 0, expired: 0 };
+                const isSelected = filterOppSection === stageKey;
+
+                return (
+                  <button
+                    key={stageKey}
+                    onClick={() => setFilterOppSection(isSelected ? 'all' : stageKey)}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-slate-900 border-emerald-500 shadow-sm ring-1 ring-emerald-500/50'
+                        : 'bg-slate-950 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block truncate">
+                        {meta.label}
+                      </span>
+                      <span className="text-[9px] text-slate-500 truncate">
+                        {meta.labelHi}
+                      </span>
+                    </div>
+                    <div className="text-xl font-extrabold text-white font-mono mt-1">
+                      {stat.count}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[10px] mt-0.5 font-mono">
+                      <span className="text-emerald-400 font-semibold">{stat.active} Active</span>
+                      {stat.expired > 0 && (
+                        <span className="text-rose-400 font-semibold">• {stat.expired} Closed</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
+                {/* Search Input */}
+                <div className="relative flex-1 min-w-[220px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="text"
+                    value={searchOpp}
+                    onChange={(e) => setSearchOpp(e.target.value)}
+                    placeholder="Search by Opportunity Name, Authority, Category..."
+                    className="w-full pl-9 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:border-emerald-500 outline-none"
+                  />
+                  {searchOpp && (
+                    <button
+                      onClick={() => setSearchOpp('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                {/* Section Filter Dropdown */}
+                <select
+                  value={filterOppSection}
+                  onChange={(e) => setFilterOppSection(e.target.value)}
+                  className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:border-emerald-500 outline-none cursor-pointer"
+                >
+                  <option value="all">All Sections ({opportunities.length})</option>
+                  {Object.entries(sectionMetaMap).map(([stageKey, meta]) => (
+                    <option key={stageKey} value={stageKey}>
+                      {meta.label} ({oppSectionStats[stageKey]?.count || 0})
+                    </option>
+                  ))}
+                </select>
+
+                {/* Status Filter */}
+                <select
+                  value={filterOppStatus}
+                  onChange={(e) => setFilterOppStatus(e.target.value as any)}
+                  className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:border-emerald-500 outline-none cursor-pointer"
+                >
+                  <option value="all">All Application Status</option>
+                  <option value="active">Active Applications Ongoing</option>
+                  <option value="expired">Closed / Expired</option>
+                </select>
+              </div>
+
+              {/* Counter Pill */}
+              <div className="text-slate-400 font-mono text-[11px] flex items-center gap-2">
+                <span>Showing:</span>
+                <span className="font-bold text-white bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
+                  {filteredOpportunities.length} of {opportunities.length} Total
+                </span>
+              </div>
+            </div>
+
+            {/* Opportunities Data Table */}
+            <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-900/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      <th className="py-3 px-4">Opportunity Name (Title)</th>
+                      <th className="py-3 px-4">Section / Stage</th>
+                      <th className="py-3 px-4">Category & Benefit</th>
+                      <th className="py-3 px-4">Issuing Authority / Ministry</th>
+                      <th className="py-3 px-4">Deadline & Status</th>
+                      <th className="py-3 px-4 text-right">Official Link</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-850">
+                    {filteredOpportunities.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-12 text-center text-slate-500">
+                          {isLoadingOpps ? (
+                            <div className="flex items-center justify-center gap-2">
+                              <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+                              <span>Loading opportunities registry...</span>
+                            </div>
+                          ) : (
+                            <span>No opportunities match your current search query or section filter.</span>
+                          )}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredOpportunities.map((opp) => {
+                        const meta = sectionMetaMap[opp.lifeStage] || {
+                          label: opp.lifeStage.replace('_', ' '),
+                          labelHi: '',
+                          badgeColor: 'bg-slate-800 text-slate-300 border-slate-700',
+                        };
+
+                        return (
+                          <tr key={opp.id} className="hover:bg-slate-900/60 transition-colors group">
+                            {/* Opportunity Name & Title */}
+                            <td className="py-3 px-4 max-w-sm">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-bold text-white group-hover:text-emerald-400 transition-colors block">
+                                    {opp.title}
+                                  </span>
+                                  {opp.isNew && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-700/80 tracking-wide uppercase">
+                                      NEW
+                                    </span>
+                                  )}
+                                  {opp.is100PercentFree && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/80 tracking-wide uppercase">
+                                      100% FREE
+                                    </span>
+                                  )}
+                                </div>
+                                {opp.titleHi && (
+                                  <span className="text-[11px] text-slate-400 font-medium block">
+                                    {opp.titleHi}
+                                  </span>
+                                )}
+                                <span className="text-[10px] text-slate-500 font-mono block">
+                                  ID: {opp.id}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Section / Life Stage Badge */}
+                            <td className="py-3 px-4">
+                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border ${meta.badgeColor}`}>
+                                <span>{meta.label}</span>
+                              </span>
+                              {meta.labelHi && (
+                                <span className="text-[9px] text-slate-500 block mt-0.5">
+                                  {meta.labelHi}
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Category & Benefit */}
+                            <td className="py-3 px-4">
+                              <span className="text-slate-200 font-semibold block capitalize">
+                                {opp.category.replace(/_/g, ' ')}
+                              </span>
+                              <span className="text-[11px] text-emerald-400 font-medium block truncate max-w-xs">
+                                {opp.benefitHeadline || `Benefit: Rs ${(opp.benefitAmount || 0).toLocaleString('en-IN')}`}
+                              </span>
+                            </td>
+
+                            {/* Issuing Authority / Ministry */}
+                            <td className="py-3 px-4">
+                              <span className="text-slate-200 font-medium block">
+                                {opp.issuingAuthority}
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-mono block">
+                                {opp.circularNumber}
+                              </span>
+                            </td>
+
+                            {/* Deadline & Live Status */}
+                            <td className="py-3 px-4">
+                              <div className="space-y-1">
+                                <span className="text-slate-300 font-mono text-[11px] block">
+                                  {opp.deadline ? opp.deadline : 'Open / Rolling'}
+                                </span>
+                                {opp.isExpired ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 text-[10px] font-bold">
+                                    Closed / Expired
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px] font-bold font-mono">
+                                    <Check className="w-3 h-3" /> Active Now
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+
+                            {/* Official Verification URL */}
+                            <td className="py-3 px-4 text-right">
+                              {opp.officialPortalUrl && opp.officialPortalUrl !== '#' ? (
+                                <a
+                                  href={opp.officialPortalUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-slate-700 text-[11px] font-semibold transition-all shadow-xs"
+                                >
+                                  <span>Official Portal</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              ) : (
+                                <span className="text-slate-500 text-[11px]">Official Notice</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------- */}
+        {/* TAB 3: LIVE FEED CRAWLER & SECTOR REGISTRY */}
         {/* ------------------------------------------------------------- */}
         {activeTab === 'crawler' && (
           <div className="space-y-6">

@@ -104,6 +104,7 @@ export interface CitizenRecord {
   nationalIdName?: string;
   nationalIdMasked?: string;
   aadhaarNumberMasked?: string;
+  aadhaarNumber?: string;
   age: number;
   dob?: string;
   gender: 'male' | 'female' | 'other';

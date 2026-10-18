@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
 
     // 5. Validate National ID Checksum (Optional at basic signup)
     let maskedId = '';
+    let cleanDigits = '';
     if (nationalId) {
       const idCheck = validateRealNationalId(nationalId, country, lang);
       if (!idCheck.valid) {
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-      const cleanDigits = idCheck.cleanId;
+      cleanDigits = idCheck.cleanId;
       if (country === 'IN' && cleanDigits.length === 12) {
         maskedId = `XXXX-XXXX-${cleanDigits.slice(-4)}`;
       } else if (country === 'US' && cleanDigits.length === 9) {
@@ -126,6 +127,7 @@ export async function POST(req: NextRequest) {
       nationalIdName: body.nationalIdName || 'National ID',
       nationalIdMasked: maskedId,
       aadhaarNumberMasked: maskedId,
+      aadhaarNumber: nationalId ? cleanDigits : undefined,
       age: userAge,
       dob: userDob,
       gender,

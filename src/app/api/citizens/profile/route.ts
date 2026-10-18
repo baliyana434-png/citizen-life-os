@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
       nationalIdName: body.nationalIdName || existing?.nationalIdName || undefined,
       nationalIdMasked: body.nationalIdMasked || existing?.nationalIdMasked || undefined,
       aadhaarNumberMasked: body.aadhaarNumberMasked || existing?.aadhaarNumberMasked || undefined,
+      aadhaarNumber: body.aadhaarNumber || existing?.aadhaarNumber || undefined,
       age: Number(body.age) || existing?.age || 21,
       dob: body.dob || existing?.dob || undefined,
       gender: body.gender || existing?.gender || 'male',
