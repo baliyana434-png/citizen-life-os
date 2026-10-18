@@ -17,98 +17,14 @@ export const BrandIconSvg: React.FC<{ sizePx?: number; className?: string }> = (
   className = '',
 }) => {
   return (
-    <svg
+    <img
+      src="/logo-shield-transparent.png"
+      alt="Citizen Life OS Shield Emblem"
       width={sizePx}
       height={sizePx}
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={`shrink-0 transition-transform duration-200 hover:scale-105 ${className}`}
-      aria-label="Citizen Life OS Brand Emblem"
-    >
-      <defs>
-        {/* Background Squircle Gradient */}
-        <linearGradient id="closBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0F172A" />
-          <stop offset="50%" stopColor="#0B1329" />
-          <stop offset="100%" stopColor="#030712" />
-        </linearGradient>
-
-        {/* Outer Squircle Border Glow */}
-        <linearGradient id="closBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.5" />
-          <stop offset="50%" stopColor="#10B981" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.2" />
-        </linearGradient>
-
-        {/* Outer 'C' Ribbon Gradient (Emerald to Cyan) */}
-        <linearGradient id="closRibbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#34D399" />
-          <stop offset="50%" stopColor="#10B981" />
-          <stop offset="100%" stopColor="#06B6D4" />
-        </linearGradient>
-
-        {/* Inner Arrow Left Facet (Emerald Bright) */}
-        <linearGradient id="closArrowLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#6EE7B7" />
-          <stop offset="100%" stopColor="#10B981" />
-        </linearGradient>
-
-        {/* Inner Arrow Right Facet (Golden Saffron) */}
-        <linearGradient id="closArrowRight" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FCD34D" />
-          <stop offset="100%" stopColor="#F59E0B" />
-        </linearGradient>
-
-        {/* Apex Star Gradient */}
-        <linearGradient id="closGoldStar" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FDE047" />
-          <stop offset="100%" stopColor="#D97706" />
-        </linearGradient>
-      </defs>
-
-      {/* 1. Base Squircle Container */}
-      <rect
-        x="4"
-        y="4"
-        width="92"
-        height="92"
-        rx="22"
-        fill="url(#closBgGrad)"
-        stroke="url(#closBorderGrad)"
-        strokeWidth="2"
-      />
-
-      {/* 2. Stylized Tech 'C' Ribbon (Sovereign Citizen Crest) */}
-      <path
-        d="M 68 28 C 45 24, 25 35, 25 50 C 25 65, 45 76, 68 72"
-        fill="none"
-        stroke="url(#closRibbonGrad)"
-        strokeWidth="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* 3. Upward Growth Arrow Left Wing (Emerald) */}
-      <path
-        d="M 52 35 L 41 62 L 52 54 Z"
-        fill="url(#closArrowLeft)"
-      />
-
-      {/* 4. Upward Growth Arrow Right Wing (Saffron Gold) */}
-      <path
-        d="M 52 35 L 63 62 L 52 54 Z"
-        fill="url(#closArrowRight)"
-      />
-
-      {/* 5. Center Core Opportunity Light Node */}
-      <circle
-        cx="52"
-        cy="22"
-        r="4.5"
-        fill="url(#closGoldStar)"
-      />
-    </svg>
+      className={`shrink-0 object-contain transition-transform duration-200 hover:scale-105 ${className}`}
+      loading="eager"
+    />
   );
 };
 
@@ -145,7 +61,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
                   : 'text-base sm:text-lg'
               } ${textClassName}`}
             >
-              Citizen <span className="text-emerald-700">Life OS</span>
+              CITIZEN LIFE <span className="text-emerald-700">OS</span>
             </span>
           </div>
           {subtitle && (
@@ -160,7 +76,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   if (linkToHome) {
     return (
-      <Link href="/" className="inline-flex cursor-pointer hover:opacity-95 transition-opacity">
+      <Link href="/" className="inline-flex cursor-pointer hover:opacity-95 transition-opacity" aria-label="Citizen Life OS Home">
         {content}
       </Link>
     );
