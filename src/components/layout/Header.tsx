@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut, GraduationCap, X, ArrowLeft } from 'lucide-react';
+import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut, GraduationCap, X, ArrowLeft, Bell } from 'lucide-react';
 import { BrandIconSvg } from '@/components/common/BrandLogo';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -263,6 +263,21 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               )}
             </Link>
+
+            {/* Live Notification Alerts Toggle Button (Works on iPhone, Android, Laptop, Desktop) */}
+            <button
+              type="button"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open_notification_prompt'));
+              }}
+              className="h-8 w-8 sm:h-9 sm:w-auto inline-flex items-center justify-center sm:px-2.5 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-950 border border-slate-200 hover:border-emerald-300 font-bold text-xs transition-all shrink-0 relative cursor-pointer shadow-2xs"
+              title={language === 'hi' ? 'अवसर नोटिफिकेशन अलर्ट' : 'Opportunity Notification Alerts'}
+              aria-label="Notification Alerts"
+            >
+              <Bell className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span className="hidden md:inline ml-1.5">{language === 'hi' ? 'अलर्ट' : 'Alerts'}</span>
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            </button>
 
             {/* Single Profile Button (Zero Overflow on Mobile) */}
             <button
