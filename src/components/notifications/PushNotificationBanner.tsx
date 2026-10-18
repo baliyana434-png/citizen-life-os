@@ -106,8 +106,8 @@ export const PushNotificationBanner: React.FC<PushNotificationBannerProps> = ({
                 </h4>
                 <p className="text-[11px] text-slate-300 mt-0.5">
                   {language === 'hi' 
-                    ? 'आपके फोन पर एक टेस्ट अलर्ट भेजा गया है। अब सभी नए अपडेट आपको सीधे मिलेंगे।' 
-                    : 'A test alert was sent. You will now receive verified alerts directly on your device.'}
+                    ? 'लाइव अवसर सूचनाएं सक्रिय हो गई हैं। अब सभी नए अपडेट आपको सीधे लॉक स्क्रीन पर मिलेंगे।' 
+                    : 'Live opportunity alerts are now active directly on your device lock screen.'}
                 </p>
               </div>
             ) : (

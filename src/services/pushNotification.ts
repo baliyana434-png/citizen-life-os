@@ -175,11 +175,11 @@ class PushNotificationService {
     }
 
     const title = language === 'hi' 
-      ? 'Citizen Life OS — टेस्ट अलर्ट' 
-      : 'Citizen Life OS — Test Alert';
+      ? 'Citizen Life OS — लाइव अलर्ट सक्रिय' 
+      : 'Citizen Life OS — Live Alerts Activated';
     const body = language === 'hi'
-      ? 'बधाई! आपके फोन की लॉक स्क्रीन व होम स्क्रीन पर सूचनाएं सफलतापूर्वक सक्रिय हो गई हैं।'
-      : 'Success! Push notifications are now active on your lock screen and home screen.';
+      ? 'बधाई! आपके डिवाइस की लॉक स्क्रीन पर लाइव अवसर सूचनाएं सफलतापूर्वक सक्रिय हो गई हैं।'
+      : 'Success! Live opportunity push notifications are now active on your lock screen.';
 
     try {
       if ('serviceWorker' in navigator) {
@@ -190,7 +190,7 @@ class PushNotificationService {
           badge: '/icon.png',
           vibrate: [200, 100, 200],
           data: { url: '/' },
-          tag: 'test-notification',
+          tag: 'citizen-live-alert',
           renotify: true,
         } as any);
         return true;

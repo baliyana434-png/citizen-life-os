@@ -1292,8 +1292,8 @@ export default function HomePage() {
         onNotificationEnabled={() => {
           setPaymentSuccessToast(
             language === 'hi'
-              ? 'Lock Screen नोटिफिकेशन सक्रिय हो गया! एक टेस्ट अलर्ट भेजा गया है।'
-              : 'Lock screen alerts enabled! A test notification was sent.'
+              ? 'Lock Screen नोटिफिकेशन सक्रिय हो गया! लाइव अलर्ट भेजा गया है।'
+              : 'Lock screen alerts enabled! Live verification alert was sent.'
           );
           setTimeout(() => setPaymentSuccessToast(null), 5000);
         }}
