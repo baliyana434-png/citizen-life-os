@@ -25,6 +25,7 @@ import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { VERIFIED_HELPLINES } from '@/data/helplines';
 import { HelplineCategory, HelplineFacility } from '@/types';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 
 export default function HelplinePage() {
   const { language, setLanguage } = useTranslation();
@@ -138,6 +139,7 @@ export default function HelplinePage() {
 
             {/* Quick Navigation Links */}
             <div className="flex items-center gap-2">
+              <LanguageSwitcher />
               <Link
                 href="/saved"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300 transition-all shadow-2xs"

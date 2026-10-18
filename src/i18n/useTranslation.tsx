@@ -35,12 +35,21 @@ export function TranslationProvider({ children }: { children: React.ReactNode })
   const [language, setLanguageState] = useState<SupportedLanguage>('en');
 
   useEffect(() => {
-    const saved = localStorage.getItem('citizen_language') as SupportedLanguage;
-    if (saved && dictionaries[saved]) {
-      setLanguageState(saved);
-      document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = saved;
-    }
+    const handleSync = (e?: any) => {
+      const saved = (e?.detail || (typeof window !== 'undefined' ? localStorage.getItem('citizen_language') : null)) as SupportedLanguage;
+      if (saved && dictionaries[saved]) {
+        setLanguageState(saved);
+        document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = saved;
+      }
+    };
+    handleSync();
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('language_changed', handleSync as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('language_changed', handleSync as EventListener);
+    };
   }, []);
 
   const setLanguage = (lang: SupportedLanguage) => {

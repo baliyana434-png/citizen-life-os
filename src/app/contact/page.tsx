@@ -3,8 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone, MapPin, Clock, MessageSquare, ShieldCheck } from 'lucide-react';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
+import { useTranslation } from '@/i18n/useTranslation';
+import { CONTACT_LOCALES } from '@/data/localization/legalPoliciesData';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 export default function ContactPage() {
+  const { language } = useTranslation();
+  const c = CONTACT_LOCALES[language] || CONTACT_LOCALES.en;
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased flex flex-col">
       {/* Top Bar */}
@@ -15,9 +22,15 @@ export default function ContactPage() {
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-emerald-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>मुख्य पृष्ठ (Back to Home)</span>
+            <span>{c.backHome}</span>
           </Link>
-          <span className="font-extrabold text-sm text-slate-900">Citizen Life OS</span>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+            <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+              <BrandIconSvg sizePx={32} />
+              <span className="font-extrabold text-sm text-slate-900">Citizen Life OS</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -27,13 +40,13 @@ export default function ContactPage() {
         <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-850 to-emerald-950 text-white shadow-xl border border-emerald-500/30">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 mb-3">
             <MessageSquare className="w-3.5 h-3.5" />
-            <span>Citizen Helpdesk & Grievance</span>
+            <span>{c.badge}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-            संपर्क एवं सहायता केंद्र (Contact Us)
+            {c.title}
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl leading-relaxed">
-            नागरिक सहायता, तकनीकी समस्या या भुगतान संबंधी प्रश्नों हेतु हमारी समर्पित सहायता टीम से संपर्क करें।
+            {c.subtitle}
           </p>
         </div>
 
@@ -43,9 +56,9 @@ export default function ContactPage() {
             <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
               <Mail className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-base text-slate-900">ईमेल सहायता (Email Support)</h3>
+            <h3 className="font-extrabold text-base text-slate-900">{c.emailCardTitle}</h3>
             <p className="text-xs text-slate-500">
-              सामान्य पूछताछ, सदस्यता व तकनीकी सहायता हेतु:
+              {c.emailCardDesc}
             </p>
             <a
               href="mailto:support@citizenlifeos.in"
@@ -59,9 +72,9 @@ export default function ContactPage() {
             <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
               <Phone className="w-5 h-5" />
             </div>
-            <h3 className="font-extrabold text-base text-slate-900">हेल्पलाइन (Helpline Desk)</h3>
+            <h3 className="font-extrabold text-base text-slate-900">{c.phoneCardTitle}</h3>
             <p className="text-xs text-slate-500">
-              कार्य दिवसों में प्रत्यक्ष सहायता उपलब्ध:
+              {c.phoneCardDesc}
             </p>
             <span className="inline-block font-mono font-bold text-sm text-slate-900">
               +91 11 4050 8900
@@ -74,10 +87,9 @@ export default function ContactPage() {
           <div className="flex items-start gap-3">
             <Clock className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-bold text-slate-900 text-sm">कार्यकारी समय (Operating Hours)</h4>
-              <p className="text-slate-600 mt-0.5">
-                सोमवार से शनिवार: प्रातः 9:30 बजे से सायं 6:30 बजे तक (IST)<br />
-                रविवार एवं राष्ट्रीय अवकाश के दिन ईमेल सपोर्ट सक्रिय रहता है।
+              <h4 className="font-bold text-slate-900 text-sm">{c.hoursTitle}</h4>
+              <p className="text-slate-600 mt-0.5 whitespace-pre-line">
+                {c.hoursDesc}
               </p>
             </div>
           </div>
@@ -85,10 +97,9 @@ export default function ContactPage() {
           <div className="border-t border-slate-100 pt-4 flex items-start gap-3">
             <MapPin className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-bold text-slate-900 text-sm">पंजीकृत कार्यालय (Registered Office)</h4>
-              <p className="text-slate-600 mt-0.5">
-                Citizen Life OS Civic-Tech Platform<br />
-                New Delhi, India - 110001
+              <h4 className="font-bold text-slate-900 text-sm">{c.officeTitle}</h4>
+              <p className="text-slate-600 mt-0.5 whitespace-pre-line">
+                {c.officeDesc}
               </p>
             </div>
           </div>
@@ -96,9 +107,9 @@ export default function ContactPage() {
           <div className="border-t border-slate-100 pt-4 flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-bold text-slate-900 text-sm">शिकायत निवारण अधिकारी (Grievance Redressal)</h4>
+              <h4 className="font-bold text-slate-900 text-sm">{c.grievanceTitle}</h4>
               <p className="text-slate-600 mt-0.5">
-                सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश) नियम के अनुसार शिकायत अधिकारी: grievance@citizenlifeos.in पर 24 घंटे के भीतर पावती दी जाती है।
+                {c.grievanceDesc}
               </p>
             </div>
           </div>

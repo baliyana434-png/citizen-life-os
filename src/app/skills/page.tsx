@@ -36,6 +36,7 @@ import { useCountry } from '@/context/CountryContext';
 import { SKILL_SECTORS, SKILL_TOPICS, SkillSector, SkillTopic, SkillVideo } from '@/data/skillsData';
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { CitizenProfile, CitizenSubscription } from '@/types';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 
 export default function SkillsPage() {
   const router = useRouter();
@@ -381,6 +382,7 @@ export default function SkillsPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <Link
               href="/saved"
               className="h-9 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"

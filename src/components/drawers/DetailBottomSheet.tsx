@@ -134,7 +134,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 {t('official_verified')}
               </span>
-              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 19 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 19 rupees to unlock opportunity details'}`} />
+              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : (language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल ₹1 में सक्रिय करें' : language === 'es' ? 'Active el Pase Ciudadano de 1 año por 1 ₹ para desbloquear detalles' : language === 'fr' ? 'Activez le Pass Citoyen 1 an pour 1 ₹ pour débloquer les détails' : language === 'de' ? 'Aktivieren Sie den 1-Jahres-Bürgerpass für 1 ₹, um Details freizuschalten' : language === 'ar' ? 'قم بتفعيل تصريح المواطن لمدة عام مقابل 1 روبية فقط لفتح التفاصيل' : 'Activate 1-Year Citizen Pass for 1 rupee to unlock opportunity details')} />
             </div>
             <h2 className={`text-base sm:text-xl font-extrabold text-slate-900 leading-snug ${
               !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
@@ -372,11 +372,29 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 </div>
                 <div className="truncate">
                   <span className="font-extrabold text-slate-900 block text-xs">
-                    {language === 'hi' ? '1-वर्षीय नागरिक पास आवश्यक' : '1-Year Citizen Pass Required'}
+                    {language === 'hi'
+                      ? '1-वर्षीय नागरिक पास आवश्यक'
+                      : language === 'es'
+                      ? 'Se requiere Pase Ciudadano de 1 año'
+                      : language === 'fr'
+                      ? 'Pass Citoyen 1 an requis'
+                      : language === 'de'
+                      ? '1-Jahres-Bürgerpass erforderlich'
+                      : language === 'ar'
+                      ? 'مطلوب تصريح المواطن لمدة عام'
+                      : '1-Year Citizen Pass Required'}
                   </span>
                   <span className="text-[11px] text-slate-600 block truncate">
                     {language === 'hi'
                       ? 'सीधे आधिकारिक पोर्टल पर आवेदन करने हेतु केवल ₹1 में पास सक्रिय करें'
+                      : language === 'es'
+                      ? 'Active el pase por 1 ₹ para acceder al portal oficial'
+                      : language === 'fr'
+                      ? 'Activez le pass pour 1 ₹ pour accéder au portail officiel'
+                      : language === 'de'
+                      ? 'Pass für 1 ₹ aktivieren für direkten Zugang zum amtlichen Portal'
+                      : language === 'ar'
+                      ? 'قم بتفعيل التصريح مقابل 1 روبية للوصول للبوابة الرسمية'
                       : 'Activate ₹1/year pass to access official portal & all skills'}
                   </span>
                 </div>
@@ -389,7 +407,17 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 }}
                 className="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-extrabold text-xs shrink-0 hover:bg-slate-800 transition-all cursor-pointer shadow-xs active:scale-95"
               >
-                {language === 'hi' ? 'अनलॉक करें' : 'Unlock Pass'}
+                {language === 'hi'
+                  ? 'अनलॉक करें'
+                  : language === 'es'
+                  ? 'Desbloquear'
+                  : language === 'fr'
+                  ? 'Débloquer'
+                  : language === 'de'
+                  ? 'Freischalten'
+                  : language === 'ar'
+                  ? 'فتح'
+                  : 'Unlock Pass'}
               </button>
             </div>
           )}
@@ -420,6 +448,14 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               <span className="truncate">
                 {language === 'hi'
                   ? 'पोर्टल अनलॉक करें (पास ₹1)'
+                  : language === 'es'
+                  ? 'Desbloquear Portal (Pase 1 ₹)'
+                  : language === 'fr'
+                  ? 'Débloquer le Portail (Pass 1 ₹)'
+                  : language === 'de'
+                  ? 'Portal Freischalten (Pass 1 ₹)'
+                  : language === 'ar'
+                  ? 'فتح البوابة الرسمية (تصريح 1 روبية)'
                   : 'Unlock Official Portal (Pass ₹1)'}
               </span>
             </button>

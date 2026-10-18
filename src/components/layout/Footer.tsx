@@ -184,6 +184,14 @@ export const Footer: React.FC = () => {
                   <span>
                     {language === 'hi'
                       ? 'रिफंड एवं रद्दीकरण नीति'
+                      : language === 'es'
+                      ? 'Reembolsos y Cancelaciones'
+                      : language === 'fr'
+                      ? 'Remboursement et Annulation'
+                      : language === 'de'
+                      ? 'Rückerstattung & Stornierung'
+                      : language === 'ar'
+                      ? 'سياسة الاسترداد والإلغاء'
                       : 'Refund & Cancellation'}
                   </span>
                 </Link>
@@ -194,6 +202,14 @@ export const Footer: React.FC = () => {
                   <span>
                     {language === 'hi'
                       ? 'संपर्क एवं सहायता'
+                      : language === 'es'
+                      ? 'Contacto y Asistencia'
+                      : language === 'fr'
+                      ? 'Contact et Support'
+                      : language === 'de'
+                      ? 'Kontakt & Hilfe'
+                      : language === 'ar'
+                      ? 'الاتصال والدعم'
                       : 'Contact Us'}
                   </span>
                 </Link>
