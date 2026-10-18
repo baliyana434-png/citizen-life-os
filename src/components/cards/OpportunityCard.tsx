@@ -27,6 +27,7 @@ import { VoiceReader } from '../voice/VoiceReader';
 import { RotatingNewBadge } from '../common/RotatingNewBadge';
 import { generateGoogleCalendarUrl } from '@/lib/calendar';
 import { formatDeadlineText } from '@/lib/dateUtils';
+import { isOpportunityNewActive } from '@/lib/newBadgeTracker';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -105,8 +106,8 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
       }}
       className="group relative bg-white rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer border border-slate-200/90 hover:border-emerald-500/60 shadow-xs hover:shadow-lg transition-all duration-200 h-full overflow-visible"
     >
-      {/* Red Rotating Starburst Badge (100% Visible, Never Clipped) */}
-      {opportunity.isNew && (
+      {/* Red Rotating Starburst Badge (Auto-expires 72 hours after user first views) */}
+      {isOpportunityNewActive(opportunity.id, opportunity.isNew) && (
         <div className="absolute -top-3.5 -left-2.5 z-20 pointer-events-none">
           <RotatingNewBadge size="md" />
         </div>

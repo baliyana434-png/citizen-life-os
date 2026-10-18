@@ -366,18 +366,48 @@ export class LiveFeedCrawler {
 
         const titleLower = rawTitle.toLowerCase();
         if (
+          titleLower.includes('अग्निवीर') ||
+          titleLower.includes('agniveer') ||
+          titleLower.includes('नौसेना') ||
+          titleLower.includes('navy') ||
+          titleLower.includes('थल सेना') ||
+          titleLower.includes('army') ||
+          titleLower.includes('वायु सेना') ||
+          titleLower.includes('air force') ||
           titleLower.includes('भर्ती') ||
           titleLower.includes('रोजगार') ||
           titleLower.includes('पदों') ||
           titleLower.includes('रेलवे') ||
           titleLower.includes('नौकरी') ||
           titleLower.includes('चयन') ||
-          titleLower.includes('असिस्टेंट') ||
-          titleLower.includes('टैक्सी')
+          titleLower.includes('असिस्टेंट')
         ) {
           category = 'govt_job';
           lifeStage = 'exams';
           targetOccupations = ['job_seeker', 'college_student', 'school_student'];
+        } else if (
+          titleLower.includes('इंटरनशिप') ||
+          titleLower.includes('internship') ||
+          titleLower.includes('अपरेंटिस') ||
+          titleLower.includes('apprentice') ||
+          titleLower.includes('प्रशिक्षु') ||
+          titleLower.includes('aicte')
+        ) {
+          category = 'internship';
+          lifeStage = 'internships';
+          targetOccupations = ['college_student', 'job_seeker'];
+        } else if (
+          titleLower.includes('निजी') ||
+          titleLower.includes('private') ||
+          titleLower.includes('कॉर्पोरेट') ||
+          titleLower.includes('corporate') ||
+          titleLower.includes('रोजगार मेला') ||
+          titleLower.includes('ncs') ||
+          titleLower.includes('प्लेसमेंट')
+        ) {
+          category = 'private_job';
+          lifeStage = 'private_jobs';
+          targetOccupations = ['job_seeker', 'college_student', 'employed'];
         } else if (
           titleLower.includes('स्वास्थ्य') ||
           titleLower.includes('आयुर्वेद') ||
@@ -385,12 +415,20 @@ export class LiveFeedCrawler {
           titleLower.includes('अस्पताल') ||
           titleLower.includes('दवा') ||
           titleLower.includes('आरोग्य') ||
-          titleLower.includes('आयुष')
+          titleLower.includes('आयुष') ||
+          titleLower.includes('nhm') ||
+          titleLower.includes('aiims') ||
+          titleLower.includes('एम्स') ||
+          titleLower.includes('health')
         ) {
           category = 'healthcare_free';
           lifeStage = 'health';
-          targetOccupations = ['senior_citizen', 'homemaker', 'farmer', 'employed'];
+          targetOccupations = ['senior_citizen', 'homemaker', 'farmer', 'employed', 'job_seeker'];
         } else if (
+          titleLower.includes('नीट') ||
+          titleLower.includes('neet') ||
+          titleLower.includes('जेईई') ||
+          titleLower.includes('jee') ||
           titleLower.includes('छात्रवृत्ति') ||
           titleLower.includes('शिक्षा') ||
           titleLower.includes('स्कूल') ||
@@ -423,11 +461,22 @@ export class LiveFeedCrawler {
             engTitle = `Ministry of Health & Family Welfare: National Healthcare Advisory (PRID: ${prid})`;
             engDesc = 'Official circular on national healthcare guidelines, diagnostics, and citizen welfare published by the Ministry of Health and Family Welfare, Government of India.';
           } else if (lifeStage === 'exams') {
-            engTitle = `Central Government Recruitment & Vacancy Notification (PRID: ${prid})`;
-            engDesc = 'Official recruitment notice and employment circular issued by the Government of India through the Press Information Bureau.';
+            if (titleLower.includes('अग्निवीर') || titleLower.includes('सेना') || titleLower.includes('नौसेना')) {
+              engTitle = `Ministry of Defence: Armed Forces Recruitment Notification (PRID: ${prid})`;
+              engDesc = 'Official defence forces notification for service entry, Agniveer intake, and technical commissions issued by the Government of India.';
+            } else {
+              engTitle = `Central Government Recruitment & Vacancy Notification (PRID: ${prid})`;
+              engDesc = 'Official recruitment notice and employment circular issued by the Government of India through the Press Information Bureau.';
+            }
+          } else if (lifeStage === 'internships') {
+            engTitle = `National Government Internship Advisory (PRID: ${prid})`;
+            engDesc = 'Official government internship and skill development announcement for youth and students.';
+          } else if (lifeStage === 'private_jobs') {
+            engTitle = `Ministry of Labour: National Career Service Placement Drive (PRID: ${prid})`;
+            engDesc = 'Official employment drive notification connecting verified private sector employers with registered job seekers.';
           } else if (lifeStage === 'education') {
-            engTitle = `Ministry of Education: National Scholarship & Academic Update (PRID: ${prid})`;
-            engDesc = 'Official government circular on national scholarships, student welfare, and educational initiatives.';
+            engTitle = `Ministry of Education: National Academic & Entrance Advisory (PRID: ${prid})`;
+            engDesc = 'Official government circular on national examinations, scholarships, and student initiatives.';
           } else if (lifeStage === 'startups') {
             engTitle = `Ministry of MSME & Commerce: Enterprise & Startup Initiative (PRID: ${prid})`;
             engDesc = 'Official circular on entrepreneurship, credit schemes, and business incentives published by the Government of India.';

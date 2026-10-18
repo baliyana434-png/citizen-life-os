@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
-import { ShieldCheck } from 'lucide-react';
+import { BrandSplashScreen } from '@/components/common/BrandSplashScreen';
 
 function LoginContent() {
   const router = useRouter();
@@ -53,16 +53,7 @@ function LoginContent() {
   };
 
   if (checkingAuth) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-900 selection:bg-emerald-500 selection:text-white">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-emerald-600/20 animate-pulse">
-          <ShieldCheck className="w-8 h-8 text-white" />
-        </div>
-        <p className="mt-4 text-xs font-mono font-bold text-emerald-700 tracking-wider uppercase">
-          CITIZEN LIFE OS
-        </p>
-      </div>
-    );
+    return <BrandSplashScreen />;
   }
 
   return (
@@ -79,15 +70,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-900">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-emerald-600/20 animate-pulse">
-            <ShieldCheck className="w-8 h-8 text-white" />
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<BrandSplashScreen />}>
       <LoginContent />
     </Suspense>
   );

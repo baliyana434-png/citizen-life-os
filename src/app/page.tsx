@@ -16,6 +16,8 @@ import { GoogleAuthService } from '@/services/googleAuth';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import { calculateExactAge } from '@/utils/antiFraudValidation';
+import { BrandSplashScreen } from '@/components/common/BrandSplashScreen';
+import { isOpportunityNewActive, recordOpportunitiesSeen } from '@/lib/newBadgeTracker';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode, CitizenSubscription } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -535,9 +537,23 @@ export default function HomePage() {
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [lastSyncDate, setLastSyncDate] = useState<Date | null>(null);
 
-  // Initialize with current local device time on client mount
+  // Hydrate client clock and any previously auto-fetched circulars on client mount
   useEffect(() => {
     setLastSyncDate(new Date());
+    try {
+      const cached = localStorage.getItem('citizen_auto_fetched_opportunities');
+      if (cached) {
+        const parsed: Opportunity[] = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setOpportunities((prev) => {
+            const existingIds = new Set(prev.map((o) => o.id));
+            const toAdd = parsed.filter((o) => !existingIds.has(o.id));
+            if (toAdd.length === 0) return prev;
+            return [...toAdd, ...prev];
+          });
+        }
+      }
+    } catch (e) {}
   }, []);
 
   const formattedSyncTime = useMemo(() => {
@@ -552,7 +568,7 @@ export default function HomePage() {
     });
   }, [lastSyncDate, language]);
 
-  // Live Internet Background Crawler & Sync
+  // Live Internet Background Crawler & Automatic Real-Time Opportunity Engine
   const fetchLiveSync = useCallback(async (targetCountry?: string) => {
     try {
       setIsSyncing(true);
@@ -565,7 +581,14 @@ export default function HomePage() {
           const existingIds = new Set(prev.map((o) => o.id));
           const toAdd = data.newOpportunities.filter((o: Opportunity) => !existingIds.has(o.id));
           if (toAdd.length === 0) return prev;
-          return [...toAdd, ...prev];
+          const updated = [...toAdd, ...prev];
+          try {
+            // Persist newly discovered trusted opportunities for offline and instant startup
+            const cachedExisting = JSON.parse(localStorage.getItem('citizen_auto_fetched_opportunities') || '[]');
+            const combinedSaved = [...toAdd, ...cachedExisting].slice(0, 50);
+            localStorage.setItem('citizen_auto_fetched_opportunities', JSON.stringify(combinedSaved));
+          } catch (e) {}
+          return updated;
         });
       }
       // Record exact client sync timestamp in user's device timezone
@@ -585,6 +608,14 @@ export default function HomePage() {
     const interval = setInterval(() => fetchLiveSync(country), 60000);
     return () => clearInterval(interval);
   }, [country, fetchLiveSync]);
+
+  // Auto-stamp 72-hour timer for any new opportunities as soon as they appear on user's device
+  useEffect(() => {
+    const newIds = opportunities.filter((o) => o.isNew).map((o) => o.id);
+    if (newIds.length > 0) {
+      recordOpportunitiesSeen(newIds);
+    }
+  }, [opportunities]);
 
   const resultsRef = useRef<HTMLDivElement>(null);
   const lastQueryRef = useRef<string>('');
@@ -723,7 +754,7 @@ export default function HomePage() {
       }
 
       // 4. Sub-filter Match
-      if (activeSubFilter === 'new' && !opp.isNew) return false;
+      if (activeSubFilter === 'new' && !isOpportunityNewActive(opp.id, opp.isNew)) return false;
       if (activeSubFilter === 'upcoming' && opp.applicationStatus !== 'upcoming') return false;
       if (activeSubFilter === 'active_now' && opp.applicationStatus !== 'active_now') return false;
       if (activeSubFilter === 'free_only' && !opp.is100PercentFree) return false;
@@ -732,9 +763,11 @@ export default function HomePage() {
 
       return true;
     }).sort((a, b) => {
-      // Series-Wise Priority 1: All "NEW" opportunities strictly positioned at the VERY TOP
-      if (a.isNew && !b.isNew) return -1;
-      if (!a.isNew && b.isNew) return 1;
+      // Series-Wise Priority 1: All active "NEW" opportunities strictly positioned at the VERY TOP
+      const aIsNew = isOpportunityNewActive(a.id, a.isNew);
+      const bIsNew = isOpportunityNewActive(b.id, b.isNew);
+      if (aIsNew && !bIsNew) return -1;
+      if (!aIsNew && bIsNew) return 1;
 
       // Priority 2: Active registration forms currently open for citizen application
       const statusWeight = { active_now: 1, ongoing: 2, upcoming: 3 };
@@ -810,16 +843,7 @@ export default function HomePage() {
   };
 
   if (isHydratingAuth) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-900 selection:bg-emerald-500 selection:text-white">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-emerald-600/20 animate-pulse">
-          <ShieldCheck className="w-8 h-8 text-white" />
-        </div>
-        <p className="mt-4 text-xs font-mono font-bold text-emerald-700 tracking-wider uppercase">
-          CITIZEN LIFE OS
-        </p>
-      </div>
-    );
+    return <BrandSplashScreen />;
   }
 
   if (!isAuthenticated) {

@@ -31,6 +31,7 @@ export type OpportunityCategory =
 export interface GazetteRef {
   circularNumber: string;
   issuingAuthority: string;
+  issuingAuthorityHi?: string;
   gazetteDate: string;
   lastVerifiedAt: string;
   officialPortalUrl: string;
