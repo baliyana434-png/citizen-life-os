@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Landmark, Search, PhoneCall, Star, User, Globe, LogIn, UserPlus, ShieldCheck, LogOut, GraduationCap, X, ArrowLeft } from 'lucide-react';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { CitizenProfile, SupportedLanguage } from '@/types';
@@ -115,16 +116,16 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-3">
           
           {/* 1. App Identity (Flexible with max-w on narrow screens to prevent pushing right hub off-screen) */}
-          <div className="flex items-center gap-2 min-w-0 shrink">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 shadow-xs shrink-0">
-              <Landmark className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-            </div>
+          <div className="flex items-center gap-2.5 min-w-0 shrink">
+            <Link href="/" className="shrink-0 cursor-pointer block hover:scale-105 transition-transform" aria-label="Citizen Life OS Home">
+              <BrandIconSvg sizePx={38} className="w-8 h-8 sm:w-10 sm:h-10 shadow-xs" />
+            </Link>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
+              <Link href="/" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
                 <span className="font-extrabold text-slate-900 tracking-tight text-sm sm:text-lg truncate max-w-[110px] sm:max-w-none">
                   {t('app_name')}
                 </span>
-              </div>
+              </Link>
               <p className="text-[11px] text-slate-500 hidden lg:block">
                 {t('app_tagline')}
               </p>

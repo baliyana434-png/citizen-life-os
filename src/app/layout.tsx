@@ -128,6 +128,14 @@ export const metadata: Metadata = {
   },
   category: 'Civic Technology & Public Welfare',
   classification: 'Government Schemes, Education, Scholarships, Helplines, Jobs & Skills',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export const viewport: Viewport = {

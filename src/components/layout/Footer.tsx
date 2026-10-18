@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Landmark, ShieldCheck, PhoneCall, Star, FileText, FileCheck } from 'lucide-react';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export const Footer: React.FC = () => {
@@ -18,12 +19,14 @@ export const Footer: React.FC = () => {
           {/* Col 1: Identity & Mission */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 shadow-sm">
-                <Landmark className="w-4 h-4 text-amber-400" />
-              </div>
-              <span className="font-extrabold text-white text-base tracking-tight">
-                {t('app_name')}
-              </span>
+              <Link href="/" className="shrink-0 cursor-pointer block hover:scale-105 transition-transform" aria-label="Citizen Life OS Home">
+                <BrandIconSvg sizePx={36} className="w-9 h-9 shadow-sm" />
+              </Link>
+              <Link href="/" className="hover:opacity-90 transition-opacity">
+                <span className="font-extrabold text-white text-base tracking-tight">
+                  {t('app_name')}
+                </span>
+              </Link>
             </div>
             <p className="text-slate-400 text-xs leading-relaxed max-w-md">
               {language === 'hi'

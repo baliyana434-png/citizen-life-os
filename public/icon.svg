@@ -1,0 +1,46 @@
+<svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="closBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#0B1329" />
+      <stop offset="100%" stop-color="#030712" />
+    </linearGradient>
+    <linearGradient id="closBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#10B981" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.3" />
+    </linearGradient>
+    <linearGradient id="closRibbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="50%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="closArrowLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="closArrowRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <linearGradient id="closGoldStar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Squircle Container -->
+  <rect x="4" y="4" width="92" height="92" rx="22" fill="url(#closBgGrad)" stroke="url(#closBorderGrad)" stroke-width="2.5" />
+
+  <!-- 2. Stylized Tech 'C' Ribbon -->
+  <path d="M 68 28 C 45 24, 25 35, 25 50 C 25 65, 45 76, 68 72" fill="none" stroke="url(#closRibbonGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- 3. Upward Growth Arrow Left Wing (Emerald) -->
+  <path d="M 52 35 L 41 62 L 52 54 Z" fill="url(#closArrowLeft)" />
+
+  <!-- 4. Upward Growth Arrow Right Wing (Saffron Gold) -->
+  <path d="M 52 35 L 63 62 L 52 54 Z" fill="url(#closArrowRight)" />
+
+  <!-- 5. Center Core Opportunity Light Node -->
+  <circle cx="52" cy="22" r="4.5" fill="url(#closGoldStar)" />
+</svg>

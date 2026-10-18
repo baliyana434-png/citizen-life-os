@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ShieldCheck, Landmark, Lock, Eye, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Lock, Eye, FileText, CheckCircle2 } from 'lucide-react';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
 
 export default function PrivacyPolicyPage() {
   return (
@@ -17,12 +18,10 @@ export default function PrivacyPolicyPage() {
             <ArrowLeft className="w-4 h-4" />
             <span>मुख्य पृष्ठ (Back to Home)</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold">
-              <Landmark className="w-4 h-4 text-amber-400" />
-            </div>
+          <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <BrandIconSvg sizePx={32} />
             <span className="font-extrabold text-sm text-slate-900">Citizen Life OS</span>
-          </div>
+          </Link>
         </div>
       </header>
 
