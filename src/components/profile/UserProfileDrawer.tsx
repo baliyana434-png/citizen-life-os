@@ -403,7 +403,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                       <span className="text-[10px] text-slate-400">
                         {profile.subscription?.status === 'active' 
                           ? (language === 'hi' ? `सक्रिय • वैधता: ${profile.subscription.validUntil}` : `Active • Valid until ${profile.subscription.validUntil}`)
-                          : (language === 'hi' ? 'निष्क्रिय • केवल ₹19 / 1 वर्ष' : 'Inactive • Only ₹19 / 1 Year')}
+                          : (language === 'hi' ? 'निष्क्रिय • केवल ₹1 / 1 वर्ष' : 'Inactive • Only ₹1 / 1 Year')}
                       </span>
                     </div>
                   </div>
@@ -422,7 +422,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                       className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition-all shadow-sm flex items-center gap-1 cursor-pointer"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>{language === 'hi' ? '₹19 पास लें' : 'Get Pass'}</span>
+                      <span>{language === 'hi' ? '₹1 पास लें' : 'Get Pass'}</span>
                     </button>
                   )}
                 </div>

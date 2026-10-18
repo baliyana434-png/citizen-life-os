@@ -216,7 +216,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
             ) : (
               <>
                 <Lock className="w-3.5 h-3.5 text-amber-300" />
-                <span>{language === 'hi' ? 'अनलॉक करें (पास ₹19)' : 'Unlock (Pass ₹19)'}</span>
+                <span>{language === 'hi' ? 'अनलॉक करें (पास ₹1)' : 'Unlock (Pass ₹1)'}</span>
               </>
             )}
           </button>

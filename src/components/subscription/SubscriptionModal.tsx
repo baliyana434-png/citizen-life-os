@@ -57,7 +57,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   if (!isOpen) return null;
 
   // Plan pricing
-  const planAmount = 19;
+  const planAmount = 1;
   const currencyCode = 'INR';
   const currencySymbol = '₹';
 
@@ -294,7 +294,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             {language === 'hi' ? 'रेज़रपे सुरक्षित चेकआउट' : 'Razorpay Secure Checkout'}
           </h3>
           <p className="text-[11px] text-slate-300">
-            {language === 'hi' ? 'भुगतान विंडो खुल रही है (₹19)...' : 'Opening payment window (₹19)...'}
+            {language === 'hi' ? 'भुगतान विंडो खुल रही है (₹1)...' : 'Opening payment window (₹1)...'}
           </p>
         </div>
         <p className="text-[10px] text-slate-400">Google Pay • PhonePe • Cards • Net Banking</p>

@@ -45,7 +45,7 @@ export default function RefundPage() {
               <span>डिजिटल सेवा एवं सदस्यता (Digital Service Delivery)</span>
             </h2>
             <p>
-              Citizen Life OS पर 1-वर्षीय नागरिक सदस्यता (1-Year National Citizen Access Pass ₹19) एक डिजिटल सेवा है। सफल भुगतान के तुरंत बाद सदस्यता स्वतः आपके खाते में सक्रिय हो जाती है। इसके लिए किसी भौतिक वस्तु (physical goods) की शिपिंग या डिलीवरी की आवश्यकता नहीं होती है।
+              Citizen Life OS पर 1-वर्षीय नागरिक सदस्यता (1-Year National Citizen Access Pass ₹1) एक डिजिटल सेवा है। सफल भुगतान के तुरंत बाद सदस्यता स्वतः आपके खाते में सक्रिय हो जाती है। इसके लिए किसी भौतिक वस्तु (physical goods) की शिपिंग या डिलीवरी की आवश्यकता नहीं होती है।
             </p>
           </section>
 

@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // SERVER-LOCKED PRICE: Fixed ₹19 INR for 1-Year Pass
-    const FIXED_AMOUNT = 19;
+    // SERVER-LOCKED PRICE: Fixed ₹1 INR for 1-Year Pass
+    const FIXED_AMOUNT = 1;
     const FIXED_CURRENCY = 'INR';
     const timestamp = Date.now();
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         });
 
         // Razorpay expects amount in smallest currency unit (Paisa)
-        // ₹19 = 1900 Paisa
+        // ₹1 = 100 Paisa
         const razorpayOrder = await razorpay.orders.create({
           amount: FIXED_AMOUNT * 100,
           currency: FIXED_CURRENCY,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Local Fallback / Test Simulation Order (if keys not yet configured)
-    const localOrderId = 'ORD-19-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+    const localOrderId = 'ORD-1-' + crypto.randomBytes(4).toString('hex').toUpperCase();
 
     return NextResponse.json({
       success: true,

@@ -336,8 +336,8 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                   </span>
                   <span className="text-[11px] text-slate-600 block truncate">
                     {language === 'hi'
-                      ? 'सीधे आधिकारिक पोर्टल पर आवेदन करने हेतु केवल ₹19 में पास सक्रिय करें'
-                      : 'Activate ₹19/year pass to access official portal & all skills'}
+                      ? 'सीधे आधिकारिक पोर्टल पर आवेदन करने हेतु केवल ₹1 में पास सक्रिय करें'
+                      : 'Activate ₹1/year pass to access official portal & all skills'}
                   </span>
                 </div>
               </div>
@@ -379,8 +379,8 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               <Lock className="w-4 h-4 text-amber-300 shrink-0" />
               <span className="truncate">
                 {language === 'hi'
-                  ? 'पोर्टल अनलॉक करें (पास ₹19)'
-                  : 'Unlock Official Portal (Pass ₹19)'}
+                  ? 'पोर्टल अनलॉक करें (पास ₹1)'
+                  : 'Unlock Official Portal (Pass ₹1)'}
               </span>
             </button>
           )}

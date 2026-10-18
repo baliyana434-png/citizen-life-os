@@ -7,9 +7,9 @@ import { CitizenSubscription } from '@/types';
 
 /**
  * Anti-Hack & Anti-Tamper Subscription Payment Verification Engine
- * 1. Enforces mandatory server-side locked price (1900 Paisa = ₹19 INR).
+ * 1. Enforces mandatory server-side locked price (100 Paisa = ₹1 INR).
  * 2. Cryptographic HMAC-SHA256 signature verification matching Razorpay secret.
- * 3. Server-to-server gateway lookup to prevent 1-rupee client-side tampering.
+ * 3. Server-to-server gateway lookup to prevent client-side tampering.
  * 4. Anti-replay prevention: Rejects reused payment IDs.
  */
 export async function POST(req: NextRequest) {
@@ -157,18 +157,18 @@ export async function POST(req: NextRequest) {
 
         const paymentDetails: any = await razorpay.payments.fetch(razorpayPaymentId);
 
-        // Anti-Tamper Check 1: Amount must be exactly 1900 Paisa (₹19 INR)
-        if (!paymentDetails || paymentDetails.amount < 1900) {
+        // Anti-Tamper Check 1: Amount must be exactly 100 Paisa (₹1 INR)
+        if (!paymentDetails || paymentDetails.amount < 100) {
           console.error('CRITICAL ANTI-HACK ALERT: Tampered payment amount detected:', {
             paymentId: razorpayPaymentId,
             paidAmountPaisa: paymentDetails?.amount,
-            requiredAmountPaisa: 1900,
+            requiredAmountPaisa: 100,
           });
           return NextResponse.json(
             {
               success: false,
               errorType: 'TAMPERED_AMOUNT',
-              message: 'सुरक्षा चेतावनी: भुगतान राशि में छेड़छाड़ पाई गई। 1-वर्षीय नागरिक पास शुल्क ₹19 अनिवार्य है।',
+              message: 'सुरक्षा चेतावनी: भुगतान राशि में छेड़छाड़ पाई गई। 1-वर्षीय नागरिक पास शुल्क ₹1 अनिवार्य है।',
             },
             { status: 400 }
           );
@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
     } else {
       // Sandbox fallback mode (only permitted when no live keys exist):
       // Must follow authentic simulation token format
-      if (!orderId.startsWith('ORD-19-')) {
+      if (!orderId.startsWith('ORD-1-') && !orderId.startsWith('ORD-19-')) {
         return NextResponse.json(
           {
             success: false,
@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 6. SERVER-ENFORCED AMOUNT & PLAN: Never trust client payload
-    const FIXED_AMOUNT = 19;
+    const FIXED_AMOUNT = 1;
     const FIXED_CURRENCY = 'INR';
     const PLAN = '1_year';
 
@@ -272,7 +272,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '₹19 1-वर्षीय राष्ट्रीय नागरिक पास सफलतापूर्वक सत्यापित एवं सक्रिय कर दिया गया।',
+      message: '₹1 1-वर्षीय राष्ट्रीय नागरिक पास सफलतापूर्वक सत्यापित एवं सक्रिय कर दिया गया।',
       subscription,
     });
   } catch (error: any) {

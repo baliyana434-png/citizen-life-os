@@ -485,7 +485,7 @@ export default function HomePage() {
     }
   };
 
-  // Handle ₹19 1-Year Subscription Success
+  // Handle ₹1 1-Year Subscription Success
   const handleSubscriptionSuccess = (sub: CitizenSubscription) => {
     setIsSubscriptionOpen(false);
     const baseProfile = profile || DEFAULT_PROFILE;
@@ -507,8 +507,8 @@ export default function HomePage() {
 
     setPaymentSuccessToast(
       language === 'hi'
-        ? `बधाई हो ${updatedProfile.fullName}! आपका ₹19 का 1-वर्षीय राष्ट्रीय नागरिक पास सक्रिय हो गया है (वैधता: 365 दिन)।`
-        : `Congratulations ${updatedProfile.fullName}! Your ₹19 1-Year National Citizen Pass is now active (365 Days).`
+        ? `बधाई हो ${updatedProfile.fullName}! आपका ₹1 का 1-वर्षीय राष्ट्रीय नागरिक पास सक्रिय हो गया है (वैधता: 365 दिन)।`
+        : `Congratulations ${updatedProfile.fullName}! Your ₹1 1-Year National Citizen Pass is now active (365 Days).`
     );
     setTimeout(() => setPaymentSuccessToast(null), 6000);
   };
@@ -521,8 +521,8 @@ export default function HomePage() {
       setIsAuthOpen(true);
       setPaymentSuccessToast(
         customNotice || (language === 'hi'
-          ? '1-वर्षीय नागरिक पास (केवल ₹19) अपने खाते से जोड़ने हेतु कृपया पहले खाता बनाएं या लॉगिन करें।'
-          : 'Please create an account or log in first to activate your 1-Year Citizen Pass (only ₹19).')
+          ? '1-वर्षीय नागरिक पास (केवल ₹1) अपने खाते से जोड़ने हेतु कृपया पहले खाता बनाएं या लॉगिन करें।'
+          : 'Please create an account or log in first to activate your 1-Year Citizen Pass (only ₹1).')
       );
       setTimeout(() => setPaymentSuccessToast(null), 6000);
     } else {
@@ -860,7 +860,7 @@ export default function HomePage() {
                 </div>
                 <div className="truncate text-[11px]">
                   <span className="font-bold text-white">
-                    {language === 'hi' ? '1-वर्षीय नागरिक पास • ₹19' : '1-Year Citizen Pass • ₹19'}
+                    {language === 'hi' ? '1-वर्षीय नागरिक पास • ₹1' : '1-Year Citizen Pass • ₹1'}
                   </span>
                 </div>
               </div>
@@ -870,7 +870,7 @@ export default function HomePage() {
                 className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[11px] shrink-0 transition-all cursor-pointer flex items-center gap-1"
               >
                 <Sparkles className="w-3 h-3" />
-                <span>{language === 'hi' ? 'सक्रिय ₹19' : 'Activate ₹19'}</span>
+                <span>{language === 'hi' ? 'सक्रिय ₹1' : 'Activate ₹1'}</span>
               </button>
             </div>
 
@@ -883,7 +883,7 @@ export default function HomePage() {
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <span className="font-bold text-white block">
-                      {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹19 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹19 / 1 Year'}
+                      {language === 'hi' ? '1-वर्षीय राष्ट्रीय नागरिक पास • केवल ₹1 / 1 वर्ष' : '1-Year National Citizen Access Pass • Only ₹1 / 1 Year'}
                     </span>
                     <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-600/50 shrink-0">
                       {language === 'hi' ? `₹${totalBenefitSum.toLocaleString('en-IN')} के लाभ अनलॉक करें` : `Unlock ${countryMeta.currencySymbol}${totalBenefitSum.toLocaleString()} Benefits`}
@@ -902,7 +902,7 @@ export default function HomePage() {
                 className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{language === 'hi' ? 'पास सक्रिय करें (₹19)' : 'Activate Pass (₹19)'}</span>
+                <span>{language === 'hi' ? 'पास सक्रिय करें (₹1)' : 'Activate Pass (₹1)'}</span>
               </button>
             </div>
           </>
@@ -1024,8 +1024,8 @@ export default function HomePage() {
                 onRequireSubscription={() => {
                   handleOpenSubscription(
                     language === 'hi'
-                      ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹19) सक्रिय करें।'
-                      : 'Activate 1-Year Citizen Pass (only ₹19) to apply directly on official portal.'
+                      ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹1) सक्रिय करें।'
+                      : 'Activate 1-Year Citizen Pass (only ₹1) to apply directly on official portal.'
                   );
                 }}
               />
@@ -1048,8 +1048,8 @@ export default function HomePage() {
           setSelectedOpp(null);
           handleOpenSubscription(
             language === 'hi'
-              ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹19) सक्रिय करें।'
-              : 'Activate 1-Year Citizen Pass (only ₹19) to apply directly on official portal.'
+              ? 'आधिकारिक पोर्टल पर सीधे आवेदन करने हेतु 1-वर्षीय नागरिक पास (केवल ₹1) सक्रिय करें।'
+              : 'Activate 1-Year Citizen Pass (only ₹1) to apply directly on official portal.'
           );
         }}
       />
@@ -1123,7 +1123,7 @@ export default function HomePage() {
         }}
       />
 
-      {/* 8. 1-Year Citizen Access Subscription Modal (₹19 / Year) */}
+      {/* 8. 1-Year Citizen Access Subscription Modal (₹1 / Year) */}
       <SubscriptionModal
         isOpen={isSubscriptionOpen}
         onClose={() => setIsSubscriptionOpen(false)}

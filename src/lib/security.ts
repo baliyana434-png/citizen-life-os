@@ -19,8 +19,8 @@ export class PaymentSecurityService {
    */
   static verifySignature(sub: CitizenSubscription, citizenId: string): boolean {
     if (!sub || !sub.signature) return false;
-    // Price must be exactly 19 INR
-    if (sub.amount !== 19 || sub.currency !== 'INR') return false;
+    // Price must be exactly 1 INR (or legacy 19 INR)
+    if ((sub.amount !== 1 && sub.amount !== 19) || sub.currency !== 'INR') return false;
 
     // Check expiry timestamp
     const now = new Date();

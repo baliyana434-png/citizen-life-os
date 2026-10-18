@@ -1674,7 +1674,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     {language === 'hi' ? '1-वर्षीय नागरिक पास' : '1-Year Citizen Pass'}
                   </p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'hi' ? 'केवल ₹19 में असीमित पहुंच' : 'Full access for just ₹19/year'}
+                    {language === 'hi' ? 'केवल ₹1 में असीमित पहुंच' : 'Full access for just ₹1/year'}
                   </p>
                 </div>
               </div>
