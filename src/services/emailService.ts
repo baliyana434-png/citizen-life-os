@@ -259,8 +259,17 @@ export class EmailService {
       </div>
 
       <div class="btn-container">
-        <a href="${resetUrl}" class="btn" target="_blank">
+        <a href="${resetUrl}" class="btn" target="_blank" rel="noopener noreferrer">
           ${isHi ? 'पासवर्ड रीसेट करें (Click to Reset)' : 'Reset My Password'}
+        </a>
+      </div>
+
+      <div style="margin-top: 18px; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; text-align: left;">
+        <p style="margin: 0 0 6px 0; font-size: 11px; font-weight: 700; color: #475569;">
+          ${isHi ? 'डायरेक्ट रीसेट लिंक (यदि बटन काम न करे):' : 'Direct Reset Link (If button does not click):'}
+        </p>
+        <a href="${resetUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 11px; color: #059669; word-break: break-all; text-decoration: underline; font-weight: 600;">
+          ${resetUrl}
         </a>
       </div>
 
@@ -293,6 +302,11 @@ export class EmailService {
           subject,
           text: plainText,
           html: htmlContent,
+          headers: {
+            'X-Priority': '1 (Highest)',
+            'X-MSMail-Priority': 'High',
+            Importance: 'High',
+          },
         });
 
         console.log(`[EmailService] SMTP delivered successfully to ${toEmail}:`, info.messageId);
