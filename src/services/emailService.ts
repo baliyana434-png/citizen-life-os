@@ -27,13 +27,16 @@ const FIREBASE_API_KEY =
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
   'AIzaSyAOHH-q4-mKpTHcwUjezHrlBFDo9Xs3u44';
 
+const DEFAULT_SMTP_USER = 'baliyana434@gmail.com';
+const DEFAULT_SMTP_PASS = 'mhaj gpbw lizc xotk';
+
 export class EmailService {
   /**
    * Check if real SMTP credentials are provided
    */
   static isSmtpConfigured(): boolean {
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
+    const user = process.env.SMTP_USER || DEFAULT_SMTP_USER;
+    const pass = process.env.SMTP_PASS || DEFAULT_SMTP_PASS;
     return Boolean(user && pass && user !== 'your_email@gmail.com');
   }
 
@@ -41,8 +44,8 @@ export class EmailService {
    * Create Nodemailer transporter
    */
   private static getTransporter() {
-    const user = process.env.SMTP_USER || '';
-    const pass = process.env.SMTP_PASS || '';
+    const user = process.env.SMTP_USER || DEFAULT_SMTP_USER;
+    const pass = process.env.SMTP_PASS || DEFAULT_SMTP_PASS;
     const host = process.env.SMTP_HOST || (user.endsWith('@gmail.com') ? 'smtp.gmail.com' : 'smtp.gmail.com');
     const port = Number(process.env.SMTP_PORT) || 465;
     const secure = port === 465;
@@ -294,7 +297,7 @@ export class EmailService {
         const transporter = this.getTransporter();
         const fromAddress =
           process.env.SMTP_FROM ||
-          `"Citizen Life OS" <${process.env.SMTP_USER}>`;
+          `"Citizen Life OS" <${process.env.SMTP_USER || DEFAULT_SMTP_USER}>`;
 
         const info = await transporter.sendMail({
           from: fromAddress,
