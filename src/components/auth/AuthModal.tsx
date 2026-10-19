@@ -642,6 +642,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           data.message ||
             (language === 'hi' ? 'पासवर्ड रीसेट लिंक भेजने में समस्या आई।' : 'Failed to send reset link.')
         );
+        if (data.errorType === 'ACCOUNT_NOT_FOUND') {
+          setAccountNotFoundNotice(true);
+        }
         return;
       }
 
