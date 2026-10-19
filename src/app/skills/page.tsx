@@ -441,7 +441,7 @@ export default function SkillsPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={language === 'hi' ? 'हुनर या विषय खोजें (जैसे: German, Japanese, Video Editing, Photography, Python, Vedic Maths)...' : 'Search any skill (e.g. German, Video Editing, Photography, Lightroom, Python)...'}
+                placeholder={language === 'hi' ? 'हुनर या विषय खोजें (German, Python, Video Editing, AI)...' : 'Search any skill or course (German, Python, Video Editing, AI)...'}
                 className="w-full pl-10 pr-9 py-2.5 bg-slate-950/80 text-white placeholder-slate-400 rounded-xl border border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none text-xs sm:text-sm transition-all"
               />
               {searchQuery && (

@@ -148,7 +148,7 @@ function ResetPasswordContent() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@gmail.com"
+                placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता' : 'Registered email address'}
                 className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
               />
             </div>
@@ -168,8 +168,8 @@ function ResetPasswordContent() {
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder={language === 'hi' ? 'उदा. 482910' : 'e.g. 482910'}
-                maxLength={48}
+                placeholder={language === 'hi' ? '6-अंकों का वेरिफिकेशन कोड' : '6-digit verification code'}
+                maxLength={6}
                 className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-mono font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none tracking-widest transition-all"
               />
             </div>
@@ -189,7 +189,7 @@ function ResetPasswordContent() {
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder={language === 'hi' ? 'कम से कम 8 अक्षर (अक्षर, अंक, चिह्न)' : 'Min 8 chars with symbols & numbers'}
+                placeholder={language === 'hi' ? 'नया पासवर्ड' : 'New password'}
                 className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
               />
               <button
@@ -216,7 +216,7 @@ function ResetPasswordContent() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={language === 'hi' ? 'पासवर्ड पुनः दर्ज करें' : 'Re-enter your new password'}
+                placeholder={language === 'hi' ? 'नए पासवर्ड की पुष्टि करें' : 'Confirm new password'}
                 className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
               />
               <button

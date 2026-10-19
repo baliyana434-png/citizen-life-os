@@ -448,7 +448,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                       setFullName(e.target.value);
                       clearFieldError('fullName');
                     }}
-                    placeholder="e.g. Abhay Kumar"
+                    placeholder={language === 'hi' ? 'पूरा कानूनी नाम दर्ज करें' : 'Enter full legal name'}
                     className={`w-full pl-9 pr-3 py-2 rounded-xl border ${
                       fieldErrors.fullName ? 'border-red-400 bg-red-50/20' : 'border-slate-300'
                     } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none text-xs font-semibold`}
@@ -473,7 +473,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                       setPhone(e.target.value.replace(/\D/g, ''));
                       clearFieldError('phone');
                     }}
-                    placeholder="98XXXXXXXX"
+                    placeholder={language === 'hi' ? '10-अंकों का मोबाइल नंबर' : '10-digit mobile number'}
                     className={`w-full pl-9 pr-3 py-2 rounded-xl border ${
                       fieldErrors.phone ? 'border-red-400 bg-red-50/20' : 'border-slate-300'
                     } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none text-xs font-mono font-bold`}
@@ -512,7 +512,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                       setAadhaarNumber(formatted);
                       clearFieldError('aadhaar');
                     }}
-                    placeholder="XXXX XXXX 8921"
+                    placeholder={language === 'hi' ? '12-अंकों का आधार नंबर' : '12-digit Aadhaar number'}
                     className={`w-full pl-9 pr-3 py-2 rounded-xl border ${
                       fieldErrors.aadhaar
                         ? 'border-red-400 bg-red-50/30'
@@ -597,7 +597,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                       setDistrict(e.target.value);
                       clearFieldError('district');
                     }}
-                    placeholder="e.g. Kanpur Nagar / Patna"
+                    placeholder={language === 'hi' ? 'जिले का नाम दर्ज करें' : 'Enter district name'}
                     className={`w-full pl-9 pr-3 py-2 rounded-xl border ${
                       fieldErrors.district ? 'border-red-400 bg-red-50/20' : 'border-slate-300'
                     } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none text-xs font-medium`}
@@ -622,7 +622,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                       setPincode(e.target.value.replace(/\D/g, ''));
                       clearFieldError('pincode');
                     }}
-                    placeholder="208001"
+                    placeholder={language === 'hi' ? '6-अंकों का पिनकोड' : '6-digit pincode'}
                     className={`w-full pl-9 pr-3 py-2 rounded-xl border ${
                       fieldErrors.pincode ? 'border-red-400 bg-red-50/20' : 'border-slate-300'
                     } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none text-xs font-mono font-bold`}
@@ -685,7 +685,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                       setFamilyIncome(Number(e.target.value));
                       clearFieldError('familyIncome');
                     }}
-                    placeholder="180000"
+                    placeholder={language === 'hi' ? 'वार्षिक आय दर्ज करें' : 'Enter annual income'}
                     className={`w-full pl-9 pr-3 py-2 rounded-xl border ${
                       fieldErrors.familyIncome ? 'border-red-400 bg-red-50/20' : 'border-slate-300'
                     } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none text-xs font-mono font-bold`}

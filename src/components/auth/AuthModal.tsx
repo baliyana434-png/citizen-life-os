@@ -1105,7 +1105,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         type="email"
                         value={googleFallbackEmail}
                         onChange={(e) => setGoogleFallbackEmail(e.target.value)}
-                        placeholder="name@gmail.com"
+                        placeholder={language === 'hi' ? 'ईमेल पता दर्ज करें' : 'Enter email address'}
                         className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
                       />
                       <button
@@ -1180,7 +1180,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={language === 'hi' ? 'वास्तविक ईमेल पता (उदा. name@gmail.com)' : 'Real email address (e.g. name@gmail.com)'}
+                  placeholder={language === 'hi' ? 'वास्तविक ईमेल पता' : 'Real email address'}
                   className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
                     emailValidation && !emailValidation.valid
                       ? 'border-red-400 focus:border-red-500'
@@ -1356,7 +1356,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         type="email"
                         value={googleFallbackEmail}
                         onChange={(e) => setGoogleFallbackEmail(e.target.value)}
-                        placeholder="name@gmail.com"
+                        placeholder={language === 'hi' ? 'ईमेल पता दर्ज करें' : 'Enter email address'}
                         className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
                       />
                       <button
@@ -1645,7 +1645,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता (name@gmail.com)' : 'Registered email address'}
+                placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता' : 'Registered email address'}
                 className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
               />
             </div>
@@ -1716,8 +1716,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={forgotOtp}
                   onChange={(e) => setForgotOtp(e.target.value)}
-                  placeholder={language === 'hi' ? '6-अंकों का वेरिफिकेशन कोड (उदा. 482910)' : '6-digit code (e.g. 482910)'}
-                  maxLength={48}
+                  placeholder={language === 'hi' ? '6-अंकों का वेरिफिकेशन कोड' : '6-digit verification code'}
+                  maxLength={6}
                   className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border border-slate-200 font-mono font-bold text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all tracking-wider"
                 />
               </div>

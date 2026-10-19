@@ -223,7 +223,7 @@ export const AddFamilyMemberModal: React.FC<AddFamilyMemberModalProps> = ({
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Satish Baliyan"
+                placeholder={language === 'hi' ? 'सदस्य का पूरा कानूनी नाम दर्ज करें' : 'Enter member full legal name'}
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none text-xs font-semibold"
               />
             </div>

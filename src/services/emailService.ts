@@ -204,7 +204,7 @@ export class EmailService {
     const { toEmail, citizenName = 'Citizen', resetCode, resetToken, origin = '', lang = 'en' } = opts;
 
     const baseOrigin = origin || (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
-    const resetUrl = `${baseOrigin}/reset-password?email=${encodeURIComponent(toEmail)}&token=${encodeURIComponent(resetToken || resetCode)}`;
+    const resetUrl = `${baseOrigin}/reset-password?email=${encodeURIComponent(toEmail)}&token=${encodeURIComponent(resetCode)}`;
 
     const isHi = lang === 'hi';
     const subject = isHi

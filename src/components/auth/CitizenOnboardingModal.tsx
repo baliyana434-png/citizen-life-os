@@ -396,7 +396,7 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder={language === 'hi' ? 'उदा. राहुल कुमार शर्मा' : 'e.g. Johnathan Smith'}
+                  placeholder={language === 'hi' ? 'पूरा नाम दर्ज करें' : 'Enter full legal name'}
                   className={`w-full py-2.5 px-3 rounded-xl bg-white border text-xs font-bold text-slate-900 outline-none transition-all ${
                     nameValidation && !nameValidation.valid
                       ? 'border-red-400 focus:ring-2 focus:ring-red-400/20'
@@ -428,7 +428,7 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="citizen@gmail.com"
+                  placeholder={language === 'hi' ? 'ईमेल पता दर्ज करें' : 'Enter email address'}
                   className="w-full py-2.5 px-3 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">

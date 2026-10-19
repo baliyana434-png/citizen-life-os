@@ -126,7 +126,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
     currencySymbol: '£',
     currencyCode: 'GBP',
     nationalIdName: 'National Insurance Number (NINO)',
-    nationalIdPlaceholder: 'NINO (e.g. QQ 12 34 56 A)',
+    nationalIdPlaceholder: 'NINO (QQ 12 34 56 A)',
     administrativeLabel: 'Home Nation / Region',
     divisions: [
       'England - Greater London',
@@ -387,7 +387,7 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
     currencySymbol: 'S$',
     currencyCode: 'SGD',
     nationalIdName: 'NRIC (National Registration IC)',
-    nationalIdPlaceholder: 'NRIC Number (e.g. S1234567A)',
+    nationalIdPlaceholder: 'NRIC Number (S1234567A)',
     administrativeLabel: 'Planning Area',
     divisions: [
       'Central Region',

@@ -451,7 +451,7 @@ export function validateRealNationalId(
       return {
         valid: false,
         cleanId: cleanNino,
-        error: lang === 'hi' ? 'अमान्य ब्रिटेन NINO नंबर (प्रारूप: QQ 12 34 56 A)।' : 'Invalid UK National Insurance Number format (e.g. QQ 12 34 56 A).',
+        error: lang === 'hi' ? 'अमान्य ब्रिटेन NINO नंबर (प्रारूप: QQ 12 34 56 A)।' : 'Invalid UK National Insurance Number format (format: QQ 12 34 56 A).',
       };
     }
     return { valid: true, cleanId: cleanNino };
@@ -581,8 +581,8 @@ export function validateRealEmail(
       valid: false,
       cleanEmail: trimmed,
       error: lang === 'hi'
-        ? 'अमान्य ईमेल प्रारूप! कृपया सही ईमेल दर्ज करें (उदा. username@gmail.com)।'
-        : 'Invalid email format! Please enter a valid email address (e.g. username@gmail.com).',
+        ? 'अमान्य ईमेल प्रारूप! कृपया सही ईमेल दर्ज करें।'
+        : 'Invalid email format! Please enter a valid email address.',
     };
   }
 
