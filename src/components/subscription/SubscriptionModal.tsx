@@ -22,6 +22,7 @@ import {
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { CitizenSubscription } from '@/types';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
 
 interface SubscriptionModalProps {
   isOpen: boolean;
@@ -108,6 +109,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           currency: orderData.order.currency || 'INR',
           name: 'Citizen Life OS',
           description: '1-Year National Citizen Access Pass (365 Days)',
+          image: typeof window !== 'undefined' ? `${window.location.origin}/logo-shield-transparent.png` : '/logo-shield-transparent.png',
           order_id: orderData.order.orderId,
           prefill: {
             name: citizenName,
@@ -215,8 +217,11 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         <div className="fixed inset-0" onClick={onClose} />
         <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 animate-in zoom-in-95 duration-200 my-auto p-5 sm:p-6 space-y-4">
           <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
-            <div className="w-12 h-12 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center shadow-md">
-              <Check className="w-6 h-6 stroke-[3]" />
+            <div className="flex justify-center mb-1">
+              <BrandIconSvg sizePx={44} className="mx-auto drop-shadow-xs" />
+            </div>
+            <div className="w-10 h-10 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center shadow-md">
+              <Check className="w-5 h-5 stroke-[3]" />
             </div>
             <h4 className="text-base font-extrabold text-emerald-950">
               {language === 'hi' ? 'सदस्यता सफलतापूर्वक सक्रिय हो गई!' : '1-Year Citizen Pass Activated!'}
@@ -288,7 +293,12 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           <X className="w-4 h-4" />
         </button>
 
-        <div className="w-10 h-10 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin mx-auto mt-1" />
+        {/* Brand Shield Logo */}
+        <div className="flex justify-center pt-1">
+          <BrandIconSvg sizePx={44} className="mx-auto drop-shadow-md" />
+        </div>
+
+        <div className="w-9 h-9 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin mx-auto" />
         <div className="space-y-1">
           <h3 className="font-extrabold text-sm text-white">
             {language === 'hi' ? 'रेज़रपे सुरक्षित चेकआउट' : 'Razorpay Secure Checkout'}

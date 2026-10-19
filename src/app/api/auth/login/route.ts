@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, verifyCitizenPassword } from '@/lib/db';
 import { SessionSecurityService } from '@/lib/security';
-import { validateRealEmail } from '@/utils/antiFraudValidation';
+import { validateRealEmail, validateRealName } from '@/utils/antiFraudValidation';
 import { rateLimiter } from '@/lib/rateLimiter';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const rawName = String(body.fullName || '');
     const rawEmail = String(body.email || '');
     const password = String(body.password || '');
     const lang = body.lang === 'hi' ? 'hi' : 'en';
+
+    // 0. Person's Legal Name Check (Required)
+    const nameValidation = validateRealName(rawName, lang);
+    if (!nameValidation.valid) {
+      return NextResponse.json(
+        {
+          success: false,
+          errorType: 'MISSING_NAME',
+          message: nameValidation.error || (lang === 'hi' ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full legal name.'),
+        },
+        { status: 400 }
+      );
+    }
 
     // 1. Email Format & Anti-Fraud Check
     const emailValidation = validateRealEmail(rawEmail, lang);
@@ -111,8 +125,19 @@ export async function POST(req: NextRequest) {
     // Password is valid and account exists
     rateLimiter.reset(rateKey);
 
+    // Confirm and update citizen's full legal name if modified
+    if (nameValidation.cleanName && citizen.fullName !== nameValidation.cleanName) {
+      citizen.fullName = nameValidation.cleanName;
+      try {
+        await DatabaseService.saveCitizen(citizen);
+      } catch (saveErr) {
+        console.warn('Note: Could not update citizen name in DB:', saveErr);
+      }
+    }
+
     // Don't leak hash/salt back to client
     const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = citizen;
+    safeCitizen.fullName = nameValidation.cleanName || citizen.fullName;
 
     const sessionToken = SessionSecurityService.generateSessionToken(citizen.id, citizen.email || '');
 

@@ -6,6 +6,7 @@ import { CitizenProfile, CountryCode } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry, COUNTRIES } from '@/context/CountryContext';
 import { GoogleAuthService, getGoogleAuthErrorMessage } from '@/services/googleAuth';
+import { BrandIconSvg } from '@/components/common/BrandLogo';
 import {
   validateRealName,
   validateRealDob,
@@ -374,6 +375,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessNotice(null);
     setAccountNotFoundNotice(false);
 
+    // 0. Person's Legal Name Check (Required)
+    const nameCheck = validateRealName(name, language);
+    if (!nameCheck.valid) {
+      setErrorMessage(
+        nameCheck.error ||
+          (language === 'hi' ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full legal name.')
+      );
+      return;
+    }
+
     // 1. Email format check
     const emailCheck = validateRealEmail(email, language);
     if (!emailCheck.valid) {
@@ -395,6 +406,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          fullName: nameCheck.cleanName,
           email: emailCheck.cleanEmail,
           password,
           rememberMe,
@@ -632,7 +644,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const renderAuthCard = () => {
     return (
-      <div className={`w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 p-5 sm:p-7 flex flex-col z-10 text-slate-900 ${
+      <div className={`w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 p-4 sm:p-7 flex flex-col z-10 text-slate-900 ${
       isFullPageGate ? 'relative' : 'relative my-auto max-h-[94vh] overflow-y-auto'
     }`}>
       {/* Top Navigation Bar */}
@@ -703,9 +715,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         )}
       </div>
 
+        {/* Brand Emblem Logo */}
+        <div className="flex justify-center -mt-1 mb-1">
+          <BrandIconSvg sizePx={44} className="drop-shadow-xs" />
+        </div>
+
         {/* Header Title & Subtitle */}
-        <div className="text-center mt-1">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <div className="text-center mt-0.5">
+          <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
             {screen === 'login'
               ? (language === 'hi' ? 'नागरिक लॉगिन' : 'Citizen Log In')
               : screen === 'signup' && signUpStep === 1
@@ -740,11 +757,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
-          <p className="text-xs sm:text-sm text-slate-500 mt-2 px-1 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1.5 px-1 leading-relaxed hidden sm:block">
             {screen === 'login'
               ? (language === 'hi'
-                  ? 'अपने खाते में सुरक्षित प्रवेश के लिए ईमेल व पासवर्ड दर्ज करें।'
-                  : 'Enter your registered email and password to securely access your profile.')
+                  ? 'अपने खाते में सुरक्षित प्रवेश के लिए नाम, ईमेल व पासवर्ड दर्ज करें।'
+                  : 'Enter your legal name, registered email and password to securely access your profile.')
               : screen === 'signup' && signUpStep === 1
               ? (language === 'hi'
                   ? 'पहले अपना नाम, वैध ईमेल व पासवर्ड दर्ज करें या गूगल से जारी रखें।'
@@ -798,7 +815,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* SCREEN 1: LOGIN                                          */}
         {/* ======================================================== */}
         {screen === 'login' && (
-          <form onSubmit={handleLoginSubmit} className="mt-4 space-y-3.5">
+          <form onSubmit={handleLoginSubmit} className="mt-3.5 space-y-3 sm:space-y-3.5">
+            {/* Person's Full Name (Required) */}
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <User className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={language === 'hi' ? 'पूरा नाम (Full Legal Name) *' : 'Full Legal Name *'}
+                  className={`w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
+                    nameValidation && !nameValidation.valid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-emerald-500'
+                  }`}
+                />
+              </div>
+              {nameValidation && !nameValidation.valid && (
+                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2">
+                  {nameValidation.error}
+                </p>
+              )}
+            </div>
+
             {/* Email Address */}
             <div>
               <div className="relative">
@@ -810,8 +851,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता' : 'Registered email address'}
-                  className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
+                  placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता (Registered Email) *' : 'Registered Email Address *'}
+                  className={`w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
                     emailValidation && !emailValidation.valid
                       ? 'border-red-400 focus:border-red-500'
                       : 'border-slate-200 focus:border-emerald-500'
@@ -835,8 +876,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={language === 'hi' ? 'पासवर्ड' : 'Password'}
-                className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
+                placeholder={language === 'hi' ? 'पासवर्ड (Password) *' : 'Password *'}
+                className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
               />
               <button
                 type="button"
@@ -1548,8 +1589,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Top Sovereign Bar */}
         <header className="w-full border-b border-slate-200 bg-white/90 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between relative z-20 shadow-2xs">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white font-black shadow-md shadow-emerald-600/20">
-              <ShieldCheck className="w-5 h-5 text-white" />
+            <div className="shrink-0 flex items-center">
+              <BrandIconSvg sizePx={38} className="shrink-0 drop-shadow-xs" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -1610,15 +1651,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </header>
 
         {/* Main Split Section */}
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 relative z-10 my-auto">
-          {/* Left Column: Platform Branding & Highlights */}
-          <div className="w-full lg:w-1/2 space-y-6 text-left">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-8 lg:py-12 flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-14 relative z-10 my-auto">
+          {/* Left Column on Desktop / Bottom on Mobile: Platform Branding & Highlights */}
+          <div className="w-full lg:w-1/2 space-y-5 text-left order-2 lg:order-1 mt-6 lg:mt-0">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-800 text-xs font-mono font-bold">
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
               <span>SOVEREIGN CIVIC INTELLIGENCE 2026</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
               {language === 'hi' ? (
                 <>
                   सभी राष्ट्रीय व वैश्विक अवसरों हेतु{' '}
@@ -1636,7 +1677,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl">
+            <p className="text-xs sm:text-base text-slate-600 leading-relaxed max-w-xl">
               {language === 'hi'
                 ? 'बिना किसी फर्जीवाड़े के 250+ सत्यापित सरकारी योजनाएं, प्रतियोगी परीक्षाएं, छात्रवृत्तियां, इंटर्नशिप और रोजगार अवसर सीधे आधिकारिक सरकारी पोर्टलों से।'
                 : 'Zero-scam civic discovery platform. Access 250+ verified government schemes, competitive exams, national scholarships, and career roadmaps directly from official sources.'}
@@ -1693,8 +1734,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           </div>
 
-          {/* Right Column: The Auth Card */}
-          <div className="w-full lg:w-1/2 flex justify-center">
+          {/* Right Column on Desktop / Top on Mobile: The Auth Card */}
+          <div className="w-full lg:w-1/2 flex justify-center order-1 lg:order-2">
             {renderAuthCard()}
           </div>
         </main>

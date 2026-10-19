@@ -42,7 +42,7 @@ export function validateVerhoeff(numStr: string): boolean {
 }
 
 // 2. Full Name Validation
-export function validateRealName(name: string, lang: SupportedLanguage = 'en'): { valid: boolean; error?: string } {
+export function validateRealName(name: string, lang: SupportedLanguage = 'en'): { valid: boolean; cleanName?: string; error?: string } {
   const trimmed = (name || '').trim();
   if (!trimmed) {
     return {
@@ -102,7 +102,7 @@ export function validateRealName(name: string, lang: SupportedLanguage = 'en'): 
     };
   }
 
-  return { valid: true };
+  return { valid: true, cleanName: trimmed };
 }
 
 // 3. Indian Mobile Number Validation (TRAI Standards)
