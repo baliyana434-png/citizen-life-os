@@ -130,7 +130,6 @@ export const sendRealSmsOtp = async (
   }
 
   // 2. Smart Sandbox / Development Mode (fallback)
-  await new Promise((resolve) => setTimeout(resolve, 650));
   confirmationResult = null;
 
   return {
@@ -177,7 +176,6 @@ export const verifyRealSmsOtp = async (
   }
 
   // 2. Smart Sandbox / Test Mode
-  await new Promise((resolve) => setTimeout(resolve, 500));
   return {
     success: true,
     userUid: 'usr-simulated-' + Date.now(),

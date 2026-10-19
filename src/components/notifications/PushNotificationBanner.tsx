@@ -62,10 +62,10 @@ export const PushNotificationBanner: React.FC<PushNotificationBannerProps> = ({
       }
     }
 
-    // Auto-show banner after 3 seconds of browsing
+    // Auto-show banner smoothly
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 3000);
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, []);
@@ -95,13 +95,14 @@ export const PushNotificationBanner: React.FC<PushNotificationBannerProps> = ({
       const result = await pushNotificationService.requestPermission();
       if (result.success) {
         setIsSuccess(true);
-        await pushNotificationService.sendLocalTestNotification(language === 'hi' ? 'hi' : 'en');
+        // Dispatch test alert non-blocking
+        pushNotificationService.sendLocalTestNotification(language === 'hi' ? 'hi' : 'en').catch(() => {});
         if (onNotificationEnabled) {
           onNotificationEnabled();
         }
         setTimeout(() => {
           setIsVisible(false);
-        }, 3500);
+        }, 1000);
       } else {
         // If on iOS and standard request failed, show iOS home screen guide
         if (isIOS) {

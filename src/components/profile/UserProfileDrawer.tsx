@@ -89,7 +89,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setIsGoogleLoggingIn(false);
-        }, 900);
+        }, 100);
       }
     };
 

@@ -89,10 +89,10 @@ function ResetPasswordContent() {
         } catch (e) {}
       }
 
-      // Redirect after 2 seconds
+      // Quick redirect
       setTimeout(() => {
         window.location.href = '/';
-      }, 2000);
+      }, 600);
     } catch (err: any) {
       setErrorMessage(
         language === 'hi' ? 'तकनीकी त्रुटि आई। कृपया पुनः प्रयास करें।' : 'Network error. Please try again.'

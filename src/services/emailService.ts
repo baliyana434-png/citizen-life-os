@@ -40,28 +40,39 @@ export class EmailService {
     return Boolean(user && pass && user !== 'your_email@gmail.com');
   }
 
+  private static cachedTransporter: any = null;
+
   /**
-   * Create Nodemailer transporter
+   * Create or return cached pooled Nodemailer transporter
    */
   private static getTransporter() {
-    const user = process.env.SMTP_USER || DEFAULT_SMTP_USER;
-    const pass = process.env.SMTP_PASS || DEFAULT_SMTP_PASS;
-    const host = process.env.SMTP_HOST || (user.endsWith('@gmail.com') ? 'smtp.gmail.com' : 'smtp.gmail.com');
-    const port = Number(process.env.SMTP_PORT) || 465;
-    const secure = port === 465;
+    if (!this.cachedTransporter) {
+      const user = process.env.SMTP_USER || DEFAULT_SMTP_USER;
+      const pass = process.env.SMTP_PASS || DEFAULT_SMTP_PASS;
+      const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+      const port = Number(process.env.SMTP_PORT) || 465;
+      const secure = port === 465;
 
-    return nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      auth: {
-        user,
-        pass,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+      this.cachedTransporter = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        pool: true,
+        maxConnections: 3,
+        maxMessages: 100,
+        connectionTimeout: 5000,
+        greetingTimeout: 4000,
+        socketTimeout: 8000,
+        auth: {
+          user,
+          pass,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+    }
+    return this.cachedTransporter;
   }
 
   /**

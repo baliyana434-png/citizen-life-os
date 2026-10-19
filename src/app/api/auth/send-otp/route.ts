@@ -42,10 +42,11 @@ export async function POST(req: NextRequest) {
         let sentSuccessfully = false;
         let responseData: any = null;
 
-        // Try POST first
+        // Try POST first with 3s timeout
         try {
           const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
             method: 'POST',
+            signal: AbortSignal.timeout(3000),
             headers: {
               authorization: fast2smsKey,
               'Content-Type': 'application/json',
@@ -64,12 +65,12 @@ export async function POST(req: NextRequest) {
           console.warn('Fast2SMS POST attempt failed, trying GET fallback:', postErr);
         }
 
-        // Try GET fallback if POST didn't succeed
+        // Try GET fallback if POST didn't succeed with 3s timeout
         if (!sentSuccessfully) {
           const getUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(
             fast2smsKey
           )}&route=otp&variables_values=${encodeURIComponent(otp)}&numbers=${cleanPhone}`;
-          const getResponse = await fetch(getUrl);
+          const getResponse = await fetch(getUrl, { signal: AbortSignal.timeout(3000) });
           responseData = await getResponse.json();
           if (responseData && (responseData.return === true || responseData.status_code === 200)) {
             sentSuccessfully = true;
@@ -98,7 +99,8 @@ export async function POST(req: NextRequest) {
     if (twoFactorKey && twoFactorKey !== 'YOUR_TWO_FACTOR_API_KEY') {
       try {
         const tfRes = await fetch(
-          `https://2factor.in/v2/${twoFactorKey}/SMS/+91${cleanPhone}/${otp}/OTP1`
+          `https://2factor.in/v2/${twoFactorKey}/SMS/+91${cleanPhone}/${otp}/OTP1`,
+          { signal: AbortSignal.timeout(3000) }
         );
         const tfData = await tfRes.json();
         if (tfData.Status === 'Success') {

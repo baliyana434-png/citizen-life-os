@@ -164,7 +164,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setIsLoading(false);
-        }, 900);
+        }, 100);
       }
     };
 
@@ -725,7 +725,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         if (data.citizen) {
           onLoginSuccess(data.citizen);
         }
-      }, 1200);
+      }, 350);
     } catch (err: any) {
       setErrorMessage(
         language === 'hi' ? 'तकनीकी समस्या आई। पुनः प्रयास करें।' : 'Network error. Please try again.'

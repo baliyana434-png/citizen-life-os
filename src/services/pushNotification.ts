@@ -75,58 +75,46 @@ class PushNotificationService {
         };
       }
 
-      // Step B: Register the Firebase Service Worker
-      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/',
-      });
-      await navigator.serviceWorker.ready;
+      // Permission granted - immediately enable locally for instant UI response
+      localStorage.setItem('citizen_web_push_enabled', 'true');
 
-      // Step C: Retrieve FCM Device Push Token
-      const messaging = await this.getMessagingInstance();
-      if (!messaging) {
-        return {
-          success: true,
-          permission: 'granted',
-          error: 'Firebase Messaging not supported, but native notifications enabled.',
-        };
-      }
-
-      const token = await getToken(messaging, {
-        vapidKey: VAPID_KEY,
-        serviceWorkerRegistration: registration,
-      });
-
-      if (token) {
-        // Save token locally
-        localStorage.setItem('citizen_fcm_token', token);
-        localStorage.setItem('citizen_web_push_enabled', 'true');
-
-        // Step D: Send token to server backend to store in DB
+      // Step B & C & D: Register worker and sync FCM token in background/concurrently
+      (async () => {
         try {
-          await fetch('/api/notifications/register-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              token,
-              email: userIdentifier?.email || localStorage.getItem('citizen_remember_email') || '',
-              phone: userIdentifier?.phone || '',
-              citizenId: userIdentifier?.citizenId || '',
-              country: userIdentifier?.country || localStorage.getItem('citizen_country') || 'IN',
-              userAgent: navigator.userAgent,
-            }),
+          const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+            scope: '/',
           });
-        } catch (apiErr) {
-          console.warn('Failed to sync push token with server:', apiErr);
+          await navigator.serviceWorker.ready;
+
+          const messaging = await this.getMessagingInstance();
+          if (!messaging) return;
+
+          const token = await getToken(messaging, {
+            vapidKey: VAPID_KEY,
+            serviceWorkerRegistration: registration,
+          });
+
+          if (token) {
+            localStorage.setItem('citizen_fcm_token', token);
+            fetch('/api/notifications/register-token', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                token,
+                email: userIdentifier?.email || localStorage.getItem('citizen_remember_email') || '',
+                phone: userIdentifier?.phone || '',
+                citizenId: userIdentifier?.citizenId || '',
+                country: userIdentifier?.country || localStorage.getItem('citizen_country') || 'IN',
+                userAgent: navigator.userAgent,
+              }),
+            }).catch(() => {});
+          }
+        } catch (bgErr) {
+          console.warn('Background FCM token sync notice:', bgErr);
         }
+      })();
 
-        return { success: true, token, permission: 'granted' };
-      }
-
-      return {
-        success: false,
-        error: 'Failed to retrieve FCM device token.',
-        permission: 'granted',
-      };
+      return { success: true, permission: 'granted' };
     } catch (err: any) {
       console.error('Error enabling push notifications:', err);
       return {
