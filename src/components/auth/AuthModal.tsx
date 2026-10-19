@@ -139,11 +139,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setIsGoogleRegistration(true);
           setScreen('signup');
           setSignUpStep(2);
-          setSuccessNotice(
-            language === 'hi'
-              ? `Google खाता सत्यापित: ${prefillData.email}। कृपया नीचे प्रोफ़ाइल विवरण भरें।`
-              : `Google account verified: ${prefillData.email}. Please fill profile details below.`
-          );
+          setSuccessNotice(null);
           return;
         }
       }
@@ -308,11 +304,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsGoogleRegistration(true);
       setScreen('signup');
       setSignUpStep(2);
-      setSuccessNotice(
-        language === 'hi'
-          ? `Google खाता सत्यापित: ${googleEmail}। यह खाता अभी पंजीकृत नहीं है। कृपया नीचे प्रोफ़ाइल विवरण भरकर पंजीकरण पूर्ण करें।`
-          : `Google account verified: ${googleEmail}. Not registered yet. Please complete profile details below to finish registration.`
-      );
+      setSuccessNotice(null);
     } catch (err: any) {
       console.warn('Google Auth notice:', err);
       const code = (err?.code || err?.message || '').toLowerCase();
@@ -365,11 +357,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setScreen('signup');
       setSignUpStep(2);
       setShowLocalIpGooglePrompt(false);
-      setSuccessNotice(
-        language === 'hi'
-          ? `Google खाता सत्यापित: ${cleanEmail}। कृपया नीचे प्रोफ़ाइल विवरण भरकर खाता निर्माण पूरा करें।`
-          : `Google account verified: ${cleanEmail}. Please complete profile details below to finish registration.`
-      );
+      setSuccessNotice(null);
     } catch (err: any) {
       setErrorMessage(
         language === 'hi'
@@ -543,6 +531,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     e.preventDefault();
     setErrorMessage(null);
     setSuccessNotice(null);
+
+    // 0. Validate Full Name (Required)
+    const nameCheck = validateRealName(name, language);
+    if (!nameCheck.valid) {
+      setErrorMessage(nameCheck.error || (language === 'hi' ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full legal name.'));
+      return;
+    }
 
     // 1. Validate DOB
     const dobCheck = validateRealDob(dob, language);
@@ -821,20 +816,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* Header Title & Subtitle */}
         <div className="text-center mt-0.5">
-          <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
             {screen === 'login'
               ? (language === 'hi' ? 'नागरिक लॉगिन' : 'Citizen Log In')
               : screen === 'signup' && signUpStep === 1
-              ? (language === 'hi' ? 'खाता बनाएं (कदम 1/2)' : 'Create Account (Step 1/2)')
+              ? (language === 'hi' ? 'खाता बनाएं' : 'Create Account')
               : screen === 'signup' && signUpStep === 2
-              ? (language === 'hi' ? 'नागरिक प्रोफ़ाइल विवरण (कदम 2/2)' : 'Profile Details (Step 2/2)')
+              ? (language === 'hi' ? 'प्रोफ़ाइल विवरण' : 'Profile Details')
               : screen === 'forgot_password' && forgotPasswordStep === 2
               ? (language === 'hi' ? 'नया पासवर्ड बनाएं' : 'Set New Password')
               : (language === 'hi' ? 'पासवर्ड भूल गए?' : 'Forgot Password')}
           </h2>
 
           {/* Stepper Indicator for Sign Up */}
-          {screen === 'signup' && (
+          {screen === 'signup' && !isGoogleRegistration && (
             <div className="flex items-center justify-center gap-2 mt-2">
               <span
                 className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold transition-all ${
@@ -843,7 +838,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     : 'bg-emerald-100 text-emerald-800'
                 }`}
               >
-                1. {language === 'hi' ? 'खाता क्रेडेंशियल' : 'Credentials'}
+                1. {language === 'hi' ? 'क्रेडेंशियल' : 'Credentials'}
               </span>
               <span className="text-slate-300 font-bold">•</span>
               <span
@@ -853,7 +848,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     : 'bg-slate-100 text-slate-500'
                 }`}
               >
-                2. {language === 'hi' ? 'नागरिक विवरण' : 'Details Page'}
+                2. {language === 'hi' ? 'विवरण' : 'Details'}
               </span>
             </div>
           )}
@@ -1396,51 +1391,69 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* ======================================================== */}
         {screen === 'signup' && signUpStep === 2 && (
           <form onSubmit={handleFinalSignUpSubmit} className="mt-4 space-y-3.5">
-            {/* Verified Account Identification Banner */}
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-              <div className="flex items-center gap-2.5 overflow-hidden">
-                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
-                  {isGoogleRegistration ? 'G' : <User className="w-4 h-4" />}
+            {/* Account Status */}
+            <div className="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                  {isGoogleRegistration ? 'G' : <Mail className="w-3.5 h-3.5" />}
                 </div>
-                <div className="overflow-hidden">
-                  <div className="text-xs font-bold text-slate-900 truncate">{name}</div>
-                  <div className="text-[11px] font-medium text-slate-500 truncate">{email}</div>
-                </div>
+                <div className="text-xs font-semibold text-slate-800 truncate">{email}</div>
               </div>
-              <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
+              <span className="shrink-0 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                 <span>{isGoogleRegistration ? 'Google Verified' : 'Verified'}</span>
               </span>
             </div>
 
+            {/* Full Legal Name (Required) */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1">
+                {language === 'hi' ? 'पूरा नाम *' : 'Full Name *'}
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <User className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={language === 'hi' ? 'अपना पूरा नाम दर्ज करें' : 'Enter your full name'}
+                  className={`w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border text-xs font-bold text-slate-900 focus:bg-white outline-none transition-all ${
+                    nameValidation && !nameValidation.valid ? 'border-red-400' : 'border-slate-200 focus:border-emerald-500'
+                  }`}
+                />
+              </div>
+              {nameValidation && !nameValidation.valid && (
+                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2">
+                  {nameValidation.error}
+                </p>
+              )}
+            </div>
+
             {/* Country Selector */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1 flex items-center justify-between">
-                <span>{language === 'hi' ? 'देश / राष्ट्र (Country) *' : 'Country / Region *'}</span>
-                <span className="text-emerald-700 font-mono font-bold">{countryMeta.name} ({countryMeta.alpha3 || country})</span>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1">
+                {language === 'hi' ? 'देश *' : 'Country / Region *'}
               </label>
-              <div className="grid grid-cols-4 gap-1.5 max-h-24 overflow-y-auto p-1.5 border border-slate-200 rounded-2xl bg-slate-50">
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value as CountryCode)}
+                className="w-full py-2.5 px-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none cursor-pointer"
+              >
                 {Object.values(COUNTRIES).map((c) => (
-                  <button
-                    type="button"
-                    key={c.code}
-                    onClick={() => setCountry(c.code as CountryCode)}
-                    className={`py-1 px-1.5 rounded-xl text-center text-[10px] font-bold border transition-all cursor-pointer truncate ${
-                      country === c.code
-                        ? 'border-emerald-600 bg-white text-emerald-950 shadow-2xs font-black'
-                        : 'border-transparent text-slate-600 hover:bg-white/60'
-                    }`}
-                  >
-                    <span>{c.code}</span> - <span className="font-mono">{c.alpha3}</span>
-                  </button>
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.name} ({c.alpha3})
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
 
             {/* Date of Birth & Live Calculated Age */}
             <div>
               <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between px-1">
-                <span>{language === 'hi' ? 'जन्म तिथि (Date of Birth) *' : 'Date of Birth *'}</span>
+                <span>{language === 'hi' ? 'जन्म तिथि *' : 'Date of Birth *'}</span>
                 {calculatedAge >= 14 && (
                   <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 text-[10px]">
                     {language === 'hi' ? `आयु: ${calculatedAge} वर्ष` : `Age: ${calculatedAge} yrs`}
@@ -1508,33 +1521,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             {/* Life Phase / Role Selection */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1 flex items-center justify-between">
-                <span>{language === 'hi' ? 'वर्तमान भूमिका / पेशा (Occupation) *' : 'Occupation / Role *'}</span>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  {language === 'hi' ? 'अवसर अनुकूलन' : 'Customized Feed'}
-                </span>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1">
+                {language === 'hi' ? 'पेशा / वर्तमान स्थिति *' : 'Occupation / Role *'}
               </label>
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value as CitizenProfile['lifePhase'])}
                 className="w-full py-2.5 px-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none cursor-pointer"
               >
-                <option value="school_student">{language === 'hi' ? 'स्कूली छात्र (School Student)' : 'School Student'}</option>
-                <option value="college_student">{language === 'hi' ? 'कॉलेज छात्र / डिग्री (College Student)' : 'College Student'}</option>
-                <option value="exam_aspirant">{language === 'hi' ? 'प्रतियोगी परीक्षा अभ्यर्थी (Exam Aspirant)' : 'Exam Aspirant'}</option>
-                <option value="job_seeker">{language === 'hi' ? 'नौकरी तलाशकर्ता (Job Seeker)' : 'Job Seeker'}</option>
-                <option value="employed">{language === 'hi' ? 'कार्यरत / कर्मचारी (Employed)' : 'Employed'}</option>
-                <option value="business_owner">{language === 'hi' ? 'व्यवसायी / उद्यमी (Business Owner / Startup)' : 'Business Owner / Startup'}</option>
-                <option value="farmer">{language === 'hi' ? 'किसान / कृषि (Farmer)' : 'Farmer'}</option>
-                <option value="homemaker">{language === 'hi' ? 'गृहणी (Homemaker)' : 'Homemaker'}</option>
-                <option value="senior_citizen">{language === 'hi' ? 'वरिष्ठ नागरिक (Senior Citizen 60+)' : 'Senior Citizen (60+)'}</option>
+                <option value="school_student">{language === 'hi' ? 'स्कूली छात्र' : 'School Student'}</option>
+                <option value="college_student">{language === 'hi' ? 'कॉलेज छात्र' : 'College Student'}</option>
+                <option value="exam_aspirant">{language === 'hi' ? 'प्रतियोगी परीक्षा अभ्यर्थी' : 'Exam Aspirant'}</option>
+                <option value="job_seeker">{language === 'hi' ? 'नौकरी तलाशकर्ता' : 'Job Seeker'}</option>
+                <option value="employed">{language === 'hi' ? 'कार्यरत / कर्मचारी' : 'Employed'}</option>
+                <option value="business_owner">{language === 'hi' ? 'व्यवसायी / उद्यमी' : 'Business Owner / Startup'}</option>
+                <option value="farmer">{language === 'hi' ? 'किसान / कृषि' : 'Farmer'}</option>
+                <option value="homemaker">{language === 'hi' ? 'गृहणी' : 'Homemaker'}</option>
+                <option value="senior_citizen">{language === 'hi' ? 'वरिष्ठ नागरिक (60+)' : 'Senior Citizen (60+)'}</option>
               </select>
             </div>
 
             {/* Gender Selection */}
             <div>
               <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1">
-                {language === 'hi' ? 'लिंग (Gender) *' : 'Gender *'}
+                {language === 'hi' ? 'लिंग *' : 'Gender *'}
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
@@ -1560,9 +1570,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
             {/* National ID / Aadhaar */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1 flex items-center justify-between px-1">
-                <span>{countryMeta.nationalIdName} ({language === 'hi' ? 'वैकल्पिक' : 'Optional'})</span>
-                <span className="text-[10px] text-slate-400 font-mono uppercase">{countryMeta.alpha3 || country}</span>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1">
+                {countryMeta.nationalIdName} ({language === 'hi' ? 'वैकल्पिक' : 'Optional'})
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -1585,11 +1594,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {nationalIdValidation && nationalIdValidation.valid && (
                 <p className="text-[10px] font-bold text-emerald-700 mt-1 pl-2 flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                  <span>
-                    {country === 'IN'
-                      ? (language === 'hi' ? 'UIDAI Verhoeff चेकसम सत्यापित' : 'UIDAI Verhoeff Checksum Verified')
-                      : (language === 'hi' ? `मान्य ${countryMeta.nationalIdName} प्रारूप` : `Valid ${countryMeta.nationalIdName} format`)}
-                  </span>
+                  <span>{language === 'hi' ? 'मान्य प्रारूप' : 'Valid Format'}</span>
                 </p>
               )}
               {nationalIdValidation && !nationalIdValidation.valid && (
@@ -1623,7 +1628,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin text-white" />
                 ) : (
-                  <span>{language === 'hi' ? 'खाता बनाएं (Create Account)' : 'Create Account'}</span>
+                  <span>{language === 'hi' ? 'खाता बनाएं' : 'Create Account'}</span>
                 )}
               </button>
             </div>

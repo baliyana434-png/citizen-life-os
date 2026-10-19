@@ -923,9 +923,11 @@ export default function HomePage() {
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 radar-pulse" />
                   <span>{countryMeta.flag} {countryMeta.name}</span>
                 </span>
-                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-emerald-300/80 font-mono font-bold bg-white/5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border border-white/10">
-                  {activeProfile.isAadhaarVerified ? t('hero.verified_status') : t('hero.unverified_status')}
-                </span>
+                {activeProfile.isAadhaarVerified && (
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-emerald-300 font-mono font-bold bg-emerald-500/15 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border border-emerald-500/30">
+                    {t('hero.verified_status')}
+                  </span>
+                )}
               </div>
 
               <h1 className="text-base sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug">
@@ -954,7 +956,7 @@ export default function HomePage() {
                 <span className="text-[11px] text-emerald-300 font-medium">
                   {activeProfile.isOnboarded
                     ? `${profile?.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student')} • ${profile?.casteCategory || 'General'}`
-                    : `${countryMeta.name} • ${t('hero.unverified_status')}`}
+                    : countryMeta.name}
                 </span>
               </div>
             </div>

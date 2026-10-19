@@ -89,64 +89,59 @@ export default function HelplinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col antialiased">
+    <div className="min-h-screen bg-slate-50 flex flex-col antialiased overflow-x-hidden">
       {/* Top Banner Strip */}
-      <div className="w-full bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 sm:px-8 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-bold tracking-wider text-slate-100 flex items-center gap-1.5">
-            <span className="text-sm">{countryMeta.flag}</span>
-            <span>{countryMeta.name}</span>
-            <span className="text-slate-500">•</span>
-            <span>{language === 'hi' ? 'नागरिक आपातकालीन एवं सहायता डायरेक्टरी' : '24x7 EMERGENCY & HELPLINE DIRECTORY'}</span>
-          </span>
-          <span className="text-slate-600 hidden md:inline">•</span>
-          <span className="text-slate-400 text-[10px] hidden md:inline">
-            {language === 'hi' ? '100% निःशुल्क टोल-फ्री आधिकारिक नंबर' : '100% Toll-Free Official Verified Numbers'}
-          </span>
+      <div className="w-full bg-slate-900 text-slate-300 text-[10px] sm:text-[11px] py-1.5 px-3 sm:px-8 border-b border-slate-800 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 sm:gap-2 truncate">
+          <span className="text-sm shrink-0">{countryMeta.flag}</span>
+          <span className="font-bold text-white shrink-0">{countryMeta.name}</span>
+          <span className="text-slate-500">•</span>
+          <span className="truncate">{language === 'hi' ? 'नागरिक हेल्पलाइन डायरेक्टरी' : '24x7 Helpline Directory'}</span>
         </div>
-        <div className="flex items-center gap-3 text-[10px]">
-          <span className="text-emerald-400 font-mono font-bold">1-CLICK DIRECT CALLING</span>
+        <div className="shrink-0 text-emerald-400 font-mono font-bold text-[10px] ml-2">
+          {language === 'hi' ? '1-क्लिक कॉल' : '1-CLICK CALL'}
         </div>
       </div>
 
       {/* Navigation Header */}
       <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-3">
-            <div className="flex items-center gap-3">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>{language === 'hi' ? 'मुख्य पृष्ठ' : 'Opportunities'}</span>
-              </Link>
-              <div className="h-5 w-px bg-slate-200 hidden sm:block"></div>
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-sm">
-                  <LifeBuoy className="w-5 h-5" />
-                </div>
-                <div>
-                  <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none">
-                    {language === 'hi' ? '24x7 नागरिक हेल्पलाइन एवं सहायता केंद्र' : '24x7 Citizen Helpline & Emergency Hub'}
-                  </h1>
-                  <p className="text-[11px] text-slate-500 hidden sm:block mt-0.5">
-                    {language === 'hi' ? 'सरकारी आपातकालीन, कानूनी, साइबर व जन-कल्याण सेवाएं' : 'Government emergency, legal, cyber & welfare hotlines'}
-                  </p>
-                </div>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-3">
+            {/* Left: Back Link */}
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all shrink-0 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">{language === 'hi' ? 'मुख्य पृष्ठ' : 'Opportunities'}</span>
+              <span className="sm:hidden">{language === 'hi' ? 'वापस' : 'Back'}</span>
+            </Link>
+
+            {/* Center: Brand Title */}
+            <div className="flex items-center gap-2 min-w-0 flex-1 justify-start sm:justify-start">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-sm shrink-0">
+                <LifeBuoy className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-xs sm:text-base lg:text-lg font-black text-slate-900 tracking-tight leading-none truncate">
+                  {language === 'hi' ? 'नागरिक हेल्पलाइन एवं सहायता' : 'Citizen Helpline & Emergency Hub'}
+                </h1>
+                <p className="text-[11px] text-slate-500 hidden md:block mt-0.5 truncate">
+                  {language === 'hi' ? 'सरकारी आपातकालीन, कानूनी, साइबर व जन-कल्याण सेवाएं' : 'Government emergency, legal, cyber & welfare hotlines'}
+                </p>
               </div>
             </div>
 
-            {/* Quick Navigation Links */}
-            <div className="flex items-center gap-2">
+            {/* Right: Quick Action Links */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <LanguageSwitcher />
               <Link
                 href="/saved"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300 transition-all shadow-2xs"
+                className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300 transition-all shadow-2xs shrink-0 cursor-pointer"
                 title={language === 'hi' ? 'पसंदीदा फॉर्म व अवसर' : 'Saved Opportunities'}
               >
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-600" />
-                <span>{language === 'hi' ? 'पसंदीदा' : 'Saved'}</span>
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-600 shrink-0" />
+                <span className="hidden xs:inline sm:inline">{language === 'hi' ? 'पसंदीदा' : 'Saved'}</span>
               </Link>
             </div>
           </div>
