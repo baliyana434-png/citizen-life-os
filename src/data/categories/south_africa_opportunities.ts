@@ -156,7 +156,7 @@ export const SOUTH_AFRICA_OPPORTUNITIES: Opportunity[] = [
       issuingAuthority: 'Small Enterprise Development Agency (SEDA) & Department of Small Business Development (DSBD)',
       gazetteDate: '2026-06-15',
       lastVerifiedAt: '2026-09-24',
-      officialPortalUrl: 'http://www.seda.org.za/',
+      officialPortalUrl: 'https://www.seda.org.za/',
       scamAlertWarning: 'All SEDA services and business development programs are 100% free of charge. SEDA does not utilize unofficial brokers or charge consultation fees.',
       officialGovtFee: 'R0 (Completely Free)',
     },

@@ -308,7 +308,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
                 {errorMessage.includes('FIREBASE_GOOGLE_DISABLED') && (
                   <div className="pt-1">
                     <a
-                      href="https://console.firebase.google.com/project/lifeos-7a6f1/authentication/providers"
+                      href={`https://console.firebase.google.com/project/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'lifeos-7a6f1'}/authentication/providers`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold shadow-xs transition-all"
