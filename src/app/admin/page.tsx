@@ -49,6 +49,9 @@ import {
   AlertOctagon,
   Link2Off,
   Sparkles,
+  Bell,
+  Send,
+  Smartphone,
 } from 'lucide-react';
 import { RegisteredCitizen } from '@/app/api/admin/citizens/route';
 import { CitizenAadhaarModal } from '@/components/admin/CitizenAadhaarModal';
@@ -155,7 +158,19 @@ export default function AdminPage() {
   const [liveClock, setLiveClock] = useState<string>('');
 
   // Active Console View Tab
-  const [activeTab, setActiveTab] = useState<'citizens' | 'opportunities' | 'crawler' | 'diagnostics'>('citizens');
+  const [activeTab, setActiveTab] = useState<'citizens' | 'opportunities' | 'crawler' | 'diagnostics' | 'notifications'>('citizens');
+
+  // Push Notification Hub State
+  const [pushStats, setPushStats] = useState<{
+    registeredDeviceCount: number;
+    isFcmServerConfigured: boolean;
+    projectId: string;
+  } | null>(null);
+  const [pushTitle, setPushTitle] = useState('Citizen Life OS — नया अवसर अलर्ट');
+  const [pushBody, setPushBody] = useState('नई सरकारी योजना व छात्रवृत्ति पोर्टल पर उपलब्ध है। तुरंत देखें।');
+  const [pushUrl, setPushUrl] = useState('/');
+  const [isSendingPush, setIsSendingPush] = useState(false);
+  const [pushFeedback, setPushFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // Real Registered Citizens State
   const [citizens, setCitizens] = useState<RegisteredCitizen[]>([]);
@@ -346,11 +361,67 @@ export default function AdminPage() {
     }
   };
 
+  // Fetch real registered push devices and status
+  const fetchPushStats = async () => {
+    try {
+      const res = await fetch('/api/notifications/send-push');
+      if (res.ok) {
+        const data = await res.json();
+        setPushStats(data);
+      }
+    } catch (e) {
+      console.warn('Failed to fetch push stats:', e);
+    }
+  };
+
+  // Broadcast push notification to all devices
+  const handleBroadcastPush = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pushTitle.trim() || !pushBody.trim()) {
+      setPushFeedback({ type: 'error', message: 'कृपया शीर्षक और संदेश दोनों दर्ज करें।' });
+      return;
+    }
+    try {
+      setIsSendingPush(true);
+      setPushFeedback(null);
+      const res = await fetch('/api/notifications/send-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: pushTitle.trim(),
+          body: pushBody.trim(),
+          url: pushUrl.trim() || '/',
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPushFeedback({
+          type: 'success',
+          message: data.message || `पुश नोटिफिकेशन ${data.recipientsCount || 0} डिवाइस(ज) पर सफलतापूर्वक भेजा गया।`,
+        });
+        fetchPushStats();
+      } else {
+        setPushFeedback({
+          type: 'error',
+          message: data.message || 'पुश नोटिफिकेशन भेजने में त्रुटि हुई।',
+        });
+      }
+    } catch (err: any) {
+      setPushFeedback({
+        type: 'error',
+        message: err?.message || 'नेटवर्क समस्या के कारण नोटिफिकेशन नहीं भेजा जा सका।',
+      });
+    } finally {
+      setIsSendingPush(false);
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchCitizens();
       fetchOpportunities();
       fetchSystemStatus();
+      fetchPushStats();
     }
   }, [isAuthenticated]);
 
@@ -386,6 +457,7 @@ export default function AdminPage() {
       fetchCitizens(data.token);
       fetchOpportunities(data.token);
       fetchSystemStatus(data.token);
+      fetchPushStats();
     } catch (err: any) {
       setErrorMessage('सर्वर से संपर्क करने में असमर्थ। कृपया नेटवर्क की जांच करें।');
     } finally {
@@ -1004,6 +1076,26 @@ export default function AdminPage() {
               {systemStatus && systemStatus.diagnostics.filter((d) => d.level === 'warning' || d.level === 'error').length > 0 && (
                 <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black">
                   {systemStatus.diagnostics.filter((d) => d.level === 'warning' || d.level === 'error').length}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('notifications');
+                fetchPushStats();
+              }}
+              className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+                activeTab === 'notifications'
+                  ? 'border-emerald-500 ' + (theme === 'dark' ? 'text-white bg-slate-900' : 'text-slate-900 bg-white shadow-xs')
+                  : (theme === 'dark' ? 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40' : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100')
+              }`}
+            >
+              <Bell className="w-4 h-4 text-emerald-400" />
+              <span>Push Broadcast Hub</span>
+              {pushStats && pushStats.registeredDeviceCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-black">
+                  {pushStats.registeredDeviceCount}
                 </span>
               )}
             </button>
@@ -2080,6 +2172,298 @@ export default function AdminPage() {
               <div>Platform: <strong className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>{systemStatus.system.platform}</strong></div>
               <div>Memory Heap: <strong className="text-emerald-500">{systemStatus.system.memoryUsageMb} MB</strong></div>
               <div>Process Uptime: <strong className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>{Math.floor(systemStatus.system.uptimeSeconds / 60)} minutes</strong></div>
+            </div>
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------- */}
+        {/* TAB 5: LIVE PUSH NOTIFICATION BROADCAST HUB */}
+        {/* ------------------------------------------------------------- */}
+        {activeTab === 'notifications' && (
+          <div className="space-y-6">
+            {/* Top Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className={`p-4 rounded-xl border ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-400">Registered Devices</span>
+                  <Smartphone className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className={`text-2xl font-black mt-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  {pushStats?.registeredDeviceCount ?? '...'}
+                </div>
+                <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+                  <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Active FCM & Web Push Token Registry
+                </div>
+              </div>
+
+              <div className={`p-4 rounded-xl border ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-400">Push Delivery Engine</span>
+                  <Radio className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className={`text-sm font-bold mt-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  {pushStats?.isFcmServerConfigured ? 'FCM HTTP v1 Cloud Push' : 'Browser Service Worker Dispatch'}
+                </div>
+                <div className="text-[11px] text-slate-500 mt-1">
+                  Project: {pushStats?.projectId || 'lifeos-7a6f1'}
+                </div>
+              </div>
+
+              <div className={`p-4 rounded-xl border ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-400">Delivery Channels</span>
+                  <Bell className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className={`text-sm font-bold mt-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  Mobile Drawer & Desktop
+                </div>
+                <div className="text-[11px] text-slate-500 mt-1">
+                  Lock-screen notifications with click redirection
+                </div>
+              </div>
+            </div>
+
+            {/* Broadcast Form & Live Mockup */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Form Column */}
+              <div className={`lg:col-span-2 p-5 rounded-xl border ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                      Compose Push Alert Broadcast
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Send verified opportunities directly to all enrolled citizens&apos; devices.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={fetchPushStats}
+                    className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                    title="Refresh Push Status"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Quick Templates */}
+                <div className="mb-4">
+                  <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+                    Quick Templates
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPushTitle('Citizen Life OS — नई छात्रवृत्ति अधिसूचना');
+                        setPushBody('राष्ट्रीय छात्रवृत्ति पोर्टल पर नए आवेदन शुरू हो गए हैं। अपनी पात्रता तुरंत जांचें।');
+                        setPushUrl('/?tab=education');
+                      }}
+                      className="px-2.5 py-1 text-xs rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 transition-colors"
+                    >
+                      छात्रवृत्ति अलर्ट
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPushTitle('Citizen Life OS — सरकारी भर्ती परीक्षा अलर्ट');
+                        setPushBody('नवीनतम सरकारी रिक्तियां और परीक्षा तिथियां घोषित की गई हैं। आधिकारिक विवरण देखें।');
+                        setPushUrl('/?tab=career');
+                      }}
+                      className="px-2.5 py-1 text-xs rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 transition-colors"
+                    >
+                      सरकारी भर्ती अलर्ट
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPushTitle('Citizen Life OS — कौशल विकास योजना');
+                        setPushBody('युवाओं के लिए निशुल्क तकनीकी प्रशिक्षण व सरकारी प्रमाणन कार्यक्रम शुरू।');
+                        setPushUrl('/skills');
+                      }}
+                      className="px-2.5 py-1 text-xs rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 transition-colors"
+                    >
+                      कौशल विकास
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPushTitle('Citizen Life OS — नया नागरिक अवसर अलर्ट');
+                        setPushBody('आपके राज्य के लिए नई कल्याणकारी योजनाओं की सूची अपडेट की गई है।');
+                        setPushUrl('/');
+                      }}
+                      className="px-2.5 py-1 text-xs rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 transition-colors"
+                    >
+                      सामान्य अवसर
+                    </button>
+                  </div>
+                </div>
+
+                {/* Feedback Banner */}
+                {pushFeedback && (
+                  <div className={`p-3.5 rounded-lg mb-4 text-xs flex items-center justify-between border ${
+                    pushFeedback.type === 'success'
+                      ? 'bg-emerald-950/60 border-emerald-700 text-emerald-300'
+                      : 'bg-rose-950/60 border-rose-700 text-rose-300'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      {pushFeedback.type === 'success' ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      ) : (
+                        <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                      )}
+                      <span>{pushFeedback.message}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPushFeedback(null)}
+                      className="text-xs underline hover:opacity-80 ml-3"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                )}
+
+                {/* Broadcast Form */}
+                <form onSubmit={handleBroadcastPush} className="space-y-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-400 block mb-1">
+                      Notification Title
+                    </label>
+                    <input
+                      type="text"
+                      value={pushTitle}
+                      onChange={(e) => setPushTitle(e.target.value)}
+                      placeholder="e.g. Citizen Life OS — नया अवसर अलर्ट"
+                      className={`w-full px-3.5 py-2.5 rounded-lg text-xs border outline-hidden transition-all ${
+                        theme === 'dark'
+                          ? 'bg-slate-950 border-slate-800 text-white focus:border-emerald-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-emerald-500'
+                      }`}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-400 block mb-1">
+                      Notification Message Body
+                    </label>
+                    <textarea
+                      value={pushBody}
+                      onChange={(e) => setPushBody(e.target.value)}
+                      rows={3}
+                      placeholder="Write message to be shown on lock-screen and notification drawer..."
+                      className={`w-full px-3.5 py-2.5 rounded-lg text-xs border outline-hidden transition-all ${
+                        theme === 'dark'
+                          ? 'bg-slate-950 border-slate-800 text-white focus:border-emerald-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-emerald-500'
+                      }`}
+                      required
+                    />
+                    <div className="text-right text-[10px] text-slate-500 mt-1">
+                      {pushBody.length} characters
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-400 block mb-1">
+                      Action Destination URL (Opens when notification is clicked)
+                    </label>
+                    <input
+                      type="text"
+                      value={pushUrl}
+                      onChange={(e) => setPushUrl(e.target.value)}
+                      placeholder="e.g. /?tab=education or /forms"
+                      className={`w-full px-3.5 py-2.5 rounded-lg text-xs border outline-hidden transition-all ${
+                        theme === 'dark'
+                          ? 'bg-slate-950 border-slate-800 text-white focus:border-emerald-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-emerald-500'
+                      }`}
+                    />
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPushTitle('');
+                        setPushBody('');
+                        setPushUrl('/');
+                        setPushFeedback(null);
+                      }}
+                      className="px-3 py-2 text-xs font-medium text-slate-400 hover:text-white rounded-lg transition-colors"
+                    >
+                      Clear
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={isSendingPush || !pushTitle.trim() || !pushBody.trim()}
+                      className="px-5 py-2.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-500/20"
+                    >
+                      {isSendingPush ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Dispatching Broadcast...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Broadcast to All Devices</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Notification Device Preview Column */}
+              <div className={`p-5 rounded-xl border flex flex-col justify-between ${
+                theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                    Lock Screen / System Preview
+                  </h4>
+                  <div className="p-4 rounded-xl border border-slate-700 bg-slate-950 shadow-xl space-y-2">
+                    <div className="flex items-center justify-between text-[10px] text-slate-400">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3.5 h-3.5 rounded bg-emerald-500 flex items-center justify-center text-[8px] font-black text-black">
+                          C
+                        </span>
+                        <span className="font-semibold text-slate-200">Citizen Life OS</span>
+                      </div>
+                      <span>Just now</span>
+                    </div>
+                    <div className="text-xs font-bold text-white leading-snug">
+                      {pushTitle || 'Title preview'}
+                    </div>
+                    <div className="text-[11px] text-slate-300 leading-relaxed">
+                      {pushBody || 'Message preview will appear here on user screen.'}
+                    </div>
+                    <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-emerald-400 font-medium">
+                      <span>Destination: {pushUrl || '/'}</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-3 rounded-lg bg-slate-800/40 border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                  <div className="font-semibold text-slate-300">Privacy & Protocol:</div>
+                  <div>• Sent strictly to opt-in registered device tokens.</div>
+                  <div>• Zero third-party ad tracking or personal data leaks.</div>
+                  <div>• Automatic pruning of expired and uninstalled tokens.</div>
+                </div>
+              </div>
             </div>
           </div>
         )}

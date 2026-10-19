@@ -85,7 +85,7 @@ export default function RefundPage() {
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs text-slate-600">
               <div className="flex items-center gap-2 font-bold text-slate-900">
                 <Mail className="w-4 h-4 text-emerald-600" />
-                <span>{r.emailLabel}: support@citizenlifeos.in</span>
+                <span>{r.emailLabel}: baliyana434@gmail.com</span>
               </div>
               <div className="flex items-center gap-2 text-slate-600">
                 <Clock className="w-4 h-4 text-slate-400" />

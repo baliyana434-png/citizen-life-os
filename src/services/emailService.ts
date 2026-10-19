@@ -188,7 +188,7 @@ export class EmailService {
         body: JSON.stringify({
           sender: {
             name: 'Citizen Life OS',
-            email: process.env.SMTP_USER || 'support@citizenlifeos.in',
+            email: process.env.SMTP_USER || 'baliyana434@gmail.com',
           },
           to: [{ email: to, name: toName }],
           subject,

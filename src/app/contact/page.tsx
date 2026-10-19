@@ -50,35 +50,25 @@ export default function ContactPage() {
           </p>
         </div>
 
-        {/* Contact Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-3 shadow-xs">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
-              <Mail className="w-5 h-5" />
-            </div>
-            <h3 className="font-extrabold text-base text-slate-900">{c.emailCardTitle}</h3>
-            <p className="text-xs text-slate-500">
+        {/* Verified Support Card */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4 shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+            <Mail className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="font-extrabold text-lg text-slate-900">{c.emailCardTitle}</h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               {c.emailCardDesc}
             </p>
-            <a
-              href="mailto:support@citizenlifeos.in"
-              className="inline-block font-mono font-bold text-sm text-emerald-700 hover:text-emerald-800"
-            >
-              support@citizenlifeos.in
-            </a>
           </div>
-
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-3 shadow-xs">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
-              <Phone className="w-5 h-5" />
-            </div>
-            <h3 className="font-extrabold text-base text-slate-900">{c.phoneCardTitle}</h3>
-            <p className="text-xs text-slate-500">
-              {c.phoneCardDesc}
-            </p>
-            <span className="inline-block font-mono font-bold text-sm text-slate-900">
-              +91 11 4050 8900
-            </span>
+          <div>
+            <a
+              href="mailto:baliyana434@gmail.com"
+              className="inline-flex items-center gap-2 font-mono font-bold text-sm sm:text-base text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-4 py-2.5 rounded-xl border border-emerald-200 transition-colors"
+            >
+              <Mail className="w-4 h-4 shrink-0" />
+              <span>baliyana434@gmail.com</span>
+            </a>
           </div>
         </div>
 
