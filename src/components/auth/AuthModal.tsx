@@ -20,6 +20,7 @@ import {
   X,
   Mail,
   Lock,
+  KeyRound,
   Eye,
   EyeOff,
   User,
@@ -107,6 +108,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [showLocalIpGooglePrompt, setShowLocalIpGooglePrompt] = useState<boolean>(false);
   const [googleFallbackEmail, setGoogleFallbackEmail] = useState<string>('');
 
+  // Forgot Password Two-Step Flow States
+  const [forgotPasswordStep, setForgotPasswordStep] = useState<1 | 2>(1);
+  const [forgotOtp, setForgotOtp] = useState<string>('');
+  const [newResetPassword, setNewResetPassword] = useState<string>('');
+  const [confirmResetPassword, setConfirmResetPassword] = useState<string>('');
+  const [showResetPassword, setShowResetPassword] = useState<boolean>(false);
+  const [showConfirmResetPassword, setShowConfirmResetPassword] = useState<boolean>(false);
+
   // Initialize or reset when modal opens or initialScreen/prefillData changes
   useEffect(() => {
     if (isOpen) {
@@ -114,6 +123,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setSuccessNotice(initialNotice || null);
       setAccountNotFoundNotice(false);
       setShowLocalIpGooglePrompt(false);
+      setForgotPasswordStep(1);
+      setForgotOtp('');
+      setNewResetPassword('');
+      setConfirmResetPassword('');
 
       if (prefillData) {
         if (prefillData.name) setName(prefillData.name);
@@ -599,7 +612,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Submit Handler for Forgot Password
+  // Submit Handler for Forgot Password (Step 1: Request Code & Link)
   const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -633,6 +646,83 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
 
       setSuccessNotice(data.message);
+      setForgotPasswordStep(2);
+      if (data.devCode) {
+        setForgotOtp(data.devCode);
+      }
+    } catch (err: any) {
+      setErrorMessage(
+        language === 'hi' ? 'तकनीकी समस्या आई। पुनः प्रयास करें।' : 'Network error. Please try again.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Submit Handler for Reset Password (Step 2: Verify Code and Set New Password)
+  const handleResetPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setSuccessNotice(null);
+
+    if (!forgotOtp.trim()) {
+      setErrorMessage(
+        language === 'hi'
+          ? 'कृपया ईमेल पर प्राप्त 6-अंकों का वेरिफिकेशन कोड दर्ज करें।'
+          : 'Please enter the 6-digit verification code sent to your email.'
+      );
+      return;
+    }
+
+    const passwordCheck = validateRealPassword(newResetPassword, '', email, language);
+    if (!passwordCheck.valid) {
+      setErrorMessage(passwordCheck.error || (language === 'hi' ? 'कमजोर पासवर्ड।' : 'Weak password.'));
+      return;
+    }
+
+    if (newResetPassword !== confirmResetPassword) {
+      setErrorMessage(language === 'hi' ? 'दोनों पासवर्ड समान होने चाहिए।' : 'Passwords do not match.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          otp: forgotOtp.trim(),
+          newPassword: newResetPassword,
+          lang: language,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setErrorMessage(
+          data.message || (language === 'hi' ? 'पासवर्ड रीसेट विफल रहा।' : 'Failed to reset password.')
+        );
+        return;
+      }
+
+      setSuccessNotice(data.message);
+      if (data.sessionToken) {
+        try {
+          localStorage.setItem('citizen_session_token', data.sessionToken);
+          if (data.citizen) {
+            localStorage.setItem('citizen_profile', JSON.stringify(data.citizen));
+            localStorage.removeItem('citizen_logged_out');
+          }
+        } catch (e) {}
+      }
+
+      setTimeout(() => {
+        onClose();
+        if (data.citizen) {
+          onLoginSuccess(data.citizen);
+        }
+      }, 1200);
     } catch (err: any) {
       setErrorMessage(
         language === 'hi' ? 'तकनीकी समस्या आई। पुनः प्रयास करें।' : 'Network error. Please try again.'
@@ -654,10 +744,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             type="button"
             onClick={() => {
               setIsLoading(false);
-              setScreen('login');
-              setErrorMessage(null);
-              setSuccessNotice(null);
-              setAccountNotFoundNotice(false);
+              if (forgotPasswordStep === 2) {
+                setForgotPasswordStep(1);
+                setErrorMessage(null);
+                setSuccessNotice(null);
+              } else {
+                setScreen('login');
+                setErrorMessage(null);
+                setSuccessNotice(null);
+                setAccountNotFoundNotice(false);
+              }
             }}
             className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Back"
@@ -729,6 +825,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ? (language === 'hi' ? 'खाता बनाएं (कदम 1/2)' : 'Create Account (Step 1/2)')
               : screen === 'signup' && signUpStep === 2
               ? (language === 'hi' ? 'नागरिक प्रोफ़ाइल विवरण (कदम 2/2)' : 'Profile Details (Step 2/2)')
+              : screen === 'forgot_password' && forgotPasswordStep === 2
+              ? (language === 'hi' ? 'नया पासवर्ड बनाएं' : 'Set New Password')
               : (language === 'hi' ? 'पासवर्ड भूल गए?' : 'Forgot Password')}
           </h2>
 
@@ -770,9 +868,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ? (language === 'hi'
                   ? 'सटीक सरकारी योजनाएं व अवसर पाने के लिए अपनी नागरिक जानकारी भरें।'
                   : 'Fill in your personal profile details to unlock all eligible opportunities.')
+              : screen === 'forgot_password' && forgotPasswordStep === 2
+              ? (language === 'hi'
+                  ? `Gmail (${email}) पर भेजा गया 6-अंकों का वेरिफिकेशन कोड और नया पासवर्ड दर्ज करें।`
+                  : `Enter the 6-digit verification code sent to ${email} and set your new password.`)
               : (language === 'hi'
-                  ? 'अपना ईमेल पता दर्ज करें, हम पासवर्ड रीसेट लिंक भेजेंगे।'
-                  : 'Enter your email address to receive a reset link.')}
+                  ? 'अपना ईमेल पता दर्ज करें, हम 6-अंकों का वेरिफिकेशन कोड और रीसेट लिंक भेजेंगे।'
+                  : 'Enter your registered email to receive a 6-digit verification code and reset link.')}
           </p>
         </div>
 
@@ -1526,9 +1628,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         )}
 
         {/* ======================================================== */}
-        {/* SCREEN 3: FORGOT PASSWORD                                */}
+        {/* SCREEN 3: FORGOT PASSWORD (STEP 1: REQUEST CODE)         */}
         {/* ======================================================== */}
-        {screen === 'forgot_password' && (
+        {screen === 'forgot_password' && forgotPasswordStep === 1 && (
           <form onSubmit={handleForgotPasswordSubmit} className="mt-4 space-y-4">
             {/* Email Address */}
             <div className="relative">
@@ -1540,7 +1642,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={language === 'hi' ? 'ईमेल पता' : 'Email address'}
+                placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता (name@gmail.com)' : 'Registered email address'}
                 className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
               />
             </div>
@@ -1554,7 +1656,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-white" />
               ) : (
-                <span>{language === 'hi' ? 'पासवर्ड रीसेट लिंक भेजें' : 'Send Reset Link'}</span>
+                <span>{language === 'hi' ? 'वेरिफिकेशन कोड और लिंक भेजें' : 'Send Verification Code & Link'}</span>
               )}
             </button>
 
@@ -1571,6 +1673,132 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className="font-extrabold text-xs text-emerald-600 hover:text-emerald-700 hover:underline cursor-pointer"
               >
                 {language === 'hi' ? 'वापस लॉगिन पर जाएं' : 'Back to Login'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* ======================================================== */}
+        {/* SCREEN 3: FORGOT PASSWORD (STEP 2: ENTER OTP & NEW PWD)  */}
+        {/* ======================================================== */}
+        {screen === 'forgot_password' && forgotPasswordStep === 2 && (
+          <form onSubmit={handleResetPasswordSubmit} className="mt-3.5 space-y-3.5">
+            {/* Active Email Pill with Edit Option */}
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+              <div className="flex items-center gap-2 overflow-hidden text-ellipsis">
+                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="font-bold text-slate-800 truncate">{email}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setForgotPasswordStep(1);
+                  setErrorMessage(null);
+                  setSuccessNotice(null);
+                }}
+                className="text-[11px] font-bold text-emerald-700 hover:underline shrink-0 ml-2 cursor-pointer"
+              >
+                {language === 'hi' ? 'ईमेल बदलें' : 'Change'}
+              </button>
+            </div>
+
+            {/* 6-Digit Verification Code */}
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  required
+                  value={forgotOtp}
+                  onChange={(e) => setForgotOtp(e.target.value)}
+                  placeholder={language === 'hi' ? '6-अंकों का वेरिफिकेशन कोड (उदा. 482910)' : '6-digit code (e.g. 482910)'}
+                  maxLength={48}
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border border-slate-200 font-mono font-bold text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all tracking-wider"
+                />
+              </div>
+            </div>
+
+            {/* New Password */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <Lock className="w-4 h-4" />
+              </div>
+              <input
+                type={showResetPassword ? 'text' : 'password'}
+                required
+                value={newResetPassword}
+                onChange={(e) => setNewResetPassword(e.target.value)}
+                placeholder={language === 'hi' ? 'नया पासवर्ड दर्ज करें' : 'Enter new password'}
+                className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowResetPassword(!showResetPassword)}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                {showResetPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {/* Confirm New Password */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <Lock className="w-4 h-4" />
+              </div>
+              <input
+                type={showConfirmResetPassword ? 'text' : 'password'}
+                required
+                value={confirmResetPassword}
+                onChange={(e) => setConfirmResetPassword(e.target.value)}
+                placeholder={language === 'hi' ? 'नए पासवर्ड की पुष्टि करें' : 'Confirm new password'}
+                className="w-full pl-10 pr-10 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-500 outline-none transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmResetPassword(!showConfirmResetPassword)}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                {showConfirmResetPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {/* Submit Action Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3.5 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+              ) : (
+                <span>{language === 'hi' ? 'पासवर्ड अपडेट करें' : 'Confirm & Update Password'}</span>
+              )}
+            </button>
+
+            {/* Resend and Back row */}
+            <div className="flex items-center justify-between text-xs pt-1 px-1">
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={handleForgotPasswordSubmit}
+                className="font-bold text-slate-600 hover:text-emerald-700 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {language === 'hi' ? 'कोड पुनः भेजें' : 'Resend Code'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setScreen('login');
+                  setForgotPasswordStep(1);
+                  setErrorMessage(null);
+                  setSuccessNotice(null);
+                }}
+                className="font-bold text-slate-600 hover:text-emerald-700 transition-colors cursor-pointer"
+              >
+                {language === 'hi' ? 'लॉगिन पर जाएं' : 'Back to Login'}
               </button>
             </div>
           </form>
