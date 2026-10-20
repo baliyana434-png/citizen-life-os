@@ -64,7 +64,7 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
   return (
     <div className="w-full space-y-3">
       {/* 1. Main Life Stage Switch (Clean Solid Buttons, Generous Gap, Zero Touching) */}
-      <div className="flex p-1 sm:p-1.5 glass-tab-bar rounded-2xl overflow-x-auto no-scrollbar gap-1.5 sm:gap-2 touch-pan-x scroll-smooth">
+      <div className="flex p-1 sm:p-1.5 glass-tab-bar rounded-xl overflow-x-auto no-scrollbar gap-1.5 sm:gap-2 touch-pan-x scroll-smooth">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const matchCount = tabMatchCounts ? tabMatchCounts[tab.id] : undefined;
@@ -75,9 +75,9 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
                 buttonRefs.current[tab.id] = el;
               }}
               onClick={() => onTabChange(tab.id)}
-              className={`shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
+              className={`shrink-0 flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg text-xs sm:text-sm transition-all duration-200 cursor-pointer ${
                 isActive
-                  ? 'bg-white/95 dark:bg-slate-800/90 text-slate-950 dark:text-white shadow-sm border border-white/80 dark:border-white/10 font-extrabold backdrop-blur-xs'
+                  ? 'bg-white dark:bg-slate-800 text-slate-950 dark:text-white shadow-sm border border-white dark:border-white/15 font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/50 font-semibold'
               }`}
             >
@@ -87,7 +87,7 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
               <span className="whitespace-nowrap">{t(tab.labelKey)}</span>
               {matchCount !== undefined && matchCount > 0 && (
                 <span
-                  className={`ml-1 px-1.5 py-0.2 text-[10px] font-mono font-bold rounded-full ${
+                  className={`ml-1 px-1.5 py-0.2 text-[10px] font-mono font-bold rounded-md ${
                     isActive
                       ? 'bg-emerald-600 text-white'
                       : 'bg-emerald-100 text-emerald-800'
@@ -101,7 +101,7 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
         })}
       </div>
 
-      {/* 2. Compact Sub-Filter Chips (Spaced Out, Zero Touching) */}
+      {/* 2. Compact Sub-Filter Chips (Spaced Out, Zero Touching, Sharp 3D Edges) */}
       <div className="flex items-center justify-between gap-2 sm:gap-3 overflow-x-auto no-scrollbar py-0.5 sm:py-1 touch-pan-x scroll-smooth">
         <div className="flex items-center gap-1.5 sm:gap-2">
           {subFilters.map((sf) => {
@@ -111,10 +111,10 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
               <button
                 key={sf.id}
                 onClick={() => onSubFilterChange(sf.id)}
-                className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-xs'
-                    : 'glass-pill text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80'
+                    ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm border border-slate-700/60'
+                    : 'glass-pill text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/90'
                 }`}
               >
                 {t(sf.labelKey)}

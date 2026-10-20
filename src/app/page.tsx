@@ -956,7 +956,7 @@ export default function HomePage() {
         )}
 
         {/* Hero Personalized Insight Bar (3D Cyber-Gov Terminal) - Hidden on mobile during search to show opportunities directly */}
-        <div className={`${searchQuery.trim() ? 'hidden sm:block' : ''} bg-gradient-to-br from-slate-950/90 via-slate-900/90 to-emerald-950/90 backdrop-blur-xl rounded-3xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/35`}>
+        <div className={`${searchQuery.trim() ? 'hidden sm:block' : ''} bg-gradient-to-br from-slate-950/90 via-slate-900/90 to-emerald-950/90 backdrop-blur-xl rounded-2xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/40`}>
           {/* Subtle Cyber Grid Texture */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.18),transparent_50%)] pointer-events-none" />
 

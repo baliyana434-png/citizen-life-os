@@ -105,7 +105,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           onSelect(opportunity);
         }
       }}
-      className="group relative glass-card rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 h-full overflow-visible"
+      className="group relative glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 h-full overflow-visible"
     >
       {/* Red Rotating Starburst Badge (Auto-expires 72 hours after user first views) */}
       {isOpportunityNewActive(opportunity.id, opportunity.isNew) && (

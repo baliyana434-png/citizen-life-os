@@ -121,10 +121,10 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Centered Modal Container */}
-      <div className="relative w-full max-w-2xl sm:max-w-3xl glass-panel rounded-3xl shadow-2xl flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto transition-all transform animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl sm:max-w-3xl glass-panel rounded-2xl shadow-2xl flex flex-col max-h-[90vh] z-10 overflow-hidden my-auto transition-all transform animate-in fade-in zoom-in-95 duration-200">
         
         {/* 1. Header with Close Button */}
-        <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-white/10 flex items-start justify-between gap-3 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-t-3xl">
+        <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-white/10 flex items-start justify-between gap-3 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-t-2xl">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 text-slate-800 text-xs font-bold border border-slate-300">

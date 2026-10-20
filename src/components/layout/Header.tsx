@@ -138,8 +138,8 @@ export const Header: React.FC<HeaderProps> = ({
             </Link>
             <div className="min-w-0">
               <Link href="/" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity">
-                <span className="font-extrabold text-slate-900 tracking-tight text-sm sm:text-lg truncate max-w-[110px] sm:max-w-none">
-                  {t('app_name')}
+                <span className="font-black tracking-tight text-base sm:text-xl font-sans text-slate-900 dark:text-white">
+                  CIT<span className="text-emerald-600">ZOS</span>
                 </span>
               </Link>
               <p className="text-[11px] text-slate-500 hidden lg:block">
