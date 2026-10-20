@@ -19,7 +19,7 @@ export const BrandIconSvg: React.FC<{ sizePx?: number; className?: string }> = (
   return (
     <img
       src="/logo-shield-transparent.png"
-      alt="Citizen Life OS Shield Emblem"
+      alt="Citzos Shield Emblem"
       width={sizePx}
       height={sizePx}
       className={`shrink-0 object-contain transition-transform duration-200 hover:scale-105 ${className}`}
@@ -61,7 +61,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
                   : 'text-base sm:text-lg'
               } ${textClassName}`}
             >
-              CITIZEN LIFE <span className="text-emerald-700">OS</span>
+              CIT<span className="text-emerald-600">ZOS</span>
             </span>
           </div>
           {subtitle && (
@@ -76,7 +76,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   if (linkToHome) {
     return (
-      <Link href="/" className="inline-flex cursor-pointer hover:opacity-95 transition-opacity" aria-label="Citizen Life OS Home">
+      <Link href="/" className="inline-flex cursor-pointer hover:opacity-95 transition-opacity" aria-label="Citzos Home">
         {content}
       </Link>
     );

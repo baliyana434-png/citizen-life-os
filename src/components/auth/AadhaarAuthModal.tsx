@@ -734,7 +734,7 @@ export const AadhaarAuthModal: React.FC<AadhaarAuthModalProps> = ({
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>{language === 'hi' ? 'सुरक्षित नागरिक आईडी सक्रिय' : 'Citizen Life OS Verified Member'}</span>
+              <span>{language === 'hi' ? 'सुरक्षित नागरिक आईडी सक्रिय' : 'Citzos Verified Member'}</span>
             </div>
           </div>
         )}

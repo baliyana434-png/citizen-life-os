@@ -1,4 +1,4 @@
-// Firebase Cloud Messaging Service Worker for Citizen Life OS
+// Firebase Cloud Messaging Service Worker for Citzos
 // Handles background lock-screen & system drawer push notifications
 
 importScripts('https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js');
@@ -19,7 +19,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background push:', payload);
 
-  const title = payload.notification?.title || payload.data?.title || 'Citizen Life OS — नया अवसर अलर्ट';
+  const title = payload.notification?.title || payload.data?.title || 'Citzos — नया अवसर अलर्ट';
   const body = payload.notification?.body || payload.data?.body || 'आपके लिए नया सत्यापित सरकारी अवसर उपलब्ध है। अभी देखें।';
   const icon = payload.notification?.icon || payload.data?.icon || '/icon.png';
   const targetUrl = payload.data?.url || payload.fcmOptions?.link || '/';
@@ -50,7 +50,7 @@ self.addEventListener('push', (event) => {
 
   try {
     const data = event.data.json();
-    const title = data.title || data.notification?.title || 'Citizen Life OS Alert';
+    const title = data.title || data.notification?.title || 'Citzos Alert';
     const body = data.body || data.notification?.body || 'New government scheme announcement.';
     const url = data.url || data.data?.url || '/';
 
@@ -69,7 +69,7 @@ self.addEventListener('push', (event) => {
     // Non-JSON string push
     const text = event.data.text();
     event.waitUntil(
-      self.registration.showNotification('Citizen Life OS Alert', {
+      self.registration.showNotification('Citzos Alert', {
         body: text,
         icon: '/icon.png',
         badge: '/icon.png'

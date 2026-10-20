@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '24x7 Official Helpline Directory | Citizen Life OS',
+    title: '24x7 Official Helpline Directory | Citzos',
     description:
       '100% Toll-free verified government emergency hotlines with instant 1-click calling.',
   },

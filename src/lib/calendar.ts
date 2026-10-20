@@ -36,7 +36,7 @@ export function generateGoogleCalendarUrl(
     `Notice/Circular: ${circularNo}`,
     `Official Direct Portal: ${portalUrl}`,
     '',
-    'Verified via Citizen Life OS (Zero-Commission, Zero-Scam Official Gateway).'
+    'Verified via Citzos (Zero-Commission, Zero-Scam Official Gateway).'
   ].join('\n');
 
   const params = new URLSearchParams({

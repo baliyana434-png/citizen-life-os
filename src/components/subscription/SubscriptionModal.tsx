@@ -107,8 +107,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           key: orderData.keyId,
           amount: orderData.order.amountPaisa || orderData.order.amount * 100,
           currency: orderData.order.currency || 'INR',
-          name: 'Citizen Life OS',
-          description: '1-Year National Citizen Access Pass (365 Days)',
+          name: 'Citzos',
+          description: '1-Year Citzos Access Pass (365 Days)',
           image: typeof window !== 'undefined' ? `${window.location.origin}/logo-shield-transparent.png` : '/logo-shield-transparent.png',
           order_id: orderData.order.orderId,
           prefill: {

@@ -95,7 +95,7 @@ export async function downloadOpportunityPdf(
           🇮🇳 भारत सरकार एवं राज्य प्राधिकृत डिजिटल दिशानिर्देश प्रपत्र
         </div>
         <div style="font-size: 18px; font-weight: 900; color: #0f172a; margin-top: 2px;">
-          CITIZEN LIFE OS • OFFICIAL APPLICATION KIT
+          CITZOS • OFFICIAL APPLICATION KIT
         </div>
         <div style="font-size: 11px; color: #64748b;">
           100% Verified Public Domain Gazette Record • Zero Broker Guarantee
@@ -223,7 +223,7 @@ export async function downloadOpportunityPdf(
     <!-- Document Footer -->
     <div style="border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #64748b;">
       <div>
-        <strong>Citizen Life OS</strong> • डिजिटल सशक्त भारत पहल • 100% Free Public Verification
+        <strong>CITZOS</strong> • डिजिटल सशक्त भारत पहल • 100% Free Public Verification
       </div>
       <div>
         दस्तावेज़ सुरक्षा कोड: <strong>DLT-${opportunity.id.slice(0, 8).toUpperCase()}-2026</strong>
@@ -270,7 +270,7 @@ export async function downloadOpportunityPdf(
     console.error('Failed to generate canvas PDF, falling back to basic jsPDF:', err);
     const fallbackDoc = new jsPDF('p', 'mm', 'a4');
     fallbackDoc.setFontSize(16);
-    fallbackDoc.text('CITIZEN LIFE OS - OFFICIAL GUIDELINES', 14, 20);
+    fallbackDoc.text('CITZOS - OFFICIAL GUIDELINES', 14, 20);
     fallbackDoc.setFontSize(12);
     fallbackDoc.text(`Authority: ${authority}`, 14, 30);
     fallbackDoc.text(`Circular No: ${circular}`, 14, 38);

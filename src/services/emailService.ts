@@ -148,7 +148,7 @@ export class EmailService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: process.env.SMTP_FROM || 'Citizen Life OS <onboarding@resend.dev>',
+          from: process.env.SMTP_FROM || 'Citzos <onboarding@resend.dev>',
           to: [to],
           subject,
           html,
@@ -187,7 +187,7 @@ export class EmailService {
         },
         body: JSON.stringify({
           sender: {
-            name: 'Citizen Life OS',
+            name: 'Citzos',
             email: process.env.SMTP_USER || 'baliyana434@gmail.com',
           },
           to: [{ email: to, name: toName }],
@@ -219,12 +219,12 @@ export class EmailService {
 
     const isHi = lang === 'hi';
     const subject = isHi
-      ? `Citizen Life OS - पासवर्ड रीसेट वेरिफिकेशन कोड: ${resetCode}`
-      : `Citizen Life OS - Password Reset Verification Code: ${resetCode}`;
+      ? `Citzos - पासवर्ड रीसेट वेरिफिकेशन कोड: ${resetCode}`
+      : `Citzos - Password Reset Verification Code: ${resetCode}`;
 
     const plainText = isHi
-      ? `नमस्कार ${citizenName},\n\nआपका पासवर्ड रीसेट वेरिफिकेशन कोड है: ${resetCode}\n\nयह कोड अगले 15 मिनट के लिए वैध है।\n\nआप नीचे दिए गए लिंक पर क्लिक करके भी सीधे अपना पासवर्ड रीसेट कर सकते हैं:\n${resetUrl}\n\nयदि आपने यह अनुरोध नहीं किया था, तो कृपया इस ईमेल को अनदेखा करें।\n\n- Citizen Life OS Team`
-      : `Dear ${citizenName},\n\nYour Citizen Life OS Password Reset Verification Code is: ${resetCode}\n\nThis verification code is valid for 15 minutes.\n\nYou can also click the direct link below to reset your password:\n${resetUrl}\n\nIf you did not request a password reset, please ignore this email.\n\n- Citizen Life OS Team`;
+      ? `नमस्कार ${citizenName},\n\nआपका पासवर्ड रीसेट वेरिफिकेशन कोड है: ${resetCode}\n\nयह कोड अगले 15 मिनट के लिए वैध है।\n\nआप नीचे दिए गए लिंक पर क्लिक करके भी सीधे अपना पासवर्ड रीसेट कर सकते हैं:\n${resetUrl}\n\nयदि आपने यह अनुरोध नहीं किया था, तो कृपया इस ईमेल को अनदेखा करें।\n\n- Citzos Team`
+      : `Dear ${citizenName},\n\nYour Citzos Password Reset Verification Code is: ${resetCode}\n\nThis verification code is valid for 15 minutes.\n\nYou can also click the direct link below to reset your password:\n${resetUrl}\n\nIf you did not request a password reset, please ignore this email.\n\n- Citzos Team`;
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -255,7 +255,7 @@ export class EmailService {
 <body>
   <div class="container">
     <div class="header">
-      <h1>CITIZEN LIFE OS</h1>
+      <h1>Citzos</h1>
       <p>Sovereign Civic Intelligence</p>
     </div>
     <div class="content">
@@ -263,7 +263,7 @@ export class EmailService {
       <div class="description">
         ${isHi
           ? 'आपके सिटिजन लाइफ ओएस खाते के लिए पासवर्ड रीसेट का अनुरोध प्राप्त हुआ है। अपने खाते को सुरक्षित रूप से अपडेट करने के लिए नीचे दिए गए 6-अंकों के वेरिफिकेशन कोड का उपयोग करें:'
-          : 'We received a request to reset your password for your Citizen Life OS account. Use the 6-digit verification code below to securely update your password:'}
+          : 'We received a request to reset your password for your Citzos account. Use the 6-digit verification code below to securely update your password:'}
       </div>
 
       <div class="otp-card">
@@ -295,7 +295,7 @@ export class EmailService {
       </div>
     </div>
     <div class="footer">
-      Citizen Life OS &bull; 100% Genuine Civic Portal &bull; Verified National Opportunities
+      Citzos &bull; 100% Genuine Civic Portal &bull; Verified National Opportunities
     </div>
   </div>
 </body>
@@ -308,7 +308,7 @@ export class EmailService {
         const transporter = this.getTransporter();
         const fromAddress =
           process.env.SMTP_FROM ||
-          `"Citizen Life OS" <${process.env.SMTP_USER || DEFAULT_SMTP_USER}>`;
+          `"Citzos" <${process.env.SMTP_USER || DEFAULT_SMTP_USER}>`;
 
         const info = await transporter.sendMail({
           from: fromAddress,

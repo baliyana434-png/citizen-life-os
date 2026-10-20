@@ -273,7 +273,7 @@ export default function SavedPage() {
         <div className="flex items-center gap-2">
           <span className="font-bold tracking-wider text-slate-100 flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
-            {language === 'hi' ? 'सत्यापित सुरक्षित अवसर • सिटिजन लाइफ' : 'CITIZEN LIFE OS • SAVED & STARRED OPPORTUNITIES'}
+            {language === 'hi' ? 'सत्यापित सुरक्षित अवसर • सिटिजन लाइफ' : 'Citzos • SAVED & STARRED OPPORTUNITIES'}
           </span>
           <span className="text-slate-600 hidden md:inline">•</span>
           <span className="text-slate-400 text-[10px] hidden md:inline">

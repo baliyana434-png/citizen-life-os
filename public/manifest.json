@@ -1,7 +1,7 @@
 {
-  "name": "नागरिक जीवन सेतु - Citizen Life OS",
-  "short_name": "CitizenOS",
-  "description": "सत्यापित राष्ट्रीय अवसर एवं अधिकार मंच - Schemes, Jobs, Exams & Health",
+  "name": "Citzos - Global Civic & Opportunities Portal",
+  "short_name": "Citzos",
+  "description": "Citzos - 100% Verified Government Schemes, Scholarships, Jobs & Helplines",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",

@@ -21,7 +21,7 @@ export const CAREER_OPPORTUNITIES: Opportunity[] = [
     descriptionHi: 'हार्वर्ड और डीपलर्निंग एआई द्वारा संचालित 6 सप्ताह का निःशुल्क कोर्स जिससे बिना कोडिंग के एआई टूल्स चलाकर उच्च आय प्राप्त की जा सकती है।',
     gazette: {
       circularNumber: 'SKILL-AI-FREE-2026/CURATED',
-      issuingAuthority: 'Citizen Life OS Free Skills Council',
+      issuingAuthority: 'Citzos Free Skills Council',
       gazetteDate: '2026-09-01',
       lastVerifiedAt: 'Live verified 10 mins ago',
       officialPortalUrl: 'https://learnprompting.org',

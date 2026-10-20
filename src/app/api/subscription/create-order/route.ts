@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
           notes: {
             citizenId,
             plan: '1_year',
-            product: 'Citizen Life OS 1-Year Access Pass',
+            product: 'Citzos 1-Year Access Pass',
           },
         });
 

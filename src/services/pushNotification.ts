@@ -132,7 +132,7 @@ class PushNotificationService {
     if (!messaging) return;
 
     return onMessage(messaging, (payload) => {
-      const title = payload.notification?.title || payload.data?.title || 'Citizen Life OS Alert';
+      const title = payload.notification?.title || payload.data?.title || 'Citzos Alert';
       const body = payload.notification?.body || payload.data?.body || 'New verified opportunity available.';
       const url = payload.data?.url || payload.fcmOptions?.link || '/';
 
@@ -163,8 +163,8 @@ class PushNotificationService {
     }
 
     const title = language === 'hi' 
-      ? 'Citizen Life OS — लाइव अलर्ट सक्रिय' 
-      : 'Citizen Life OS — Live Alerts Activated';
+      ? 'Citzos — लाइव अलर्ट सक्रिय' 
+      : 'Citzos — Live Alerts Activated';
     const body = language === 'hi'
       ? 'बधाई! आपके डिवाइस की लॉक स्क्रीन पर लाइव अवसर सूचनाएं सफलतापूर्वक सक्रिय हो गई हैं।'
       : 'Success! Live opportunity push notifications are now active on your lock screen.';

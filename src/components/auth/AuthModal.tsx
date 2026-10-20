@@ -1904,9 +1904,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-sm sm:text-base tracking-tight text-slate-900">CITIZEN LIFE OS</span>
+                <span className="font-black text-sm sm:text-base tracking-tight text-slate-900">CIT<span className="text-emerald-600">ZOS</span></span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-mono font-bold">
-                  SOVEREIGN CIVIC OS
+                  GLOBAL CIVIC PORTAL
                 </span>
               </div>
               <p className="text-[10px] text-slate-500 hidden sm:block">
@@ -2053,7 +2053,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Footer */}
         <footer className="w-full border-t border-slate-200 bg-white/90 px-4 py-4 text-center text-xs text-slate-500 relative z-10">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px]">
-            <p>Citizen Life OS • Sovereign Civic Platform</p>
+            <p>Citzos • Global Civic & Opportunities Platform</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500">
               <Link href="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
               <Link href="/privacy" className="hover:text-slate-900 transition-colors">Privacy</Link>

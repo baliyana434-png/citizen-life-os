@@ -125,7 +125,7 @@ async function getGoogleOAuthAccessToken(serviceAccount: ServiceAccountKey): Pro
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const title = String(body.title || 'Citizen Life OS — नया अवसर अलर्ट').trim();
+    const title = String(body.title || 'Citzos — नया अवसर अलर्ट').trim();
     const message = String(body.body || body.message || 'नई सरकारी योजना व भर्ती का नोटिफिकेशन उपलब्ध है।').trim();
     const targetUrl = String(body.url || '/').trim();
     const specificToken = body.token ? String(body.token).trim() : undefined;

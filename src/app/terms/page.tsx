@@ -28,7 +28,7 @@ export default function TermsPage() {
             <LanguageSwitcher />
             <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
               <BrandIconSvg sizePx={32} />
-              <span className="font-extrabold text-sm text-slate-900">Citizen Life OS</span>
+              <span className="font-extrabold text-sm text-slate-900">Citzos</span>
             </Link>
           </div>
         </div>

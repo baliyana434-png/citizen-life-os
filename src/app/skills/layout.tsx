@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     canonical: `${siteUrl}/skills`,
   },
   openGraph: {
-    title: 'Free Skill Hub & Certifications | Citizen Life OS',
+    title: 'Free Skill Hub & Certifications | Citzos',
     description:
       'Learn high-income skills through top YouTube masterclasses and earn verified official government certificates from SWAYAM, Skill India, and tech leaders.',
     url: `${siteUrl}/skills`,
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Skill Hub & Certifications | Citizen Life OS',
+    title: 'Free Skill Hub & Certifications | Citzos',
     description:
       'Master Web Dev, AI, Python, and Data Science with free masterclasses and official certificates.',
   },
@@ -49,10 +49,10 @@ export default function SkillsLayout({
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Are the skills courses on Citizen Life OS completely free to learn?',
+        name: 'Are the skills courses on Citzos completely free to learn?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes, all curated video masterclasses in the Citizen Life OS Skill Hub are 100% free, offering complete roadmaps from beginner to professional in Web Development, AI, Python, Data Analytics, and Cloud Computing.',
+          text: 'Yes, all curated video masterclasses in the Citzos Skill Hub are 100% free, offering complete roadmaps from beginner to professional in Web Development, AI, Python, Data Analytics, and Cloud Computing.',
         },
       },
       {

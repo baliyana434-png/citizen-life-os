@@ -166,7 +166,7 @@ export default function AdminPage() {
     isFcmServerConfigured: boolean;
     projectId: string;
   } | null>(null);
-  const [pushTitle, setPushTitle] = useState('Citizen Life OS — नया अवसर अलर्ट');
+  const [pushTitle, setPushTitle] = useState('Citzos — नया अवसर अलर्ट');
   const [pushBody, setPushBody] = useState('नई सरकारी योजना व छात्रवृत्ति पोर्टल पर उपलब्ध है। तुरंत देखें।');
   const [pushUrl, setPushUrl] = useState('/');
   const [isSendingPush, setIsSendingPush] = useState(false);
@@ -849,7 +849,7 @@ export default function AdminPage() {
                 <span className={`font-extrabold text-sm tracking-tight ${
                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                 }`}>
-                  Citizen Life OS
+                  Citzos
                 </span>
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-700/60">
                   ADMIN
@@ -2264,7 +2264,7 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setPushTitle('Citizen Life OS — नई छात्रवृत्ति अधिसूचना');
+                        setPushTitle('Citzos — नई छात्रवृत्ति अधिसूचना');
                         setPushBody('राष्ट्रीय छात्रवृत्ति पोर्टल पर नए आवेदन शुरू हो गए हैं। अपनी पात्रता तुरंत जांचें।');
                         setPushUrl('/?tab=education');
                       }}
@@ -2275,7 +2275,7 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setPushTitle('Citizen Life OS — सरकारी भर्ती परीक्षा अलर्ट');
+                        setPushTitle('Citzos — सरकारी भर्ती परीक्षा अलर्ट');
                         setPushBody('नवीनतम सरकारी रिक्तियां और परीक्षा तिथियां घोषित की गई हैं। आधिकारिक विवरण देखें।');
                         setPushUrl('/?tab=career');
                       }}
@@ -2286,7 +2286,7 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setPushTitle('Citizen Life OS — कौशल विकास योजना');
+                        setPushTitle('Citzos — कौशल विकास योजना');
                         setPushBody('युवाओं के लिए निशुल्क तकनीकी प्रशिक्षण व सरकारी प्रमाणन कार्यक्रम शुरू।');
                         setPushUrl('/skills');
                       }}
@@ -2297,7 +2297,7 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setPushTitle('Citizen Life OS — नया नागरिक अवसर अलर्ट');
+                        setPushTitle('Citzos — नया नागरिक अवसर अलर्ट');
                         setPushBody('आपके राज्य के लिए नई कल्याणकारी योजनाओं की सूची अपडेट की गई है।');
                         setPushUrl('/');
                       }}
@@ -2343,7 +2343,7 @@ export default function AdminPage() {
                       type="text"
                       value={pushTitle}
                       onChange={(e) => setPushTitle(e.target.value)}
-                      placeholder="e.g. Citizen Life OS — नया अवसर अलर्ट"
+                      placeholder="e.g. Citzos — नया अवसर अलर्ट"
                       className={`w-full px-3.5 py-2.5 rounded-lg text-xs border outline-hidden transition-all ${
                         theme === 'dark'
                           ? 'bg-slate-950 border-slate-800 text-white focus:border-emerald-500'
@@ -2440,7 +2440,7 @@ export default function AdminPage() {
                         <span className="w-3.5 h-3.5 rounded bg-emerald-500 flex items-center justify-center text-[8px] font-black text-black">
                           C
                         </span>
-                        <span className="font-semibold text-slate-200">Citizen Life OS</span>
+                        <span className="font-semibold text-slate-200">Citzos</span>
                       </div>
                       <span>Just now</span>
                     </div>

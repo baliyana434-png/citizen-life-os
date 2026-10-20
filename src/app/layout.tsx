@@ -8,15 +8,29 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://citizenlifeos.com';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Citizen Life OS | Verified Government Schemes, Scholarships, Helplines & Jobs',
-    template: '%s | Citizen Life OS',
+    default: 'Citzos | Verified Government Schemes, Scholarships, Helplines & Jobs',
+    template: '%s | Citzos',
   },
   description:
-    '100% verified, zero-scam civic portal for official government schemes, student scholarships, competitive exams, youth internships, 24x7 emergency helplines, free skill certifications, and healthcare benefits.',
-  applicationName: 'Citizen Life OS',
-  authors: [{ name: 'Citizen Life OS Editorial Board', url: siteUrl }],
+    'Citzos (formerly Citizen Life OS) is the 100% verified, zero-scam global civic portal for official government schemes, student scholarships, competitive exams, youth internships, 24x7 emergency helplines, free skill certifications, and healthcare benefits.',
+  applicationName: 'Citzos',
+  authors: [{ name: 'Citzos Editorial Board', url: siteUrl }],
   generator: 'Next.js',
   keywords: [
+    // Primary Brand & Transition Keywords
+    'citzos',
+    'citzos portal',
+    'citzos online',
+    'citzos app',
+    'citzos login',
+    'citzos schemes',
+    'citzos scholarships',
+    'citzos jobs',
+    'citizen life os',
+    'citizen os',
+    'citizenlifeos',
+    'citizen life',
+    'life os',
     // Hindi & Hinglish High-Volume Search Queries
     'sarkari yojana',
     'sarkari yojana 2026',
@@ -83,8 +97,8 @@ export const metadata: Metadata = {
     'international internships and careers',
   ],
   referrer: 'origin-when-cross-origin',
-  creator: 'Citizen Life OS',
-  publisher: 'Citizen Life OS',
+  creator: 'Citzos',
+  publisher: 'Citzos',
   formatDetection: {
     email: false,
     address: false,
@@ -98,18 +112,18 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Citizen Life OS | Verified Government Schemes, Scholarships, Helplines & Jobs',
+    title: 'Citzos | Verified Government Schemes, Scholarships, Helplines & Jobs',
     description:
       'Official verified civic access portal. Discover eligible government schemes, student scholarships, competitive exam alerts, 24x7 emergency hotlines, and free skill certifications matching your age, qualification, and state.',
     url: siteUrl,
-    siteName: 'Citizen Life OS',
+    siteName: 'Citzos',
     locale: 'en_IN',
     alternateLocale: ['hi_IN'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Citizen Life OS | Verified Civic Opportunities & Helplines',
+    title: 'Citzos | Verified Civic Opportunities & Helplines',
     description:
       'Zero-scam platform for verified government schemes, scholarships, jobs, 24x7 helplines, and free certified masterclasses.',
   },
@@ -153,7 +167,8 @@ export default function RootLayout({
   const jsonLdWebSite = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Citizen Life OS',
+    name: 'Citzos',
+    alternateName: ['Citizen Life OS', 'Citizen OS', 'CitizenLifeOS', 'Citzos Portal'],
     url: siteUrl,
     description:
       'Verified government schemes, competitive exams, youth internships, 24x7 emergency helplines, free skill certifications, and healthcare benefits.',
@@ -170,7 +185,8 @@ export default function RootLayout({
   const jsonLdOrganization = {
     '@context': 'https://schema.org',
     '@type': 'GovernmentOrganization',
-    name: 'Citizen Life OS',
+    name: 'Citzos',
+    alternateName: ['Citizen Life OS', 'Citizen OS', 'CitizenLifeOS'],
     url: siteUrl,
     logo: `${siteUrl}/icon.png`,
     contactPoint: {
@@ -186,10 +202,10 @@ export default function RootLayout({
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'What is Citizen Life OS and how does it help citizens?',
+        name: 'What is Citzos (formerly Citizen Life OS) and how does it help citizens?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Citizen Life OS is an authentic, zero-scam civic platform that helps citizens discover verified government schemes, scholarships, competitive exams, youth internships, healthcare benefits, and 24x7 toll-free emergency helplines tailored to their age, state, and qualification without middlemen or scam risks.',
+          text: 'Citzos (formerly Citizen Life OS) is an authentic, zero-scam civic platform that helps citizens discover verified government schemes, scholarships, competitive exams, youth internships, healthcare benefits, and 24x7 toll-free emergency helplines tailored to their age, state, and qualification without middlemen or scam risks.',
         },
       },
       {
@@ -205,7 +221,7 @@ export default function RootLayout({
         name: 'How can students apply for genuine scholarships and internships in 2026?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Students can discover eligible central and state scholarships (like National Scholarship Portal NSP, PM YASASVI, UGC fellowships) and verified internship schemes (such as the PM Internship Scheme 2026 offering stipends up to Rs 5,000/month) directly through verified official government links on Citizen Life OS.',
+          text: 'Students can discover eligible central and state scholarships (like National Scholarship Portal NSP, PM YASASVI, UGC fellowships) and verified internship schemes (such as the PM Internship Scheme 2026 offering stipends up to Rs 5,000/month) directly through verified official government links on Citzos.',
         },
       },
       {
@@ -213,15 +229,15 @@ export default function RootLayout({
         name: 'Can I learn skills and receive free government recognized certificates online?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes, through the Citizen Life OS Skill Hub, learners can access curated masterclasses and direct official links to free government courses with recognized certificates from SWAYAM, Skill India, NPTEL, and global tech programs in Web Development, AI, Python, and Data Science.',
+          text: 'Yes, through the Citzos Skill Hub, learners can access curated masterclasses and direct official links to free government courses with recognized certificates from SWAYAM, Skill India, NPTEL, and global tech programs in Web Development, AI, Python, and Data Science.',
         },
       },
       {
         '@type': 'Question',
-        name: 'How does Citizen Life OS calculate opportunity eligibility?',
+        name: 'How does Citzos calculate opportunity eligibility?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Citizen Life OS automatically calculates your exact age from your date of birth on every birthday and filters opportunities according to your country, state, education level, and demographic category to show only genuine, 100% eligible programs.',
+          text: 'Citzos automatically calculates your exact age from your date of birth on every birthday and filters opportunities according to your country, state, education level, and demographic category to show only genuine, 100% eligible programs.',
         },
       },
     ],

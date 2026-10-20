@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://citizenlifeos.com';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Citizen Life OS',
+  title: 'Terms of Service | Citzos',
   description:
-    'Terms of Service, user commitments, and legal agreements governing the use of Citizen Life OS civic services and access passes.',
+    'Terms of Service, user commitments, and legal agreements governing the use of Citzos civic services and access passes.',
   alternates: {
     canonical: `${siteUrl}/terms`,
   },

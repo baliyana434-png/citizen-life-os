@@ -133,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* 1. App Identity (Flexible with max-w on narrow screens to prevent pushing right hub off-screen) */}
           <div className="flex items-center gap-2.5 min-w-0 shrink">
-            <Link href="/" className="shrink-0 cursor-pointer block hover:scale-105 transition-transform" aria-label="Citizen Life OS Home">
+            <Link href="/" className="shrink-0 cursor-pointer block hover:scale-105 transition-transform" aria-label="Citzos Home">
               <BrandIconSvg sizePx={38} className="w-8 h-8 sm:w-10 sm:h-10 shadow-xs" />
             </Link>
             <div className="min-w-0">

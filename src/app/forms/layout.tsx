@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     canonical: `${siteUrl}/forms`,
   },
   openGraph: {
-    title: 'Official Government Forms & Citizen Portals Directory | Citizen Life OS',
+    title: 'Official Government Forms & Citizen Portals Directory | Citzos',
     description:
       'Direct, zero-scam access to official application portals for national scholarships, exams, pensions, and welfare schemes.',
     url: `${siteUrl}/forms`,
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Government Forms & Portals Directory | Citizen Life OS',
+    title: 'Government Forms & Portals Directory | Citzos',
     description: '100% verified official government application portals without middlemen.',
   },
 };

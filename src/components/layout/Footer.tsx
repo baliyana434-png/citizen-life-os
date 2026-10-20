@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
           {/* Col 1: Identity & Mission */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2.5">
-              <Link href="/" className="shrink-0 cursor-pointer block hover:scale-105 transition-transform" aria-label="Citizen Life OS Home">
+              <Link href="/" className="shrink-0 cursor-pointer block hover:scale-105 transition-transform" aria-label="Citzos Home">
                 <BrandIconSvg sizePx={36} className="w-9 h-9 shadow-sm" />
               </Link>
               <Link href="/" className="hover:opacity-90 transition-opacity">
@@ -253,22 +253,22 @@ export const Footer: React.FC = () => {
           </strong>
           <p>
             {language === 'hi'
-              ? 'Citizen Life OS एक स्वतंत्र नागरिक-तकनीकी सूचना मंच है और किसी भी सरकारी निकाय का प्रतिनिधित्व नहीं करता है। सभी योजनाएं, परीक्षाएं एवं सूचनाएं आधिकारिक राजपत्रों एवं संबंधित मंत्रालयों के सार्वजनिक पोर्टलों से सत्यापित की जाती हैं। आधिकारिक आवेदन केवल संबंधित विभागों के मूल पोर्टल पर ही करें।'
+              ? 'Citzos एक स्वतंत्र नागरिक-तकनीकी सूचना मंच है और किसी भी सरकारी निकाय का प्रतिनिधित्व नहीं करता है। सभी योजनाएं, परीक्षाएं एवं सूचनाएं आधिकारिक राजपत्रों एवं संबंधित मंत्रालयों के सार्वजनिक पोर्टलों से सत्यापित की जाती हैं। आधिकारिक आवेदन केवल संबंधित विभागों के मूल पोर्टल पर ही करें।'
               : language === 'es'
-              ? 'Citizen Life OS es una plataforma cívica independiente y no representa a ninguna entidad gubernamental. Toda la información procede de boletines y portales oficiales del Estado.'
+              ? 'Citzos es una plataforma cívica independiente y no representa a ninguna entidad gubernamental. Toda la información procede de boletines y portales oficiales del Estado.'
               : language === 'fr'
-              ? 'Citizen Life OS est un service civique indépendant ne représentant aucune autorité publique. Les informations proviennent directement des journaux et portals officiels.'
+              ? 'Citzos est un service civique indépendant ne représentant aucune autorité publique. Les informations proviennent directement des journaux et portals officiels.'
               : language === 'de'
-              ? 'Citizen Life OS ist eine unabhängige Plattform und vertritt keine staatliche Behörde. Alle Angaben stammen aus amtlichen Veröffentlichungen.'
+              ? 'Citzos ist eine unabhängige Plattform und vertritt keine staatliche Behörde. Alle Angaben stammen aus amtlichen Veröffentlichungen.'
               : language === 'ar'
-              ? 'بوابة المواطن الرقمية منصة تقنية مستقلة ولا تمثل أي جهة حكومية. جميع البيانات مستخرجة من المصادر الرسمية المعتمدة.'
-              : 'Citizen Life OS is an independent civic-tech portal and does not represent any government entity. All opportunities, exams, and schemes are aggregated from publicly available official gazettes and ministry portals.'}
+              ? 'بوابة سيتزوس (Citzos) منصة تقنية مستقلة ولا تمثل أي جهة حكومية. جميع البيانات مستخرجة من المصادر الرسمية المعتمدة.'
+              : 'Citzos is an independent civic-tech portal and does not represent any government entity. All opportunities, exams, and schemes are aggregated from publicly available official gazettes and ministry portals.'}
           </p>
         </div>
 
         {/* 3. Bottom Bar */}
         <div className="border-t border-slate-900 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500">
-          <p>© {new Date().getFullYear()} Citizen Life OS. {t('auth.verification_success')}.</p>
+          <p>© {new Date().getFullYear()} Citzos. {t('auth.verification_success')}.</p>
           <p>
             {language === 'hi' ? 'भारतीय एवं अंतरराष्ट्रीय नागरिकों के लिए समर्पित।' : 'Designed for national and global citizens.'}
           </p>

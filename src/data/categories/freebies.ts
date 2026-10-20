@@ -123,7 +123,7 @@ export const FREEBIE_OPPORTUNITIES: Opportunity[] = [
     descriptionHi: 'छात्रों और युवाओं के लिए सत्यापित निःशुल्क एआई टूल्स जो कोचिंग और रेज्यूमे बनाने के हजारों रुपये बचाते हैं।',
     gazette: {
       circularNumber: 'AI-VERIFIED-FREE/2026/CURATION',
-      issuingAuthority: 'Citizen Life OS Artificial Intelligence Directory',
+      issuingAuthority: 'Citzos Artificial Intelligence Directory',
       gazetteDate: '2026-09-18',
       lastVerifiedAt: 'Live verified 5 mins ago',
       officialPortalUrl: 'https://chat.deepseek.com',
