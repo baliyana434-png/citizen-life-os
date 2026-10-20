@@ -13,7 +13,7 @@ const nextConfig = {
   headers: async () => {
     return [
       {
-        source: "/(.*)",
+        source: "/((?!__/auth).*)",
         headers: [
           {
             key: "X-Content-Type-Options",
@@ -46,6 +46,15 @@ const nextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(self), microphone=(), geolocation=(self)",
+          },
+        ],
+      },
+      {
+        source: "/__/auth/:path*",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
           },
         ],
       },
