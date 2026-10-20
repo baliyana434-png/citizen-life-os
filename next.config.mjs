@@ -2,6 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  rewrites: async () => {
+    return [
+      {
+        source: '/__/auth/:path*',
+        destination: 'https://lifeos-7a6f1.firebaseapp.com/__/auth/:path*',
+      },
+    ];
+  },
   headers: async () => {
     return [
       {
