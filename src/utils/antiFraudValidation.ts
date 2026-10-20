@@ -558,8 +558,10 @@ const FAKE_EMAIL_PREFIXES = new Set([
 ]);
 
 /**
- * Validates real email address
- * Enforces RFC standard, rejects dummy prefixes, placeholder domains, and disposable burner emails.
+ * Validates real Google / Gmail address
+ * Strictly enforces official Google/Gmail (@gmail.com / @googlemail.com),
+ * enforces Gmail username rules (6-30 chars, alphanumeric + periods, no leading/trailing/consecutive periods),
+ * rejects dummy prefixes, dummy patterns, repetitive sequences, and non-Gmail domains.
  */
 export function validateRealEmail(
   email: string,
@@ -570,7 +572,7 @@ export function validateRealEmail(
     return {
       valid: false,
       cleanEmail: '',
-      error: lang === 'hi' ? 'कृपया अपना ईमेल पता दर्ज करें।' : 'Please enter your email address.',
+      error: lang === 'hi' ? 'कृपया अपना Gmail पता दर्ज करें।' : 'Please enter your Gmail address.',
     };
   }
 
@@ -581,8 +583,8 @@ export function validateRealEmail(
       valid: false,
       cleanEmail: trimmed,
       error: lang === 'hi'
-        ? 'अमान्य ईमेल प्रारूप! कृपया सही ईमेल दर्ज करें।'
-        : 'Invalid email format! Please enter a valid email address.',
+        ? 'अमान्य ईमेल प्रारूप! कृपया सही Gmail पता दर्ज करें (उदा. yourname@gmail.com)।'
+        : 'Invalid email format! Please enter a valid Gmail address (e.g. yourname@gmail.com).',
     };
   }
 
@@ -597,57 +599,107 @@ export function validateRealEmail(
 
   const [username, domain] = parts;
 
-  // Check username length
-  if (username.length < 2) {
-    return {
-      valid: false,
-      cleanEmail: trimmed,
-      error: lang === 'hi' ? 'ईमेल का यूजरनेम बहुत छोटा है।' : 'Email username is too short.',
-    };
-  }
-
-  // Check fake username prefix
-  const cleanUsername = username.replace(/[._+-]/g, '');
-  if (FAKE_EMAIL_PREFIXES.has(username) || FAKE_EMAIL_PREFIXES.has(cleanUsername) || /^(.)\1{3,}$/.test(cleanUsername)) {
+  // 1. Strict Gmail Domain Enforcement
+  if (domain !== 'gmail.com' && domain !== 'googlemail.com') {
     return {
       valid: false,
       cleanEmail: trimmed,
       error: lang === 'hi'
-        ? 'फर्जी अथवा डमी ईमेल अस्वीकार्य है! कृपया अपना वास्तविक एवं सक्रिय ईमेल पता दर्ज करें।'
-        : 'Fake or dummy email addresses are not permitted. Please enter a genuine email.',
+        ? 'केवल वास्तविक Google/Gmail (@gmail.com) खाता ही मान्य है। अन्य या डमी प्रदाता अस्वीकार्य हैं।'
+        : 'Only genuine Google/Gmail accounts (@gmail.com) are accepted. Other email providers are not permitted.',
     };
   }
 
-  // Check placeholder domain
-  if (FAKE_DOMAINS.has(domain)) {
+  // 2. Gmail Username Length: 6 to 30 characters (Google official requirement)
+  if (username.length < 6) {
     return {
       valid: false,
       cleanEmail: trimmed,
       error: lang === 'hi'
-        ? `डमी या अमान्य डोमेन (${domain}) अस्वीकार्य है। कृपया वैध प्रदाता का ईमेल दर्ज करें।`
-        : `Dummy or placeholder domain (${domain}) is not allowed. Please enter a genuine email.`,
+        ? 'Gmail यूजरनेम कम से कम 6 अक्षरों का होना चाहिए।'
+        : 'Gmail username must be at least 6 characters long.',
     };
   }
 
-  // Check disposable / burner email provider
-  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) {
+  if (username.length > 30) {
     return {
       valid: false,
       cleanEmail: trimmed,
       error: lang === 'hi'
-        ? 'डिस्पोजेबल या अस्थायी (Temporary Burner) ईमेल की अनुमति नहीं है। कृपया Gmail, Yahoo, Outlook आदि का वास्तविक ईमेल उपयोग करें।'
-        : 'Disposable or temporary email services are strictly prohibited. Please use a verified provider like Gmail, Yahoo, or Outlook.',
+        ? 'Gmail यूजरनेम अधिकतम 30 अक्षरों का हो सकता है।'
+        : 'Gmail username cannot exceed 30 characters.',
     };
   }
 
-  // Check domain TLD extension
-  const domainParts = domain.split('.');
-  const tld = domainParts[domainParts.length - 1];
-  if (!tld || tld.length < 2 || !/^[a-z]+$/.test(tld)) {
+  // 3. Allowed Characters: only lowercase letters (a-z), numbers (0-9), and periods (.)
+  if (!/^[a-z0-9.]+$/.test(username)) {
     return {
       valid: false,
       cleanEmail: trimmed,
-      error: lang === 'hi' ? 'अमान्य डोमेन एक्सटेंशन (TLD)।' : 'Invalid domain extension.',
+      error: lang === 'hi'
+        ? 'Gmail यूजरनेम में केवल अक्षर (a-z), अंक (0-9) और डॉट (.) की अनुमति है।'
+        : 'Gmail username can only contain letters (a-z), numbers (0-9), and periods (.).',
+    };
+  }
+
+  // 4. Period Syntax Rules
+  if (username.startsWith('.') || username.endsWith('.')) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'Gmail यूजरनेम डॉट (.) से शुरू या समाप्त नहीं हो सकता।'
+        : 'Gmail username cannot start or end with a period.',
+    };
+  }
+
+  if (username.includes('..')) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'Gmail यूजरनेम में लगातार दो डॉट्स (..) नहीं हो सकते।'
+        : 'Gmail username cannot contain consecutive periods.',
+    };
+  }
+
+  // 5. Anti-Fake & Pattern Checks
+  const cleanUsername = username.replace(/\./g, '');
+
+  // Must contain at least one letter (Google disallows purely numeric Gmail usernames)
+  if (/^\d+$/.test(cleanUsername)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'केवल अंकों वाला Gmail यूजरनेम अमान्य है। कृपया अपना वास्तविक Gmail दर्ज करें।'
+        : 'All-numeric Gmail usernames are not permitted. Please enter your real Gmail address.',
+    };
+  }
+
+  // Check repetitive single character (e.g. aaaaaa, 111111)
+  if (/^(.)\1{4,}$/.test(cleanUsername)) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'फर्जी अथवा डमी Gmail अस्वीकार्य है! कृपया अपना वास्तविक एवं सक्रिय Gmail पता दर्ज करें।'
+        : 'Fake or dummy Gmail addresses are not permitted. Please enter your genuine Gmail.',
+    };
+  }
+
+  // Check fake username prefix or obvious placeholder
+  if (
+    FAKE_EMAIL_PREFIXES.has(username) ||
+    FAKE_EMAIL_PREFIXES.has(cleanUsername) ||
+    /^(test|demo|dummy|sample|fake|asdf|qwerty|admin|user|temp|random|fakeuser|nobody|null|undefined)/i.test(cleanUsername)
+  ) {
+    return {
+      valid: false,
+      cleanEmail: trimmed,
+      error: lang === 'hi'
+        ? 'फर्जी अथवा डमी ईमेल अस्वीकार्य है! कृपया अपना वास्तविक एवं सक्रिय Gmail पता दर्ज करें।'
+        : 'Fake or dummy email addresses are not permitted. Please enter a genuine Gmail.',
     };
   }
 

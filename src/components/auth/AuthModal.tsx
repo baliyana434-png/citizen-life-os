@@ -464,7 +464,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Sign Up Step 1 -> Step 2 Transition (Validates credentials then moves to Details Page)
+  // Sign Up Step 1 -> Step 2 Transition (Validates credentials then moves directly to Details Page)
   const handleProceedToDetailsStep = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -477,10 +477,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // 2. Real Email Check (Blocks fake, burner, disposable emails)
+    // 2. Strict Real Gmail Check (Enforces genuine @gmail.com accounts only)
     const emailCheck = validateRealEmail(email, language);
     if (!emailCheck.valid) {
-      setErrorMessage(emailCheck.error || 'Invalid email');
+      setErrorMessage(emailCheck.error || 'Invalid Gmail address');
       return;
     }
 
@@ -496,7 +496,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // 4. Quick check if this email already exists in DB
+    // 4. Quick check if this Gmail already exists in DB
     setIsLoading(true);
     try {
       const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(emailCheck.cleanEmail)}`);
@@ -504,14 +504,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (data.success && data.citizen) {
         setErrorMessage(
           language === 'hi'
-            ? 'यह ईमेल पहले से पंजीकृत है! कृपया लॉगिन करें या दूसरा ईमेल उपयोग करें।'
-            : 'This email is already registered! Please log in or use another email.'
+            ? 'यह Gmail खाता पहले से पंजीकृत है! कृपया सीधे लॉगिन करें।'
+            : 'This Gmail account is already registered! Please log in instead.'
         );
         setIsLoading(false);
         return;
       }
     } catch (e) {
-      // Proceed if network check errors
+      // Proceed to details fill
     } finally {
       setIsLoading(false);
     }
@@ -521,8 +521,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSignUpStep(2);
     setSuccessNotice(
       language === 'hi'
-        ? 'क्रेडेंशियल सत्यापित! कृपया अब नीचे अपना प्रोफ़ाइल विवरण भरें।'
-        : 'Credentials verified! Please fill in your profile details below.'
+        ? 'Gmail क्रेडेंशियल मान्य! कृपया अब नीचे अपना प्रोफ़ाइल विवरण भरें।'
+        : 'Gmail credentials verified! Please complete your profile details below.'
     );
   };
 
@@ -856,12 +856,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <p className="text-xs sm:text-sm text-slate-500 mt-1.5 px-1 leading-relaxed hidden sm:block">
             {screen === 'login'
               ? (language === 'hi'
-                  ? 'अपने खाते में सुरक्षित प्रवेश के लिए नाम, ईमेल व पासवर्ड दर्ज करें।'
-                  : 'Enter your legal name, registered email and password to securely access your profile.')
+                  ? 'अपने खाते में सुरक्षित प्रवेश के लिए नाम, Gmail व पासवर्ड दर्ज करें।'
+                  : 'Enter your legal name, registered Gmail and password to securely access your profile.')
               : screen === 'signup' && signUpStep === 1
               ? (language === 'hi'
-                  ? 'पहले अपना नाम, वैध ईमेल व पासवर्ड दर्ज करें या गूगल से जारी रखें।'
-                  : 'Enter your legal name, real email and password, or use Google.')
+                  ? 'पहले अपना नाम, वैध Gmail (@gmail.com) व पासवर्ड दर्ज करें या गूगल से जारी रखें।'
+                  : 'Enter your legal name, real Gmail (@gmail.com) and password, or use Google.')
               : screen === 'signup' && signUpStep === 2
               ? (language === 'hi'
                   ? 'सटीक सरकारी योजनाएं व अवसर पाने के लिए अपनी नागरिक जानकारी भरें।'
@@ -951,7 +951,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={language === 'hi' ? 'पंजीकृत ईमेल पता (Registered Email) *' : 'Registered Email Address *'}
+                  placeholder={language === 'hi' ? 'पंजीकृत Gmail पता (Registered Gmail) *' : 'Registered Gmail Address *'}
                   className={`w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
                     emailValidation && !emailValidation.valid
                       ? 'border-red-400 focus:border-red-500'
@@ -1175,7 +1175,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={language === 'hi' ? 'वास्तविक ईमेल पता' : 'Real email address'}
+                  placeholder={language === 'hi' ? 'वास्तविक Gmail पता (@gmail.com) *' : 'Real Gmail address (@gmail.com) *'}
                   className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
                     emailValidation && !emailValidation.valid
                       ? 'border-red-400 focus:border-red-500'
@@ -1401,7 +1401,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
               <span className="shrink-0 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                <span>{isGoogleRegistration ? 'Google Verified' : 'Verified'}</span>
+                <span>{isGoogleRegistration ? (language === 'hi' ? 'गूगल सत्यापित' : 'Google Verified') : (language === 'hi' ? 'सत्यापित Gmail' : 'Verified Gmail')}</span>
               </span>
             </div>
 
