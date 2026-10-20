@@ -1,6 +1,77 @@
-import { GoogleAuthProvider, signInWithPopup, signOut, User } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+  User,
+} from 'firebase/auth';
 import { getFirebaseAuth, isFirebaseConfigured } from './firebase';
 import { SupportedLanguage } from '@/types';
+
+// Detect mobile/tablet browsers that block popups
+function isMobileBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+    navigator.userAgent
+  );
+}
+
+// Key used to signal a redirect-based Google sign-in is in progress
+const GOOGLE_REDIRECT_PENDING_KEY = 'citzos_google_redirect_pending';
+
+export function markGoogleRedirectPending(): void {
+  try {
+    sessionStorage.setItem(GOOGLE_REDIRECT_PENDING_KEY, '1');
+  } catch (_) {}
+}
+
+export function clearGoogleRedirectPending(): void {
+  try {
+    sessionStorage.removeItem(GOOGLE_REDIRECT_PENDING_KEY);
+  } catch (_) {}
+}
+
+export function isGoogleRedirectPending(): boolean {
+  try {
+    return sessionStorage.getItem(GOOGLE_REDIRECT_PENDING_KEY) === '1';
+  } catch (_) {
+    return false;
+  }
+}
+
+/**
+ * After a redirect-based sign-in the page reloads.
+ * Call this once on mount to pick up the redirect result.
+ * Returns null if no redirect was pending.
+ */
+export async function getGoogleRedirectResultSafe(): Promise<GoogleAuthResult | null> {
+  if (typeof window === 'undefined') return null;
+  if (!isGoogleRedirectPending()) return null;
+
+  const auth = getFirebaseAuth();
+  if (!auth || !isFirebaseConfigured()) {
+    clearGoogleRedirectPending();
+    return null;
+  }
+
+  try {
+    clearGoogleRedirectPending();
+    const result = await getRedirectResult(auth);
+    if (!result || !result.user || !result.user.email) return null;
+    const user: User = result.user;
+    return {
+      success: true,
+      name: user.displayName || (user.email ?? '').split('@')[0],
+      email: (user.email ?? '').toLowerCase().trim(),
+      photoURL: user.photoURL || undefined,
+      uid: user.uid,
+    };
+  } catch (err: any) {
+    console.warn('getRedirectResult error:', err?.code || err?.message);
+    return null;
+  }
+}
 
 export interface GoogleAuthResult {
   success: boolean;
@@ -114,8 +185,8 @@ export function getGoogleAuthErrorMessage(
 export class GoogleAuthService {
   /**
    * Official Google OAuth Sign-In via Firebase Auth.
-   * Routes securely through https://lifeos-7a6f1.firebaseapp.com/__/auth/handler
-   * Prevents Google Cloud origin_mismatch errors.
+   * On mobile: uses signInWithRedirect (popup-safe).
+   * On desktop: uses signInWithPopup (instant, no page reload).
    */
   static async signInWithGoogle(): Promise<GoogleAuthResult> {
     if (typeof window === 'undefined') {
@@ -132,6 +203,21 @@ export class GoogleAuthService {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
+    // Mobile: use redirect flow (no popup needed, browser-safe)
+    if (isMobileBrowser()) {
+      markGoogleRedirectPending();
+      await signInWithRedirect(auth, provider);
+      // Page will reload after Google completes. Return a pending sentinel.
+      const pendingResult: GoogleAuthResult = {
+        success: false,
+        name: '',
+        email: '',
+        uid: '',
+      };
+      return pendingResult;
+    }
+
+    // Desktop: use popup flow (instant result)
     return new Promise<GoogleAuthResult>((resolve, reject) => {
       let isSettled = false;
 
@@ -151,7 +237,7 @@ export class GoogleAuthService {
         }
       };
 
-      // 1. Safety Timeout: auto-cancel after 90 seconds so UI never hangs indefinitely
+      // Safety Timeout: auto-cancel after 90 seconds so UI never hangs indefinitely
       const timeoutId = setTimeout(() => {
         const err: any = new Error('Google sign-in timed out. Please try again.');
         err.code = 'auth/timeout';
@@ -162,7 +248,6 @@ export class GoogleAuthService {
         clearTimeout(timeoutId);
       };
 
-      // Execute Firebase signInWithPopup
       signInWithPopup(auth, provider)
         .then((result) => {
           const user: User = result.user;
@@ -171,7 +256,6 @@ export class GoogleAuthService {
             err.code = 'auth/no-email';
             return finishReject(err);
           }
-
           finishResolve({
             success: true,
             name: user.displayName || user.email.split('@')[0],

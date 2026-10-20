@@ -5,7 +5,11 @@ import Link from 'next/link';
 import { CitizenProfile, CountryCode } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry, COUNTRIES } from '@/context/CountryContext';
-import { GoogleAuthService, getGoogleAuthErrorMessage } from '@/services/googleAuth';
+import {
+  GoogleAuthService,
+  getGoogleAuthErrorMessage,
+  getGoogleRedirectResultSafe,
+} from '@/services/googleAuth';
 import { BrandIconSvg } from '@/components/common/BrandLogo';
 import {
   validateRealName,
@@ -150,13 +154,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   }, [isOpen, initialScreen, prefillData, language]);
 
+  // Handle mobile Google redirect result on page reload
+  // Note: redirect result is handled at page level (page.tsx). This hook stays for safety only.
+  useEffect(() => {
+    let cancelled = false;
+    getGoogleRedirectResultSafe().then((result) => {
+      if (cancelled || !result) return;
+      completeGoogleSignIn(result).catch(() => {});
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Instantly cancel loading without delay if user switches back from Google window/popup
+  // On mobile redirect flow, DO NOT cancel loading on focus since page will reload
   useEffect(() => {
     if (!isOpen) return;
 
     let timer: any = null;
     const handleReturn = () => {
       if (isLoading) {
+        // If this is a mobile redirect flow, window focus should not cancel loading
+        try {
+          if (sessionStorage.getItem('citzos_google_redirect_pending') === '1') return;
+        } catch (_) {}
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           setIsLoading(false);
@@ -274,75 +297,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       const result = await GoogleAuthService.signInWithGoogle();
+
+      // Mobile redirect: page will reload, result handled after reload. Just keep loading visible.
+      if (!result.success && result.uid === '') {
+        // Redirect initiated, do nothing more — browser will navigate to Google
+        return;
+      }
+
       if (!result.success) {
         throw new Error('Google authentication unsuccessful.');
       }
 
-      const googleEmail = result.email.toLowerCase().trim();
-      const googleName = result.name.trim();
-
-      // Instantly prepare verified profile from Google authentication
-      let activeCitizen: Partial<CitizenProfile> = {
-        id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-        fullName: googleName || 'Google User',
-        email: googleEmail,
-        photoURL: result.photoURL || '',
-        country: country || 'IN',
-        isOnboarded: true,
-        isAadhaarVerified: true,
-        age: 24,
-        dob: '2002-05-18',
-        lifePhase: selectedRole || 'college_student',
-        casteCategory: casteCategory || 'General',
-        administrativeDivision: division || countryMeta.divisions[0] || 'General',
-        state: division || countryMeta.divisions[0] || 'General',
-      };
-
-      // Fast non-blocking lookup: if citizen already registered in DB, merge existing record
-      try {
-        const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleEmail)}`, {
-          signal: AbortSignal.timeout(800),
-        });
-        const data = await res.json();
-
-        if (data.success && data.citizen) {
-          activeCitizen = {
-            ...activeCitizen,
-            ...data.citizen,
-            isOnboarded: true,
-            isAadhaarVerified: true,
-          };
-        }
-      } catch (checkErr) {
-        // Fallback silently without delaying user
-      }
-
-      // Sync/save citizen to server database in background (non-blocking)
-      fetch('/api/citizens/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...activeCitizen,
-          email: googleEmail,
-          isOnboarded: true,
-          isAadhaarVerified: true,
-        }),
-      }).catch(() => {});
-
-      // Instant entry into website! Save to localStorage and invoke login success
-      try {
-        localStorage.removeItem('citizen_logged_out');
-        localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
-      } catch (e) {}
-
-      setIsLoading(false);
-      onClose();
-      onLoginSuccess(activeCitizen);
-
-      // If user is on dedicated /login page, navigate directly to main dashboard
-      if (typeof window !== 'undefined' && window.location.pathname === '/login') {
-        window.location.href = '/';
-      }
+      await completeGoogleSignIn(result);
     } catch (err: any) {
       console.warn('Google Auth notice:', err);
       const code = (err?.code || err?.message || '').toLowerCase();
@@ -357,6 +323,75 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
       setErrorMessage(getGoogleAuthErrorMessage(err?.code || err?.message, language));
       setIsLoading(false);
+    }
+  };
+
+  // Shared post-auth logic for both popup and redirect flows
+  const completeGoogleSignIn = async (result: { success: boolean; name: string; email: string; photoURL?: string; uid: string }) => {
+    const googleEmail = result.email.toLowerCase().trim();
+    const googleName = result.name.trim();
+
+    // Instantly prepare verified profile from Google authentication
+    let activeCitizen: Partial<CitizenProfile> = {
+      id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
+      fullName: googleName || 'Google User',
+      email: googleEmail,
+      photoURL: result.photoURL || '',
+      country: country || 'IN',
+      isOnboarded: true,
+      isAadhaarVerified: true,
+      age: 24,
+      dob: '2002-05-18',
+      lifePhase: selectedRole || 'college_student',
+      casteCategory: casteCategory || 'General',
+      administrativeDivision: division || countryMeta.divisions[0] || 'General',
+      state: division || countryMeta.divisions[0] || 'General',
+    };
+
+    // Fast non-blocking lookup: if citizen already registered in DB, merge existing record
+    try {
+      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleEmail)}`, {
+        signal: AbortSignal.timeout(800),
+      });
+      const data = await res.json();
+
+      if (data.success && data.citizen) {
+        activeCitizen = {
+          ...activeCitizen,
+          ...data.citizen,
+          isOnboarded: true,
+          isAadhaarVerified: true,
+        };
+      }
+    } catch (checkErr) {
+      // Fallback silently without delaying user
+    }
+
+    // Sync/save citizen to server database in background (non-blocking)
+    fetch('/api/citizens/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...activeCitizen,
+        email: googleEmail,
+        isOnboarded: true,
+        isAadhaarVerified: true,
+      }),
+    }).catch(() => {});
+
+    // Save to localStorage
+    try {
+      localStorage.removeItem('citizen_logged_out');
+      localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
+    } catch (e) {}
+
+    setIsLoading(false);
+    onClose();
+    onLoginSuccess(activeCitizen);
+
+    // Always redirect to homepage after Google sign-in for the cleanest UX
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.location.href = '/';
     }
   };
 

@@ -12,7 +12,7 @@ import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { PushNotificationBanner } from '@/components/notifications/PushNotificationBanner';
-import { GoogleAuthService } from '@/services/googleAuth';
+import { GoogleAuthService, getGoogleRedirectResultSafe } from '@/services/googleAuth';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import { calculateExactAge } from '@/utils/antiFraudValidation';
@@ -233,6 +233,18 @@ export default function HomePage() {
     }
   }, []);
 
+  // Handle mobile Google OAuth redirect result after page reload
+  useEffect(() => {
+    let cancelled = false;
+    getGoogleRedirectResultSafe().then((result) => {
+      if (cancelled || !result) return;
+      // Successfully got redirect result, log user in and go to homepage
+      handleGoogleAuthSuccess({ name: result.name, email: result.email, photoURL: result.photoURL });
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Listen to cross-tab & custom storage events
   useEffect(() => {
     const handleFavUpdate = () => {
@@ -384,6 +396,7 @@ export default function HomePage() {
   };
 
   // Direct Google Sign-In Success: Instantly enter website with verified Google profile
+  // Also handles mobile redirect flow: called after page reloads from Google OAuth redirect
   const handleGoogleAuthSuccess = async (googleUser: { name: string; email: string; photoURL?: string }) => {
     let activeCitizen: Partial<CitizenProfile> = {
       id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
