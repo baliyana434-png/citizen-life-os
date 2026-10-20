@@ -2,7 +2,19 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 
 const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyAOHH-q4-mKpTHcwUjezHrlBFDo9Xs3u44';
-const FIREBASE_AUTH_DOMAIN = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'lifeos-7a6f1.firebaseapp.com';
+
+// Dynamic custom authDomain: seamlessly uses citzos.in when hosted on citzos.in to prevent lifeos URL in popup address bar
+const getCustomAuthDomain = (): string => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname.includes('citzos.in')) {
+      return hostname;
+    }
+  }
+  return process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'citzos.in';
+};
+
+const FIREBASE_AUTH_DOMAIN = getCustomAuthDomain();
 const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'lifeos-7a6f1';
 const FIREBASE_STORAGE_BUCKET = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'lifeos-7a6f1.firebasestorage.app';
 const FIREBASE_MESSAGING_SENDER_ID = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '316506287911';
@@ -29,7 +41,11 @@ export const getFirebaseApp = (): FirebaseApp | null => {
   if (typeof window === 'undefined') return null;
   if (!app && isFirebaseConfigured()) {
     try {
-      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+      const activeConfig = {
+        ...firebaseConfig,
+        authDomain: getCustomAuthDomain(),
+      };
+      app = getApps().length > 0 ? getApp() : initializeApp(activeConfig);
     } catch (error) {
       console.warn('Firebase app initialization error:', error);
     }
