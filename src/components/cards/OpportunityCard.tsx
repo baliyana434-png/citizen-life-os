@@ -105,7 +105,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
           onSelect(opportunity);
         }
       }}
-      className="group relative bg-white rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer border border-slate-200/90 hover:border-emerald-500/60 shadow-xs hover:shadow-lg transition-all duration-200 h-full overflow-visible"
+      className="group relative glass-card rounded-3xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 h-full overflow-visible"
     >
       {/* Red Rotating Starburst Badge (Auto-expires 72 hours after user first views) */}
       {isOpportunityNewActive(opportunity.id, opportunity.isNew) && (
@@ -119,7 +119,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         {/* 1. Header: Issuing Authority Badge (Left) & Star Favorite Button (Right) */}
         <div className="flex items-center justify-between gap-3 mb-2.5">
           {/* Issuing Authority Badge */}
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-[11px] font-bold min-w-0 max-w-[70%]">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full glass-pill text-slate-800 dark:text-slate-200 text-[11px] font-bold min-w-0 max-w-[70%]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span className={`truncate ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>
               {(localized.issuingAuthority || 'Official Authority').split('(')[0].trim()}
@@ -149,7 +149,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         {/* 1B. Second Row: Section Badge, Status Badge & Pass Lock */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {/* Section / Category Badge */}
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 text-[10px] sm:text-[11px] font-bold whitespace-nowrap shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill text-slate-800 dark:text-slate-200 text-[10px] sm:text-[11px] font-bold whitespace-nowrap shrink-0">
             {getLifeStageIcon(opportunity.lifeStage)}
             <span>{t(`tabs.${opportunity.lifeStage}`)}</span>
           </span>
@@ -202,8 +202,8 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
 
         {/* 3. Benefit Headline Box */}
-        <div className="mb-3 p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200">
-          <span className="text-xs font-bold text-emerald-950 block leading-snug">
+        <div className="mb-3 p-2.5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 backdrop-blur-xs">
+          <span className="text-xs font-bold text-emerald-950 dark:text-emerald-300 block leading-snug">
             {localized.benefitHeadline}
           </span>
         </div>
@@ -217,10 +217,10 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
       </div>
 
       {/* 5. Footer Details & Actions (Crash-Proof 2-Row Layout, Never Touching) */}
-      <div className="pt-3 border-t border-slate-100 mt-auto space-y-2.5">
+      <div className="pt-3 border-t border-slate-100 dark:border-white/10 mt-auto space-y-2.5">
         {/* Row A: Deadline Date Pill & 100% Free Badge */}
         <div className="flex items-center justify-between gap-2 text-xs">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 font-semibold text-[11px] truncate max-w-[70%]">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl glass-pill text-slate-700 dark:text-slate-300 font-semibold text-[11px] truncate max-w-[70%]">
             <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span className="truncate">{formattedDeadline}</span>
           </div>
@@ -237,7 +237,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
 
         {/* Row B: Official Fee Full-Width Card (Never overlaps or collides) */}
-        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-700 flex items-start gap-2 leading-snug">
+        <div className="p-2.5 rounded-xl glass-pill text-[11px] text-slate-700 dark:text-slate-300 flex items-start gap-2 leading-snug">
           <Banknote className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
           <span className="font-semibold text-slate-800 break-words flex-1">
             {localized.officialFee}

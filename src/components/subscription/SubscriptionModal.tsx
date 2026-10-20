@@ -282,7 +282,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       {/* Click outside to cancel */}
       <div className="fixed inset-0" onClick={onClose} />
       
-      <div className="relative bg-slate-900 text-white rounded-3xl p-6 sm:p-7 max-w-xs w-full text-center space-y-4 border border-emerald-500/30 shadow-2xl z-10">
+      <div className="relative bg-slate-900/85 backdrop-blur-xl text-white rounded-3xl p-6 sm:p-7 max-w-xs w-full text-center space-y-4 border border-emerald-500/40 shadow-2xl z-10">
         {/* Top-right close X */}
         <button
           type="button"

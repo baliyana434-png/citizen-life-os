@@ -897,7 +897,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] flex flex-col antialiased selection:bg-emerald-500 selection:text-white relative overflow-hidden">
+      {/* Ambient Glassmorphic Aura Background Orbs */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-400/20 dark:bg-emerald-500/15 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-teal-400/15 dark:bg-teal-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-2/3 left-1/4 w-80 h-80 bg-cyan-400/15 dark:bg-cyan-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 right-1/4 w-96 h-96 bg-emerald-500/15 dark:bg-emerald-600/10 rounded-full blur-3xl" />
+      </div>
+
       {/* 1. Header */}
       <Header
         profile={activeProfile}
@@ -920,14 +928,14 @@ export default function HomePage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 relative z-10">
         {/* Dynamic Payment/Success Toast */}
         {paymentSuccessToast && (
-          <div className="p-3.5 rounded-2xl bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-lg flex items-center justify-between gap-3 animate-fade-in">
+          <div className="p-3.5 rounded-2xl bg-emerald-700/90 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-lg flex items-center justify-between gap-3 animate-fade-in border border-emerald-500/40">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-300" />
               <span>{paymentSuccessToast}</span>
             </div>
             <button
               onClick={() => setPaymentSuccessToast(null)}
-              className="text-emerald-200 hover:text-white text-xs underline"
+              className="text-emerald-200 hover:text-white text-xs underline cursor-pointer"
             >
               {t('drawer.close')}
             </button>
@@ -935,20 +943,20 @@ export default function HomePage() {
         )}
 
         {/* Hero Personalized Insight Bar (3D Cyber-Gov Terminal) - Hidden on mobile during search to show opportunities directly */}
-        <div className={`${searchQuery.trim() ? 'hidden sm:block' : ''} bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 rounded-3xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/30`}>
+        <div className={`${searchQuery.trim() ? 'hidden sm:block' : ''} bg-gradient-to-br from-slate-950/90 via-slate-900/90 to-emerald-950/90 backdrop-blur-xl rounded-3xl p-5 sm:p-7 text-white shadow-2xl relative overflow-hidden border border-emerald-500/35`}>
           {/* Subtle Cyber Grid Texture */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_50%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.18),transparent_50%)] pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-5">
             <div>
               {/* Sovereign Portal Indicator */}
               <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/40 shadow-xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] sm:text-xs font-bold border border-emerald-500/40 shadow-xs backdrop-blur-xs">
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 radar-pulse" />
                   <span>{countryMeta.flag} {countryMeta.name}</span>
                 </span>
                 {activeProfile.isAadhaarVerified && (
-                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-emerald-300 font-mono font-bold bg-emerald-500/15 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border border-emerald-500/30">
+                  <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-emerald-300 font-mono font-bold bg-emerald-500/15 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full border border-emerald-500/30 backdrop-blur-xs">
                     {t('hero.verified_status')}
                   </span>
                 )}

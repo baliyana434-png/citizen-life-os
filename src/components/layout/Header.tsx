@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all relative">
+    <header className="sticky top-0 z-30 w-full glass-header transition-all relative">
       {/* Mobile Full-Width Search Bar Overlay (Covers Header completely for effortless typing) */}
       {isMobileSearchOpen && (
         <div className="absolute inset-0 bg-white px-3 flex items-center gap-2 z-50 sm:hidden animate-in fade-in duration-100">
