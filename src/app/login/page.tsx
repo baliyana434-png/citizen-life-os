@@ -34,7 +34,7 @@ function LoginContent() {
           (parsed.isAadhaarVerified || parsed.isOnboarded)
         ) {
           // Already authenticated: redirect to main dashboard
-          window.location.href = '/';
+          window.location.replace('/');
           return;
         }
       }
@@ -49,7 +49,7 @@ function LoginContent() {
         localStorage.setItem('citizen_profile', JSON.stringify(profile));
       }
     } catch (e) {}
-    window.location.href = '/';
+    window.location.replace('/');
   };
 
   if (checkingAuth) {

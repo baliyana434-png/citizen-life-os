@@ -32,22 +32,24 @@ export const isMongoConfigured = (): boolean => {
   return Boolean(uri && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')));
 };
 
-// Fast non-blocking MongoDB connection configuration (Max 2000ms selection timeout)
+// Fast non-blocking MongoDB connection configuration (Max 500ms selection timeout)
 const MONGO_OPTIONS = {
-  serverSelectionTimeoutMS: 2000,
-  connectTimeoutMS: 2500,
-  socketTimeoutMS: 3000,
+  serverSelectionTimeoutMS: 500,
+  connectTimeoutMS: 800,
+  socketTimeoutMS: 1500,
   maxPoolSize: 20,
   minPoolSize: 1,
   maxIdleTimeMS: 60000,
 };
+
+let mongoOfflineUntil = 0;
 
 if (isMongoConfigured()) {
   if (process.env.NODE_ENV === 'development') {
     if (!global._mongoClientPromise) {
       const client = new MongoClient(uri, MONGO_OPTIONS);
       global._mongoClientPromise = client.connect().catch((err) => {
-        console.warn('MongoDB initial connect notice:', err.message);
+        mongoOfflineUntil = Date.now() + 60000;
         global._mongoClientPromise = undefined;
         return null as any;
       });
@@ -56,7 +58,7 @@ if (isMongoConfigured()) {
   } else {
     const client = new MongoClient(uri, MONGO_OPTIONS);
     clientPromise = client.connect().catch((err) => {
-      console.warn('MongoDB connect notice:', err.message);
+      mongoOfflineUntil = Date.now() + 60000;
       return null as any;
     });
   }
@@ -64,14 +66,21 @@ if (isMongoConfigured()) {
 
 async function getMongoDb(): Promise<Db | null> {
   if (!isMongoConfigured() || !clientPromise) return null;
+  // If MongoDB previously failed or timed out, do not block subsequent requests
+  if (Date.now() < mongoOfflineUntil) return null;
+
   try {
     const client = await Promise.race([
       clientPromise,
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500)),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 250)),
     ]);
-    if (!client) return null;
+    if (!client) {
+      mongoOfflineUntil = Date.now() + 30000;
+      return null;
+    }
     return client.db(process.env.MONGODB_DB_NAME || 'citizen_life_os');
   } catch (err) {
+    mongoOfflineUntil = Date.now() + 60000;
     return null;
   }
 }

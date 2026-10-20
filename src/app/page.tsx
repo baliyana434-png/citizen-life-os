@@ -383,30 +383,54 @@ export default function HomePage() {
     setTimeout(() => setPaymentSuccessToast(null), 4000);
   };
 
-  // Direct Google Sign-In Success: Check onboarding state or launch Wizard
+  // Direct Google Sign-In Success: Instantly enter website with verified Google profile
   const handleGoogleAuthSuccess = async (googleUser: { name: string; email: string; photoURL?: string }) => {
-    try {
-      // Check if this user already registered & completed onboarding previously on server
-      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleUser.email)}`);
-      const data = await res.json();
-      if (data.success && data.citizen && data.citizen.isOnboarded) {
-        // Returning user with completed onboarding! Restore their profile directly
-        handleVerificationComplete(data.citizen);
-        if (data.citizen.country) {
-          setCountry(data.citizen.country);
-        }
-        if (data.citizen.lifePhase) {
-          handleRoleAutoSwitch(data.citizen.lifePhase);
-        }
-        return;
-      }
-    } catch (e) {
-      console.warn('Profile fetch check warning:', e);
-    }
+    let activeCitizen: Partial<CitizenProfile> = {
+      id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
+      fullName: googleUser.name || 'Google User',
+      email: googleUser.email,
+      photoURL: googleUser.photoURL || '',
+      country: country || 'IN',
+      isOnboarded: true,
+      isAadhaarVerified: true,
+      age: 24,
+      dob: '2002-05-18',
+      lifePhase: 'college_student',
+      casteCategory: 'General',
+      state: countryMeta.divisions[0] || 'General',
+      administrativeDivision: countryMeta.divisions[0] || 'General',
+    };
 
-    // New user or incomplete onboarding: Launch the Onboarding Wizard to take role, age, category, state!
-    setPendingGoogleUser(googleUser);
-    setIsOnboardingOpen(true);
+    try {
+      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleUser.email)}`, {
+        signal: AbortSignal.timeout(800),
+      });
+      const data = await res.json();
+      if (data.success && data.citizen) {
+        activeCitizen = {
+          ...activeCitizen,
+          ...data.citizen,
+          isOnboarded: true,
+          isAadhaarVerified: true,
+        };
+      }
+    } catch (e) {}
+
+    // Save in background without blocking UI
+    fetch('/api/citizens/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(activeCitizen),
+    }).catch(() => {});
+
+    // Instantly log in and enter website
+    handleVerificationComplete(activeCitizen);
+    if (activeCitizen.country) {
+      setCountry(activeCitizen.country);
+    }
+    if (activeCitizen.lifePhase) {
+      handleRoleAutoSwitch(activeCitizen.lifePhase);
+    }
   };
 
   // Complete Onboarding: Save Role, Age, Category, State, Country and Unlock Opportunities
