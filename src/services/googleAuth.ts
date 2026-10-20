@@ -76,13 +76,14 @@ export function getGoogleAuthErrorMessage(
   }
 
   if (code.includes('unauthorized-domain')) {
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'citzos.in';
     const messages: Record<SupportedLanguage, string> = {
-      en: 'Domain is not in Firebase authorized domains. Please add citizen-life-os.vercel.app in Firebase Console > Authentication > Settings > Authorized domains, or enter your email below.',
-      hi: 'यह डोमेन Firebase में अधिकृत (Authorized) नहीं है। कृपया Firebase Console में Authentication > Settings > Authorized domains में citizen-life-os.vercel.app जोड़ें या नीचे सीधे अपना Gmail डालकर आगे बढ़ें।',
-      es: 'El dominio no esta autorizado en Firebase Console.',
-      fr: 'Le domaine n\'est pas autorise dans Firebase Console.',
-      de: 'Domain ist in Firebase Console nicht autorisiert.',
-      ar: 'هذا النطاق غير مصرح به في Firebase Console.',
+      en: `Domain (${currentHost}) is not in Firebase authorized domains. Please add ${currentHost} in Firebase Console > Authentication > Settings > Authorized domains.`,
+      hi: `यह डोमेन (${currentHost}) Firebase में अधिकृत नहीं है। कृपया Firebase Console में Authentication > Settings > Authorized domains में ${currentHost} जोड़ें।`,
+      es: `El dominio ${currentHost} no esta autorizado en Firebase Console.`,
+      fr: `Le domaine ${currentHost} n'est pas autorise dans Firebase Console.`,
+      de: `Domain ${currentHost} ist in Firebase Console nicht autorisiert.`,
+      ar: `هذا النطاق ${currentHost} غير مصرح به في Firebase Console.`,
     };
     return messages[language] || messages.en;
   }
