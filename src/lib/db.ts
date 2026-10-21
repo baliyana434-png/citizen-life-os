@@ -32,11 +32,11 @@ export const isMongoConfigured = (): boolean => {
   return Boolean(uri && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')));
 };
 
-// Fast non-blocking MongoDB connection configuration (Max 500ms selection timeout)
+// Reliable production MongoDB connection configuration
 const MONGO_OPTIONS = {
-  serverSelectionTimeoutMS: 500,
-  connectTimeoutMS: 800,
-  socketTimeoutMS: 1500,
+  serverSelectionTimeoutMS: 5000,
+  connectTimeoutMS: 5000,
+  socketTimeoutMS: 10000,
   maxPoolSize: 20,
   minPoolSize: 1,
   maxIdleTimeMS: 60000,
@@ -49,7 +49,8 @@ if (isMongoConfigured()) {
     if (!global._mongoClientPromise) {
       const client = new MongoClient(uri, MONGO_OPTIONS);
       global._mongoClientPromise = client.connect().catch((err) => {
-        mongoOfflineUntil = Date.now() + 60000;
+        console.warn('MongoDB Atlas connection initial warning:', err?.message);
+        mongoOfflineUntil = Date.now() + 15000;
         global._mongoClientPromise = undefined;
         return null as any;
       });
@@ -58,7 +59,8 @@ if (isMongoConfigured()) {
   } else {
     const client = new MongoClient(uri, MONGO_OPTIONS);
     clientPromise = client.connect().catch((err) => {
-      mongoOfflineUntil = Date.now() + 60000;
+      console.warn('MongoDB Atlas connection warning:', err?.message);
+      mongoOfflineUntil = Date.now() + 15000;
       return null as any;
     });
   }
@@ -72,15 +74,15 @@ async function getMongoDb(): Promise<Db | null> {
   try {
     const client = await Promise.race([
       clientPromise,
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 250)),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 3500)),
     ]);
     if (!client) {
-      mongoOfflineUntil = Date.now() + 30000;
+      mongoOfflineUntil = Date.now() + 15000;
       return null;
     }
     return client.db(process.env.MONGODB_DB_NAME || 'citizen_life_os');
   } catch (err) {
-    mongoOfflineUntil = Date.now() + 60000;
+    mongoOfflineUntil = Date.now() + 15000;
     return null;
   }
 }

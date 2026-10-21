@@ -398,52 +398,40 @@ export default function HomePage() {
   // Direct Google Sign-In Success: Instantly enter website with verified Google profile
   // Also handles mobile redirect flow: called after page reloads from Google OAuth redirect
   const handleGoogleAuthSuccess = async (googleUser: { name: string; email: string; photoURL?: string }) => {
-    let activeCitizen: Partial<CitizenProfile> = {
-      id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-      fullName: googleUser.name || 'Google User',
-      email: googleUser.email,
-      photoURL: googleUser.photoURL || '',
-      country: country || 'IN',
-      isOnboarded: true,
-      isAadhaarVerified: true,
-      age: 24,
-      dob: '2002-05-18',
-      lifePhase: 'college_student',
-      casteCategory: 'General',
-      state: countryMeta.divisions[0] || 'General',
-      administrativeDivision: countryMeta.divisions[0] || 'General',
-    };
+    const cleanEmail = googleUser.email.toLowerCase().trim();
 
+    // 1. Check if citizen is ALREADY REGISTERED in the database
     try {
-      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(googleUser.email)}`, {
-        signal: AbortSignal.timeout(800),
+      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
+        cache: 'no-store',
       });
       const data = await res.json();
-      if (data.success && data.citizen) {
-        activeCitizen = {
-          ...activeCitizen,
-          ...data.citizen,
-          isOnboarded: true,
-          isAadhaarVerified: true,
-        };
+      if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+        // CASE A: Registered citizen -> Instant direct entry with ZERO delay!
+        handleVerificationComplete(data.citizen);
+        if (data.citizen.country) {
+          setCountry(data.citizen.country);
+        }
+        if (data.citizen.lifePhase) {
+          handleRoleAutoSwitch(data.citizen.lifePhase);
+        }
+        return;
       }
-    } catch (e) {}
-
-    // Save in background without blocking UI
-    fetch('/api/citizens/profile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(activeCitizen),
-    }).catch(() => {});
-
-    // Instantly log in and enter website
-    handleVerificationComplete(activeCitizen);
-    if (activeCitizen.country) {
-      setCountry(activeCitizen.country);
+    } catch (e) {
+      console.warn('Profile fetch warning:', e);
     }
-    if (activeCitizen.lifePhase) {
-      handleRoleAutoSwitch(activeCitizen.lifePhase);
-    }
+
+    // CASE B: Non-registered Google email
+    // STRICTLY ZERO DUMMY/RANDOM DATA. DO NOT AUTO-LOGIN.
+    // Transition to Sign Up Step 2 so user manually enters real details!
+    setAuthPrefillData({
+      name: googleUser.name,
+      email: cleanEmail,
+      photoURL: googleUser.photoURL,
+      isGoogle: true,
+    });
+    setAuthModalScreen('signup');
+    setIsAuthOpen(true);
   };
 
   // Complete Onboarding: Save Role, Age, Category, State, Country and Unlock Opportunities
