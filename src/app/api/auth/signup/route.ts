@@ -62,20 +62,26 @@ export async function POST(req: NextRequest) {
       salt = hashed.salt;
     }
 
-    // 4. Validate Real Date of Birth & Age (Optional at basic signup)
-    let userAge = 24;
-    let userDob = dob || '2002-01-01';
-    if (dob) {
-      const dobCheck = validateRealDob(dob, lang);
-      if (!dobCheck.valid) {
-        return NextResponse.json(
-          { success: false, errorType: 'INVALID_DOB', message: dobCheck.error },
-          { status: 400 }
-        );
-      }
-      userAge = dobCheck.age;
-      userDob = dob;
+    // 4. Validate Real Date of Birth & Age (Mandatory for real opportunities matching)
+    if (!dob) {
+      return NextResponse.json(
+        {
+          success: false,
+          errorType: 'MISSING_DOB',
+          message: lang === 'hi' ? 'कृपया अपनी वास्तविक जन्म तिथि (DOB) दर्ज करें।' : 'Please enter your real date of birth.',
+        },
+        { status: 400 }
+      );
     }
+    const dobCheck = validateRealDob(dob, lang);
+    if (!dobCheck.valid) {
+      return NextResponse.json(
+        { success: false, errorType: 'INVALID_DOB', message: dobCheck.error },
+        { status: 400 }
+      );
+    }
+    const userAge = dobCheck.age;
+    const userDob = dob;
 
     // 5. Validate National ID Checksum (Optional at basic signup)
     let maskedId = '';

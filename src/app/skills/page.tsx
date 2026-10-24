@@ -1370,6 +1370,8 @@ export default function SkillsPage() {
         onClose={() => setIsSubscriptionOpen(false)}
         citizenName={profile?.fullName || (language === 'hi' ? 'नागरिक' : 'Citizen')}
         citizenId={profile?.id || 'cit-guest'}
+        citizenEmail={profile?.email}
+        citizenPhone={profile?.phoneNumber}
         onSubscriptionSuccess={handleSubscriptionSuccess}
       />
 

@@ -12,7 +12,7 @@ import { UserProfileDrawer } from '@/components/profile/UserProfileDrawer';
 import { CitizenOnboardingModal } from '@/components/auth/CitizenOnboardingModal';
 import { SubscriptionModal } from '@/components/subscription/SubscriptionModal';
 import { PushNotificationBanner } from '@/components/notifications/PushNotificationBanner';
-import { GoogleAuthService, getGoogleRedirectResultSafe } from '@/services/googleAuth';
+import { GoogleAuthService, getGoogleRedirectResultSafe, isGoogleRedirectPending } from '@/services/googleAuth';
 import { INITIAL_OPPORTUNITIES } from '@/data/opportunities';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
 import { calculateExactAge } from '@/utils/antiFraudValidation';
@@ -175,9 +175,11 @@ export default function HomePage() {
     try {
       const isLoggedOut = localStorage.getItem('citizen_logged_out');
       if (isLoggedOut === 'true') {
-        setProfile(null);
-        window.location.replace('/login?from=logout');
-        return;
+        if (!isGoogleRedirectPending()) {
+          setProfile(null);
+          window.location.replace('/login?from=logout');
+          return;
+        }
       }
       const saved = localStorage.getItem('citizen_profile');
       if (saved) {
@@ -210,11 +212,17 @@ export default function HomePage() {
             setIsOnboardingOpen(true);
           }
         } else {
+          if (isGoogleRedirectPending()) {
+            return;
+          }
           setProfile(null);
           window.location.replace('/login');
           return;
         }
       } else {
+        if (isGoogleRedirectPending()) {
+          return;
+        }
         setProfile(null);
         window.location.replace('/login');
         return;
@@ -226,8 +234,10 @@ export default function HomePage() {
       }
     } catch (e) {
       console.warn('Storage hydration notice:', e);
-      setProfile(null);
-      window.location.replace('/login');
+      if (!isGoogleRedirectPending()) {
+        setProfile(null);
+        window.location.replace('/login');
+      }
     } finally {
       setIsHydratingAuth(false);
     }
@@ -237,7 +247,13 @@ export default function HomePage() {
   useEffect(() => {
     let cancelled = false;
     getGoogleRedirectResultSafe().then((result) => {
-      if (cancelled || !result) return;
+      if (cancelled) return;
+      if (!result || !result.email) {
+        if (typeof window !== 'undefined' && !localStorage.getItem('citizen_profile')) {
+          window.location.replace('/login');
+        }
+        return;
+      }
       // Successfully got redirect result, log user in and go to homepage
       handleGoogleAuthSuccess({ name: result.name, email: result.email, photoURL: result.photoURL });
     });
@@ -1319,6 +1335,8 @@ export default function HomePage() {
         onClose={() => setIsSubscriptionOpen(false)}
         citizenName={activeProfile.fullName || 'Citizen'}
         citizenId={activeProfile.id && activeProfile.id !== 'cit-guest' && activeProfile.id !== 'cit-default' ? activeProfile.id : (activeProfile.nationalIdMasked || `${countryMeta.alpha3 || country}-CIT-8921`)}
+        citizenEmail={activeProfile.email}
+        citizenPhone={activeProfile.phoneNumber}
         onSubscriptionSuccess={handleSubscriptionSuccess}
       />
 

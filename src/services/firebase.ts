@@ -3,18 +3,9 @@ import { getAuth, Auth } from 'firebase/auth';
 
 const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyAOHH-q4-mKpTHcwUjezHrlBFDo9Xs3u44';
 
-// Dynamic custom authDomain: seamlessly uses citzos.in when hosted on citzos.in to prevent lifeos URL in popup address bar
-const getCustomAuthDomain = (): string => {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname.includes('citzos.in')) {
-      return hostname;
-    }
-  }
-  return process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'citzos.in';
-};
-
-const FIREBASE_AUTH_DOMAIN = getCustomAuthDomain();
+// Standard Google Firebase Auth Domain: connects directly to Firebase Identity Toolkit
+// Ensures 100% reliable Google OAuth without proxy 503 errors or 308 redirect loops
+const FIREBASE_AUTH_DOMAIN = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'lifeos-7a6f1.firebaseapp.com';
 const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'lifeos-7a6f1';
 const FIREBASE_STORAGE_BUCKET = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'lifeos-7a6f1.firebasestorage.app';
 const FIREBASE_MESSAGING_SENDER_ID = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '316506287911';
@@ -41,11 +32,7 @@ export const getFirebaseApp = (): FirebaseApp | null => {
   if (typeof window === 'undefined') return null;
   if (!app && isFirebaseConfigured()) {
     try {
-      const activeConfig = {
-        ...firebaseConfig,
-        authDomain: getCustomAuthDomain(),
-      };
-      app = getApps().length > 0 ? getApp() : initializeApp(activeConfig);
+      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     } catch (error) {
       console.warn('Firebase app initialization error:', error);
     }

@@ -114,9 +114,8 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
   // Core Real Base Form State
   const [fullName, setFullName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  // Default DOB ~ 2002-05-18 (24 years old)
-  const [dob, setDob] = useState<string>('2002-05-18');
-  const [calculatedAge, setCalculatedAge] = useState<number>(24);
+  const [dob, setDob] = useState<string>('');
+  const [calculatedAge, setCalculatedAge] = useState<number>(0);
   const [selectedRole, setSelectedRole] = useState<CitizenProfile['lifePhase']>(initialRole);
   const [casteCategory, setCasteCategory] = useState<CitizenProfile['casteCategory']>('General');
   const [division, setDivision] = useState<string>(countryMeta.divisions[0] || 'General');
@@ -603,7 +602,7 @@ export const CitizenOnboardingModal: React.FC<CitizenOnboardingModalProps> = ({
             {/* Country-Specific Notice Banner */}
             {countryMeta.hasCasteSystem ? (
               <div className="p-2.5 rounded-xl bg-amber-50/90 border border-amber-200 text-amber-900 text-xs flex items-center gap-2 font-medium">
-                <span className="text-base shrink-0">🇮🇳</span>
+                <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0" />
                 <span className="leading-tight">
                   {language === 'hi'
                     ? 'भारत सरकार आधिकारिक जाति वर्ग प्रणाली: सरकारी योजनाओं, छात्रवृत्ति व आरक्षण हेतु लागू।'

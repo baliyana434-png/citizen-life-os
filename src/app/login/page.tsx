@@ -6,12 +6,19 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { BrandSplashScreen } from '@/components/common/BrandSplashScreen';
+import { isGoogleRedirectPending, getGoogleRedirectResultSafe } from '@/services/googleAuth';
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { language } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [pendingPrefill, setPendingPrefill] = useState<{
+    name: string;
+    email: string;
+    photoURL?: string;
+    isGoogle: boolean;
+  } | null>(null);
 
   const fromLogout = searchParams.get('from') === 'logout';
   const initialNotice = fromLogout
@@ -21,6 +28,40 @@ function LoginContent() {
     : undefined;
 
   useEffect(() => {
+    let cancelled = false;
+
+    // Check if returning from a mobile Google OAuth redirect
+    if (isGoogleRedirectPending()) {
+      getGoogleRedirectResultSafe().then(async (result) => {
+        if (cancelled) return;
+        if (result && result.email) {
+          try {
+            const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(result.email)}`, {
+              cache: 'no-store',
+            });
+            const data = await res.json();
+            if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+              // Registered -> direct instant entry into website with zero delay!
+              handleLoginSuccess(data.citizen);
+              return;
+            }
+          } catch (e) {}
+
+          // Non-registered email -> open registration Step 2 with Google details prefilled
+          setPendingPrefill({
+            name: result.name,
+            email: result.email,
+            photoURL: result.photoURL,
+            isGoogle: true,
+          });
+        }
+        setCheckingAuth(false);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
     try {
       const isLoggedOut = localStorage.getItem('citizen_logged_out');
       const saved = localStorage.getItem('citizen_profile');
@@ -61,7 +102,8 @@ function LoginContent() {
       isOpen={true}
       isFullPageGate={true}
       onClose={() => {}}
-      initialScreen="login"
+      initialScreen={pendingPrefill ? 'signup' : 'login'}
+      prefillData={pendingPrefill || undefined}
       initialNotice={initialNotice}
       onLoginSuccess={handleLoginSuccess}
     />

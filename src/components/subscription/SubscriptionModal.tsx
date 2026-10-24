@@ -29,6 +29,8 @@ interface SubscriptionModalProps {
   onClose: () => void;
   citizenName: string;
   citizenId: string;
+  citizenEmail?: string;
+  citizenPhone?: string;
   onSubscriptionSuccess: (sub: CitizenSubscription) => void;
 }
 
@@ -37,6 +39,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   onClose,
   citizenName,
   citizenId,
+  citizenEmail,
+  citizenPhone,
   onSubscriptionSuccess,
 }) => {
   const { language } = useTranslation();
@@ -45,12 +49,14 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card'>('upi');
   const [upiId, setUpiId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [successReceipt, setSuccessReceipt] = useState<CitizenSubscription | null>(null);
   const [copiedTxn, setCopiedTxn] = useState(false);
 
   // Auto-launch Razorpay immediately when opened!
   useEffect(() => {
     if (isOpen && !successReceipt) {
+      setPaymentError(null);
       handlePayment();
     }
   }, [isOpen]);
@@ -84,6 +90,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
   const handlePayment = async (preferredMethod?: 'upi' | 'card' | 'netbanking') => {
     setIsProcessing(true);
+    setPaymentError(null);
     try {
       // 1. Create server-locked order
       const orderRes = await fetch('/api/subscription/create-order', {
@@ -109,10 +116,12 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           currency: orderData.order.currency || 'INR',
           name: 'Citzos',
           description: '1-Year Citzos Access Pass (365 Days)',
-          image: typeof window !== 'undefined' ? `${window.location.origin}/logo-shield-transparent.png` : '/logo-shield-transparent.png',
+          image: 'https://www.citzos.in/logo-shield-transparent.png',
           order_id: orderData.order.orderId,
           prefill: {
             name: citizenName,
+            email: citizenEmail || '',
+            contact: citizenPhone || '',
           },
           notes: {
             citizenId,
@@ -146,7 +155,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               onSubscriptionSuccess(verifyData.subscription);
             } catch (verErr: any) {
               console.error('Razorpay verification error:', verErr);
-              alert(verErr.message || 'Payment verification failed');
+              setPaymentError(verErr.message || 'Payment verification failed');
             } finally {
               setIsProcessing(false);
             }
@@ -154,7 +163,6 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           modal: {
             ondismiss: function () {
               setIsProcessing(false);
-              onClose();
             },
           },
         };
@@ -163,11 +171,9 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         razorpayInstance.on('payment.failed', function (resp: any) {
           console.error('Payment failed:', resp.error);
           setIsProcessing(false);
-          onClose();
-          alert(
-            (language === 'hi' ? 'भुगतान विफल: ' : 'Payment Failed: ') +
-              (resp.error?.description || (language === 'hi' ? 'कृपया पुनः प्रयास करें।' : 'Please try again.'))
-          );
+          const desc = resp.error?.description || resp.error?.reason || (language === 'hi' ? 'भुगतान पूर्ण नहीं हो सका।' : 'Payment could not be completed.');
+          const code = resp.error?.code ? ` [${resp.error.code}]` : '';
+          setPaymentError(`${desc}${code}`);
         });
         razorpayInstance.open();
         return;
@@ -194,11 +200,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       onSubscriptionSuccess(verifyData.subscription);
     } catch (err: any) {
       console.error('Payment process error:', err);
-      onClose();
-      alert(
-        (language === 'hi' ? 'भुगतान प्रक्रिया में त्रुटि: ' : 'Payment Error: ') +
-          (err.message || (language === 'hi' ? 'कृपया पुनः प्रयास करें।' : 'Please try again.'))
-      );
+      setPaymentError(err.message || (language === 'hi' ? 'भुगतान प्रक्रिया में त्रुटि आई।' : 'Payment error occurred.'));
     } finally {
       setIsProcessing(false);
     }
@@ -271,6 +273,64 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             <span>{language === 'hi' ? 'अवसर पोर्टल में प्रवेश करें' : 'Explore My Opportunities'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If an error occurred during payment
+  if (paymentError) {
+    const isDomainError = paymentError.toLowerCase().includes('domain') || paymentError.toLowerCase().includes('origin') || paymentError.toLowerCase().includes('not authorized');
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+        <div className="fixed inset-0" onClick={onClose} />
+        <div className="relative bg-slate-900/90 backdrop-blur-xl text-white rounded-3xl p-6 sm:p-7 max-w-sm w-full text-center space-y-4 border border-rose-500/40 shadow-2xl z-10">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+            aria-label={language === 'hi' ? 'बंद करें' : 'Close'}
+          >
+            <X className="w-4 h-4" />
+          </button>
+
+          <div className="flex justify-center pt-1">
+            <BrandIconSvg sizePx={44} className="mx-auto drop-shadow-md" />
+          </div>
+
+          <div className="space-y-1.5">
+            <h3 className="font-extrabold text-base text-rose-400">
+              {language === 'hi' ? 'भुगतान विफल' : 'Payment Failed'}
+            </h3>
+            <p className="text-xs text-slate-200 bg-rose-950/50 border border-rose-800/40 rounded-xl p-2.5 break-words">
+              {paymentError}
+            </p>
+          </div>
+
+          {isDomainError && (
+            <p className="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-800/40 rounded-xl p-2.5 text-left leading-relaxed">
+              {language === 'hi'
+                ? 'सूचना: Razorpay Live Dashboard में Business website details के अंतर्गत citzos.in अधिकृत होना आवश्यक है।'
+                : 'Notice: Under Razorpay Live Dashboard > Business website details, citzos.in must be approved.'}
+            </p>
+          )}
+
+          <div className="pt-2 space-y-2">
+            <button
+              type="button"
+              onClick={() => handlePayment()}
+              className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all cursor-pointer shadow-md"
+            >
+              {language === 'hi' ? 'पुनः प्रयास करें (₹1)' : 'Retry Payment (₹1)'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all cursor-pointer border border-slate-700"
+            >
+              {language === 'hi' ? 'रद्द करें' : 'Cancel'}
+            </button>
+          </div>
         </div>
       </div>
     );

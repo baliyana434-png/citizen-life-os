@@ -96,8 +96,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   // Sign up profile details fields (Step 2 - Details Page)
-  const [dob, setDob] = useState<string>('2002-05-18');
-  const [calculatedAge, setCalculatedAge] = useState<number>(24);
+  const [dob, setDob] = useState<string>('');
+  const [calculatedAge, setCalculatedAge] = useState<number>(0);
   const [nationalIdInput, setNationalIdInput] = useState<string>('');
   const [casteCategory, setCasteCategory] = useState<string>('General');
   const [division, setDivision] = useState<string>(countryMeta.divisions[0] || 'General');
@@ -313,11 +313,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       console.warn('Google Auth notice:', err);
       const code = (err?.code || err?.message || '').toLowerCase();
       if (
-        code.includes('unauthorized-domain') ||
-        code.includes('origin_mismatch') ||
-        code.includes('redirect_uri_mismatch') ||
-        code.includes('auth/failed') ||
-        code.includes('not-configured')
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) &&
+        (code.includes('unauthorized-domain') || code.includes('origin_mismatch') || code.includes('redirect_uri_mismatch'))
       ) {
         setShowLocalIpGooglePrompt(true);
       }
@@ -377,17 +375,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setEmail(googleEmail);
     setGooglePhotoURL(result.photoURL || '');
     setIsGoogleRegistration(true);
+    setDob('');
+    setCalculatedAge(0);
     setScreen('signup');
     setSignUpStep(2);
     setErrorMessage(null);
     setSuccessNotice(
       language === 'hi'
-        ? `Google खाता (${googleEmail}) सत्यापित! पंजीकरण पूरा करने के लिए कृपया नीचे अपना वास्तविक विवरण भरें।`
+        ? `Google खाता (${googleEmail}) सत्यापित! कृपया पंजीकरण पूरा करने के लिए नीचे अपना वास्तविक विवरण भरें।`
         : `Google account (${googleEmail}) verified! Please complete your registration details below.`
     );
   };
 
-  // Direct Google Connect for local Wi-Fi IP / private network testing
+  // Direct Google Connect fallback (Only used for local Wi-Fi IP testing)
+  // Strictly checks real DB; NEVER creates dummy data with random age/DOB.
   const handleGoogleDirectConnect = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const emailCheck = validateRealEmail(googleFallbackEmail, language);
@@ -404,69 +405,50 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setErrorMessage(null);
 
     try {
-      let activeCitizen: Partial<CitizenProfile> = {
-        id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-        fullName: derivedName,
-        email: cleanEmail,
-        country: country || 'IN',
-        isOnboarded: true,
-        isAadhaarVerified: true,
-        age: 24,
-        dob: '2002-05-18',
-        lifePhase: selectedRole || 'college_student',
-        casteCategory: casteCategory || 'General',
-        administrativeDivision: division || countryMeta.divisions[0] || 'General',
-        state: division || countryMeta.divisions[0] || 'General',
-      };
+      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
+        cache: 'no-store',
+      });
+      const data = await res.json();
 
-      try {
-        const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
-          signal: AbortSignal.timeout(800),
-        });
-        const data = await res.json();
-
-        if (data.success && data.citizen) {
-          activeCitizen = {
-            ...activeCitizen,
-            ...data.citizen,
-            isOnboarded: true,
-            isAadhaarVerified: true,
-          };
-        }
-      } catch (checkErr) {}
-
-      // Save in background
-      fetch('/api/citizens/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...activeCitizen,
-          email: cleanEmail,
+      if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+        // Registered -> Instant entry
+        const existingCitizen = {
+          ...data.citizen,
           isOnboarded: true,
           isAadhaarVerified: true,
-        }),
-      }).catch(() => {});
+        };
+        try {
+          localStorage.removeItem('citizen_logged_out');
+          localStorage.setItem('citizen_profile', JSON.stringify(existingCitizen));
+        } catch (e) {}
 
-      try {
-        localStorage.removeItem('citizen_logged_out');
-        localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
-      } catch (e) {}
-
-      setIsLoading(false);
-      setShowLocalIpGooglePrompt(false);
-      onClose();
-      onLoginSuccess(activeCitizen);
-
-      if (typeof window !== 'undefined' && window.location.pathname === '/login') {
-        window.location.href = '/';
+        setIsLoading(false);
+        onClose();
+        onLoginSuccess(existingCitizen);
+        if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
+        return;
       }
-    } catch (err: any) {
-      setErrorMessage(
-        language === 'hi'
-          ? 'तकनीकी समस्या आई। पुनः प्रयास करें।'
-          : 'Network error. Please try again.'
-      );
+
+      // Non-registered -> transition to Step 2 for manual entry
       setIsLoading(false);
+      setName(derivedName);
+      setEmail(cleanEmail);
+      setIsGoogleRegistration(true);
+      setDob('');
+      setCalculatedAge(0);
+      setScreen('signup');
+      setSignUpStep(2);
+      setShowLocalIpGooglePrompt(false);
+      setSuccessNotice(
+        language === 'hi'
+          ? `ईमेल सत्यापित! कृपया नीचे अपना वास्तविक विवरण भरें।`
+          : `Email verified! Please enter your real details below to complete registration.`
+      );
+    } catch (err: any) {
+      setIsLoading(false);
+      setErrorMessage(language === 'hi' ? 'सत्यापन विफल रहा।' : 'Verification failed.');
     }
   };
 
