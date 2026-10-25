@@ -115,7 +115,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           amount: orderData.order.amountPaisa || orderData.order.amount * 100,
           currency: orderData.order.currency || 'INR',
           name: 'Citzos',
-          description: '1-Year Citzos Access Pass (365 Days)',
+          description: '1-Year Citzos Universal Platform Access Pass (365 Days)',
           image: 'https://www.citzos.in/logo-shield-transparent.png',
           order_id: orderData.order.orderId,
           prefill: {
@@ -125,7 +125,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           },
           notes: {
             citizenId,
-            plan: '1_year',
+            plan: '1_year_universal_platform_pass',
+            product: 'Citzos Digital Technology Platform Access Pass',
+            purpose: 'Universal Digital Software Maintenance and Eligibility Matching Service for Citizens',
+            non_government_service: 'true',
           },
           theme: {
             color: '#059669', // Emerald 600
@@ -226,11 +229,18 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               <Check className="w-5 h-5 stroke-[3]" />
             </div>
             <h4 className="text-base font-extrabold text-emerald-950">
-              {language === 'hi' ? 'सदस्यता सफलतापूर्वक सक्रिय हो गई!' : '1-Year Citizen Pass Activated!'}
+              {language === 'hi' ? 'Citzos Universal Platform Pass सक्रिय हो गया!' : '1-Year Citzos Universal Platform Pass Activated!'}
             </h4>
             <p className="text-xs text-emerald-800">
-              {language === 'hi' ? 'आपके आयु, क्षेत्र और देश के अनुसार सभी वास्तविक अवसर अनलॉक हो चुके हैं।' : 'All genuine opportunities matching your age, area, and nation are unlocked.'}
+              {language === 'hi' ? 'सभी नागरिकों (छात्र, किसान, महिलाएं, युवा, उद्यमी व वरिष्ठ नागरिक) के लिए डिजिटल अवसर खोज व पात्रता पोर्टल सक्रिय है।' : 'Universal opportunity discovery & eligibility matching software is now unlocked for 365 days.'}
             </p>
+          </div>
+
+          {/* Legal Compliance Notice */}
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[10px] text-slate-500 leading-relaxed text-center">
+            {language === 'hi'
+              ? 'अस्वीकरण: Citzos एक स्वतंत्र डिजिटल सूचना व पात्रता मंच है। सभी सरकारी योजनाओं की जानकारी पूर्णतः निःशुल्क जनहित सूचना है। ₹1 केवल डिजिटल प्लेटफ़ॉर्म सॉफ़्टवेयर व सर्वर रख-रखाव शुल्क है।'
+              : 'Disclaimer: Citzos is an independent private digital technology platform. Government scheme information is 100% free public awareness. The ₹1 fee is strictly towards digital platform maintenance and eligibility software.'}
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 text-xs shadow-xs font-sans">
@@ -361,13 +371,21 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         <div className="w-9 h-9 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin mx-auto" />
         <div className="space-y-1">
           <h3 className="font-extrabold text-sm text-white">
-            {language === 'hi' ? 'रेज़रपे सुरक्षित चेकआउट' : 'Razorpay Secure Checkout'}
+            {language === 'hi' ? 'Citzos Universal Platform Pass' : 'Citzos Universal Platform Pass'}
           </h3>
-          <p className="text-[11px] text-slate-300">
-            {language === 'hi' ? 'भुगतान विंडो खुल रही है (₹1)...' : 'Opening payment window (₹1)...'}
+          <p className="text-[11px] text-emerald-400 font-bold">
+            {language === 'hi' ? 'वार्षिक प्लेटफ़ॉर्म रख-रखाव व सॉफ़्टवेयर शुल्क: ₹1.00' : 'Annual Platform Access & Software Fee: ₹1.00'}
+          </p>
+          <p className="text-[10px] text-slate-300">
+            {language === 'hi' ? 'सुरक्षित भुगतान विंडो खुल रही है...' : 'Opening secure payment window...'}
           </p>
         </div>
         <p className="text-[10px] text-slate-400">Google Pay • PhonePe • Cards • Net Banking</p>
+        <p className="text-[9px] text-slate-400 leading-tight">
+          {language === 'hi'
+            ? 'Citzos एक स्वतंत्र डिजिटल तकनीक मंच है। सभी योजनाएं पूर्णतः निःशुल्क जनहित सूचना हैं।'
+            : 'Independent digital tech platform. Government scheme listings are free public awareness.'}
+        </p>
         
         {/* Prominent High-Contrast Cancel Button */}
         <button

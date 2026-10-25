@@ -8,11 +8,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://citizenlifeos.com';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Citzos | Verified Government Schemes, Scholarships, Helplines & Jobs',
+    default: 'Citzos | Universal Opportunity Discovery & Civic Platform for All Citizens',
     template: '%s | Citzos',
   },
   description:
-    'Citzos (formerly Citizen Life OS) is the 100% verified, zero-scam global civic portal for official government schemes, student scholarships, competitive exams, youth internships, 24x7 emergency helplines, free skill certifications, and healthcare benefits.',
+    'Citzos is an independent private digital technology platform connecting all citizens—students, job seekers, farmers, women, startups, and seniors—with official schemes, private jobs, internships, healthcare, and 24x7 emergency helplines.',
   applicationName: 'Citzos',
   authors: [{ name: 'Citzos Editorial Board', url: siteUrl }],
   generator: 'Next.js',

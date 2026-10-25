@@ -40,8 +40,10 @@ export async function POST(req: NextRequest) {
           receipt: `rcpt_${citizenId.slice(0, 8)}_${timestamp.toString().slice(-6)}`,
           notes: {
             citizenId,
-            plan: '1_year',
-            product: 'Citzos 1-Year Access Pass',
+            plan: '1_year_universal_platform_pass',
+            product: 'Citzos Digital Technology Platform Access Pass',
+            purpose: 'Universal Digital Software Maintenance and Eligibility Matching Service for Citizens',
+            non_government_service: 'true',
           },
         });
 

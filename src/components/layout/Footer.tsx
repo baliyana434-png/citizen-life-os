@@ -240,7 +240,7 @@ export const Footer: React.FC = () => {
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-[11px] leading-relaxed text-slate-400 space-y-1">
           <strong className="text-white block font-bold">
             {language === 'hi'
-              ? 'अनिवार्य गैर-सरकारी घोषणा एवं सूचना:'
+              ? 'अनिवार्य गैर-सरकारी घोषणा एवं प्लेटफ़ॉर्म सूचना:'
               : language === 'es'
               ? 'Aviso Oficial de Plataforma No Gubernamental:'
               : language === 'fr'
@@ -249,20 +249,12 @@ export const Footer: React.FC = () => {
               ? 'Hinweis auf Nicht-Staatliche Unabhängigkeit :'
               : language === 'ar'
               ? 'إقرار رسمي بعدم التبعية الحكومية المباشرة :'
-              : 'Mandatory Non-Government Civic Notice:'}
+              : 'Mandatory Independent Platform Notice:'}
           </strong>
           <p>
             {language === 'hi'
-              ? 'Citzos एक स्वतंत्र नागरिक-तकनीकी सूचना मंच है और किसी भी सरकारी निकाय का प्रतिनिधित्व नहीं करता है। सभी योजनाएं, परीक्षाएं एवं सूचनाएं आधिकारिक राजपत्रों एवं संबंधित मंत्रालयों के सार्वजनिक पोर्टलों से सत्यापित की जाती हैं। आधिकारिक आवेदन केवल संबंधित विभागों के मूल पोर्टल पर ही करें।'
-              : language === 'es'
-              ? 'Citzos es una plataforma cívica independiente y no representa a ninguna entidad gubernamental. Toda la información procede de boletines y portales oficiales del Estado.'
-              : language === 'fr'
-              ? 'Citzos est un service civique indépendant ne représentant aucune autorité publique. Les informations proviennent directement des journaux et portals officiels.'
-              : language === 'de'
-              ? 'Citzos ist eine unabhängige Plattform und vertritt keine staatliche Behörde. Alle Angaben stammen aus amtlichen Veröffentlichungen.'
-              : language === 'ar'
-              ? 'بوابة سيتزوس (Citzos) منصة تقنية مستقلة ولا تمثل أي جهة حكومية. جميع البيانات مستخرجة من المصادر الرسمية المعتمدة.'
-              : 'Citzos is an independent civic-tech portal and does not represent any government entity. All opportunities, exams, and schemes are aggregated from publicly available official gazettes and ministry portals.'}
+              ? 'Citzos एक स्वतंत्र निजी डिजिटल तकनीक मंच है और किसी भी सरकारी निकाय का प्रतिनिधित्व नहीं करता है। हम कोई भी सरकारी पहचान पत्र (जैसे आधार/पैन) जारी नहीं करते हैं और न ही किसी सरकारी योजना के लिए शुल्क लेते हैं। पोर्टल पर प्रदर्शित सभी सरकारी योजनाओं की जानकारी 100% निःशुल्क जनहित सूचना है। ₹1 का वार्षिक सदस्यता शुल्क केवल डिजिटल प्लेटफ़ॉर्म सॉफ़्टवेयर, सर्वर रख-रखाव एवं अवसर खोज इंजन के लिए है। आधिकारिक आवेदन केवल संबंधित विभागों के मूल पोर्टल पर ही करें।'
+              : 'Citzos is an independent private digital technology platform providing opportunity discovery, eligibility matching, and civic information for all citizens (students, farmers, women, job seekers, startups, seniors). We are NOT an official government portal. We do NOT issue government identity cards (Aadhaar/PAN) or charge any fee for government schemes. All government scheme notifications are 100% free public awareness sourced from official government websites. The ₹1 annual pass is strictly towards digital software hosting, platform maintenance, and eligibility search software.'}
           </p>
         </div>
 

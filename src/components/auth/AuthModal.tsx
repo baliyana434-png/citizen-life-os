@@ -947,8 +947,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   : 'Enter your legal name, real Gmail (@gmail.com) and password, or use Google.')
               : screen === 'signup' && signUpStep === 2
               ? (language === 'hi'
-                  ? 'सटीक सरकारी योजनाएं व अवसर पाने के लिए अपनी नागरिक जानकारी भरें।'
-                  : 'Fill in your personal profile details to unlock all eligible opportunities.')
+                  ? 'सटीक अवसर, जॉब्स व योजनाएं पाने के लिए अपनी प्रोफ़ाइल जानकारी भरें।'
+                  : 'Fill in your profile details to unlock personalized opportunities, schemes and jobs.')
               : screen === 'forgot_password' && forgotPasswordStep === 2
               ? (language === 'hi'
                   ? `Gmail (${email}) पर भेजा गया 6-अंकों का वेरिफिकेशन कोड और नया पासवर्ड दर्ज करें।`
@@ -1685,6 +1685,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   {nationalIdValidation.error}
                 </p>
               )}
+              <p className="text-[10px] text-slate-500 mt-1 px-1">
+                {language === 'hi'
+                  ? 'पहचान मिलान हेतु वैकल्पिक। Citzos एक स्वतंत्र निजी मंच है और कोई सरकारी पहचान पत्र जारी नहीं करता।'
+                  : 'Optional for matching. Citzos is an independent private platform and does not issue government IDs.'}
+              </p>
             </div>
 
             {/* Two-Button Bottom Navigation */}

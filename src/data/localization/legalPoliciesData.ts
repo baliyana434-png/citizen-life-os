@@ -417,7 +417,7 @@ export const TERMS_LOCALES: Record<SupportedLanguage, TermsContent> = {
     sec1Text: 'By accessing or registering on Citzos, you agree to be bound by these Terms and Conditions. If you disagree with any part of these terms, please discontinue using the platform.',
     sec2Title: 'Nature of Service',
     sec2Text: 'Our platform operates as an independent civic-tech facilitator, presenting organized public circulars, scholarships, and career notifications aggregated directly from official government gazettes and recognized recruitment boards.',
-    sec2Note: 'We never charge unauthorized broker fees or illicit commissions for government welfare programs. All official applications are made directly on the respective authentic departmental portals.',
+    sec2Note: 'We do not charge any fee for government welfare schemes or issue government identity cards (Aadhaar/PAN). All government schemes are 100% free public domain information. The nominal ₹1 annual subscription is exclusively towards digital software hosting, server maintenance, and eligibility search technology. All official applications are made directly on the respective authentic departmental portals.',
     sec3Title: 'User Obligations & Integrity',
     sec3Points: [
       'Citizens are responsible for providing authentic demographic details (age, category, state) during profile setup.',
@@ -438,7 +438,7 @@ export const TERMS_LOCALES: Record<SupportedLanguage, TermsContent> = {
     sec1Text: 'Citzos का उपयोग करके या इस पर पंजीकरण करके आप इन नियमों व शर्तों से पूर्णतः सहमत होते हैं। यदि आप इनमें से किसी भी शर्त से असहमत हैं, तो कृपया प्लेटफ़ॉर्म का उपयोग न करें।',
     sec2Title: 'सेवा की प्रकृति',
     sec2Text: 'हमारा प्लेटफ़ॉर्म एक नागरिक सुविधा मंच (Civic-Tech Facilitator) है, जो भारत के नागरिकों को केंद्र व राज्य सरकारों के विभिन्न मंत्रालयों, आधिकारिक गजटों और मान्यता प्राप्त भर्ती बोर्डों द्वारा जारी सार्वजनिक अधिसूचनाओं को संगठित रूप में दिखाता है।',
-    sec2Note: 'हम किसी भी सरकारी सेवा, परीक्षा फॉर्म या योजना के लिए नागरिकों से कोई अनधिकृत दलाली या अवैध शुल्क नहीं लेते। सभी आधिकारिक आवेदन सीधे संबंधित सरकारी पोर्टल पर होते हैं।',
+    sec2Note: 'हम किसी भी सरकारी योजना या पहचान पत्र (आधार/पैन) के लिए कोई शुल्क नहीं लेते और न ही कोई सरकारी पहचान पत्र जारी करते हैं। सभी सरकारी योजनाओं की जानकारी पूर्णतः निःशुल्क सार्वजनिक सूचना है। प्लेटफ़ॉर्म पर लिया जाने वाला ₹1 का वार्षिक शुल्क केवल डिजिटल सॉफ़्टवेयर सर्वर रख-रखाव एवं अवसर खोज इंजन की तकनीकी सेवा हेतु है। सभी आधिकारिक आवेदन सीधे संबंधित विभागों के मूल पोर्टल पर ही होते हैं।',
     sec3Title: 'सत्य विवरण एवं आचरण',
     sec3Points: [
       'उपयोगकर्ता पंजीकरण करते समय सत्य एवं प्रामाणिक विवरण (जैसे वास्तविक आयु, वर्ग, राज्य) दर्ज करने के लिए उत्तरदायी है।',
