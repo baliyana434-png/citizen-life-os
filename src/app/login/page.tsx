@@ -40,7 +40,7 @@ function LoginContent() {
               cache: 'no-store',
             });
             const data = await res.json();
-            if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+            if (res.ok && data.success && data.citizen && data.citizen.isOnboarded && data.citizen.dob && data.citizen.state) {
               // Registered -> direct instant entry into website with zero delay!
               handleLoginSuccess(data.citizen);
               return;
@@ -72,7 +72,8 @@ function LoginContent() {
           parsed.id &&
           parsed.id !== 'cit-guest' &&
           parsed.id !== 'cit-default' &&
-          (parsed.isAadhaarVerified || parsed.isOnboarded)
+          parsed.isOnboarded &&
+          parsed.dob
         ) {
           // Already authenticated: redirect to main dashboard
           window.location.replace('/');

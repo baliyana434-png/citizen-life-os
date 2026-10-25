@@ -143,6 +143,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           setIsGoogleRegistration(true);
           setScreen('signup');
           setSignUpStep(2);
+          setDob('');
+          setCalculatedAge(0);
           setSuccessNotice(null);
           return;
         }
@@ -340,7 +342,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       });
       const data = await res.json();
 
-      if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+      if (res.ok && data.success && data.citizen && data.citizen.isOnboarded && data.citizen.dob && data.citizen.state) {
         // CASE A: REGISTERED CITIZEN -> DIRECT INSTANT ENTRY WITH ZERO DELAY!
         const existingCitizen = {
           ...data.citizen,
@@ -410,7 +412,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       });
       const data = await res.json();
 
-      if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+      if (res.ok && data.success && data.citizen && data.citizen.isOnboarded && data.citizen.dob && data.citizen.state) {
         // Registered -> Instant entry
         const existingCitizen = {
           ...data.citizen,

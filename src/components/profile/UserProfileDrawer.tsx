@@ -122,56 +122,50 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     setGoogleLoginError(null);
     try {
       const result = await GoogleAuthService.signInWithGoogle();
-      if (result.success) {
-        let activeCitizen: Partial<CitizenProfile> = {
-          id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-          fullName: result.name || 'Google User',
-          email: result.email,
-          photoURL: result.photoURL || '',
-          country: profile.country || 'IN',
-          isOnboarded: true,
-          isAadhaarVerified: true,
-          age: profile.age || 20,
-          dob: profile.dob || '',
-          lifePhase: profile.lifePhase || 'college_student',
-          casteCategory: profile.casteCategory || 'General',
-          administrativeDivision: profile.administrativeDivision || profile.state || 'General',
-          state: profile.state || profile.administrativeDivision || 'General',
-        };
+      if (result.success && result.email) {
+        const cleanEmail = result.email.toLowerCase().trim();
 
-        // Fast non-blocking lookup
+        // Check if citizen is ALREADY REGISTERED in the database
         try {
-          const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(result.email)}`, {
-            signal: AbortSignal.timeout(800),
+          const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
+            cache: 'no-store',
           });
           const data = await res.json();
-          if (data.success && data.citizen) {
-            activeCitizen = {
-              ...activeCitizen,
+          if (res.ok && data.success && data.citizen && data.citizen.isOnboarded && data.citizen.dob && data.citizen.state) {
+            // Case A: Registered citizen with real details -> Instant direct login
+            const activeCitizen = {
               ...data.citizen,
               isOnboarded: true,
               isAadhaarVerified: true,
             };
+
+            try {
+              localStorage.removeItem('citizen_logged_out');
+              localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
+            } catch (e) {}
+
+            onClose();
+            if (onLoginSuccess) {
+              onLoginSuccess(activeCitizen);
+            } else {
+              onUpdateProfile(activeCitizen);
+            }
+            return;
           }
-        } catch (fetchErr) {}
+        } catch (fetchErr) {
+          console.warn('Profile lookup note:', fetchErr);
+        }
 
-        // Save in background
-        fetch('/api/citizens/profile', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(activeCitizen),
-        }).catch(() => {});
-
-        try {
-          localStorage.removeItem('citizen_logged_out');
-          localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
-        } catch (e) {}
-
+        // Case B: Non-registered Google email -> NEVER create fake dummy data!
+        // Transition cleanly to Sign Up Step 2 to collect real details!
         onClose();
-        if (onLoginSuccess) {
-          onLoginSuccess(activeCitizen);
-        } else {
-          onUpdateProfile(activeCitizen);
+        if (onOpenAuth) {
+          onOpenAuth('signup', {
+            name: result.name || '',
+            email: cleanEmail,
+            photoURL: result.photoURL || '',
+            isGoogle: true,
+          });
         }
         return;
       } else {

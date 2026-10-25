@@ -184,15 +184,13 @@ export default function HomePage() {
       const saved = localStorage.getItem('citizen_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.id && parsed.id !== 'cit-guest' && parsed.id !== 'cit-default' && (parsed.isAadhaarVerified || parsed.isOnboarded)) {
-          if (parsed.dob) {
-            const dynamicAge = calculateExactAge(parsed.dob);
-            if (dynamicAge > 0 && dynamicAge !== parsed.age) {
-              parsed.age = dynamicAge;
-              try {
-                localStorage.setItem('citizen_profile', JSON.stringify(parsed));
-              } catch (e) {}
-            }
+        if (parsed && parsed.id && parsed.id !== 'cit-guest' && parsed.id !== 'cit-default' && parsed.isOnboarded && parsed.dob) {
+          const dynamicAge = calculateExactAge(parsed.dob);
+          if (dynamicAge > 0 && dynamicAge !== parsed.age) {
+            parsed.age = dynamicAge;
+            try {
+              localStorage.setItem('citizen_profile', JSON.stringify(parsed));
+            } catch (e) {}
           }
           setProfile(parsed);
           if (parsed.subscription && parsed.subscription.status === 'active') {
@@ -367,8 +365,15 @@ export default function HomePage() {
 
   // Handle Verification & Login Complete
   const handleVerificationComplete = (updated: Partial<CitizenProfile>) => {
-    let calculatedAge = updated.age || profile?.age || 21;
-    const dobCandidate = updated.dob || profile?.dob;
+    const isDifferentUser = Boolean(
+      updated.email &&
+      profile?.email &&
+      updated.email.toLowerCase() !== profile.email.toLowerCase()
+    );
+    const baseProfile: Partial<CitizenProfile> = isDifferentUser ? {} : (profile || {});
+
+    let calculatedAge = updated.age || baseProfile.age || 21;
+    const dobCandidate = updated.dob || baseProfile.dob;
     if (dobCandidate) {
       const dyn = calculateExactAge(dobCandidate);
       if (dyn > 0) {
@@ -378,7 +383,7 @@ export default function HomePage() {
 
     const newProfile: CitizenProfile = {
       ...DEFAULT_PROFILE,
-      ...(profile || {}),
+      ...baseProfile,
       ...updated,
       age: calculatedAge,
       isAadhaarVerified: true,
@@ -422,7 +427,7 @@ export default function HomePage() {
         cache: 'no-store',
       });
       const data = await res.json();
-      if (res.ok && data.success && data.citizen && (data.citizen.isAadhaarVerified || data.citizen.isOnboarded || data.citizen.fullName)) {
+      if (res.ok && data.success && data.citizen && data.citizen.isOnboarded && data.citizen.dob && data.citizen.state) {
         // CASE A: Registered citizen -> Instant direct entry with ZERO delay!
         handleVerificationComplete(data.citizen);
         if (data.citizen.country) {

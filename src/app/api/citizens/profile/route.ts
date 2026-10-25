@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
       photoURL: body.photoURL || existing?.photoURL || undefined,
       registeredAt: existing?.registeredAt || new Date().toISOString(),
       status: 'verified',
-      isOnboarded: body.isOnboarded !== undefined ? Boolean(body.isOnboarded) : (existing?.isOnboarded ?? true),
+      isOnboarded: Boolean(body.dob || existing?.dob) && (body.isOnboarded !== undefined ? Boolean(body.isOnboarded) : (existing?.isOnboarded ?? false)),
       // SECURITY: Preserve existing password credentials, never allow client-side tampering
       passwordHash: existing?.passwordHash,
       passwordSalt: existing?.passwordSalt,
