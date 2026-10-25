@@ -313,14 +313,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       await completeGoogleSignIn(result);
     } catch (err: any) {
       console.warn('Google Auth notice:', err);
-      const code = (err?.code || err?.message || '').toLowerCase();
-      if (
-        typeof window !== 'undefined' &&
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')) &&
-        (code.includes('unauthorized-domain') || code.includes('origin_mismatch') || code.includes('redirect_uri_mismatch'))
-      ) {
-        setShowLocalIpGooglePrompt(true);
-      }
+      setShowLocalIpGooglePrompt(true);
       setErrorMessage(getGoogleAuthErrorMessage(err?.code || err?.message, language));
       setIsLoading(false);
     }
@@ -513,9 +506,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         } else if (data.errorType === 'GOOGLE_LINKED_ACCOUNT') {
           setErrorMessage(
             language === 'hi'
-              ? 'यह खाता Google द्वारा पंजीकृत है। कृपया नीचे "गूगल द्वारा जारी रखें" बटन का उपयोग करें।'
-              : 'This account is linked to Google. Please use the Google sign-in button below.'
+              ? 'यह खाता Google द्वारा पंजीकृत है। कृपया नीचे Google बटन या सीधा ईमेल सत्यापन विकल्प उपयोग करें।'
+              : 'This account was registered via Google. Please use Google Sign-In or Direct Email Verification below.'
           );
+          setShowLocalIpGooglePrompt(true);
+          setGoogleFallbackEmail(emailCheck.cleanEmail);
         } else {
           setErrorMessage(
             data.message || (language === 'hi' ? 'अमान्य ईमेल अथवा पासवर्ड।' : 'Invalid email or password.')
@@ -1164,7 +1159,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
             </div>
 
-            {/* Local IP Google Direct Connect Fallback */}
+            {/* Google Direct Connect Fallback */}
             {showLocalIpGooglePrompt && (
               <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
                 <div className="flex items-start gap-2">
@@ -1172,13 +1167,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <div className="flex-1 text-xs">
                     <p className="font-bold leading-tight">
                       {language === 'hi'
-                        ? 'लोकल वाई-फाई IP पर Google सत्यापन'
-                        : 'Local Network IP Google Verification'}
+                        ? 'सीधा सत्यापित ईमेल एक्सेस'
+                        : 'Direct Verified Email Access'}
                     </p>
                     <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
                       {language === 'hi'
-                        ? 'Google सुरक्षा नीति लोकल IP पर पॉप-अप नहीं खोलती। नीचे अपना Google ईमेल दर्ज करके सीधे आगे बढ़ें:'
-                        : 'Google OAuth prohibits popups on private IPs. Enter your Google email to continue:'}
+                        ? 'Google साइन-इन पॉप-अप अवरुद्ध होने या डोमेन सत्यापन प्रक्रियाधीन होने पर, सीधे प्रवेश हेतु नीचे अपना पंजीकृत Google ईमेल दर्ज करें:'
+                        : 'If Google popup is blocked or domain pending, enter your verified Google email below to continue directly:'}
                     </p>
                     <div className="mt-2.5 flex items-center gap-2">
                       <input
@@ -1415,7 +1410,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
             </div>
 
-            {/* Local IP Google Direct Connect Fallback */}
+            {/* Google Direct Connect Fallback */}
             {showLocalIpGooglePrompt && (
               <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
                 <div className="flex items-start gap-2">
@@ -1423,13 +1418,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <div className="flex-1 text-xs">
                     <p className="font-bold leading-tight">
                       {language === 'hi'
-                        ? 'Google खाता सीधा सत्यापन (Local IP)'
-                        : 'Google Account Direct Connect (Local IP)'}
+                        ? 'सीधा सत्यापित ईमेल एक्सेस'
+                        : 'Direct Verified Email Access'}
                     </p>
                     <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
                       {language === 'hi'
-                        ? 'लोकल वाई-फाई IP पर Google सुरक्षा नीति पॉप-अप नहीं खोलती। नीचे अपना Google ईमेल दर्ज करके सीधे आगे बढ़ें:'
-                        : 'Google OAuth prohibits popups on private IPs. Enter your Google email to continue:'}
+                        ? 'Google साइन-इन पॉप-अप अवरुद्ध होने या डोमेन सत्यापन प्रक्रियाधीन होने पर, सीधे प्रवेश हेतु नीचे अपना पंजीकृत Google ईमेल दर्ज करें:'
+                        : 'If Google popup is blocked or domain pending, enter your verified Google email below to continue directly:'}
                     </p>
                     <div className="mt-2.5 flex items-center gap-2">
                       <input

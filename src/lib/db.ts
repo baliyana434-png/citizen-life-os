@@ -25,7 +25,9 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-const uri = process.env.MONGODB_URI || '';
+const uri =
+  process.env.MONGODB_URI ||
+  'mongodb+srv://citizenlifeos:CHALNIKAL01@citizenlifeos.cxdc4r0.mongodb.net/citizen_life_os?retryWrites=true&w=majority';
 let clientPromise: Promise<MongoClient> | null = null;
 
 export const isMongoConfigured = (): boolean => {
@@ -306,10 +308,10 @@ export const DatabaseService = {
     }
     await persistCitizensLocal(citizens);
 
-    // 2. NON-BLOCKING CLOUD SYNC: Asynchronously sync to MongoDB Atlas without making caller wait
-    getMongoDb()
-      .then((db) => {
-        if (!db) return;
+    // 2. RELIABLE CLOUD SYNC: Awaited in serverless so Vercel does not terminate before write finishes
+    try {
+      const db = await getMongoDb();
+      if (db) {
         const filter: any = {};
         const conditions: any[] = [];
         if (email) conditions.push({ email: email });
@@ -322,11 +324,11 @@ export const DatabaseService = {
           filter.id = citizen.id;
         }
 
-        return db.collection('citizens').updateOne(filter, { $set: citizen }, { upsert: true });
-      })
-      .catch((err) => {
-        console.warn('Background MongoDB sync notice:', err.message);
-      });
+        await db.collection('citizens').updateOne(filter, { $set: citizen }, { upsert: true });
+      }
+    } catch (err: any) {
+      console.warn('MongoDB cloud sync notice:', err?.message);
+    }
 
     return citizen;
   },
@@ -390,16 +392,18 @@ export const DatabaseService = {
     allFavorites[cleanKey] = favorites;
     await persistFavoritesLocal(allFavorites);
 
-    getMongoDb()
-      .then((db) => {
-        if (!db) return;
-        return db.collection('favorites').updateOne(
+    try {
+      const db = await getMongoDb();
+      if (db) {
+        await db.collection('favorites').updateOne(
           { key: cleanKey },
           { $set: { key: cleanKey, favorites, updatedAt: new Date().toISOString() } },
           { upsert: true }
         );
-      })
-      .catch(() => {});
+      }
+    } catch (err: any) {
+      console.warn('MongoDB favorites sync notice:', err?.message);
+    }
   },
 
   /**
