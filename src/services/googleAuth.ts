@@ -23,54 +23,66 @@ const GOOGLE_REDIRECT_PENDING_KEY = 'citzos_google_redirect_pending';
 export function markGoogleRedirectPending(): void {
   try {
     sessionStorage.setItem(GOOGLE_REDIRECT_PENDING_KEY, '1');
+    localStorage.setItem(GOOGLE_REDIRECT_PENDING_KEY, '1');
   } catch (_) {}
 }
 
 export function clearGoogleRedirectPending(): void {
   try {
     sessionStorage.removeItem(GOOGLE_REDIRECT_PENDING_KEY);
+    localStorage.removeItem(GOOGLE_REDIRECT_PENDING_KEY);
   } catch (_) {}
 }
 
 export function isGoogleRedirectPending(): boolean {
   try {
-    return sessionStorage.getItem(GOOGLE_REDIRECT_PENDING_KEY) === '1';
+    return (
+      sessionStorage.getItem(GOOGLE_REDIRECT_PENDING_KEY) === '1' ||
+      localStorage.getItem(GOOGLE_REDIRECT_PENDING_KEY) === '1'
+    );
   } catch (_) {
     return false;
   }
 }
 
+// Cached singleton promise: prevents multiple mounts from competing for the single redirect result
+let redirectResultPromise: Promise<GoogleAuthResult | null> | null = null;
+
 /**
  * After a redirect-based sign-in the page reloads.
- * Call this once on mount to pick up the redirect result.
- * Returns null if no redirect was pending.
+ * Call this safely on mount to pick up the redirect result.
  */
-export async function getGoogleRedirectResultSafe(): Promise<GoogleAuthResult | null> {
-  if (typeof window === 'undefined') return null;
-  if (!isGoogleRedirectPending()) return null;
+export function getGoogleRedirectResultSafe(): Promise<GoogleAuthResult | null> {
+  if (typeof window === 'undefined') return Promise.resolve(null);
 
-  const auth = getFirebaseAuth();
-  if (!auth || !isFirebaseConfigured()) {
-    clearGoogleRedirectPending();
-    return null;
+  if (!redirectResultPromise) {
+    const auth = getFirebaseAuth();
+    if (!auth || !isFirebaseConfigured()) {
+      clearGoogleRedirectPending();
+      return Promise.resolve(null);
+    }
+
+    redirectResultPromise = getRedirectResult(auth)
+      .then((result) => {
+        clearGoogleRedirectPending();
+        if (!result || !result.user || !result.user.email) return null;
+        const user: User = result.user;
+        return {
+          success: true,
+          name: user.displayName || (user.email ?? '').split('@')[0],
+          email: (user.email ?? '').toLowerCase().trim(),
+          photoURL: user.photoURL || undefined,
+          uid: user.uid,
+        };
+      })
+      .catch((err: any) => {
+        clearGoogleRedirectPending();
+        console.warn('getRedirectResult notice:', err?.code || err?.message);
+        return null;
+      });
   }
 
-  try {
-    clearGoogleRedirectPending();
-    const result = await getRedirectResult(auth);
-    if (!result || !result.user || !result.user.email) return null;
-    const user: User = result.user;
-    return {
-      success: true,
-      name: user.displayName || (user.email ?? '').split('@')[0],
-      email: (user.email ?? '').toLowerCase().trim(),
-      photoURL: user.photoURL || undefined,
-      uid: user.uid,
-    };
-  } catch (err: any) {
-    console.warn('getRedirectResult error:', err?.code || err?.message);
-    return null;
-  }
+  return redirectResultPromise;
 }
 
 export interface GoogleAuthResult {

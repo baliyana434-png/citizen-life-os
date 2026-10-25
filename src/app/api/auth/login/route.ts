@@ -12,17 +12,21 @@ export async function POST(req: NextRequest) {
     const password = String(body.password || '');
     const lang = body.lang === 'hi' ? 'hi' : 'en';
 
-    // 0. Person's Legal Name Check (Required)
-    const nameValidation = validateRealName(rawName, lang);
-    if (!nameValidation.valid) {
-      return NextResponse.json(
-        {
-          success: false,
-          errorType: 'MISSING_NAME',
-          message: nameValidation.error || (lang === 'hi' ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full legal name.'),
-        },
-        { status: 400 }
-      );
+    // 0. Person's Legal Name Check (Optional for login)
+    let cleanName = '';
+    if (rawName && rawName.trim()) {
+      const nameValidation = validateRealName(rawName, lang);
+      if (!nameValidation.valid) {
+        return NextResponse.json(
+          {
+            success: false,
+            errorType: 'INVALID_NAME',
+            message: nameValidation.error,
+          },
+          { status: 400 }
+        );
+      }
+      cleanName = nameValidation.cleanName || '';
     }
 
     // 1. Email Format & Anti-Fraud Check
@@ -126,8 +130,8 @@ export async function POST(req: NextRequest) {
     rateLimiter.reset(rateKey);
 
     // Confirm and update citizen's full legal name if modified
-    if (nameValidation.cleanName && citizen.fullName !== nameValidation.cleanName) {
-      citizen.fullName = nameValidation.cleanName;
+    if (cleanName && citizen.fullName !== cleanName) {
+      citizen.fullName = cleanName;
       try {
         await DatabaseService.saveCitizen(citizen);
       } catch (saveErr) {
@@ -137,7 +141,7 @@ export async function POST(req: NextRequest) {
 
     // Don't leak hash/salt back to client
     const { passwordHash: _ph, passwordSalt: _ps, ...safeCitizen } = citizen;
-    safeCitizen.fullName = nameValidation.cleanName || citizen.fullName;
+    safeCitizen.fullName = cleanName || citizen.fullName;
 
     const sessionToken = SessionSecurityService.generateSessionToken(citizen.id, citizen.email || '');
 

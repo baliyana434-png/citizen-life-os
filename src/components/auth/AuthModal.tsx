@@ -454,16 +454,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessNotice(null);
     setAccountNotFoundNotice(false);
 
-    // 0. Person's Legal Name Check (Required)
-    const nameCheck = validateRealName(name, language);
-    if (!nameCheck.valid) {
-      setErrorMessage(
-        nameCheck.error ||
-          (language === 'hi' ? 'कृपया अपना पूरा नाम दर्ज करें।' : 'Please enter your full legal name.')
-      );
-      return;
-    }
-
     // 1. Email format check
     const emailCheck = validateRealEmail(email, language);
     if (!emailCheck.valid) {
@@ -485,7 +475,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName: nameCheck.cleanName,
+          fullName: name.trim() || undefined,
           email: emailCheck.cleanEmail,
           password,
           rememberMe,
@@ -996,30 +986,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* ======================================================== */}
         {screen === 'login' && (
           <form onSubmit={handleLoginSubmit} className="mt-3.5 space-y-3 sm:space-y-3.5">
-            {/* Person's Full Name (Required) */}
-            <div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <User className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={language === 'hi' ? 'पूरा नाम (Full Legal Name) *' : 'Full Legal Name *'}
-                  className={`w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-2xl bg-slate-50 border text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white outline-none transition-all ${
-                    nameValidation && !nameValidation.valid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-emerald-500'
-                  }`}
-                />
-              </div>
-              {nameValidation && !nameValidation.valid && (
-                <p className="text-[10px] font-semibold text-red-600 mt-1 pl-2">
-                  {nameValidation.error}
-                </p>
-              )}
-            </div>
-
             {/* Email Address */}
             <div>
               <div className="relative">

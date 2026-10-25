@@ -170,93 +170,91 @@ export default function HomePage() {
   // User Starred / Favorite Opportunities State
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set<string>());
 
-  // Safe client mount hydration for master profile & favorite IDs
+  // Safe client mount hydration for master profile, Google redirect result & favorite IDs
   useEffect(() => {
-    try {
-      const isLoggedOut = localStorage.getItem('citizen_logged_out');
-      if (isLoggedOut === 'true') {
-        if (!isGoogleRedirectPending()) {
+    let cancelled = false;
+
+    async function initAuth() {
+      // 1. First, check if returning from a mobile Google OAuth redirect
+      try {
+        const redirectUser = await getGoogleRedirectResultSafe();
+        if (cancelled) return;
+        if (redirectUser && redirectUser.email) {
+          await handleGoogleAuthSuccess({
+            name: redirectUser.name,
+            email: redirectUser.email,
+            photoURL: redirectUser.photoURL,
+          });
+          setIsHydratingAuth(false);
+          return;
+        }
+      } catch (err) {
+        console.warn('Redirect auth check notice:', err);
+      }
+
+      // 2. Check local saved profile
+      try {
+        const isLoggedOut = localStorage.getItem('citizen_logged_out');
+        if (isLoggedOut === 'true') {
           setProfile(null);
+          setIsHydratingAuth(false);
           window.location.replace('/login?from=logout');
           return;
         }
-      }
-      const saved = localStorage.getItem('citizen_profile');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && parsed.id && parsed.id !== 'cit-guest' && parsed.id !== 'cit-default' && parsed.isOnboarded && parsed.dob) {
-          const dynamicAge = calculateExactAge(parsed.dob);
-          if (dynamicAge > 0 && dynamicAge !== parsed.age) {
-            parsed.age = dynamicAge;
-            try {
-              localStorage.setItem('citizen_profile', JSON.stringify(parsed));
-            } catch (e) {}
-          }
-          setProfile(parsed);
-          if (parsed.subscription && parsed.subscription.status === 'active') {
-            verifySubscriptionWithServer(parsed, () => {
-              setProfile((prev) => (prev ? { ...prev, subscription: undefined } : null));
-            });
-          }
-          if (parsed.country) {
-            setCountry(parsed.country);
-          }
-          if (parsed.isAadhaarVerified && !parsed.isOnboarded) {
-            setPendingGoogleUser({
-              name: parsed.fullName || 'Citizen',
-              email: parsed.email || '',
-              photoURL: parsed.photoURL,
-            });
-            setIsOnboardingOpen(true);
-          }
-        } else {
-          if (isGoogleRedirectPending()) {
+
+        const saved = localStorage.getItem('citizen_profile');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (
+            parsed &&
+            parsed.id &&
+            parsed.id !== 'cit-guest' &&
+            parsed.id !== 'cit-default' &&
+            parsed.isOnboarded &&
+            parsed.dob
+          ) {
+            const dynamicAge = calculateExactAge(parsed.dob);
+            if (dynamicAge > 0 && dynamicAge !== parsed.age) {
+              parsed.age = dynamicAge;
+              try {
+                localStorage.setItem('citizen_profile', JSON.stringify(parsed));
+              } catch (e) {}
+            }
+            setProfile(parsed);
+            if (parsed.subscription && parsed.subscription.status === 'active') {
+              verifySubscriptionWithServer(parsed, () => {
+                setProfile((prev) => (prev ? { ...prev, subscription: undefined } : null));
+              });
+            }
+            if (parsed.country) {
+              setCountry(parsed.country);
+            }
+            setIsHydratingAuth(false);
             return;
           }
-          setProfile(null);
-          window.location.replace('/login');
-          return;
         }
-      } else {
-        if (isGoogleRedirectPending()) {
-          return;
-        }
-        setProfile(null);
-        window.location.replace('/login');
-        return;
+      } catch (e) {
+        console.warn('Storage hydration notice:', e);
       }
 
+      // 3. Not authenticated -> redirect to /login
+      setProfile(null);
+      setIsHydratingAuth(false);
+      window.location.replace('/login');
+    }
+
+    initAuth();
+
+    try {
       const savedFavs = localStorage.getItem('citizen_favorites');
       if (savedFavs) {
         setFavoriteIds(new Set(JSON.parse(savedFavs)));
       }
-    } catch (e) {
-      console.warn('Storage hydration notice:', e);
-      if (!isGoogleRedirectPending()) {
-        setProfile(null);
-        window.location.replace('/login');
-      }
-    } finally {
-      setIsHydratingAuth(false);
-    }
-  }, []);
+    } catch (_) {}
 
-  // Handle mobile Google OAuth redirect result after page reload
-  useEffect(() => {
-    let cancelled = false;
-    getGoogleRedirectResultSafe().then((result) => {
-      if (cancelled) return;
-      if (!result || !result.email) {
-        if (typeof window !== 'undefined' && !localStorage.getItem('citizen_profile')) {
-          window.location.replace('/login');
-        }
-        return;
-      }
-      // Successfully got redirect result, log user in and go to homepage
-      handleGoogleAuthSuccess({ name: result.name, email: result.email, photoURL: result.photoURL });
-    });
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Listen to cross-tab & custom storage events

@@ -30,58 +30,63 @@ function LoginContent() {
   useEffect(() => {
     let cancelled = false;
 
-    // Check if returning from a mobile Google OAuth redirect
-    if (isGoogleRedirectPending()) {
-      getGoogleRedirectResultSafe().then(async (result) => {
+    async function checkLoginState() {
+      // 1. Check if returning from a mobile Google OAuth redirect
+      try {
+        const redirectUser = await getGoogleRedirectResultSafe();
         if (cancelled) return;
-        if (result && result.email) {
+        if (redirectUser && redirectUser.email) {
           try {
-            const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(result.email)}`, {
+            const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(redirectUser.email)}`, {
               cache: 'no-store',
             });
             const data = await res.json();
             if (res.ok && data.success && data.citizen && data.citizen.isOnboarded && data.citizen.dob && data.citizen.state) {
-              // Registered -> direct instant entry into website with zero delay!
               handleLoginSuccess(data.citizen);
               return;
             }
           } catch (e) {}
 
-          // Non-registered email -> open registration Step 2 with Google details prefilled
           setPendingPrefill({
-            name: result.name,
-            email: result.email,
-            photoURL: result.photoURL,
+            name: redirectUser.name,
+            email: redirectUser.email,
+            photoURL: redirectUser.photoURL,
             isGoogle: true,
           });
-        }
-        setCheckingAuth(false);
-      });
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    try {
-      const isLoggedOut = localStorage.getItem('citizen_logged_out');
-      const saved = localStorage.getItem('citizen_profile');
-      if (isLoggedOut !== 'true' && saved) {
-        const parsed = JSON.parse(saved);
-        if (
-          parsed &&
-          parsed.id &&
-          parsed.id !== 'cit-guest' &&
-          parsed.id !== 'cit-default' &&
-          parsed.isOnboarded &&
-          parsed.dob
-        ) {
-          // Already authenticated: redirect to main dashboard
-          window.location.replace('/');
+          setCheckingAuth(false);
           return;
         }
+      } catch (err) {
+        console.warn('Redirect auth notice:', err);
       }
-    } catch (e) {}
-    setCheckingAuth(false);
+
+      // 2. Check if already logged in
+      try {
+        const isLoggedOut = localStorage.getItem('citizen_logged_out');
+        const saved = localStorage.getItem('citizen_profile');
+        if (isLoggedOut !== 'true' && saved) {
+          const parsed = JSON.parse(saved);
+          if (
+            parsed &&
+            parsed.id &&
+            parsed.id !== 'cit-guest' &&
+            parsed.id !== 'cit-default' &&
+            parsed.isOnboarded &&
+            parsed.dob
+          ) {
+            window.location.replace('/');
+            return;
+          }
+        }
+      } catch (e) {}
+      setCheckingAuth(false);
+    }
+
+    checkLoginState();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleLoginSuccess = (profile: Partial<CitizenProfile>) => {
