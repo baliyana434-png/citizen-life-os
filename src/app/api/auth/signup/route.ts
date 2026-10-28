@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, CitizenRecord, hashCitizenPassword } from '@/lib/db';
 import { SessionSecurityService } from '@/lib/security';
+import { SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from '@/lib/sessionEdge';
 import {
   validateRealName,
   validateRealEmail,
@@ -158,15 +159,28 @@ export async function POST(req: NextRequest) {
 
     const sessionToken = SessionSecurityService.generateSessionToken(savedCitizen.id, cleanEmail);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message:
         lang === 'hi'
-          ? 'खाता सफलतापूर्वक बन गया! आपका वास्तविक प्रोफाइल सत्यापित हो गया है।'
+          ? 'खाता सफलतापूर्वक बन गया! आपका वास्तविक प्रोफाइल तैयार है।'
           : 'Account created successfully! Your verified citizen profile is ready.',
       citizen: safeCitizen,
       sessionToken,
     });
+
+    // Set httpOnly session cookie
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: sessionToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: SESSION_MAX_AGE_SECONDS,
+    });
+
+    return response;
   } catch (error: any) {
     console.error('Auth Sign Up API Error:', error);
     return NextResponse.json(

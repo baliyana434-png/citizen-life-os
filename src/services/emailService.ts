@@ -6,6 +6,13 @@
 
 import nodemailer from 'nodemailer';
 
+export interface SendVerificationOtpOptions {
+  toEmail: string;
+  citizenName?: string;
+  otp: string;
+  lang?: 'en' | 'hi';
+}
+
 export interface SendPasswordResetOptions {
   toEmail: string;
   citizenName?: string;
@@ -379,5 +386,97 @@ export class EmailService {
       method: 'FALLBACK',
       info: `Reset code generated for ${toEmail}`,
     };
+  }
+
+  /**
+   * Dispatches 6-digit email verification code for citizen verification
+   */
+  static async sendVerificationOtpEmail(opts: SendVerificationOtpOptions): Promise<EmailDispatchResult> {
+    const { toEmail, citizenName = 'Citizen', otp, lang = 'en' } = opts;
+    const isHi = lang === 'hi';
+    const subject = isHi
+      ? `Citzos - ईमेल सत्यापन कोड: ${otp}`
+      : `Citzos - Email Verification Code: ${otp}`;
+
+    const plainText = isHi
+      ? `नमस्कार ${citizenName},\n\nआपका Citzos ईमेल सत्यापन कोड है: ${otp}\n\nयह कोड अगले 10 मिनट के लिए वैध है।\n\n- Citzos Team`
+      : `Dear ${citizenName},\n\nYour Citzos email verification code is: ${otp}\n\nThis code is valid for 10 minutes.\n\n- Citzos Team`;
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+  <meta charset="utf-8">
+  <title>${subject}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+    .container { max-width: 540px; margin: 24px auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0; }
+    .header { background: linear-gradient(135deg, #059669 0%, #0d9488 100%); padding: 26px 20px; text-align: center; color: #ffffff; }
+    .content { padding: 30px 24px; text-align: center; }
+    .otp-box { background: #ecfdf5; border: 2px dashed #059669; border-radius: 14px; padding: 18px; margin: 20px 0; }
+    .otp-num { font-family: monospace; font-size: 36px; font-weight: 900; letter-spacing: 8px; color: #065f46; }
+    .footer { font-size: 11px; color: #94a3b8; text-align: center; padding: 16px; background: #f8fafc; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2 style="margin:0; font-size: 20px; font-weight: 800;">Citzos</h2>
+      <p style="margin: 4px 0 0 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Sovereign Civic Intelligence</p>
+    </div>
+    <div class="content">
+      <p style="font-size: 15px; font-weight: 600; color: #0f172a; margin-bottom: 12px;">
+        ${isHi ? `नमस्ते ${citizenName},` : `Hello ${citizenName},`}
+      </p>
+      <p style="font-size: 13px; color: #475569; line-height: 1.5;">
+        ${isHi ? 'अपने Citzos नागरिक खाते को सत्यापित करने के लिए नीचे दिए गए 6-अंकों के कोड का उपयोग करें:' : 'Please use the 6-digit verification code below to verify your Citzos account:'}
+      </p>
+      <div class="otp-box">
+        <div style="font-size: 11px; font-weight: 700; color: #047857; text-transform: uppercase; margin-bottom: 6px;">
+          ${isHi ? 'सत्यापन कोड (Verification Code)' : 'Verification Code'}
+        </div>
+        <div class="otp-num">${otp}</div>
+        <div style="font-size: 11px; color: #059669; margin-top: 4px;">${isHi ? 'मान्यता: 10 मिनट' : 'Valid for 10 minutes'}</div>
+      </div>
+      <p style="font-size: 11px; color: #94a3b8; margin-top: 20px;">
+        ${isHi ? 'यदि आपने यह अनुरोध नहीं किया था, तो कृपया इस ईमेल को अनदेखा करें।' : 'If you did not request this verification, please ignore this email.'}
+      </p>
+    </div>
+    <div class="footer">
+      Citzos &bull; Verified National Opportunities
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+    if (this.isSmtpConfigured()) {
+      try {
+        const transporter = this.getTransporter();
+        const fromAddress = process.env.SMTP_FROM || `"Citzos" <${process.env.SMTP_USER || 'baliyana434@gmail.com'}>`;
+        const info = await transporter.sendMail({
+          from: fromAddress,
+          to: toEmail,
+          subject,
+          text: plainText,
+          html: htmlContent,
+        });
+        return { success: true, method: 'SMTP', messageId: info.messageId };
+      } catch (e) {
+        console.warn('[EmailService] SMTP verification dispatch error:', e);
+      }
+    }
+
+    if (process.env.RESEND_API_KEY) {
+      const resendId = await this.sendResendEmail(toEmail, subject, htmlContent, plainText);
+      if (resendId) return { success: true, method: 'RESEND', messageId: resendId };
+    }
+
+    if (process.env.BREVO_API_KEY) {
+      const brevoId = await this.sendBrevoEmail(toEmail, citizenName, subject, htmlContent, plainText);
+      if (brevoId) return { success: true, method: 'BREVO', messageId: brevoId };
+    }
+
+    return { success: true, method: 'FALLBACK', info: `Verification OTP generated for ${toEmail}` };
   }
 }

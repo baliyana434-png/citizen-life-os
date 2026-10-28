@@ -344,6 +344,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         };
 
         try {
+          await fetch('/api/auth/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ citizenId: data.citizen.id, email: googleEmail }),
+          });
+        } catch (_) {}
+        try {
           localStorage.removeItem('citizen_logged_out');
           localStorage.setItem('citizen_profile', JSON.stringify(existingCitizen));
         } catch (e) {}

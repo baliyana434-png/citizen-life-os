@@ -175,21 +175,23 @@ export default function HomePage() {
     let cancelled = false;
 
     async function initAuth() {
-      // 1. First, check if returning from a mobile Google OAuth redirect
-      try {
-        const redirectUser = await getGoogleRedirectResultSafe();
-        if (cancelled) return;
-        if (redirectUser && redirectUser.email) {
-          await handleGoogleAuthSuccess({
-            name: redirectUser.name,
-            email: redirectUser.email,
-            photoURL: redirectUser.photoURL,
-          });
-          setIsHydratingAuth(false);
-          return;
+      // 1. Check if returning from a mobile Google OAuth redirect ONLY if redirect was marked pending
+      if (isGoogleRedirectPending()) {
+        try {
+          const redirectUser = await getGoogleRedirectResultSafe();
+          if (cancelled) return;
+          if (redirectUser && redirectUser.email) {
+            await handleGoogleAuthSuccess({
+              name: redirectUser.name,
+              email: redirectUser.email,
+              photoURL: redirectUser.photoURL,
+            });
+            setIsHydratingAuth(false);
+            return;
+          }
+        } catch (err) {
+          console.warn('Redirect auth check notice:', err);
         }
-      } catch (err) {
-        console.warn('Redirect auth check notice:', err);
       }
 
       // 2. Check local saved profile
@@ -233,11 +235,27 @@ export default function HomePage() {
             return;
           }
         }
+
+        // 3. Fast fallback: check session with server cookie if local profile is not yet hydrated
+        try {
+          const meRes = await fetch('/api/auth/me');
+          if (cancelled) return;
+          const meData = await meRes.json();
+          if (meRes.ok && meData.authenticated && meData.citizen) {
+            localStorage.setItem('citizen_profile', JSON.stringify(meData.citizen));
+            setProfile(meData.citizen);
+            if (meData.citizen.country) {
+              setCountry(meData.citizen.country);
+            }
+            setIsHydratingAuth(false);
+            return;
+          }
+        } catch (e) {}
       } catch (e) {
         console.warn('Storage hydration notice:', e);
       }
 
-      // 3. Not authenticated -> redirect to /login
+      // 4. Not authenticated -> redirect to /login
       setProfile(null);
       setIsHydratingAuth(false);
       window.location.replace('/login');
@@ -322,6 +340,9 @@ export default function HomePage() {
       console.warn('Firebase signout notice:', e);
     }
     try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {}
+    try {
       localStorage.setItem('citizen_logged_out', 'true');
       localStorage.removeItem('citizen_profile');
       localStorage.removeItem('citizen_favorites');
@@ -334,7 +355,7 @@ export default function HomePage() {
     setIsProfileOpen(false);
     setIsOnboardingOpen(false);
 
-    // Immediately navigate to dedicated login page like Claude & ChatGPT
+    // Immediately navigate to dedicated login page
     window.location.href = '/login?from=logout';
   };
 
@@ -898,22 +919,8 @@ export default function HomePage() {
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
-  if (isHydratingAuth) {
+  if (isHydratingAuth || !isAuthenticated) {
     return <BrandSplashScreen />;
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <AuthModal
-        isOpen={true}
-        isFullPageGate={true}
-        onClose={() => {}}
-        initialScreen={authModalScreen}
-        prefillData={authPrefillData}
-        onLoginSuccess={(updated) => handleVerificationComplete(updated)}
-        onGoogleSuccess={(googleUser) => handleGoogleAuthSuccess(googleUser)}
-      />
-    );
   }
 
   return (

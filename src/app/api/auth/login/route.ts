@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseService, verifyCitizenPassword } from '@/lib/db';
 import { SessionSecurityService } from '@/lib/security';
+import { SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from '@/lib/sessionEdge';
 import { validateRealEmail, validateRealName } from '@/utils/antiFraudValidation';
 import { rateLimiter } from '@/lib/rateLimiter';
 
@@ -145,12 +146,25 @@ export async function POST(req: NextRequest) {
 
     const sessionToken = SessionSecurityService.generateSessionToken(citizen.id, citizen.email || '');
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: lang === 'hi' ? 'लॉगिन सफल रहा!' : 'Login successful!',
       citizen: safeCitizen,
       sessionToken,
     });
+
+    // Set httpOnly session cookie
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: sessionToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: SESSION_MAX_AGE_SECONDS,
+    });
+
+    return response;
   } catch (error: any) {
     console.error('Auth Login API Error:', error);
     return NextResponse.json(
