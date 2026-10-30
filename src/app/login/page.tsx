@@ -37,68 +37,36 @@ function LoginContent() {
         if (cancelled) return;
         if (redirectUser && redirectUser.email) {
           const cleanEmail = redirectUser.email.toLowerCase().trim();
-          let activeCitizen: Partial<CitizenProfile> = {
-            id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-            fullName: redirectUser.name || 'Google User',
-            email: cleanEmail,
-            photoURL: redirectUser.photoURL || '',
-            isOnboarded: true,
-            isAadhaarVerified: true,
-            age: 24,
-            dob: '2002-05-18',
-            lifePhase: 'college_student',
-            casteCategory: 'General',
-          };
 
+          // Check if citizen is ALREADY REGISTERED in the database
           try {
             const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
               cache: 'no-store',
             });
             const data = await res.json();
-            if (res.ok && data.success && data.citizen) {
-              activeCitizen = {
-                ...activeCitizen,
-                ...data.citizen,
-                isOnboarded: true,
-                isAadhaarVerified: true,
-              };
+            if (res.ok && data.success && data.citizen && (data.citizen.dob || data.citizen.state || data.citizen.registeredAt)) {
+              // Registered citizen -> instant direct login
+              await handleLoginSuccess(data.citizen);
+              return;
             }
           } catch (e) {}
 
-          try {
-            await fetch('/api/citizens/profile', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ...activeCitizen,
-                email: cleanEmail,
-                isOnboarded: true,
-                isAadhaarVerified: true,
-              }),
-            });
-          } catch (_) {}
-
-          try {
-            await fetch('/api/auth/session', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ citizenId: activeCitizen.id, email: cleanEmail }),
-            });
-          } catch (_) {}
-
-          try {
-            localStorage.removeItem('citizen_logged_out');
-            localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
-          } catch (e) {}
-
-          window.location.replace('/');
+          // Non-registered account -> DO NOT auto-login!
+          // Push directly to Sign Up Step 2 so user enters their real details!
+          setPendingPrefill({
+            name: redirectUser.name,
+            email: cleanEmail,
+            photoURL: redirectUser.photoURL,
+            isGoogle: true,
+          });
+          setCheckingAuth(false);
           return;
         }
       } catch (err) {
         console.warn('Redirect auth notice:', err);
       }
 
-      // 2. Check if already logged in
+      // 2. Check if already logged in with verified profile
       try {
         const isLoggedOut = localStorage.getItem('citizen_logged_out');
         const saved = localStorage.getItem('citizen_profile');
@@ -109,7 +77,8 @@ function LoginContent() {
             parsed.id &&
             parsed.id !== 'cit-guest' &&
             parsed.id !== 'cit-default' &&
-            (parsed.isAadhaarVerified || parsed.isOnboarded)
+            parsed.isOnboarded &&
+            parsed.dob
           ) {
             // Restore server session cookie for middleware
             await fetch('/api/auth/session', {
@@ -120,6 +89,9 @@ function LoginContent() {
 
             window.location.replace('/');
             return;
+          } else {
+            // Stale or incomplete unverified profile, clean up
+            localStorage.removeItem('citizen_profile');
           }
         }
       } catch (e) {}

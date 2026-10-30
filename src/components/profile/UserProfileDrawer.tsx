@@ -125,68 +125,55 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
       if (result.success && result.email) {
         const cleanEmail = result.email.toLowerCase().trim();
 
-        let activeCitizen: Partial<CitizenProfile> = {
-          id: `cit-google-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-          fullName: result.name || 'Google User',
-          email: cleanEmail,
-          photoURL: result.photoURL || '',
-          isOnboarded: true,
-          isAadhaarVerified: true,
-          age: 24,
-          dob: '2002-05-18',
-          lifePhase: 'college_student',
-          casteCategory: 'General',
-        };
-
-        // Check if citizen is ALREADY in the database
+        // 1. Strict Check: Is citizen ALREADY REGISTERED in the database?
         try {
           const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
             cache: 'no-store',
           });
           const data = await res.json();
-          if (res.ok && data.success && data.citizen) {
-            activeCitizen = {
-              ...activeCitizen,
+          if (res.ok && data.success && data.citizen && (data.citizen.dob || data.citizen.state || data.citizen.registeredAt)) {
+            // Case A: Registered citizen -> Instant direct login
+            const activeCitizen = {
               ...data.citizen,
               isOnboarded: true,
               isAadhaarVerified: true,
             };
+
+            try {
+              await fetch('/api/auth/session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ citizenId: activeCitizen.id, email: cleanEmail }),
+              });
+            } catch (_) {}
+
+            try {
+              localStorage.removeItem('citizen_logged_out');
+              localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
+            } catch (e) {}
+
+            onClose();
+            if (onLoginSuccess) {
+              onLoginSuccess(activeCitizen);
+            } else {
+              onUpdateProfile(activeCitizen);
+            }
+            return;
           }
         } catch (fetchErr) {
           console.warn('Profile lookup note:', fetchErr);
         }
 
-        try {
-          await fetch('/api/citizens/profile', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...activeCitizen,
-              email: cleanEmail,
-              isOnboarded: true,
-              isAadhaarVerified: true,
-            }),
-          });
-        } catch (_) {}
-
-        try {
-          await fetch('/api/auth/session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ citizenId: activeCitizen.id, email: cleanEmail }),
-          });
-        } catch (_) {}
-
-        try {
-          localStorage.removeItem('citizen_logged_out');
-          localStorage.setItem('citizen_profile', JSON.stringify(activeCitizen));
-        } catch (e) {}
-
+        // Case B: Non-registered Google email -> DO NOT AUTO-LOGIN!
+        // Push directly to Sign Up Step 2 to collect real registration details!
         onClose();
-        if (onLoginSuccess) {
-          onLoginSuccess(activeCitizen);
-        } else {
-          onUpdateProfile(activeCitizen);
+        if (onOpenAuth) {
+          onOpenAuth('signup', {
+            name: result.name || '',
+            email: cleanEmail,
+            photoURL: result.photoURL || '',
+            isGoogle: true,
+          });
         }
         return;
       } else {
