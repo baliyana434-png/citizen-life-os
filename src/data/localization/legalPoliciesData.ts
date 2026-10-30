@@ -102,9 +102,9 @@ export const DISCLAIMER_LOCALES: Record<SupportedLanguage, DisclaimerContent> = 
     title: 'Disclaimer & Civic Advisory',
     subtitle: 'Mandatory transparency declaration under Civic-Tech Information Technology standards.',
     coreDeclarationTitle: 'Important Declaration: Independent Non-Governmental Platform',
-    coreDeclarationText: 'Citzos is an independent civic-tech portal and is NOT an official agency, ministry, department, or representative of any government entity. Our sole mission is to aggregate, organize, and simplify publicly available gazettes, job notifications, and social welfare programs directly from authentic official government sources to empower students, job seekers, farmers, and citizens with direct links to apply without middlemen or cyber-cafe extortion.',
+    coreDeclarationText: 'Citzos is an independent EdTech & career readiness technology portal and is NOT an official agency, ministry, department, or representative of any government entity. Our mission is to aggregate, organize, and simplify publicly available educational syllabus, competitive exam learning resources, and civic awareness programs directly from authentic official educational and institutional sources to empower students, learners, and citizens with direct links to learning portals without middlemen or cyber-cafe extortion.',
     sec1Title: 'Authentic Sources of Information',
-    sec1Intro: 'All schemes, recruitment exams, and civic benefits displayed on this platform are aggregated strictly from publicly accessible official government sources:',
+    sec1Intro: 'All educational syllabus, competitive learning exams, and civic resources displayed on this platform are aggregated strictly from publicly accessible official institutional sources:',
     sources: [
       { title: 'The Gazette of India', url: 'egazette.gov.in' },
       { title: 'Press Information Bureau', url: 'pib.gov.in' },
@@ -416,8 +416,8 @@ export const TERMS_LOCALES: Record<SupportedLanguage, TermsContent> = {
     sec1Title: 'Acceptance of Terms',
     sec1Text: 'By accessing or registering on Citzos, you agree to be bound by these Terms and Conditions. If you disagree with any part of these terms, please discontinue using the platform.',
     sec2Title: 'Nature of Service',
-    sec2Text: 'Our platform operates as an independent civic-tech facilitator, presenting organized public circulars, scholarships, and career notifications aggregated directly from official government gazettes and recognized recruitment boards.',
-    sec2Note: 'We do not charge any fee for government welfare schemes or issue government identity cards (Aadhaar/PAN). All government schemes are 100% free public domain information. The nominal ₹1 annual subscription is exclusively towards digital software hosting, server maintenance, and eligibility search technology. All official applications are made directly on the respective authentic departmental portals.',
+    sec2Text: 'Our platform operates as an independent EdTech & career readiness software portal, presenting organized educational study materials, competitive exam syllabus, and career skill learning tracks aggregated directly from official institutional publications and recognized educational boards.',
+    sec2Note: 'We are strictly an educational technology and career skill readiness learning dashboard. We do not provide employment, recruitment, or government administrative services. The nominal ₹1 annual subscription is exclusively towards digital software hosting, server maintenance, and learning dashboard technology.',
     sec3Title: 'User Obligations & Integrity',
     sec3Points: [
       'Citizens are responsible for providing authentic demographic details (age, category, state) during profile setup.',
@@ -437,8 +437,8 @@ export const TERMS_LOCALES: Record<SupportedLanguage, TermsContent> = {
     sec1Title: 'नियमों की स्वीकृति',
     sec1Text: 'Citzos का उपयोग करके या इस पर पंजीकरण करके आप इन नियमों व शर्तों से पूर्णतः सहमत होते हैं। यदि आप इनमें से किसी भी शर्त से असहमत हैं, तो कृपया प्लेटफ़ॉर्म का उपयोग न करें।',
     sec2Title: 'सेवा की प्रकृति',
-    sec2Text: 'हमारा प्लेटफ़ॉर्म एक नागरिक सुविधा मंच (Civic-Tech Facilitator) है, जो भारत के नागरिकों को केंद्र व राज्य सरकारों के विभिन्न मंत्रालयों, आधिकारिक गजटों और मान्यता प्राप्त भर्ती बोर्डों द्वारा जारी सार्वजनिक अधिसूचनाओं को संगठित रूप में दिखाता है।',
-    sec2Note: 'हम किसी भी सरकारी योजना या पहचान पत्र (आधार/पैन) के लिए कोई शुल्क नहीं लेते और न ही कोई सरकारी पहचान पत्र जारी करते हैं। सभी सरकारी योजनाओं की जानकारी पूर्णतः निःशुल्क सार्वजनिक सूचना है। प्लेटफ़ॉर्म पर लिया जाने वाला ₹1 का वार्षिक शुल्क केवल डिजिटल सॉफ़्टवेयर सर्वर रख-रखाव एवं अवसर खोज इंजन की तकनीकी सेवा हेतु है। सभी आधिकारिक आवेदन सीधे संबंधित विभागों के मूल पोर्टल पर ही होते हैं।',
+    sec2Text: 'हमारा प्लेटफ़ॉर्म एक स्वतंत्र एडटेक व करियर लर्निंग सॉफ़्टवेयर पोर्टल है, जो विद्यार्थियों व नागरिकों को प्रतियोगी परीक्षा पाठ्यक्रम, कौशल विकास मॉड्यूल और करियर अध्ययन सामग्री को संगठित रूप में प्रदान करता है।',
+    sec2Note: 'हम कोई नौकरी प्रदाता, भर्ती एजेंसी या जॉब लिस्टिंग सेवा संचालित नहीं करते हैं। प्लेटफ़ॉर्म पर लिया जाने वाला ₹1 का वार्षिक शुल्क केवल डिजिटल प्लेटफ़ॉर्म सॉफ़्टवेयर सर्वर रख-रखाव एवं लर्निंग डैशबोर्ड की तकनीकी सेवा हेतु है।',
     sec3Title: 'सत्य विवरण एवं आचरण',
     sec3Points: [
       'उपयोगकर्ता पंजीकरण करते समय सत्य एवं प्रामाणिक विवरण (जैसे वास्तविक आयु, वर्ग, राज्य) दर्ज करने के लिए उत्तरदायी है।',
