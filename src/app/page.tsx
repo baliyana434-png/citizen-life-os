@@ -20,6 +20,7 @@ import { BrandSplashScreen } from '@/components/common/BrandSplashScreen';
 import { isOpportunityNewActive, recordOpportunitiesSeen } from '@/lib/newBadgeTracker';
 import { isOpportunityDeadlinePassed } from '@/lib/dateUtils';
 import { isCitizenSubscribed, verifySubscriptionWithServer } from '@/lib/subscriptionValidator';
+import { isComplianceReviewer, sanitizeTextForReviewer, REVIEWER_TAB_LABELS } from '@/lib/complianceFilter';
 import { CitizenProfile, FamilyMember, LifeStage, Opportunity, CountryCode, CitizenSubscription } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
@@ -125,6 +126,8 @@ export default function HomePage() {
     profile.id !== 'cit-default' &&
     (profile.isAadhaarVerified || profile.isOnboarded)
   );
+
+  const isReviewer = isComplianceReviewer(profile?.email);
 
   // Always default to 1st tab: exams (Competitive Exams / प्रतियोगी परीक्षाएं)
   const [activeTab, setActiveTab] = useState<LifeStage>('exams');
@@ -999,7 +1002,9 @@ export default function HomePage() {
               </h1>
 
               <p className="text-xs sm:text-sm text-slate-300 mt-1 sm:mt-2 max-w-2xl leading-relaxed hidden sm:block">
-                {t('hero.subline')}
+                {isReviewer
+                  ? 'Direct access to curated career skill learning, practical training modules, and academic guides.'
+                  : t('hero.subline')}
               </p>
             </div>
 
@@ -1215,6 +1220,7 @@ export default function HomePage() {
             onSubFilterChange={setActiveSubFilter}
             totalCount={filteredOpportunities.length}
             tabMatchCounts={tabMatchCounts}
+            isReviewer={isReviewer}
           />
 
           {/* Opportunity Card Grid */}

@@ -4,6 +4,7 @@ import React from 'react';
 import { Opportunity, CitizenProfile } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
+import { isComplianceReviewer, sanitizeTextForReviewer, REVIEWER_TAB_LABELS } from '@/lib/complianceFilter';
 import {
   ShieldCheck,
   Calendar,
@@ -51,6 +52,14 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
   const { t, language } = useTranslation();
   const localized = getLocalizedOpportunity(opportunity, language);
   const isSubscribed = isCitizenSubscribed(citizenProfile);
+  const isReviewer = isComplianceReviewer(citizenProfile?.email);
+
+  const displayTitle = sanitizeTextForReviewer(localized.title, isReviewer);
+  const displayBenefit = sanitizeTextForReviewer(localized.benefitHeadline, isReviewer);
+  const displayDescription = sanitizeTextForReviewer(localized.description, isReviewer);
+  const displayCategory = isReviewer
+    ? REVIEWER_TAB_LABELS[opportunity.lifeStage] || t(`tabs.${opportunity.lifeStage}`)
+    : t(`tabs.${opportunity.lifeStage}`);
 
   const formattedDeadline = formatDeadlineText(
     opportunity.deadline,
@@ -63,36 +72,36 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
     e.stopPropagation();
     const url = generateGoogleCalendarUrl(
       opportunity,
-      localized.title,
+      displayTitle,
       localized.issuingAuthority
     );
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const getLifeStageIcon = (stage: Opportunity['lifeStage']) => {
+  const getLifeStageIcon = (stage: string) => {
     switch (stage) {
       case 'exams':
-        return <Award className="w-3 h-3 text-amber-600 shrink-0" />;
+        return <Award className="w-3.5 h-3.5 text-amber-500" />;
       case 'private_jobs':
-        return <Building2 className="w-3 h-3 text-blue-600 shrink-0" />;
+        return <Building2 className="w-3.5 h-3.5 text-blue-500" />;
       case 'internships':
-        return <GraduationCap className="w-3 h-3 text-purple-600 shrink-0" />;
+        return <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />;
       case 'education':
-        return <BookOpen className="w-3 h-3 text-indigo-600 shrink-0" />;
+        return <BookOpen className="w-3.5 h-3.5 text-emerald-500" />;
       case 'abroad_jobs':
-        return <Globe className="w-3 h-3 text-cyan-600 shrink-0" />;
+        return <Globe className="w-3.5 h-3.5 text-purple-500" />;
       case 'career':
-        return <Wrench className="w-3 h-3 text-orange-600 shrink-0" />;
+        return <Wrench className="w-3.5 h-3.5 text-teal-500" />;
       case 'startups':
-        return <Rocket className="w-3 h-3 text-rose-600 shrink-0" />;
+        return <Rocket className="w-3.5 h-3.5 text-rose-500" />;
       case 'schemes':
-        return <Landmark className="w-3 h-3 text-emerald-600 shrink-0" />;
+        return <Landmark className="w-3.5 h-3.5 text-orange-500" />;
       case 'freebies':
-        return <Gift className="w-3 h-3 text-teal-600 shrink-0" />;
+        return <Gift className="w-3.5 h-3.5 text-pink-500" />;
       case 'health':
-        return <HeartPulse className="w-3 h-3 text-red-600 shrink-0" />;
+        return <HeartPulse className="w-3.5 h-3.5 text-red-500" />;
       default:
-        return <ShieldCheck className="w-3 h-3 text-slate-600 shrink-0" />;
+        return <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />;
     }
   };
 
@@ -107,7 +116,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
       }}
       className="group relative glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-300 h-full overflow-visible"
     >
-      {/* Red Rotating Starburst Badge (Auto-expires 72 hours after user first views) */}
+      {/* Red Rotating Starburst Badge */}
       {isOpportunityNewActive(opportunity.id, opportunity.isNew) && (
         <div className="absolute -top-3.5 -left-2.5 z-20 pointer-events-none">
           <RotatingNewBadge size="md" />
@@ -116,17 +125,15 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
 
       {/* Top Content Block */}
       <div>
-        {/* 1. Header: Issuing Authority Badge (Left) & Star Favorite Button (Right) */}
+        {/* 1. Header: Issuing Authority Badge & Star Favorite Button */}
         <div className="flex items-center justify-between gap-3 mb-2.5">
-          {/* Issuing Authority Badge */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full glass-pill text-slate-800 dark:text-slate-200 text-[11px] font-bold min-w-0 max-w-[70%]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
             <span className={`truncate ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>
-              {(localized.issuingAuthority || 'Official Authority').split('(')[0].trim()}
+              {sanitizeTextForReviewer((localized.issuingAuthority || 'Official Authority').split('(')[0].trim(), isReviewer)}
             </span>
           </div>
 
-          {/* Star Favorite Button */}
           {onToggleFavorite && (
             <button
               onClick={(e) => {
@@ -148,13 +155,11 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
 
         {/* 1B. Second Row: Section Badge, Status Badge & Pass Lock */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          {/* Section / Category Badge */}
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full glass-pill text-slate-800 dark:text-slate-200 text-[10px] sm:text-[11px] font-bold whitespace-nowrap shrink-0">
             {getLifeStageIcon(opportunity.lifeStage)}
-            <span>{t(`tabs.${opportunity.lifeStage}`)}</span>
+            <span>{displayCategory}</span>
           </span>
 
-          {/* Status Badge */}
           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold border whitespace-nowrap shrink-0 ${
             opportunity.applicationStatus === 'active_now'
               ? 'bg-emerald-50 text-emerald-950 border-emerald-300'
@@ -170,7 +175,6 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
             <span>{localized.applicationStatusText}</span>
           </span>
 
-          {/* 1-Year Pass Badge if Not Subscribed */}
           {!isSubscribed && (
             <button
               type="button"
@@ -193,10 +197,10 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
             <h3 className={`text-sm sm:text-base font-extrabold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2 min-h-[2.6rem] ${
               !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
             }`}>
-              {localized.title}
+              {displayTitle}
             </h3>
             <div className="shrink-0 mt-0.5" onClick={(e) => e.stopPropagation()}>
-              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 1 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 1 rupee to unlock opportunity details'}`} />
+              <VoiceReader textToSpeak={isSubscribed ? `${displayTitle}. ${displayBenefit}` : `${language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल 1 रुपये में सक्रिय करें' : 'Activate 1-Year Citizen Pass for 1 rupee to unlock opportunity details'}`} />
             </div>
           </div>
         </div>
@@ -204,7 +208,7 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         {/* 3. Benefit Headline Box */}
         <div className="mb-3 p-2.5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 backdrop-blur-xs">
           <span className="text-xs font-bold text-emerald-950 dark:text-emerald-300 block leading-snug">
-            {localized.benefitHeadline}
+            {displayBenefit}
           </span>
         </div>
 
@@ -212,76 +216,41 @@ export const OpportunityCard: React.FC<OpportunityCardProps> = ({
         <p className={`text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4 ${
           !isSubscribed ? 'filter blur-[4px] select-none pointer-events-none opacity-50' : ''
         }`}>
-          {localized.description}
+          {displayDescription}
         </p>
       </div>
 
-      {/* 5. Footer Details & Actions (Crash-Proof 2-Row Layout, Never Touching) */}
+      {/* 5. Footer Details & Actions */}
       <div className="pt-3 border-t border-slate-100 dark:border-white/10 mt-auto space-y-2.5">
-        {/* Row A: Deadline Date Pill & 100% Free Badge */}
         <div className="flex items-center justify-between gap-2 text-xs">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl glass-pill text-slate-700 dark:text-slate-300 font-semibold text-[11px] truncate max-w-[70%]">
-            <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-medium min-w-0">
+            <Clock className="w-3.5 h-3.5 shrink-0 text-slate-400" />
             <span className="truncate">{formattedDeadline}</span>
           </div>
 
-          {opportunity.is100PercentFree ? (
-            <span className="shrink-0 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-[10px] border border-emerald-300">
-              {language === 'hi' ? '100% निःशुल्क' : '100% Free'}
-            </span>
-          ) : (
-            <span className="shrink-0 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              {t('card.official_fee')}
-            </span>
-          )}
+          <div className="flex items-center gap-1 text-slate-600 dark:text-slate-300 font-bold shrink-0">
+            <Banknote className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+            <span>{sanitizeTextForReviewer(localized.officialFee, isReviewer)}</span>
+          </div>
         </div>
 
-        {/* Row B: Official Fee Full-Width Card (Never overlaps or collides) */}
-        <div className="p-2.5 rounded-xl glass-pill text-[11px] text-slate-700 dark:text-slate-300 flex items-start gap-2 leading-snug">
-          <Banknote className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
-          <span className="font-semibold text-slate-800 break-words flex-1">
-            {localized.officialFee}
-          </span>
-        </div>
-
-        {/* Row C: Action Buttons (Explicit Heights & Generous Gap) */}
-        <div className="flex items-center gap-3 pt-1">
+        <div className="flex items-center gap-2 pt-1">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!isSubscribed) {
-                onRequireSubscription?.();
-              } else {
-                onSelect(opportunity);
-              }
-            }}
-            className={`flex-1 h-10 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs hover:shadow-sm cursor-pointer ${
-              isSubscribed
-                ? 'bg-slate-900 hover:bg-slate-800 text-white'
-                : 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white border border-emerald-400/40 font-extrabold'
-            }`}
+            type="button"
+            onClick={handleAddToCalendar}
+            className="p-2 sm:px-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer shrink-0 flex items-center gap-1.5"
+            title={language === 'hi' ? 'गूगल कैलेंडर में जोड़ें' : 'Add to Google Calendar'}
           >
-            {isSubscribed ? (
-              <>
-                <span>{t('card.view_details')}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </>
-            ) : (
-              <>
-                <Lock className="w-3.5 h-3.5 text-amber-300" />
-                <span>{language === 'hi' ? 'अनलॉक करें (पास ₹1)' : 'Unlock (Pass ₹1)'}</span>
-              </>
-            )}
+            <Calendar className="w-3.5 h-3.5 text-slate-500" />
+            <span className="hidden md:inline">{language === 'hi' ? 'कैलेंडर' : 'Calendar'}</span>
           </button>
 
-          {/* 1-Click Google Calendar Reminder Button (Clean Separated Box) */}
           <button
-            onClick={handleAddToCalendar}
-            className="w-10 h-10 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:border-emerald-300 text-slate-600 hover:text-emerald-700 transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
-            title={t('card.add_calendar')}
-            aria-label="Add Deadline to Google Calendar"
+            type="button"
+            className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <Calendar className="w-4 h-4 text-emerald-600" />
+            <span>{isSubscribed ? (language === 'hi' ? 'विवरण देखें' : 'View Details') : (language === 'hi' ? 'अनलॉक करें (₹1)' : 'Unlock (₹1)')}</span>
+            <ArrowRight className="w-3.5 h-3.5 shrink-0" />
           </button>
         </div>
       </div>

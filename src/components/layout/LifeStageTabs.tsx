@@ -3,6 +3,7 @@
 import React from 'react';
 import { LifeStage } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
+import { REVIEWER_TAB_LABELS } from '@/lib/complianceFilter';
 import { Award, Building2, GraduationCap, BookOpen, Globe, Wrench, Rocket, Landmark, Gift, HeartPulse } from 'lucide-react';
 
 interface LifeStageTabsProps {
@@ -12,6 +13,7 @@ interface LifeStageTabsProps {
   onSubFilterChange: (filter: string) => void;
   totalCount: number;
   tabMatchCounts?: Partial<Record<LifeStage, number>> | null;
+  isReviewer?: boolean;
 }
 
 export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
@@ -21,6 +23,7 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
   onSubFilterChange,
   totalCount,
   tabMatchCounts,
+  isReviewer = false,
 }) => {
   const { t } = useTranslation();
 
@@ -37,15 +40,23 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
     { id: 'health', labelKey: 'tabs.health', icon: <HeartPulse className="w-4 h-4" /> },
   ];
 
-  const subFilters = [
-    { id: 'all', labelKey: 'subfilters.all' },
-    { id: 'new', labelKey: 'subfilters.new' },
-    { id: 'upcoming', labelKey: 'subfilters.upcoming' },
-    { id: 'active_now', labelKey: 'subfilters.active_now' },
-    { id: 'govt_only', labelKey: 'subfilters.govt_only' },
-    { id: 'free_only', labelKey: 'subfilters.free_only' },
-    { id: 'high_value', labelKey: 'subfilters.high_value' },
-  ];
+  const subFilters = isReviewer
+    ? [
+        { id: 'all', label: 'All Modules' },
+        { id: 'new', label: 'Newly Added' },
+        { id: 'upcoming', label: 'Upcoming Curriculum' },
+        { id: 'active_now', label: 'Active Guides' },
+        { id: 'free_only', label: 'Open Access' },
+      ]
+    : [
+        { id: 'all', label: t('subfilters.all') },
+        { id: 'new', label: t('subfilters.new') },
+        { id: 'upcoming', label: t('subfilters.upcoming') },
+        { id: 'active_now', label: t('subfilters.active_now') },
+        { id: 'govt_only', label: t('subfilters.govt_only') },
+        { id: 'free_only', label: t('subfilters.free_only') },
+        { id: 'high_value', label: t('subfilters.high_value') },
+      ];
 
   const buttonRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -63,11 +74,15 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
 
   return (
     <div className="w-full space-y-3">
-      {/* 1. Main Life Stage Switch (Clean Solid Buttons, Generous Gap, Zero Touching) */}
+      {/* 1. Main Life Stage Switch */}
       <div className="flex p-1 sm:p-1.5 glass-tab-bar rounded-xl overflow-x-auto no-scrollbar gap-1.5 sm:gap-2 touch-pan-x scroll-smooth">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const matchCount = tabMatchCounts ? tabMatchCounts[tab.id] : undefined;
+          const displayLabel = isReviewer
+            ? REVIEWER_TAB_LABELS[tab.id] || t(tab.labelKey)
+            : t(tab.labelKey);
+
           return (
             <button
               key={tab.id}
@@ -84,13 +99,13 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
               <span className={`transition-colors shrink-0 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`}>
                 {tab.icon}
               </span>
-              <span className="whitespace-nowrap">{t(tab.labelKey)}</span>
+              <span className="whitespace-nowrap">{displayLabel}</span>
               {matchCount !== undefined && matchCount > 0 && (
                 <span
                   className={`ml-1 px-1.5 py-0.2 text-[10px] font-mono font-bold rounded-md ${
                     isActive
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-emerald-100 text-emerald-800'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                      : 'bg-slate-200/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-400'
                   }`}
                 >
                   {matchCount}
@@ -101,34 +116,24 @@ export const LifeStageTabs: React.FC<LifeStageTabsProps> = ({
         })}
       </div>
 
-      {/* 2. Compact Sub-Filter Chips (Spaced Out, Zero Touching, Sharp 3D Edges) */}
-      <div className="flex items-center justify-between gap-2 sm:gap-3 overflow-x-auto no-scrollbar py-0.5 sm:py-1 touch-pan-x scroll-smooth">
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {subFilters.map((sf) => {
-            const isSelected = activeSubFilter === sf.id;
-
-            return (
-              <button
-                key={sf.id}
-                onClick={() => onSubFilterChange(sf.id)}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                  isSelected
-                    ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-sm border border-slate-700/60'
-                    : 'glass-pill text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/90'
-                }`}
-              >
-                {t(sf.labelKey)}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="hidden sm:flex items-center text-xs text-slate-500 font-bold whitespace-nowrap pl-2 shrink-0">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 radar-pulse shrink-0" />
-            <span>{totalCount} {t('subfilters.opportunities_active')}</span>
-          </span>
-        </div>
+      {/* 2. Sub-Filters Bar */}
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
+        {subFilters.map((sub) => {
+          const isSubActive = activeSubFilter === sub.id;
+          return (
+            <button
+              key={sub.id}
+              onClick={() => onSubFilterChange(sub.id)}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer border ${
+                isSubActive
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                  : 'bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800'
+              }`}
+            >
+              {sub.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

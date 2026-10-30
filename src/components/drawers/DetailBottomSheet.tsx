@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Opportunity } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { getLocalizedOpportunity } from '@/data/localization/opportunityTranslator';
+import { isComplianceReviewer, sanitizeTextForReviewer, REVIEWER_TAB_LABELS } from '@/lib/complianceFilter';
 import {
   X,
   ShieldCheck,
@@ -74,6 +75,15 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
 
   const localized = getLocalizedOpportunity(opportunity, language);
   const eligibility = evaluateCitizenEligibility(opportunity, citizenProfile);
+  const isReviewer = isComplianceReviewer(citizenProfile?.email);
+
+  const displayTitle = sanitizeTextForReviewer(localized.title, isReviewer);
+  const displayBenefit = sanitizeTextForReviewer(localized.benefitHeadline, isReviewer);
+  const displayDescription = sanitizeTextForReviewer(localized.description, isReviewer);
+  const displayAuthority = sanitizeTextForReviewer(localized.issuingAuthority, isReviewer);
+  const displayCategory = isReviewer
+    ? REVIEWER_TAB_LABELS[opportunity.lifeStage] || t(`tabs.${opportunity.lifeStage}`)
+    : t(`tabs.${opportunity.lifeStage}`);
 
   const toggleDoc = (id: string) => {
     setCheckedDocs((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -129,18 +139,18 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-200/80 text-slate-800 text-xs font-bold border border-slate-300">
                 {getLifeStageIcon(opportunity.lifeStage)}
-                <span>{t(`tabs.${opportunity.lifeStage}`)}</span>
+                <span>{displayCategory}</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 {t('official_verified')}
               </span>
-              <VoiceReader textToSpeak={isSubscribed ? `${localized.title}. ${localized.benefitHeadline}` : (language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल ₹1 में सक्रिय करें' : language === 'es' ? 'Active el Pase Ciudadano de 1 año por 1 ₹ para desbloquear detalles' : language === 'fr' ? 'Activez le Pass Citoyen 1 an pour 1 ₹ pour débloquer les détails' : language === 'de' ? 'Aktivieren Sie den 1-Jahres-Bürgerpass für 1 ₹, um Details freizuschalten' : language === 'ar' ? 'قم بتفعيل تصريح المواطن لمدة عام مقابل 1 روبية فقط لفتح التفاصيل' : 'Activate 1-Year Citizen Pass for 1 rupee to unlock opportunity details')} />
+              <VoiceReader textToSpeak={isSubscribed ? `${displayTitle}. ${displayBenefit}` : (language === 'hi' ? 'अवसर विवरण देखने हेतु 1-वर्षीय नागरिक पास केवल ₹1 में सक्रिय करें' : language === 'es' ? 'Active el Pase Ciudadano de 1 año por 1 ₹ para desbloquear detalles' : language === 'fr' ? 'Activez le Pass Citoyen 1 an pour 1 ₹ pour débloquer les détails' : language === 'de' ? 'Aktivieren Sie den 1-Jahres-Bürgerpass für 1 ₹, um Details freizuschalten' : language === 'ar' ? 'قم بتفعيل تصريح المواطن لمدة عام مقابل 1 روبية فقط لفتح التفاصيل' : 'Activate 1-Year Citizen Pass for 1 rupee to unlock opportunity details')} />
             </div>
             <h2 className={`text-base sm:text-xl font-extrabold text-slate-900 leading-snug ${
               !isSubscribed ? 'filter blur-[6px] select-none pointer-events-none opacity-40' : ''
             }`}>
-              {localized.title}
+              {displayTitle}
             </h2>
           </div>
 
@@ -177,7 +187,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
             <div className="flex items-center gap-1.5 font-bold text-slate-800">
               <Building2 className="w-4 h-4 text-slate-600" />
-              <span className={!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}>{localized.issuingAuthority}</span>
+              <span className={!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}>{displayAuthority}</span>
             </div>
             <div className="text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 border-t border-slate-200/80">
               <span>{t('card.circular_no')}: <strong className={`text-slate-900 font-mono ${!isSubscribed ? 'filter blur-[5px] select-none pointer-events-none opacity-50' : ''}`}>{opportunity.gazette?.circularNumber || 'Official Notice'}</strong></span>
@@ -186,7 +196,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                 <span>{t('card.last_date')}: <strong className="text-slate-900">{formatDeadlineText(opportunity.deadline, opportunity.daysRemaining, language, t('card.days_left'))}</strong></span>
               </span>
               <span>{opportunity.gazette?.lastVerifiedAt || 'Recently Verified'}</span>
-              <span>{t('card.official_fee')}: <strong className="text-emerald-800">{localized.officialFee}</strong></span>
+              <span>{t('card.official_fee')}: <strong className="text-emerald-800">{sanitizeTextForReviewer(localized.officialFee, isReviewer)}</strong></span>
               {opportunity.targetAges && (
                 <span className="flex items-center gap-1">
                   <Target className="w-3.5 h-3.5 text-slate-500" />
@@ -288,14 +298,14 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
               {t('drawer.benefit_details')}
             </h3>
             <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs sm:text-sm font-bold text-emerald-950">
-              {localized.benefitHeadline}
+              {displayBenefit}
             </div>
           </div>
 
           {/* D. Official Description */}
           <div>
             <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-              {localized.description}
+              {displayDescription}
             </p>
           </div>
 
@@ -321,7 +331,7 @@ export const DetailBottomSheet: React.FC<DetailBottomSheetProps> = ({
                     />
                     <div className="text-xs">
                       <span className="font-semibold text-slate-800">
-                        {doc.name}
+                        {sanitizeTextForReviewer(doc.name, isReviewer)}
                       </span>
                       {doc.isMandatory && (
                         <span className="ml-2 text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-md">
