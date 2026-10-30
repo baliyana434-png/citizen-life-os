@@ -423,7 +423,7 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                       </span>
                       <span className="text-[10px] text-slate-400">
                         {isCitizenSubscribed(profile) && profile.subscription
-                          ? (language === 'hi' ? `सक्रिय • वैधता: ${profile.subscription.validUntil}` : `Active • Valid until ${profile.subscription.validUntil}`)
+                          ? (language === 'hi' ? `सक्रिय • वैधता: ${profile.subscription.validUntil.split('T')[0]}` : `Active • Valid until ${profile.subscription.validUntil.split('T')[0]}`)
                           : (language === 'hi' ? 'निष्क्रिय • केवल ₹1 / 1 वर्ष' : 'Inactive • Only ₹1 / 1 Year')}
                       </span>
                     </div>

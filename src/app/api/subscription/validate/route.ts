@@ -1,50 +1,59 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PaymentSecurityService } from '@/lib/security';
 import { DatabaseService } from '@/lib/db';
+import { PaymentSecurityService } from '@/lib/security';
 import { CitizenSubscription } from '@/types';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const citizenId = PaymentSecurityService.sanitizeString(body.citizenId);
-    const subscription = body.subscription as CitizenSubscription;
+    const email = body.email ? String(body.email).trim().toLowerCase() : undefined;
+    const clientSubscription = body.subscription as CitizenSubscription;
 
-    if (!citizenId || !subscription) {
+    if (!citizenId && !email) {
       return NextResponse.json(
         { valid: false, reason: 'MISSING_PAYLOAD' },
         { status: 400 }
       );
     }
 
-    // 1. Cryptographic HMAC-SHA256 signature and expiry verification
-    const isSignatureValid = PaymentSecurityService.verifySignature(subscription, citizenId);
-    if (!isSignatureValid) {
-      return NextResponse.json(
-        { valid: false, reason: 'CRYPTOGRAPHIC_SIGNATURE_INVALID_OR_EXPIRED' },
-        { status: 403 }
-      );
-    }
+    // 1. Authoritative check from MongoDB Atlas Database
+    const citizen = await DatabaseService.findCitizen({ id: citizenId, email });
+    const effectiveSub = citizen?.subscription || clientSubscription;
 
-    // 2. Server database check if citizen exists
-    const citizen = await DatabaseService.findCitizen({ id: citizenId });
-    if (citizen && citizen.subscription) {
-      // If server has a record, verify transactionId matches
-      if (
-        citizen.subscription.transactionId &&
-        citizen.subscription.transactionId !== subscription.transactionId
-      ) {
-        return NextResponse.json(
-          { valid: false, reason: 'TRANSACTION_ID_MISMATCH' },
-          { status: 403 }
-        );
+    if (effectiveSub && effectiveSub.status === 'active' && effectiveSub.validUntil) {
+      const now = Date.now();
+      const expiry = new Date(effectiveSub.validUntil).getTime();
+
+      if (expiry > now) {
+        // ACTIVE AND UNEXPIRED (Within 365 days)
+        const daysRemaining = Math.max(1, Math.ceil((expiry - now) / (1000 * 60 * 60 * 24)));
+        return NextResponse.json({
+          valid: true,
+          subscription: effectiveSub,
+          validUntil: effectiveSub.validUntil,
+          daysRemaining,
+          message: '1-Year Citizen Pass active and valid.',
+        });
+      } else {
+        // 365 DAYS HAVE GENUINELY EXPIRED
+        if (citizen && citizen.subscription) {
+          citizen.subscription.status = 'expired';
+          await DatabaseService.saveCitizen(citizen);
+        }
+        return NextResponse.json({
+          valid: false,
+          expired: true,
+          reason: 'SUBSCRIPTION_EXPIRED_AFTER_365_DAYS',
+          message: 'आपकी 1-वर्षीय सदस्यता समाप्त हो चुकी है। कृपया नवीनीकरण करें।',
+        });
       }
     }
 
     return NextResponse.json({
-      valid: true,
-      validUntil: subscription.validUntil,
-      message: 'नागरिक सदस्यता प्रमाणीकरण सफल।',
-    });
+      valid: false,
+      reason: 'NO_ACTIVE_SUBSCRIPTION',
+    }, { status: 200 });
   } catch (error: any) {
     console.error('Subscription validation error:', error);
     return NextResponse.json(

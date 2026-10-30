@@ -15,7 +15,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
-    const citizen = await DatabaseService.findCitizen({ id: verification.citizenId });
+    const citizen = await DatabaseService.findCitizen({
+      id: verification.citizenId,
+      email: verification.email,
+    });
     if (!citizen) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }

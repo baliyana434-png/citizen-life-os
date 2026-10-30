@@ -240,10 +240,10 @@ export async function POST(req: NextRequest) {
     const FIXED_CURRENCY = 'INR';
     const PLAN = '1_year';
 
-    // Calculate exact 365 days expiry from server clock
+    // Calculate exact 365 days expiry from server clock (8760 hours)
     const now = new Date();
     const validUntilDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-    const validUntilStr = validUntilDate.toISOString().split('T')[0];
+    const validUntilStr = validUntilDate.toISOString();
 
     // Generate cryptographic HMAC-SHA256 signature for internal verification
     const internalSignature = PaymentSecurityService.generateSignature(

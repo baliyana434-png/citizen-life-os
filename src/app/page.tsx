@@ -231,6 +231,27 @@ export default function HomePage() {
                 setProfile((prev) => (prev ? { ...prev, subscription: undefined } : null));
               });
             }
+
+            // Real-base background sync from MongoDB: guarantees 365-day pass and profile persistence forever
+            if (parsed.email) {
+              fetch(`/api/citizens/profile?email=${encodeURIComponent(parsed.email)}`, { cache: 'no-store' })
+                .then((r) => r.json())
+                .then((dbData) => {
+                  if (cancelled) return;
+                  if (dbData.success && dbData.citizen) {
+                    const merged: CitizenProfile = {
+                      ...parsed,
+                      ...dbData.citizen,
+                      isOnboarded: true,
+                    };
+                    setProfile(merged);
+                    try {
+                      localStorage.setItem('citizen_profile', JSON.stringify(merged));
+                    } catch (_) {}
+                  }
+                })
+                .catch(() => {});
+            }
             if (parsed.country) {
               setCountry(parsed.country);
             }

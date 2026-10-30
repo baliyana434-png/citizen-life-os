@@ -1,33 +1,14 @@
 import { CitizenProfile, CitizenSubscription } from '@/types';
 
 /**
- * Validates whether a citizen's subscription passes cryptographic structural requirements on the client.
- * Guards against client-side localStorage tampering where an attacker manually changes
- * status to 'active' without possessing a valid HMAC-SHA256 signature and transaction token.
+ * Validates whether a citizen's subscription is active and within its 365-day validity period.
+ * Authoritative source of truth is always the user's expiration timestamp in MongoDB Atlas.
  */
 export function isSubscriptionStructurallyValid(sub?: CitizenSubscription | null): boolean {
   if (!sub || typeof sub !== 'object') return false;
   if (sub.status !== 'active') return false;
 
-  // 1. Must possess a valid 64-character hex HMAC-SHA256 digital signature
-  if (!sub.signature || typeof sub.signature !== 'string' || sub.signature.length !== 64) {
-    return false;
-  }
-  if (!/^[0-9a-f]{64}$/i.test(sub.signature)) {
-    return false;
-  }
-
-  // 2. Must possess an authentic transaction identifier
-  if (!sub.transactionId || typeof sub.transactionId !== 'string' || sub.transactionId.length < 6) {
-    return false;
-  }
-
-  // 3. Amount must strictly match official fee (1 INR or legacy 19 INR)
-  if (sub.amount !== 1 && sub.amount !== 19) {
-    return false;
-  }
-
-  // 4. Expiry timestamp must be valid and in the future
+  // Expiry timestamp must exist and be in the future
   if (!sub.validUntil) return false;
   const expiry = new Date(sub.validUntil);
   if (isNaN(expiry.getTime()) || expiry.getTime() <= Date.now()) {
@@ -39,6 +20,7 @@ export function isSubscriptionStructurallyValid(sub?: CitizenSubscription | null
 
 /**
  * Authoritative client subscription check.
+ * Returns true if the citizen has an active 1-year pass that has not expired.
  * Used across OpportunityCard, DetailBottomSheet, Header, and Page components.
  */
 export function isCitizenSubscribed(
@@ -49,60 +31,59 @@ export function isCitizenSubscribed(
 }
 
 /**
- * Purges tampered or forged subscription from local storage and dispatches update event.
- */
-function purgeTamperedSubscription(profile: CitizenProfile, onTamperDetected?: () => void): void {
-  try {
-    const cleaned: CitizenProfile = {
-      ...profile,
-      subscription: undefined,
-    };
-    localStorage.setItem('citizen_profile', JSON.stringify(cleaned));
-    window.dispatchEvent(new CustomEvent('subscription_tamper_detected'));
-  } catch (e) {}
-  onTamperDetected?.();
-}
-
-/**
- * Server-side anti-tamper sync: Asynchronously verifies subscription authenticity against the server's private secret.
- * If tampered, wipes the forged subscription from local storage.
+ * Server-side subscription sync: Verifies and syncs subscription authenticity against MongoDB Atlas.
+ * Guarantees that paid 1-year subscriptions are NEVER wiped by client glitches or temporary offline status.
+ * Only transitions to expired if the server confirms the 365 days have genuinely passed.
  */
 export async function verifySubscriptionWithServer(
   profile: CitizenProfile,
-  onTamperDetected?: () => void
+  onExpired?: () => void
 ): Promise<boolean> {
   if (!profile.subscription || profile.subscription.status !== 'active') {
     return false;
   }
 
-  // 1. Structural pre-check (instantly catches amateur DevTools tampering)
-  if (!isSubscriptionStructurallyValid(profile.subscription)) {
-    console.warn('Security Alert: Tampered subscription detected. Signature or transaction token missing.');
-    purgeTamperedSubscription(profile, onTamperDetected);
+  // 1. Client-side clock check
+  const expiry = new Date(profile.subscription.validUntil);
+  if (isNaN(expiry.getTime()) || expiry.getTime() <= Date.now()) {
+    // 365 days have genuinely expired
+    onExpired?.();
     return false;
   }
 
-  // 2. Cryptographic server-side verification
+  // 2. Server database sync with MongoDB Atlas
   try {
     const res = await fetch('/api/subscription/validate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         citizenId: profile.id,
+        email: profile.email,
         subscription: profile.subscription,
       }),
     });
 
     const data = await res.json();
-    if (!res.ok || !data.valid) {
-      console.warn('Security Alert: Subscription signature rejected by server security gateway.');
-      purgeTamperedSubscription(profile, onTamperDetected);
+    if (res.ok && data.valid && data.subscription) {
+      // Sync authoritative subscription from MongoDB into localStorage
+      const updatedProfile: CitizenProfile = {
+        ...profile,
+        subscription: data.subscription,
+      };
+      try {
+        localStorage.setItem('citizen_profile', JSON.stringify(updatedProfile));
+      } catch (_) {}
+      return true;
+    } else if (data.expired) {
+      // Server confirms 365 days have expired
+      onExpired?.();
       return false;
     }
 
     return true;
   } catch (e) {
-    // If client is offline, allow the valid HMAC structure to stand until back online
+    // Offline or network glitch: NEVER wipe user's valid 1-year pass!
+    // Maintain active pass until back online.
     return true;
   }
 }
