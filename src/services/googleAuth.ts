@@ -197,8 +197,9 @@ export function getGoogleAuthErrorMessage(
 export class GoogleAuthService {
   /**
    * Official Google OAuth Sign-In via Firebase Auth.
-   * On mobile: uses signInWithRedirect (popup-safe).
-   * On desktop: uses signInWithPopup (instant, no page reload).
+   * Uses signInWithPopup primarily across all devices so the main browser window URL
+   * remains clean on citzos.in and never navigates to external firebaseapp.com URLs.
+   * If popup is blocked by a restrictive browser, falls back gracefully to redirect.
    */
   static async signInWithGoogle(): Promise<GoogleAuthResult> {
     if (typeof window === 'undefined') {
@@ -215,21 +216,7 @@ export class GoogleAuthService {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    // Mobile: use redirect flow (no popup needed, browser-safe)
-    if (isMobileBrowser()) {
-      markGoogleRedirectPending();
-      await signInWithRedirect(auth, provider);
-      // Page will reload after Google completes. Return a pending sentinel.
-      const pendingResult: GoogleAuthResult = {
-        success: false,
-        name: '',
-        email: '',
-        uid: '',
-      };
-      return pendingResult;
-    }
-
-    // Desktop: use popup flow (instant result)
+    // Try popup flow first (keeps window URL on citzos.in without showing firebaseapp.com)
     return new Promise<GoogleAuthResult>((resolve, reject) => {
       let isSettled = false;
 
@@ -276,8 +263,28 @@ export class GoogleAuthService {
             uid: user.uid,
           });
         })
-        .catch((fbErr: any) => {
-          console.warn('Firebase signInWithPopup error code:', fbErr?.code || fbErr?.message);
+        .catch(async (fbErr: any) => {
+          const code = (fbErr?.code || '').toLowerCase();
+          console.warn('Firebase signInWithPopup error code:', code || fbErr?.message);
+
+          // If popup is explicitly blocked by a mobile webview/browser, fall back to redirect
+          if (code === 'auth/popup-blocked' && isMobileBrowser()) {
+            try {
+              markGoogleRedirectPending();
+              await signInWithRedirect(auth, provider);
+              return finishResolve({
+                success: false,
+                name: '',
+                email: '',
+                uid: '',
+              });
+            } catch (redirErr: any) {
+              const err: any = new Error(redirErr?.message || 'Google sign-in redirect failed');
+              err.code = redirErr?.code || 'auth/failed';
+              return finishReject(err);
+            }
+          }
+
           const err: any = new Error(fbErr?.message || fbErr?.code || 'Google sign-in failed');
           err.code = fbErr?.code || 'auth/failed';
           finishReject(err);
