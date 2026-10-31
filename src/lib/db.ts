@@ -25,9 +25,7 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-const uri =
-  process.env.MONGODB_URI ||
-  'mongodb+srv://citizenlifeos:CHALNIKAL01@citizenlifeos.cxdc4r0.mongodb.net/citizen_life_os?retryWrites=true&w=majority';
+const uri = process.env.MONGODB_URI || '';
 let clientPromise: Promise<MongoClient> | null = null;
 
 export const isMongoConfigured = (): boolean => {
