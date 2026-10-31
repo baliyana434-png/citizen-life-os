@@ -11,6 +11,7 @@ import {
   getGoogleRedirectResultSafe,
 } from '@/services/googleAuth';
 import { BrandIconSvg } from '@/components/common/BrandLogo';
+import { GlowingPendulumBell } from './GlowingPendulumBell';
 import {
   validateRealName,
   validateRealDob,
@@ -1829,82 +1830,89 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Main Split Section */}
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-8 lg:py-12 flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-14 relative z-10 my-auto">
           {/* Left Column on Desktop / Bottom on Mobile: Platform Branding & Highlights */}
-          <div className="w-full lg:w-1/2 space-y-5 text-left order-2 lg:order-1 mt-6 lg:mt-0">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-800 text-xs font-mono font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span>SOVEREIGN CIVIC INTELLIGENCE 2026</span>
+          <div className="w-full lg:w-1/2 space-y-4 text-left order-2 lg:order-1 mt-4 lg:mt-0 relative">
+            {/* Hyper-realistic Glowing Pendulum Bell Lantern */}
+            <div className="w-full flex justify-center lg:justify-start -mb-4">
+              <GlowingPendulumBell />
             </div>
 
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-              {language === 'hi' ? (
-                <>
-                  सभी राष्ट्रीय व वैश्विक अवसरों हेतु{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
-                    एक सुरक्षित नागरिक खाता
-                  </span>
-                </>
-              ) : (
-                <>
-                  One Secure Citizen Account for{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
-                    All National & Global Opportunities
-                  </span>
-                </>
-              )}
-            </h1>
-
-            <p className="text-xs sm:text-base text-slate-600 leading-relaxed max-w-xl">
-              {language === 'hi'
-                ? 'बिना किसी फर्जीवाड़े के 250+ सत्यापित सरकारी योजनाएं, प्रतियोगी परीक्षाएं, छात्रवृत्तियां, इंटर्नशिप और रोजगार अवसर सीधे आधिकारिक सरकारी पोर्टलों से।'
-                : 'Zero-scam civic discovery platform. Access 250+ verified government schemes, competitive exams, national scholarships, and career roadmaps directly from official sources.'}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    {language === 'hi' ? '100% सत्यापित पोर्टल' : '100% Verified Portals'}
-                  </p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'hi' ? 'केवल आधिकारिक डायरेक्ट लिंक्स' : 'Direct official application URLs'}
-                  </p>
-                </div>
+            <div className="relative z-20 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-bold backdrop-blur-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+                <span>SOVEREIGN CIVIC INTELLIGENCE 2026</span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    {language === 'hi' ? 'आयु व पात्रता ऑटो-मैच' : 'Instant Eligibility Match'}
-                  </p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'hi' ? 'राज्य व श्रेणी अनुसार फिल्टर' : 'Auto-filtered by state and role'}
-                  </p>
-                </div>
-              </div>
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight drop-shadow-xs">
+                {language === 'hi' ? (
+                  <>
+                    सभी राष्ट्रीय व वैश्विक अवसरों हेतु{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+                      एक सुरक्षित नागरिक खाता
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    One Secure Citizen Account for{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+                      All National & Global Opportunities
+                    </span>
+                  </>
+                )}
+              </h1>
 
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    {language === 'hi' ? '1-वर्षीय नागरिक पास' : '1-Year Citizen Pass'}
-                  </p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'hi' ? 'केवल ₹1 में असीमित पहुंच' : 'Full access for just ₹1/year'}
-                  </p>
-                </div>
-              </div>
+              <p className="text-xs sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed max-w-xl font-medium drop-shadow-xs">
+                {language === 'hi'
+                  ? 'बिना किसी फर्जीवाड़े के 250+ सत्यापित सरकारी योजनाएं, प्रतियोगी परीक्षाएं, छात्रवृत्तियां, इंटर्नशिप और रोजगार अवसर सीधे आधिकारिक सरकारी पोर्टलों से।'
+                  : 'Zero-scam civic discovery platform. Access 250+ verified government schemes, competitive exams, national scholarships, and career roadmaps directly from official sources.'}
+              </p>
 
-              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    {language === 'hi' ? '24x7 नागरिक हेल्पलाइन' : '24x7 Citizen Helplines'}
-                  </p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {language === 'hi' ? 'आपातकालीन सहायता नंबर' : 'National emergency & youth lines'}
-                  </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {language === 'hi' ? '100% सत्यापित पोर्टल' : '100% Verified Portals'}
+                    </p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                      {language === 'hi' ? 'केवल आधिकारिक डायरेक्ट लिंक्स' : 'Direct official application URLs'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {language === 'hi' ? 'आयु व पात्रता ऑटो-मैच' : 'Instant Eligibility Match'}
+                    </p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                      {language === 'hi' ? 'राज्य व श्रेणी अनुसार फिल्टर' : 'Auto-filtered by state and role'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {language === 'hi' ? '1-वर्षीय नागरिक पास' : '1-Year Citizen Pass'}
+                    </p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                      {language === 'hi' ? 'केवल ₹1 में असीमित पहुंच' : 'Full access for just ₹1/year'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {language === 'hi' ? '24x7 नागरिक हेल्पलाइन' : '24x7 Citizen Helplines'}
+                    </p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                      {language === 'hi' ? 'आपातकालीन सहायता नंबर' : 'National emergency & youth lines'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
