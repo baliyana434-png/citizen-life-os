@@ -25,9 +25,10 @@ function getSafeNextUrl(nextParam: string | null | undefined): string {
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  // 1. Skip static assets, Next.js internal files, admin portal, and API routes
+  // 1. Skip static assets, Next.js internal files, Firebase auth proxy, admin portal, and API routes
   if (
     pathname.startsWith('/_next') ||
+    pathname.startsWith('/__') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/admin') ||
     pathname.includes('.')

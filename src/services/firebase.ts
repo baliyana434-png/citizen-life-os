@@ -3,22 +3,33 @@ import { getAuth, Auth } from 'firebase/auth';
 
 const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyAOHH-q4-mKpTHcwUjezHrlBFDo9Xs3u44';
 
-// Standard Google Firebase Auth Domain: connects directly to Firebase Identity Toolkit
-// Ensures 100% reliable Google OAuth without proxy 503 errors or 308 redirect loops
-const FIREBASE_AUTH_DOMAIN = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'lifeos-7a6f1.firebaseapp.com';
+// Dynamic custom authDomain: seamlessly uses www.citzos.in when hosted on citzos to prevent firebaseapp.com in browser URL
+export const getCustomAuthDomain = (): string => {
+  if (typeof window !== 'undefined') {
+    const host = window.location.host;
+    if (host.includes('citzos.in')) {
+      return 'www.citzos.in';
+    }
+    if (host.includes('localhost') || host.includes('127.0.0.1')) {
+      return host;
+    }
+  }
+  return process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'www.citzos.in';
+};
+
 const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'lifeos-7a6f1';
 const FIREBASE_STORAGE_BUCKET = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'lifeos-7a6f1.firebasestorage.app';
 const FIREBASE_MESSAGING_SENDER_ID = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '316506287911';
 const FIREBASE_APP_ID = process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:316506287911:web:cfda70c003fa4f31864302';
 
-const firebaseConfig = {
+export const getFirebaseConfig = () => ({
   apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
+  authDomain: getCustomAuthDomain(),
   projectId: FIREBASE_PROJECT_ID,
   storageBucket: FIREBASE_STORAGE_BUCKET,
   messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
   appId: FIREBASE_APP_ID,
-};
+});
 
 export const isFirebaseConfigured = (): boolean => {
   const key = FIREBASE_API_KEY;
@@ -32,7 +43,7 @@ export const getFirebaseApp = (): FirebaseApp | null => {
   if (typeof window === 'undefined') return null;
   if (!app && isFirebaseConfigured()) {
     try {
-      app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+      app = getApps().length > 0 ? getApp() : initializeApp(getFirebaseConfig());
     } catch (error) {
       console.warn('Firebase app initialization error:', error);
     }
