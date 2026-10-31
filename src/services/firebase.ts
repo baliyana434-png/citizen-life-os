@@ -10,6 +10,9 @@ export const getCustomAuthDomain = (): string => {
     if (host.includes('citzos.in')) {
       return 'www.citzos.in';
     }
+    if (host.includes('vercel.app')) {
+      return host;
+    }
     if (host.includes('localhost') || host.includes('127.0.0.1')) {
       return host;
     }

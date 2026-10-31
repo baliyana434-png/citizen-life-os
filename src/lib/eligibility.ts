@@ -5,6 +5,8 @@ export interface EligibilityResult {
   isAgeMatch: boolean;
   isStateMatch: boolean;
   isGenderMatch: boolean;
+  isQualificationMatch?: boolean;
+  qualificationText?: string;
   ageText: string;
   stateText: string;
   matchScore: number;
@@ -54,17 +56,29 @@ export function evaluateCitizenEligibility(
     isGenderMatch = !profile.gender || opportunity.genderEligibility === profile.gender;
   }
 
-  const isEligible = isAgeMatch && isStateMatch && isGenderMatch;
+  // 4. Educational Qualification Match
+  let isQualificationMatch = true;
+  let qualificationText = 'All Qualifications';
+  if (opportunity.qualificationEligibility && opportunity.qualificationEligibility.length > 0) {
+    const userQual = profile.educationLevel || profile.qualification;
+    isQualificationMatch = !userQual || opportunity.qualificationEligibility.includes(userQual);
+    qualificationText = opportunity.qualificationEligibility.join(', ');
+  }
+
+  const isEligible = isAgeMatch && isStateMatch && isGenderMatch && isQualificationMatch;
   let matchScore = 0;
-  if (isAgeMatch) matchScore += 40;
-  if (isStateMatch) matchScore += 40;
+  if (isAgeMatch) matchScore += 30;
+  if (isStateMatch) matchScore += 30;
   if (isGenderMatch) matchScore += 20;
+  if (isQualificationMatch) matchScore += 20;
 
   return {
     isEligible,
     isAgeMatch,
     isStateMatch,
     isGenderMatch,
+    isQualificationMatch,
+    qualificationText,
     ageText,
     stateText,
     matchScore,

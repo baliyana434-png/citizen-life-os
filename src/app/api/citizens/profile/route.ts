@@ -94,6 +94,8 @@ export async function POST(req: NextRequest) {
       lifePhase: body.lifePhase || existing?.lifePhase || 'college_student',
       casteCategory: body.casteCategory || existing?.casteCategory || 'General',
       familyIncomeAnnual: Number(body.familyIncomeAnnual) || existing?.familyIncomeAnnual || 0,
+      educationLevel: body.educationLevel || body.qualification || existing?.educationLevel || 'graduate',
+      qualification: body.qualification || body.educationLevel || existing?.qualification || 'graduate',
       photoURL: body.photoURL || existing?.photoURL || undefined,
       registeredAt: existing?.registeredAt || new Date().toISOString(),
       status: 'verified',

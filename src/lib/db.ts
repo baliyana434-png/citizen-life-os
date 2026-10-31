@@ -195,6 +195,8 @@ export interface CitizenRecord {
   lifePhase: string;
   casteCategory: string;
   familyIncomeAnnual?: number;
+  educationLevel?: string;
+  qualification?: string;
   photoURL?: string;
   registeredAt: string;
   status: 'verified';

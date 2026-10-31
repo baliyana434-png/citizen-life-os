@@ -79,8 +79,9 @@ export const config = {
      * Match all request paths except:
      * - _next/static (static files)
      * - _next/image (image optimization files)
+     * - __/auth (Firebase OAuth proxy virtual routes)
      * - favicon.ico, images, audio, video
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|__/auth|favicon.ico).*)',
   ],
 };

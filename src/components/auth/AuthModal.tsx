@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { CitizenProfile, CountryCode } from '@/types';
+import { CitizenProfile, CountryCode, EducationalQualification, QUALIFICATION_OPTIONS } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry, COUNTRIES } from '@/context/CountryContext';
 import {
@@ -40,6 +40,7 @@ import {
   Info,
   ArrowRight,
   ArrowLeft,
+  GraduationCap,
 } from 'lucide-react';
 
 export type AuthScreen = 'login' | 'signup' | 'forgot_password';
@@ -102,6 +103,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [casteCategory, setCasteCategory] = useState<string>('General');
   const [division, setDivision] = useState<string>(countryMeta.divisions[0] || 'General');
   const [selectedRole, setSelectedRole] = useState<CitizenProfile['lifePhase']>('college_student');
+  const [qualification, setQualification] = useState<EducationalQualification>('graduate');
   const [gender, setGender] = useState<CitizenProfile['gender']>('male');
 
   // UI state
@@ -578,6 +580,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           gender,
           administrativeDivision: division,
           lifePhase: selectedRole,
+          qualification,
+          educationLevel: qualification,
           nationalIdName: countryMeta.nationalIdName,
           photoURL: googlePhotoURL,
           lang: language,
@@ -1444,6 +1448,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <option value="homemaker">{language === 'hi' ? 'गृहणी' : 'Homemaker'}</option>
                 <option value="senior_citizen">{language === 'hi' ? 'वरिष्ठ नागरिक (60+)' : 'Senior Citizen (60+)'}</option>
               </select>
+            </div>
+
+            {/* Educational Qualification Selection */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 mb-1 px-1 flex items-center justify-between">
+                <span>{language === 'hi' ? 'शैक्षणिक योग्यता *' : 'Educational Qualification *'}</span>
+                <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  {language === 'hi' ? 'सटीक योजना मिलान' : 'Scheme Matching'}
+                </span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <GraduationCap className="w-4 h-4 text-emerald-600" />
+                </div>
+                <select
+                  value={qualification}
+                  onChange={(e) => setQualification(e.target.value as EducationalQualification)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 focus:bg-white focus:border-emerald-500 outline-none cursor-pointer"
+                >
+                  {QUALIFICATION_OPTIONS.map((q) => (
+                    <option key={q.id} value={q.id}>
+                      {language === 'hi' ? q.labelHi : q.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Gender Selection */}

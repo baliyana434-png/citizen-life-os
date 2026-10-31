@@ -79,7 +79,33 @@ export interface Opportunity {
   isNew?: boolean; // When true, renders red rotating starburst badge
   applicationStatus?: 'active_now' | 'upcoming' | 'ongoing'; // Real government status
   matchScore?: number; // 0 - 100 calculated dynamically
+  qualificationEligibility?: EducationalQualification[];
 }
+
+export type EducationalQualification =
+  | 'below_10th'
+  | '10th_pass'
+  | '12th_pass'
+  | 'iti_diploma'
+  | 'graduate'
+  | 'post_graduate'
+  | 'doctorate_phd';
+
+export interface QualificationOption {
+  id: EducationalQualification;
+  label: string;
+  labelHi: string;
+}
+
+export const QUALIFICATION_OPTIONS: QualificationOption[] = [
+  { id: 'below_10th', label: 'Below 10th Standard', labelHi: '10वीं से कम' },
+  { id: '10th_pass', label: '10th Pass (Matriculation)', labelHi: '10वीं पास (मैट्रिक)' },
+  { id: '12th_pass', label: '12th Pass (Intermediate / 10+2)', labelHi: '12वीं पास (इंटरमीडिएट)' },
+  { id: 'iti_diploma', label: 'ITI / Polytechnic Diploma', labelHi: 'आईटीआई / पॉलिटेक्निक डिप्लोमा' },
+  { id: 'graduate', label: "Graduate / Bachelor's Degree", labelHi: 'स्नातक / ग्रेजुएट' },
+  { id: 'post_graduate', label: "Post Graduate / Master's Degree", labelHi: 'परास्नातक / पोस्ट ग्रेजुएट' },
+  { id: 'doctorate_phd', label: 'Doctorate / Ph.D. / Research', labelHi: 'डॉक्टरेट / पीएचडी' },
+];
 
 export interface CitizenProfile {
   id: string;
@@ -103,7 +129,8 @@ export interface CitizenProfile {
   lifePhase: 'school_student' | 'college_student' | 'exam_aspirant' | 'job_seeker' | 'employed' | 'business_owner' | 'farmer' | 'homemaker' | 'senior_citizen';
   casteCategory: 'General' | 'OBC' | 'SC' | 'ST' | 'EWS' | 'Minority' | string;
   familyIncomeAnnual: number;
-  educationLevel: 'below_10th' | '10th_pass' | '12th_pass' | 'graduate' | 'post_graduate';
+  educationLevel: EducationalQualification;
+  qualification?: EducationalQualification;
   activeGoal: string;
   notificationsEnabled: {
     webPush: boolean;

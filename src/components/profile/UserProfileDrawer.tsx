@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CitizenProfile, FamilyMember } from '@/types';
+import { CitizenProfile, FamilyMember, QUALIFICATION_OPTIONS } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useCountry } from '@/context/CountryContext';
 import { isCitizenSubscribed } from '@/lib/subscriptionValidator';
@@ -203,6 +203,14 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
     (profile.isAadhaarVerified || profile.isOnboarded || (profile.fullName && profile.fullName.trim() !== ''))
   );
   const roleName = profile.lifePhase ? t(`roles.${profile.lifePhase}`) : t('roles.college_student');
+  const qualOption = QUALIFICATION_OPTIONS.find(
+    (q) => q.id === (profile.educationLevel || profile.qualification)
+  );
+  const qualLabel = qualOption
+    ? language === 'hi'
+      ? qualOption.labelHi
+      : qualOption.label
+    : profile.educationLevel || profile.qualification || (language === 'hi' ? 'स्नातक' : 'Graduate');
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
@@ -390,12 +398,22 @@ export const UserProfileDrawer: React.FC<UserProfileDrawerProps> = ({
                   </div>
 
                   {/* Resident State / Region */}
-                  <div className="col-span-2 bg-white/5 p-2.5 rounded-2xl border border-white/10">
-                    <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
+                  <div className="bg-white/5 p-2.5 rounded-2xl border border-white/10">
+                    <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider truncate">
                       {countryMeta.administrativeLabel}
                     </span>
                     <span className="text-white font-bold text-sm mt-0.5 block truncate">
                       {profile.state || countryMeta.divisions[0] || 'State'}
+                    </span>
+                  </div>
+
+                  {/* Educational Qualification */}
+                  <div className="bg-white/5 p-2.5 rounded-2xl border border-white/10">
+                    <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider truncate">
+                      {language === 'hi' ? 'शैक्षणिक योग्यता' : 'Qualification'}
+                    </span>
+                    <span className="text-white font-bold text-xs mt-0.5 block truncate" title={qualLabel}>
+                      {qualLabel}
                     </span>
                   </div>
                 </div>

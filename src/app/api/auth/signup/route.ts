@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     const gender = (body.gender || 'male') as 'male' | 'female' | 'other';
     const division = String(body.administrativeDivision || body.state || '').trim();
     const lifePhase = String(body.lifePhase || 'college_student');
+    const qualification = String(body.qualification || body.educationLevel || 'graduate').trim();
 
     // 1. Validate Real Name
     const nameCheck = validateRealName(fullName, lang);
@@ -145,6 +146,8 @@ export async function POST(req: NextRequest) {
       lifePhase,
       casteCategory,
       familyIncomeAnnual: Number(body.familyIncomeAnnual) || 0,
+      educationLevel: qualification,
+      qualification,
       registeredAt: new Date().toISOString(),
       status: 'verified',
       isOnboarded: true,
