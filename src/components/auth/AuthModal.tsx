@@ -109,8 +109,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [accountNotFoundNotice, setAccountNotFoundNotice] = useState<boolean>(false);
-  const [showLocalIpGooglePrompt, setShowLocalIpGooglePrompt] = useState<boolean>(false);
-  const [googleFallbackEmail, setGoogleFallbackEmail] = useState<string>('');
 
   // Forgot Password Two-Step Flow States
   const [forgotPasswordStep, setForgotPasswordStep] = useState<1 | 2>(1);
@@ -126,7 +124,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setErrorMessage(null);
       setSuccessNotice(initialNotice || null);
       setAccountNotFoundNotice(false);
-      setShowLocalIpGooglePrompt(false);
       setForgotPasswordStep(1);
       setForgotOtp('');
       setNewResetPassword('');
@@ -136,7 +133,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         if (prefillData.name) setName(prefillData.name);
         if (prefillData.email) {
           setEmail(prefillData.email);
-          setGoogleFallbackEmail(prefillData.email);
         }
         if (prefillData.photoURL) setGooglePhotoURL(prefillData.photoURL);
         if (prefillData.isGoogle) {
@@ -313,7 +309,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       await completeGoogleSignIn(result);
     } catch (err: any) {
       console.warn('Google Auth notice:', err);
-      setShowLocalIpGooglePrompt(true);
       setErrorMessage(getGoogleAuthErrorMessage(err?.code || err?.message, language));
       setIsLoading(false);
     }
@@ -388,77 +383,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     );
   };
 
-  // Direct Google Connect fallback (used if popup blocked or domain pending)
-  const handleGoogleDirectConnect = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const emailCheck = validateRealEmail(googleFallbackEmail, language);
-    if (!emailCheck.valid) {
-      setErrorMessage(emailCheck.error || 'Invalid email');
-      return;
-    }
-
-    const cleanEmail = emailCheck.cleanEmail;
-    const namePart = cleanEmail.split('@')[0].replace(/[._-]/g, ' ');
-    const derivedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    try {
-      const res = await fetch(`/api/citizens/profile?email=${encodeURIComponent(cleanEmail)}`, {
-        cache: 'no-store',
-      });
-      const data = await res.json();
-
-      if (res.ok && data.success && data.citizen && (data.citizen.dob || data.citizen.state || data.citizen.registeredAt)) {
-        // CASE A: Registered citizen -> Instant entry
-        const existingCitizen = {
-          ...data.citizen,
-          isOnboarded: true,
-          isAadhaarVerified: true,
-        };
-        try {
-          await fetch('/api/auth/session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ citizenId: data.citizen.id, email: cleanEmail }),
-          });
-        } catch (_) {}
-        try {
-          localStorage.removeItem('citizen_logged_out');
-          localStorage.setItem('citizen_profile', JSON.stringify(existingCitizen));
-        } catch (e) {}
-
-        setIsLoading(false);
-        onClose();
-        onLoginSuccess(existingCitizen);
-        if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-          window.location.href = '/';
-        }
-        return;
-      }
-
-      // CASE B: Non-registered email -> Push to Step 2 for registration
-      setIsLoading(false);
-      setName(derivedName);
-      setEmail(cleanEmail);
-      setIsGoogleRegistration(true);
-      setDob('');
-      setCalculatedAge(0);
-      setScreen('signup');
-      setSignUpStep(2);
-      setShowLocalIpGooglePrompt(false);
-      setSuccessNotice(
-        language === 'hi'
-          ? `ईमेल सत्यापित! यह खाता अभी पंजीकृत नहीं है। कृपया आगे बढ़ने के लिए अपना विवरण भरें।`
-          : `Email verified! This account is not registered yet. Please enter your profile details below to complete registration.`
-      );
-    } catch (err: any) {
-      setIsLoading(false);
-      setErrorMessage(language === 'hi' ? 'सत्यापन विफल रहा।' : 'Verification failed.');
-    }
-  };
-
   // Submit Handler for Email/Password Login (Strict registered accounts only)
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -511,8 +435,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ? 'यह खाता Google द्वारा पंजीकृत है। कृपया नीचे Google बटन या सीधा ईमेल सत्यापन विकल्प उपयोग करें।'
               : 'This account was registered via Google. Please use Google Sign-In or Direct Email Verification below.'
           );
-          setShowLocalIpGooglePrompt(true);
-          setGoogleFallbackEmail(emailCheck.cleanEmail);
+          
         } else {
           setErrorMessage(
             data.message || (language === 'hi' ? 'अमान्य ईमेल अथवा पासवर्ड।' : 'Invalid email or password.')
@@ -1137,44 +1060,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
             </div>
 
-            {/* Google Direct Connect Fallback */}
-            {showLocalIpGooglePrompt && (
-              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
-                <div className="flex items-start gap-2">
-                  <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <div className="flex-1 text-xs">
-                    <p className="font-bold leading-tight">
-                      {language === 'hi'
-                        ? 'सीधा सत्यापित ईमेल एक्सेस'
-                        : 'Direct Verified Email Access'}
-                    </p>
-                    <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
-                      {language === 'hi'
-                        ? 'Google साइन-इन पॉप-अप अवरुद्ध होने या डोमेन सत्यापन प्रक्रियाधीन होने पर, सीधे प्रवेश हेतु नीचे अपना पंजीकृत Google ईमेल दर्ज करें:'
-                        : 'If Google popup is blocked or domain pending, enter your verified Google email below to continue directly:'}
-                    </p>
-                    <div className="mt-2.5 flex items-center gap-2">
-                      <input
-                        type="email"
-                        value={googleFallbackEmail}
-                        onChange={(e) => setGoogleFallbackEmail(e.target.value)}
-                        placeholder={language === 'hi' ? 'ईमेल पता दर्ज करें' : 'Enter email address'}
-                        className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleGoogleDirectConnect}
-                        disabled={isLoading}
-                        className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-all cursor-pointer shrink-0 disabled:opacity-50"
-                      >
-                        {language === 'hi' ? 'सत्यापित करें' : 'Verify'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Immediate Cancel Button if Waiting */}
             {isLoading && (
               <div className="text-center pt-2">
@@ -1387,44 +1272,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </span>
               </button>
             </div>
-
-            {/* Google Direct Connect Fallback */}
-            {showLocalIpGooglePrompt && (
-              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
-                <div className="flex items-start gap-2">
-                  <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <div className="flex-1 text-xs">
-                    <p className="font-bold leading-tight">
-                      {language === 'hi'
-                        ? 'सीधा सत्यापित ईमेल एक्सेस'
-                        : 'Direct Verified Email Access'}
-                    </p>
-                    <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
-                      {language === 'hi'
-                        ? 'Google साइन-इन पॉप-अप अवरुद्ध होने या डोमेन सत्यापन प्रक्रियाधीन होने पर, सीधे प्रवेश हेतु नीचे अपना पंजीकृत Google ईमेल दर्ज करें:'
-                        : 'If Google popup is blocked or domain pending, enter your verified Google email below to continue directly:'}
-                    </p>
-                    <div className="mt-2.5 flex items-center gap-2">
-                      <input
-                        type="email"
-                        value={googleFallbackEmail}
-                        onChange={(e) => setGoogleFallbackEmail(e.target.value)}
-                        placeholder={language === 'hi' ? 'ईमेल पता दर्ज करें' : 'Enter email address'}
-                        className="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 text-xs font-semibold text-slate-900 outline-none focus:border-amber-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleGoogleDirectConnect}
-                        disabled={isLoading}
-                        className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-all cursor-pointer shrink-0 disabled:opacity-50"
-                      >
-                        {language === 'hi' ? 'सत्यापित करें' : 'Verify'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Immediate Cancel Button if Waiting */}
             {isLoading && (
