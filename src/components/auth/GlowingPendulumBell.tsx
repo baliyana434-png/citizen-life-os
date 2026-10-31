@@ -5,11 +5,18 @@ import styles from './GlowingPendulumBell.module.css';
 
 export interface GlowingPendulumBellProps {
   className?: string;
+  isMobileCompact?: boolean;
 }
 
-export const GlowingPendulumBell: React.FC<GlowingPendulumBellProps> = ({ className = '' }) => {
+export const GlowingPendulumBell: React.FC<GlowingPendulumBellProps> = ({
+  className = '',
+  isMobileCompact = false,
+}) => {
   return (
-    <div className={`${styles.bellStageWrapper} ${className}`} aria-hidden="true">
+    <div
+      className={`${styles.bellStageWrapper} ${isMobileCompact ? styles.mobileCompact : ''} ${className}`}
+      aria-hidden="true"
+    >
       {/* Ambient Radial Glow Pool that casts warm illumination onto surrounding content */}
       <div className={styles.ambientGlowPool} />
 
