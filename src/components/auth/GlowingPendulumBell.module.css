@@ -12,6 +12,10 @@
   --base-clr: #b7b5b4;
   --degofrot: 1.6;
   margin-bottom: -10px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 @media (min-width: 640px) {
@@ -36,42 +40,42 @@
   margin-bottom: -15px !important;
 }
 
-/* Ambient Radial Glow Pool that casts onto the surroundings in both light & dark themes */
+/* Ambient Radial Glow Pool that casts onto the surroundings smoothly without rectangular clipping */
 .ambientGlowPool {
   position: absolute;
-  width: 380px;
-  height: 320px;
+  width: 320px;
+  height: 260px;
   border-radius: 50%;
-  top: 35%;
+  top: 38%;
   left: 50%;
-  transform: translate(-50%, -20%);
+  transform: translate3d(-50%, -20%, 0);
+  -webkit-transform: translate3d(-50%, -20%, 0);
   background: radial-gradient(
-    ellipse at center,
-    rgba(254, 215, 170, 0.45) 0%,
-    rgba(251, 146, 60, 0.25) 30%,
-    rgba(234, 88, 12, 0.12) 55%,
-    rgba(217, 119, 6, 0) 75%
+    circle at center,
+    rgba(254, 215, 170, 0.32) 0%,
+    rgba(251, 146, 60, 0.16) 35%,
+    rgba(234, 88, 12, 0.06) 58%,
+    transparent 75%
   );
-  filter: blur(45px);
   pointer-events: none;
   z-index: 1;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .mobileCompact .ambientGlowPool {
-  width: 270px;
-  height: 220px;
-  filter: blur(35px);
+  width: 240px;
+  height: 190px;
 }
 
 :global(.dark) .ambientGlowPool {
   background: radial-gradient(
-    ellipse at center,
-    rgba(254, 215, 170, 0.35) 0%,
-    rgba(251, 146, 60, 0.22) 32%,
-    rgba(234, 88, 12, 0.1) 58%,
-    rgba(217, 119, 6, 0) 80%
+    circle at center,
+    rgba(254, 215, 170, 0.28) 0%,
+    rgba(251, 146, 60, 0.14) 35%,
+    rgba(234, 88, 12, 0.05) 58%,
+    transparent 75%
   );
-  filter: blur(55px);
 }
 
 .bellContainer {
@@ -392,11 +396,11 @@
   border-radius: 50%;
   transform: translate3d(0, 24em, 0);
   background: #fffff6;
-  box-shadow: 0 0 1.2em 0.8em #ffe9d4, -0.8em 0.2em 2.2em 1.2em #cca37f,
-    -5.4em -0.6em 3.2em -1em #ce6e1abb, 6em -0.6em 3.2em -1em #ce6e1abb,
+  box-shadow: 0 0 1em 0.6em #ffe9d4, -0.8em 0.2em 2em 1em #cca37f,
+    -5.4em -0.6em 3em -1em #ce6e1abb, 6em -0.6em 3em -1em #ce6e1abb,
     inset 0em 30.3em 0.3em -30em #c7962d, inset 0 -2em 2em -2em #ffe9d4,
     inset 0em -1em 2em 1em #ce6e1a66;
-  filter: brightness(1.15);
+  filter: brightness(1);
 }
 
 .bellRingContainer {
@@ -405,6 +409,9 @@
   border-radius: 50% 50% 50% 50% / 25% 25% 0% 0%;
   transform: translate3d(0, 29.2em, 0);
   overflow: hidden;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .bellRingClapper {

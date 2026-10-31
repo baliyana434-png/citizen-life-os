@@ -42,6 +42,8 @@ import {
   ArrowRight,
   ArrowLeft,
   GraduationCap,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 export type AuthScreen = 'login' | 'signup' | 'forgot_password';
@@ -112,6 +114,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [accountNotFoundNotice, setAccountNotFoundNotice] = useState<boolean>(false);
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false);
+
+  // Sync theme with document class / localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isDark =
+        document.documentElement.classList.contains('dark') ||
+        localStorage.getItem('citizen_theme') === 'dark';
+      setIsDarkTheme(isDark);
+    }
+  }, [isOpen]);
+
+  const handleToggleTheme = () => {
+    const nextTheme = !isDarkTheme;
+    setIsDarkTheme(nextTheme);
+    if (typeof window !== 'undefined') {
+      if (nextTheme) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('citizen_theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('citizen_theme', 'light');
+      }
+      window.dispatchEvent(new Event('citizen_theme_changed'));
+    }
+  };
 
   // Forgot Password Two-Step Flow States
   const [forgotPasswordStep, setForgotPasswordStep] = useState<1 | 2>(1);
@@ -1758,45 +1786,68 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (isFullPageGate) {
     return (
-      <div className="min-h-screen w-full bg-slate-50 text-slate-900 flex flex-col relative overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+      <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-emerald-500 selection:text-white">
         {/* Subtle Ambient Light Glows */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-100/70 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-teal-100/70 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-100/70 dark:bg-emerald-950/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-teal-100/70 dark:bg-teal-950/20 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Top Sovereign Bar */}
-        <header className="w-full border-b border-slate-200 bg-white/90 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between relative z-20 shadow-2xs">
+        {/* Top Floating Sovereign Bar (Bina Box / No Rectangular Container) */}
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 pt-4 pb-2 sm:pt-6 sm:pb-3 flex items-center justify-between relative z-30 bg-transparent border-0 shadow-none">
           <div className="flex items-center gap-2.5">
             <div className="shrink-0 flex items-center">
               <BrandIconSvg sizePx={38} className="shrink-0 drop-shadow-xs" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-sm sm:text-base tracking-tight text-slate-900">CIT<span className="text-emerald-600">ZOS</span></span>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-mono font-bold">
+                <span className="font-black text-sm sm:text-base tracking-tight text-slate-900 dark:text-white">CIT<span className="text-emerald-600">ZOS</span></span>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[10px] font-mono font-bold">
                   GLOBAL CIVIC PORTAL
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 hidden sm:block">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block">
                 {language === 'hi' ? 'सत्यापित राष्ट्रीय व वैश्विक अवसर पोर्टल' : 'Verified Civic & Opportunity Platform'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Language Switcher (All 6 Languages) */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Theme Toggle Button (Light / Dark) */}
+            <button
+              type="button"
+              onClick={handleToggleTheme}
+              title={
+                isDarkTheme
+                  ? language === 'hi'
+                    ? 'लाइट मोड चालू करें'
+                    : 'Switch to Light Mode'
+                  : language === 'hi'
+                  ? 'डार्क मोड चालू करें'
+                  : 'Switch to Dark Mode'
+              }
+              aria-label={isDarkTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="h-8 sm:h-9 w-8 sm:w-9 rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              {isDarkTheme ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-700 dark:text-slate-200" />
+              )}
+            </button>
+
+            {/* Language Switcher */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="h-8 sm:h-9 px-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                className="h-8 sm:h-9 px-3 rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
               >
-                <Globe className="w-3.5 h-3.5 text-slate-500" />
+                <Globe className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 <span className="uppercase">{language}</span>
               </button>
               {isLangMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsLangMenuOpen(false)} />
-                  <div className="absolute right-0 mt-1.5 w-44 bg-white rounded-2xl shadow-xl border border-slate-200 p-1.5 z-50">
+                  <div className="absolute right-0 mt-1.5 w-44 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-1.5 z-50">
                     {[
                       { code: 'en', label: 'English' },
                       { code: 'hi', label: 'हिन्दी' },
@@ -1813,7 +1864,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                           setIsLangMenuOpen(false);
                         }}
                         className={`w-full px-3 py-2 text-left text-xs font-bold rounded-xl flex items-center justify-between cursor-pointer transition-colors ${
-                          language === l.code ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100'
+                          language === l.code ? 'bg-emerald-600 text-white' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60'
                         }`}
                       >
                         <span>{l.label}</span>
@@ -1825,19 +1876,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Main Split Section */}
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-8 lg:py-12 flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-14 relative z-10 my-auto">
+        <main
+          className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-8 lg:py-12 flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-14 relative z-10 my-auto"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           {/* Left Column on Desktop / Bottom on Mobile: Platform Branding & Highlights */}
-          <div className="w-full lg:w-1/2 space-y-4 text-left order-2 lg:order-1 mt-4 lg:mt-0 relative">
+          <div
+            className="w-full lg:w-1/2 space-y-4 text-left order-2 lg:order-1 mt-4 lg:mt-0 relative"
+            style={{
+              WebkitTransform: 'translateZ(0)',
+              transform: 'translateZ(0)',
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+            }}
+          >
             {/* Hyper-realistic Glowing Pendulum Bell Lantern */}
             <div className="w-full flex justify-center lg:justify-start -mb-4 pointer-events-none">
               <GlowingPendulumBell />
             </div>
 
             <div className="relative z-20 space-y-4">
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight drop-shadow-xs">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                 {language === 'hi' ? (
                   <>
                     सभी राष्ट्रीय व वैश्विक अवसरों हेतु{' '}
@@ -1855,14 +1917,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 )}
               </h1>
 
-              <p className="text-xs sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed max-w-xl font-medium drop-shadow-xs">
+              <p className="text-xs sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed max-w-xl font-medium">
                 {language === 'hi'
                   ? 'बिना किसी फर्जीवाड़े के 250+ सत्यापित सरकारी योजनाएं, प्रतियोगी परीक्षाएं, छात्रवृत्तियां, इंटर्नशिप और रोजगार अवसर सीधे आधिकारिक सरकारी पोर्टलों से।'
                   : 'Zero-scam civic discovery platform. Access 250+ verified government schemes, competitive exams, national scholarships, and career roadmaps directly from official sources.'}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1874,7 +1936,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1886,7 +1948,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1898,7 +1960,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-start gap-3 backdrop-blur-xs">
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1920,16 +1982,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </main>
 
         {/* Footer */}
-        <footer className="w-full border-t border-slate-200 bg-white/90 px-4 py-4 text-center text-xs text-slate-500 relative z-10">
+        <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 px-4 py-4 text-center text-xs text-slate-500 dark:text-slate-400 relative z-10">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px]">
             <p>Citzos • Global Civic & Opportunities Platform</p>
-            <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500">
-              <Link href="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
-              <Link href="/privacy" className="hover:text-slate-900 transition-colors">Privacy</Link>
-              <Link href="/refund" className="hover:text-slate-900 transition-colors">Refund Policy</Link>
-              <Link href="/helpline" className="hover:text-slate-900 transition-colors">Helpline</Link>
-              <Link href="/contact" className="hover:text-slate-900 transition-colors">Contact</Link>
-              <Link href="/disclaimer" className="hover:text-slate-900 transition-colors">Disclaimer</Link>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-slate-500 dark:text-slate-400">
+              <Link href="/terms" className="hover:text-slate-900 dark:hover:text-white transition-colors">Terms</Link>
+              <Link href="/privacy" className="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy</Link>
+              <Link href="/refund" className="hover:text-slate-900 dark:hover:text-white transition-colors">Refund Policy</Link>
+              <Link href="/helpline" className="hover:text-slate-900 dark:hover:text-white transition-colors">Helpline</Link>
+              <Link href="/contact" className="hover:text-slate-900 dark:hover:text-white transition-colors">Contact</Link>
+              <Link href="/disclaimer" className="hover:text-slate-900 dark:hover:text-white transition-colors">Disclaimer</Link>
             </div>
           </div>
         </footer>
