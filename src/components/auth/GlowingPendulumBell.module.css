@@ -1,14 +1,14 @@
 .bellStageWrapper {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: visible;
   pointer-events: none;
   font-size: calc(var(--size) * 0.01);
-  --size: 240px;
+  --size: 260px;
   --base-clr: #b7b5b4;
   --degofrot: 1.6;
   margin-bottom: -10px;
@@ -20,8 +20,8 @@
 
 @media (min-width: 640px) {
   .bellStageWrapper {
-    height: 290px;
-    --size: 270px;
+    height: 300px;
+    --size: 280px;
   }
 }
 
@@ -392,7 +392,7 @@
 
 .bellBottomRimGlow {
   width: 74%;
-  height: 12%;
+  height: 14%;
   border-radius: 50%;
   transform: translate3d(0, 24em, 0);
   background: #fffff6;
@@ -406,7 +406,7 @@
 .bellRingContainer {
   width: 74%;
   height: 24%;
-  border-radius: 50% 50% 50% 50% / 25% 25% 0% 0%;
+  border-radius: 50%;
   transform: translate3d(0, 29.2em, 0);
   overflow: hidden;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
@@ -467,8 +467,10 @@
   width: 98%;
   height: 224%;
   transform: translate3d(0, 124em, 0);
-  opacity: 0.35;
+  opacity: 0.22;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
 }
 
 .volumetricBeam .vl {
@@ -476,7 +478,7 @@
   height: 100%;
   transform-origin: 50% 20em;
   transform: rotate(22deg);
-  box-shadow: inset 40em 0 22em -20em #ffe9d455;
+  box-shadow: inset 40em 0 20em -20em #fff2, inset 40em 0 22em -20em #ffe9d433;
 }
 
 .volumetricBeam .vr {
@@ -484,5 +486,5 @@
   height: 100%;
   transform-origin: 50% 20em;
   transform: rotate(-22deg);
-  box-shadow: inset -40em 0 22em -20em #ffe9d455;
+  box-shadow: inset -40em 0 20em -20em #fff2, inset -40em 0 22em -20em #ffe9d433;
 }
