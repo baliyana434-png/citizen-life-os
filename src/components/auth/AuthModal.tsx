@@ -1837,11 +1837,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
 
             <div className="relative z-20 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-bold backdrop-blur-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-                <span>SOVEREIGN CIVIC INTELLIGENCE 2026</span>
-              </div>
-
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight drop-shadow-xs">
                 {language === 'hi' ? (
                   <>
