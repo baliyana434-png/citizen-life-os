@@ -1831,8 +1831,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-8 lg:py-12 flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-14 relative z-10 my-auto">
           {/* Left Column on Desktop / Bottom on Mobile: Platform Branding & Highlights */}
           <div className="w-full lg:w-1/2 space-y-4 text-left order-2 lg:order-1 mt-4 lg:mt-0 relative">
-            {/* Hyper-realistic Glowing Pendulum Bell Lantern (Desktop) */}
-            <div className="w-full hidden lg:flex justify-start -mb-4 pointer-events-none">
+            {/* Hyper-realistic Glowing Pendulum Bell Lantern */}
+            <div className="w-full flex justify-center lg:justify-start -mb-4 pointer-events-none">
               <GlowingPendulumBell />
             </div>
 
@@ -1914,11 +1914,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
 
           {/* Right Column on Desktop / Top on Mobile: The Auth Card */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center justify-center order-1 lg:order-2">
-            {/* Mobile Hanging Bell - Positioned on Top of the Login Box on Mobile Devices */}
-            <div className="w-full flex justify-center lg:hidden -mb-4 pointer-events-none">
-              <GlowingPendulumBell isMobileCompact={true} />
-            </div>
+          <div className="w-full lg:w-1/2 flex justify-center order-1 lg:order-2">
             {renderAuthCard()}
           </div>
         </main>
@@ -1944,13 +1940,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md">
       <div className="fixed inset-0" onClick={() => { setIsLoading(false); onClose(); }} />
-      <div className="relative z-10 w-full max-w-lg flex flex-col items-center">
-        {/* Glowing Bell hanging above the modal card */}
-        <div className="w-full flex justify-center -mb-6 pointer-events-none">
-          <GlowingPendulumBell isMobileCompact={true} />
-        </div>
-        {renderAuthCard()}
-      </div>
+      {renderAuthCard()}
     </div>
   );
 };
