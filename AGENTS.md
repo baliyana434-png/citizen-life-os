@@ -17,8 +17,8 @@ All agent interactions and tasks must leverage the full power of the installed e
    - Apply CodeRabbit security principles: sanitize all inputs, protect environment secrets, enforce HMAC-SHA256 signatures on payments, and prevent timing attacks.
    - Perform static code audits before marking tasks complete.
 
-4. **Mobbin Real-World UI/UX Patterns**:
-   - For all frontend UI and design tasks, follow real-world shipping patterns from top apps (Uber, Blinkit, Swiggy, Airbnb, Apple, Linear, Stripe).
+4. **Mobbin & Dribbble Dual Design Engine**:
+   - For all frontend UI and design tasks, follow real-world shipping patterns from top apps (Uber, Blinkit, Swiggy, Airbnb, Apple, Linear, Stripe) via Mobbin, combined with modern visual aesthetic trends (glassmorphism, subtle gradients, soft multi-layer shadows, micro-interactions) via Dribbble.
    - Never generate plain, flat, or generic template UI. Use modern spacing, micro-interactions, responsive hierarchy, and accessible components.
 
 5. **Cross-Model Resilience (Claude Opus <-> Gemini 3.8 / Pro)**:
